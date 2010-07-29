@@ -34,6 +34,7 @@ import org.netbeans.modules.php.editor.parser.astnodes.FunctionInvocation;
 import org.netbeans.modules.php.editor.parser.astnodes.MethodDeclaration;
 import org.netbeans.modules.php.editor.parser.astnodes.MethodInvocation;
 import org.netbeans.modules.php.editor.parser.astnodes.Scalar;
+import org.netbeans.modules.php.editor.parser.astnodes.Variable;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -112,7 +113,12 @@ public class CakePhpEditorExtender extends EditorExtender {
         @Override
         public void visit(MethodInvocation node) {
             super.visit(node);
-            
+
+            if(!(node.getDispatcher() instanceof Variable)
+                || !"$this".equals(CodeUtils.extractVariableName((Variable) node.getDispatcher()))) {
+                return;
+            }
+
             FunctionInvocation fi = node.getMethod();
             String invokedMethodName = CodeUtils.extractFunctionName(fi);
 
