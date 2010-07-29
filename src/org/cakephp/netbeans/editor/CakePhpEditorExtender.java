@@ -133,10 +133,7 @@ public class CakePhpEditorExtender extends EditorExtender {
             if(e instanceof Scalar) {
                 Scalar s = (Scalar)e;
                 if(s.getScalarType() == Scalar.Type.STRING) {
-                    viewVarName = s.getStringValue();
-                    if(!viewVarName.isEmpty()) {
-                        viewVarName = viewVarName.substring(1, viewVarName.length() - 1).trim();
-                    }
+                    viewVarName = prepareViewVar(s.getStringValue());
                 }
             }
 
@@ -145,9 +142,19 @@ public class CakePhpEditorExtender extends EditorExtender {
                     && CakePhpUtils.isControllerName(className)
                     && !viewVarName.isEmpty()) {
                 synchronized (fields) {
-                    fields.add(new PhpVariable("$" + viewVarName, new PhpClass("HtmlHelper", "HtmlHelper")));
+                    fields.add(new PhpVariable("$" + viewVarName, new PhpClass("stdClass", "stdClass")));
                 }
             }
+        }
+        
+        private String prepareViewVar(String viewVarName) {
+            if(!viewVarName.isEmpty()) {
+                viewVarName = viewVarName.substring(1, viewVarName.length() - 1).trim();
+                if(!viewVarName.matches("[A-Za-z][A-Za-z0-9]*")) {
+                    viewVarName = "";
+                }
+            }
+            return viewVarName;
         }
     }
 }
