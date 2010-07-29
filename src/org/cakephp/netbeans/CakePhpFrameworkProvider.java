@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import org.cakephp.netbeans.editor.CakePhpEditorExtender;
 import org.netbeans.modules.php.api.phpmodule.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
@@ -115,6 +116,6 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public EditorExtender getEditorExtender(PhpModule phpModule) {
-        return null;
+        return new CakePhpEditorExtender();
     }
 }
