@@ -150,7 +150,7 @@ public class CakePhpEditorExtender extends EditorExtender {
         private String prepareViewVar(String viewVarName) {
             if(!viewVarName.isEmpty()) {
                 viewVarName = viewVarName.substring(1, viewVarName.length() - 1).trim();
-                if(!viewVarName.matches("[A-Za-z][A-Za-z0-9]*")) {
+                if(!viewVarName.matches("[A-Za-z_][A-Za-z0-9_]*")) {
                     viewVarName = "";
                 }
             }
