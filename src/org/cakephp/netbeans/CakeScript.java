@@ -18,6 +18,7 @@ public class CakeScript extends PhpProgram {
     public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + FileUtils.getScriptExtension(true);
 
     private static final String SCRIPT_DIRECTORY = "cake/console/"; // NOI18N
+    private static final String SCRIPT_DIRECTORY_2 = "lib/Cake/Console/"; // NOI18N cake2.x.x
     private static final String CMD_BAKE = "bake"; // NOI18N
 
     private final PhpModule phpModule;
@@ -45,6 +46,13 @@ public class CakeScript extends PhpProgram {
         if (cake == null) {
             cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME_LONG);
         }
+        if (cake == null) {
+            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY_2 + SCRIPT_NAME);
+        }
+        if (cake == null) {
+            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY_2 + SCRIPT_NAME_LONG);
+        }
+	
         if (cake == null) {
             throw new InvalidPhpProgramException(NbBundle.getMessage(CakeScript.class, "MSG_CakeNotFound"));
         }

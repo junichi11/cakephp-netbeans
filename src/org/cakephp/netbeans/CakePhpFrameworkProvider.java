@@ -62,6 +62,10 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     public boolean isInPhpModule(PhpModule phpModule) {
         // TODO: is this detection enough?
         FileObject cake = phpModule.getSourceDirectory().getFileObject("cake"); // NOI18N
+        // cake 2.x.x
+	if(cake == null){
+		cake = phpModule.getSourceDirectory().getFileObject("lib/Cake");
+	}
         return cake != null && cake.isFolder();
     }
 
@@ -71,7 +75,11 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         List<File> configFiles = new LinkedList<File>();
 
         FileObject config = phpModule.getSourceDirectory().getFileObject("app/config"); // NOI18N
-        assert config != null : "app/config not found for CakePHP project " + phpModule.getDisplayName();
+	// cake 2.x.x
+	if(config == null){
+		config = phpModule.getSourceDirectory().getFileObject("app/Config");
+	}
+        assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
         if (config != null && config.isFolder()) {
             Enumeration<? extends FileObject> children = config.getChildren(true);
             while (children.hasMoreElements()) {

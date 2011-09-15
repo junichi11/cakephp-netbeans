@@ -15,13 +15,18 @@ import org.openide.filesystems.FileUtil;
 public final class CakePhpUtils {
     private static final String CONTROLLER_CLASS_SUFFIX = "Controller"; // NOI18N
     private static final String CONTROLLER_FILE_SUFIX = "_controller"; // NOI18N
+    private static final String CONTROLLER_FILE_SUFIX_2 = "Controller"; // NOI18N cake2.x.x
     private static final String DIR_CONTROLLERS = "controllers"; // NOI18N
+    private static final String DIR_CONTROLLER_2 = "Controller"; // NOI18N cake2.x.x
     private static final String DIR_VIEWS = "views"; // NOI18N
+    private static final String DIR_VIEW_2 = "View"; // NOI18N cake2.x.x
     private static final String FILE_VIEW_EXT = "ctp"; // NOI18N
     private static final String UNDERSCORE = "_"; // NOI18N
 
     private static final String FILE_CONTROLLER_RELATIVE = "../../" + DIR_CONTROLLERS + "/%s.php"; // NOI18N
+    private static final String FILE_CONTROLLER_RELATIVE_2 = "../../" + DIR_CONTROLLER_2 + "/%s.php"; // NOI18N cake2.0
     private static final String FILE_VIEW_RELATIVE = "../" + DIR_VIEWS + "/%s/%s." + FILE_VIEW_EXT; // NOI18N
+    private static final String FILE_VIEW_RELATIVE_2 = "../" + DIR_VIEW_2 + "/%s/%s." + FILE_VIEW_EXT; // NOI18N cake2.0
 
     private CakePhpUtils() {
     }
@@ -39,6 +44,10 @@ public final class CakePhpUtils {
         if (parent == null) {
             return false;
         }
+	// cake 2.x.x
+	if(DIR_VIEW_2.equals(parent.getName())){
+		return true;
+	}
         return DIR_VIEWS.equals(parent.getName());
     }
 
@@ -53,7 +62,10 @@ public final class CakePhpUtils {
     private static FileObject getView(FileObject controller, String viewName) {
         File parent = FileUtil.toFile(controller).getParentFile();
         File view = PropertyUtils.resolveFile(parent, String.format(FILE_VIEW_RELATIVE, getViewFolderName(controller.getName()), viewName));
-        if (view.isFile()) {
+        if(!view.isFile()){
+	    view = PropertyUtils.resolveFile(parent, String.format(FILE_VIEW_RELATIVE_2, getViewFolderName(controller.getName()), viewName));
+	}
+	if (view.isFile()) {
             return FileUtil.toFileObject(view);
         }
         return null;
@@ -64,10 +76,18 @@ public final class CakePhpUtils {
     }
 
     public static boolean isControllerFileName(String filename) {
+	if(filename.endsWith(CakePhpUtils.CONTROLLER_FILE_SUFIX_2)){
+		return true;
+	}
         return filename.endsWith(CakePhpUtils.CONTROLLER_FILE_SUFIX);
     }
 
     public static boolean isController(FileObject fo) {
+	if(fo.isData()
+                && isControllerFileName(fo.getName())
+                && fo.getParent().getNameExt().equals(DIR_CONTROLLER_2)){
+	    return true;
+        }
         return fo.isData()
                 && isControllerFileName(fo.getName())
                 && fo.getParent().getNameExt().equals(DIR_CONTROLLERS);
@@ -76,7 +96,10 @@ public final class CakePhpUtils {
     public static FileObject getController(FileObject view) {
         File parent = FileUtil.toFile(view).getParentFile();
         File action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE, getControllerFileName(parent.getName())));
-        if (action.isFile()) {
+        if(!action.isFile()){
+            action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE_2, getControllerFileName(parent.getName())));
+	}
+	if (action.isFile()) {
             return FileUtil.toFileObject(action);
         }
         return null;
@@ -92,7 +115,10 @@ public final class CakePhpUtils {
     }
 
     private static String getControllerFileName(String viewName) {
-        return viewName + CONTROLLER_FILE_SUFIX;
+	if(viewName.toLowerCase().equals(viewName)){
+	    return viewName + CONTROLLER_FILE_SUFIX;
+	}
+        return viewName + CONTROLLER_FILE_SUFIX_2; // cake 2.x.x
     }
 
     // unit tests
@@ -101,7 +127,10 @@ public final class CakePhpUtils {
     }
 
     private static String getViewFolderName(String controllerFileName) {
-        return controllerFileName.replace(CONTROLLER_FILE_SUFIX, ""); // NOI18N
+        if(controllerFileName.toLowerCase().equals(controllerFileName)){
+	    return controllerFileName.replace(CONTROLLER_FILE_SUFIX, ""); // NOI18N
+	}
+	return controllerFileName.replace(CONTROLLER_FILE_SUFIX_2, ""); // NOI18N cake 2.x.x
     }
 
     // my_posts -> MyPosts or myPosts
