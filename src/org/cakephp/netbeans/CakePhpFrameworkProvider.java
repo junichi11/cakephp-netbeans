@@ -103,7 +103,19 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
-        return new PhpModuleProperties();
+        PhpModuleProperties properties = new PhpModuleProperties();
+	FileObject webroot = phpModule.getSourceDirectory().getFileObject("app/webroot");
+	if(webroot != null){
+	    properties.setWebRoot(webroot);
+	}
+	FileObject test = phpModule.getSourceDirectory().getFileObject("app/tests");
+	if(test == null){
+	    test = phpModule.getSourceDirectory().getFileObject("app/Test");
+	}
+	if(test != null){
+	    properties.setTests(test);
+	}
+        return properties;
     }
 
     @Override
