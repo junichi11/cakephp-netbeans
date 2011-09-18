@@ -19,6 +19,7 @@ import org.netbeans.modules.php.spi.commands.FrameworkCommandSupport;
 import org.netbeans.modules.php.spi.editor.EditorExtender;
 import org.netbeans.modules.php.spi.phpmodule.PhpFrameworkProvider;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleActionsExtender;
+import org.netbeans.modules.php.spi.phpmodule.PhpModuleCustomizerExtender;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleExtender;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleIgnoredFilesExtender;
 import org.openide.filesystems.FileObject;
@@ -101,6 +102,11 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         return null;
     }
 
+    @Override
+    public PhpModuleCustomizerExtender createPhpModuleCustomizerExtender(PhpModule phpModule){
+	    return new CakePhpModuleCustomizerExtender(phpModule);
+    }
+    
     @Override
     public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
         PhpModuleProperties properties = new PhpModuleProperties();
