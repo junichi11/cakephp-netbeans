@@ -9,6 +9,9 @@ TODO: add license
             <file name="org-cakephp-netbeans-ui-actions-RunBakeAction.instance">
                 <attr name="instanceCreate" methodvalue="org.cakephp.netbeans.ui.actions.RunBakeAction.getInstance"/>
             </file>
+            <file name="org-cakephp-netbeans-ui-actions-ClearCacheAction.instance">
+                <attr name="instanceCreate" methodvalue="org.cakephp.netbeans.ui.actions.ClearCacheAction.getInstance"/>
+            </file>
         </folder>
     </folder>
     <folder name="Loaders">

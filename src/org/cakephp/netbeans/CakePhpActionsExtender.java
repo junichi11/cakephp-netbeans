@@ -4,11 +4,12 @@
 
 package org.cakephp.netbeans;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
 import org.cakephp.netbeans.ui.actions.CakePhpGoToActionAction;
 import org.cakephp.netbeans.ui.actions.CakePhpGoToViewAction;
+import org.cakephp.netbeans.ui.actions.ClearCacheAction;
 import org.cakephp.netbeans.ui.actions.RunBakeAction;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.spi.actions.GoToActionAction;
@@ -18,7 +19,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 
 public class CakePhpActionsExtender extends PhpModuleActionsExtender {
-    private static final List<Action> ACTIONS = Collections.<Action>singletonList(RunBakeAction.getInstance());
+//    private static final List<Action> ACTIONS = Collections.<Action>singletonList(RunBakeAction.getInstance());
 
     @Override
     public String getMenuName() {
@@ -27,7 +28,11 @@ public class CakePhpActionsExtender extends PhpModuleActionsExtender {
 
     @Override
     public List<? extends Action> getActions() {
-        return ACTIONS;
+        List<Action> list = new ArrayList<Action>();
+	list.add(RunBakeAction.getInstance());
+	list.add(ClearCacheAction.getInstance());
+	return list;
+//	    return ACTIONS;
     }
 
     @Override
