@@ -16,7 +16,7 @@ import org.openide.util.Exceptions;
  *
  * @author junichi11
  */
-@NodeFactory.Registration(projectType = "org-netbeans-modules-php-project", position = 30)
+@NodeFactory.Registration(projectType = "org-netbeans-modules-php-project", position = 700)
 public class ViewNodeFactoryImpl implements NodeFactory{
 	@Override
 	public NodeList createNodes(Project prj){

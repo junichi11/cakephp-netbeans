@@ -5,6 +5,7 @@
 package org.cakephp.netbeans.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
@@ -164,5 +165,25 @@ public final class CakePhpUtils {
             }
         }
         return sb.toString();
+    }
+    
+    public static FileObject createView(FileObject controller, PhpBaseElement phpElement) throws IOException{
+        FileObject fo = null;
+	if (phpElement instanceof PhpClass.Method) {
+            FileObject view = controller.getFileObject("../../" + DIR_VIEWS);
+	    if(view == null){
+                view = controller.getFileObject("../../" + DIR_VIEW_2);
+	    }
+            if(view != null){
+                fo = view.getFileObject(getViewFolderName(controller.getName()));
+		if(fo == null){
+                    fo = view.createFolder(getViewFolderName(controller.getName()));
+		}
+	    }
+ 	    if(fo != null){
+	        fo = fo.createData(phpElement.getName() + "." + FILE_VIEW_EXT);
+	    }
+        }
+	return fo;
     }
 }

@@ -4,12 +4,16 @@
 
 package org.cakephp.netbeans.ui.actions;
 
+import java.io.IOException;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.GoToViewAction;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 public final class CakePhpGoToViewAction extends GoToViewAction {
@@ -36,6 +40,18 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
             UiUtils.open(view, DEFAULT_OFFSET);
             return true;
         }
+	
+	// auto create a view file
+	PhpModule phpModule = PhpModule.forFileObject(controller);
+	if(CakePreferences.getAutoCreateView(phpModule)){
+            try {
+                view = CakePhpUtils.createView(controller, phpElement);
+                UiUtils.open(view, DEFAULT_OFFSET);
+                return true;
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+	}
         return false;
     }
 }

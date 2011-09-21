@@ -20,10 +20,12 @@ import org.openide.util.NbBundle;
  */
 public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender{
 	private final String appName;
+	private final boolean originalAutoCreateState;
 	private CakePhpCustomizerPanel component;
 	
 	CakePhpModuleCustomizerExtender(PhpModule phpModule){
 		appName = CakePreferences.getAppName(phpModule);
+		originalAutoCreateState = CakePreferences.getAutoCreateView(phpModule);
 	}
 	
 	@Override
@@ -64,6 +66,10 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 	@Override
 	public EnumSet<Change> save(PhpModule phpModule){
 		String newAppName = getPanel().getAppNameField().getText();
+		boolean newAutoCreateState = getPanel().isAutoCreateView();
+		if(newAutoCreateState != originalAutoCreateState){
+			CakePreferences.setAutoCreateView(phpModule, newAutoCreateState);
+		}
 		if(!newAppName.equals(appName) && !newAppName.equals("")){
 			CakePreferences.setAppName(phpModule, newAppName);
 			return EnumSet.of(Change.SOURCES_CHANGE);
@@ -74,6 +80,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 	private CakePhpCustomizerPanel getPanel(){
 		if(component == null){
 			component = new CakePhpCustomizerPanel();
+			component.setAutoCreateView(originalAutoCreateState);
 			if(!appName.equals("")){
 				component.setAppNameField(appName);
 			}

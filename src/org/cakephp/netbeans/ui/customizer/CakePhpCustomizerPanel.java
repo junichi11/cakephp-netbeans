@@ -26,6 +26,13 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
 		appNameField.setText(appName);
 	}
 	
+	public boolean isAutoCreateView(){
+		return autoCreateViewCheckBox.isSelected();
+	}
+	
+	public void setAutoCreateView(boolean isAuto){
+		autoCreateViewCheckBox.setSelected(isAuto);
+	}
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -37,6 +44,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
 
         appNameLabel = new javax.swing.JLabel();
         appNameField = new javax.swing.JTextField();
+        autoCreateViewCheckBox = new javax.swing.JCheckBox();
 
         appNameLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.appNameLabel.text")); // NOI18N
 
@@ -47,15 +55,20 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
             }
         });
 
+        autoCreateViewCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.autoCreateViewCheckBox.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(appNameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(appNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(appNameLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(appNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE))
+                    .addComponent(autoCreateViewCheckBox))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -65,6 +78,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(appNameLabel)
                     .addComponent(appNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(autoCreateViewCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -76,5 +91,6 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField appNameField;
     private javax.swing.JLabel appNameLabel;
+    private javax.swing.JCheckBox autoCreateViewCheckBox;
     // End of variables declaration//GEN-END:variables
 }
