@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP Component
+ * CakePHP Behavior
  * @author ${user}
  */
 class ${name}Behavior extends ModelBehavior {

@@ -134,6 +134,24 @@ TODO: add license
                 <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/BehaviorDescription.html"/>
                 <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
             </file>
+            <file name="Shell.php" url="Shell.php">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/Shell.php"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/php_icon.png"/>
+                <attr name="position" intvalue="500"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/ShellDescription.html"/>
+                <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+            </file>
+            <file name="Task.php" url="Task.php">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/Task.php"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/php_icon.png"/>
+                <attr name="position" intvalue="600"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/TaskDescription.html"/>
+                <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+            </file>
          </folder>
     </folder>
 </filesystem>
