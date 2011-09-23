@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import org.cakephp.netbeans.editor.CakePhpEditorExtender;
+import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.netbeans.modules.php.api.phpmodule.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
@@ -137,7 +138,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     @Override
     public FrameworkCommandSupport getFrameworkCommandSupport(PhpModule phpModule) {
         // TODO: provide list of commands (preferably in XML format)
-        return null;
+        return new CakePhpCommandSupport(phpModule);
     }
 
     @Override

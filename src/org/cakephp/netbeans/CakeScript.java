@@ -42,15 +42,9 @@ public class CakeScript extends PhpProgram {
         FileObject sourceDirectory = phpModule.getSourceDirectory();
 
         // locate
-        FileObject cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME);
+        FileObject cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME + ".php");
         if (cake == null) {
-            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME_LONG);
-        }
-        if (cake == null) {
-            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY_2 + SCRIPT_NAME);
-        }
-        if (cake == null) {
-            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY_2 + SCRIPT_NAME_LONG);
+            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY_2 + SCRIPT_NAME + ".php");
         }
 	
         if (cake == null) {
