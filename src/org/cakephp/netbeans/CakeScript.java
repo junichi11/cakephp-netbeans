@@ -15,7 +15,7 @@ import org.openide.util.NbBundle;
 
 public class CakeScript extends PhpProgram {
     public static final String SCRIPT_NAME = "cake"; // NOI18N
-    public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + FileUtils.getScriptExtension(true);
+    public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + ".php"; // NOI18N
 
     private static final String SCRIPT_DIRECTORY = "cake/console/"; // NOI18N
     private static final String SCRIPT_DIRECTORY_2 = "lib/Cake/Console/"; // NOI18N cake2.x.x
@@ -42,9 +42,9 @@ public class CakeScript extends PhpProgram {
         FileObject sourceDirectory = phpModule.getSourceDirectory();
 
         // locate
-        FileObject cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME + ".php");
+        FileObject cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME_LONG);
         if (cake == null) {
-            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY_2 + SCRIPT_NAME + ".php");
+            cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY_2 + SCRIPT_NAME_LONG);
         }
 	
         if (cake == null) {

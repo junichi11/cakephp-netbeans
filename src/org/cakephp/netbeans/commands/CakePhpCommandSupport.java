@@ -26,6 +26,10 @@ import org.openide.util.NbBundle;
  */
 public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 	static final Logger LOGGER = Logger.getLogger(CakePhpCommandSupport.class.getName());
+	private static final String CORE_SHELLS_DIRECTORY = "cake/console/libs"; // NOI18N
+	private static final String VENDORS_SHELLS_DIRECTORY = "vendors/shells"; // NOI18N
+	private static final String APP_VENDORS_SHELLS_DIRECTORY = "app/vendors/shells"; // NOI18N
+	private static final String[] shells = {CORE_SHELLS_DIRECTORY, VENDORS_SHELLS_DIRECTORY, APP_VENDORS_SHELLS_DIRECTORY}; // NOI18N
 
 	public CakePhpCommandSupport(PhpModule phpModule){
 		super(phpModule);
@@ -81,23 +85,45 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 	@Override
 	protected List<FrameworkCommand> getFrameworkCommandsInternal() {
 		// TODO Find more better way.
-		FileObject fo = phpModule.getSourceDirectory().getFileObject("cake/console/libs");
-		Enumeration<? extends FileObject> shells = null;
-		if(fo != null){
-			shells = fo.getChildren(false);
-		}else{
-			return null;
+		List<FileObject> shellDirs = new ArrayList<FileObject>();
+		for(String shell : shells){
+			FileObject shellFileObject = phpModule.getSourceDirectory().getFileObject(shell);
+			if(shellFileObject != null){
+				shellDirs.add(shellFileObject);
+			}
 		}
 		List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
-		if(shells != null){
-			while(shells.hasMoreElements()){
-				FileObject shell = shells.nextElement();
-				if(!shell.getName().equals("shell") && !shell.isFolder()){
-					commands.add(new CakePhpCommand(phpModule, shell.getName(), shell.getName(), shell.getName()));
+		
+		for (FileObject shellDir : shellDirs) {
+			Enumeration<? extends FileObject> shellFiles = null;
+			if (shellDir != null) {
+				shellFiles = shellDir.getChildren(false);
+			} else {
+				return null;
+			}
+			if (shellFiles != null) {
+				while (shellFiles.hasMoreElements()) {
+					FileObject shell = shellFiles.nextElement();
+					if (!shell.getName().equals("shell") && !shell.isFolder()) { // NOI18N
+						commands.add(new CakePhpCommand(phpModule, shell.getName(), "[" + getShellsPlace(shellDir) + "]", shell.getName())); // NOI18N
+					}
 				}
 			}
 		}
 		return commands;
+	}
+	
+	private String getShellsPlace(FileObject shellDir){
+		String place = "";
+		FileObject source = phpModule.getSourceDirectory();
+		if(source.getFileObject(CORE_SHELLS_DIRECTORY) == shellDir){
+			place = "CORE";
+		}else if (source.getFileObject(APP_VENDORS_SHELLS_DIRECTORY) == shellDir){
+			place = "APP VENDOR";
+		}else if (source.getFileObject(VENDORS_SHELLS_DIRECTORY) == shellDir){
+			place = "VENDOR";
+		}
+		return place;
 	}
 	
 }
