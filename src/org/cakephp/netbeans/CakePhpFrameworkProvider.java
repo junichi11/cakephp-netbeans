@@ -75,11 +75,12 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     public File[] getConfigurationFiles(PhpModule phpModule) {
         // return all php files from app/config
         List<File> configFiles = new LinkedList<File>();
-
-        FileObject config = phpModule.getSourceDirectory().getFileObject("app/config"); // NOI18N
-	// cake 2.x.x
-	if(config == null){
-		config = phpModule.getSourceDirectory().getFileObject("app/Config"); // NOI18N
+        FileObject config;
+	if(phpModule.getSourceDirectory().getFileObject("cake") != null){
+                config = phpModule.getSourceDirectory().getFileObject("app/config"); // NOI18N
+	}else{
+                // cake 2.x.x
+                config = phpModule.getSourceDirectory().getFileObject("app/Config"); // NOI18N
 	}
         assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
         if (config != null && config.isFolder()) {

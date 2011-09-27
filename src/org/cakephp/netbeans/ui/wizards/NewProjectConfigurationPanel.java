@@ -25,6 +25,7 @@ import org.openide.util.Exceptions;
  */
 public class NewProjectConfigurationPanel extends javax.swing.JPanel {
 	private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
+	private static final long serialVersionUID = 7874450246517944114L;
 	private Map<String, String> tagsMap = new HashMap<String, String>();
 	private String errorMessage;
 	
