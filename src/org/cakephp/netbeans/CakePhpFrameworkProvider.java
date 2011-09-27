@@ -66,7 +66,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         FileObject cake = phpModule.getSourceDirectory().getFileObject("cake"); // NOI18N
         // cake 2.x.x
 	if(cake == null){
-		cake = phpModule.getSourceDirectory().getFileObject("lib/Cake");
+		cake = phpModule.getSourceDirectory().getFileObject("lib/Cake"); // NOI18N
 	}
         return cake != null && cake.isFolder();
     }
@@ -79,7 +79,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         FileObject config = phpModule.getSourceDirectory().getFileObject("app/config"); // NOI18N
 	// cake 2.x.x
 	if(config == null){
-		config = phpModule.getSourceDirectory().getFileObject("app/Config");
+		config = phpModule.getSourceDirectory().getFileObject("app/Config"); // NOI18N
 	}
         assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
         if (config != null && config.isFolder()) {
@@ -100,7 +100,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     @Override
     public PhpModuleExtender createPhpModuleExtender(PhpModule phpModule) {
         // TODO: can we non-interactively create a project via 'cake' command?
-        return null;
+        return new CakePhpModuleExtender();
     }
 
     @Override
@@ -111,13 +111,13 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     @Override
     public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
         PhpModuleProperties properties = new PhpModuleProperties();
-	FileObject webroot = phpModule.getSourceDirectory().getFileObject("app/webroot");
+	FileObject webroot = phpModule.getSourceDirectory().getFileObject("app/webroot"); // NOI18N
 	if(webroot != null){
 	    properties.setWebRoot(webroot);
 	}
-	FileObject test = phpModule.getSourceDirectory().getFileObject("app/tests");
+	FileObject test = phpModule.getSourceDirectory().getFileObject("app/tests"); // NOI18N
 	if(test == null){
-	    test = phpModule.getSourceDirectory().getFileObject("app/Test");
+	    test = phpModule.getSourceDirectory().getFileObject("app/Test"); // NOI18N
 	}
 	if(test != null){
 	    properties.setTests(test);
