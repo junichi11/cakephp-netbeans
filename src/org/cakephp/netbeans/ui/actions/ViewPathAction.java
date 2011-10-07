@@ -23,11 +23,14 @@ id = "org.cakephp.netbeans.ui.actions.ViewPathAction")
 })
 @Messages("CTL_ViewPathAction=View Path")
 public final class ViewPathAction extends AbstractAction implements Presenter.Toolbar {
+	private static final long serialVersionUID = -8271031482726036137L;
 	
+	@Override
 	public Component getToolbarPresenter(){
 		return new ViewPathPanel();
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO implement action body
 	}

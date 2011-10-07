@@ -24,7 +24,7 @@ class ${name}Component extends Object {
 
 	}
 	
-	function shutDown(&controller) {
+	function shutDown(&$controller) {
 
 	}
 }

@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.cakephp.netbeans.CakeScript;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
@@ -30,11 +28,6 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.windows.InputOutput;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -110,7 +103,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 			return commands;
 		}
 
-		// cakephp1.2+
+		// cakephp1.3+
 		commands = new ArrayList<FrameworkCommand>();
 		List<FileObject> shellDirs = new ArrayList<FileObject>();
 		for(String shell : shells){
@@ -144,31 +137,52 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 		if(output == null){
 			return null;
 		}
-		List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
-		// TODO Create a class for parsing XML. DOM? SAX?
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		List<CakeCommandItem> commandsItem = new ArrayList<CakeCommandItem>();
 		try {
-			DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			Document document = builder.parse(output);
-			Element root = document.getDocumentElement();
-			NodeList nodeList = root.getChildNodes();
-			for(int i = 0; i < nodeList.getLength(); i++){
-				Node node = nodeList.item(i);
-				NamedNodeMap attr = node.getAttributes();
-				commands.add(new CakePhpCommand(phpModule, 
-					attr.getNamedItem("call_as").getNodeValue(), attr.getNamedItem("provider").getNodeValue(), attr.getNamedItem("name").getNodeValue())); // NOI18N
-			}
+			CakePhpCommandXmlParser.parse(output, commandsItem);
 		} catch (SAXException ex) {
-			Exceptions.printStackTrace(ex);
-		} catch (IOException ex) {
-			Exceptions.printStackTrace(ex);
-		} catch (ParserConfigurationException ex) {
-			Exceptions.printStackTrace(ex);
+			LOGGER.log(Level.WARNING, "Xml file Error:{0}", ex.getMessage());
+		}
+		if(commandsItem.isEmpty()){
+			return null;
+		}
+		List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
+		for(CakeCommandItem item : commandsItem){
+			File commandXml = getRedirectOutput(item.getCommand(), "--help", "xml"); // NOI18N
+			if(commandXml == null){
+				return null;
+			}
+			List<CakeCommandItem> mainCommandsItem = new ArrayList<CakeCommandItem>();
+			try {
+				CakePhpCommandXmlParser.parse(commandXml, mainCommandsItem);
+			} catch (SAXException ex) {
+				LOGGER.log(Level.WARNING, "Xml file Error:{0}", ex.getMessage());
+				commands.add(new CakePhpCommand(phpModule,
+					item.getCommand(), item.getDescription(), item.getDisplayName()));
+				continue;
+			}
+			if (mainCommandsItem.isEmpty()) {
+				return null;
+			}
+			CakeCommandItem main = mainCommandsItem.get(0);
+			// add main command
+			commands.add(new CakePhpCommand(phpModule,
+				main.getCommand(), "[" + item.getDescription() + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
+			List<CakeCommandItem> subcommands = main.getSubcommands();
+			if(subcommands == null){
+				continue;
+			}
+			// add subcommands
+			for(CakeCommandItem subcommand : subcommands){
+				String[] command = {main.getCommand(), subcommand.getCommand()};
+				commands.add(new CakePhpCommand(phpModule,
+					command, "[" + item.getDescription() + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName()));// NOI18N
+			}
 		}
 		return commands;
 	}
 	
-	public File getRedirectOutput(String command, String param) {
+	public File getRedirectOutput(String command, String... param) {
 		// No error dialog is displayed
 		ExternalProcessBuilder processBuilder = createSilentCommand(command, param);
 		if (processBuilder == null) {
@@ -178,7 +192,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 		try {
 			final RedirectInputProcessor inputProcessor = new RedirectInputProcessor();
 			ExecutionDescriptor descriptor = new ExecutionDescriptor().inputOutput(InputOutput.NULL).outProcessorFactory(new ExecutionDescriptor.InputProcessorFactory() {
-
+				@Override
 				public InputProcessor newInputProcessor(InputProcessor defaultProcessor) {
 					return inputProcessor;
 				}
@@ -227,16 +241,19 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 			output.deleteOnExit();
 		}
 		
+		@Override
 		public void processInput(char[] chars) throws IOException {
 			for(char c : chars){
 				buffer.write((byte)c);
 			}
 		}
 
+		@Override
 		public void reset() throws IOException {
 //			throw new UnsupportedOperationException("Not supported yet.");
 		}
 
+		@Override
 		public void close() throws IOException {
 			buffer.close();
 			outputStream.close();

@@ -4,16 +4,25 @@
 
 package org.cakephp.netbeans.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 
 public final class CakePhpUtils {
+    public static final int CAKE_VERSION_MAJOR = 0;
+    public static final int CAKE_VERSION_MINOR = 1;
+    public static final int CAKE_VERSION_REVISION = 2;
+    public static final int CAKE_VERSION_NOT_STABLE = 3;
     private static final String CONTROLLER_CLASS_SUFFIX = "Controller"; // NOI18N
     private static final String CONTROLLER_FILE_SUFIX = "_controller"; // NOI18N
     private static final String CONTROLLER_FILE_SUFIX_2 = "Controller"; // NOI18N cake2.x.x
@@ -23,11 +32,17 @@ public final class CakePhpUtils {
     private static final String DIR_VIEW_2 = "View"; // NOI18N cake2.x.x
     private static final String FILE_VIEW_EXT = "ctp"; // NOI18N
     private static final String UNDERSCORE = "_"; // NOI18N
+    private static final String DIR_THEMED = "themed"; // NOI18N 
+    private static final String DIR_THEMED_2 = "Themed"; // NOI18N 
 
     private static final String FILE_CONTROLLER_RELATIVE = "../../" + DIR_CONTROLLERS + "/%s.php"; // NOI18N
     private static final String FILE_CONTROLLER_RELATIVE_2 = "../../" + DIR_CONTROLLER_2 + "/%s.php"; // NOI18N cake2.0
+    private static final String FILE_THEME_CONTROLLER_RELATIVE = "../../../../" + DIR_CONTROLLERS + "/%s.php"; // NOI18N
+    private static final String FILE_THEME_CONTROLLER_RELATIVE_2 = "../../../../" + DIR_CONTROLLER_2 + "/%s.php"; // NOI18N cake2.0
     private static final String FILE_VIEW_RELATIVE = "../" + DIR_VIEWS + "/%s/%s." + FILE_VIEW_EXT; // NOI18N
     private static final String FILE_VIEW_RELATIVE_2 = "../" + DIR_VIEW_2 + "/%s/%s." + FILE_VIEW_EXT; // NOI18N cake2.0
+    private static final String FILE_THEME_VIEW_RELATIVE = "../" + DIR_VIEWS + "/" + DIR_THEMED + "/%s/%s/%s." + FILE_VIEW_EXT; // NOI18N
+    private static final String FILE_THEME_VIEW_RELATIVE_2 = "../" + DIR_VIEW_2 + "/" + DIR_THEMED_2 + "/%s/%s/%s." + FILE_VIEW_EXT; // NOI18N cake2.0
 
     private CakePhpUtils() {
     }
@@ -36,6 +51,11 @@ public final class CakePhpUtils {
         if (!fo.isData() || !fo.getExt().equals(FILE_VIEW_EXT)) {
             return false;
         }
+	// Theme view file  View/Themed/ThemeName/Controller/View.ctp
+        if(DIR_VIEW_2.equals(fo.getFileObject("../../../../").getName())
+		|| DIR_VIEWS.equals(fo.getFileObject("../../../../").getName())){ // NOI18N
+	    return true;
+	}
         File file = FileUtil.toFile(fo);
         File parent = file.getParentFile(); // controller
         if (parent == null) {
@@ -45,7 +65,7 @@ public final class CakePhpUtils {
         if (parent == null) {
             return false;
         }
-	// cake 2.x.x
+        // cake 2.x.x
 	if(DIR_VIEW_2.equals(parent.getName())){
 		return true;
 	}
@@ -65,6 +85,26 @@ public final class CakePhpUtils {
         File view = PropertyUtils.resolveFile(parent, String.format(FILE_VIEW_RELATIVE, getViewFolderName(controller.getName()), viewName));
         if(!view.isFile()){
 	    view = PropertyUtils.resolveFile(parent, String.format(FILE_VIEW_RELATIVE_2, getViewFolderName(controller.getName()), viewName));
+	}
+	if (view.isFile()) {
+            return FileUtil.toFileObject(view);
+        }
+        return null;
+    }
+
+    public static FileObject getView(FileObject controller, PhpBaseElement phpElement, FileObject theme) {
+        FileObject view = null;
+        if (phpElement instanceof PhpClass.Method) {
+            view = getView(controller, getViewFileName(phpElement.getName()), theme);
+        }
+        return view;
+    }
+
+    private static FileObject getView(FileObject controller, String viewName, FileObject theme) {
+        File parent = FileUtil.toFile(controller).getParentFile();
+        File view = PropertyUtils.resolveFile(parent, String.format(FILE_THEME_VIEW_RELATIVE, theme.getName(), getViewFolderName(controller.getName()), viewName));
+        if(!view.isFile()){
+	    view = PropertyUtils.resolveFile(parent, String.format(FILE_THEME_VIEW_RELATIVE_2, theme.getName(), getViewFolderName(controller.getName()), viewName));
 	}
 	if (view.isFile()) {
             return FileUtil.toFileObject(view);
@@ -99,6 +139,13 @@ public final class CakePhpUtils {
         File action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE, getControllerFileName(parent.getName())));
         if(!action.isFile()){
             action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE_2, getControllerFileName(parent.getName())));
+	}
+	// Theme view file
+        if(!action.isFile()){
+            action = PropertyUtils.resolveFile(parent, String.format(FILE_THEME_CONTROLLER_RELATIVE, getControllerFileName(parent.getName())));
+	}
+        if(!action.isFile()){
+            action = PropertyUtils.resolveFile(parent, String.format(FILE_THEME_CONTROLLER_RELATIVE_2, getControllerFileName(parent.getName())));
 	}
 	if (action.isFile()) {
             return FileUtil.toFileObject(action);
@@ -185,5 +232,66 @@ public final class CakePhpUtils {
 	    }
         }
 	return fo;
+    }
+    
+    /**
+     * Get CakePHP version.
+     * @param PhpModule phpModule
+     * @return String If can't get the version file, return null.
+     */
+    public static String getCakePhpVersion(PhpModule phpModule){
+        FileObject root = phpModule.getSourceDirectory();
+        FileObject cake = root.getFileObject("cake"); // NOI18N
+        FileObject version;
+	if(cake != null){
+            version = root.getFileObject("cake/VERSION.txt"); // NOI18N
+	}else{
+            version = root.getFileObject("lib/Cake/VERSION.txt"); // NOI18N
+        }
+        if(version == null){
+            return null;
+        }
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FileUtil.toFile(version))));
+            String str;
+	    String versionNumber = null;
+	    while((str = reader.readLine()) != null){
+                if(!str.contains("//") && !str.equals("")){
+                    str = str.trim();
+                    versionNumber = str;
+		}
+	    }
+	    reader.close();
+	    return versionNumber;
+	}catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+    
+    public static String[] getCakePhpVersionSplit(PhpModule phpModule){
+	    String version = getCakePhpVersion(phpModule);
+	    if(version == null){
+		    return null;
+	    }
+	    return version.split("[., -]");
+    }
+    
+    public static String getCakePhpVersion(PhpModule phpModule, int kind){
+        String[] versionArray = getCakePhpVersionSplit(phpModule);
+	if(kind < CAKE_VERSION_MAJOR || CAKE_VERSION_NOT_STABLE < kind){
+		return null;
+	}
+	String version;
+	try{
+		version = versionArray[kind];
+	}catch(ArrayIndexOutOfBoundsException ex){
+		version = null;
+	}
+	return version;
+    }
+    
+    public static String getCamelCaseName(String name){
+	    return toCamelCase(name, false);
     }
 }

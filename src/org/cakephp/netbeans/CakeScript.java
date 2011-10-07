@@ -4,14 +4,22 @@
 
 package org.cakephp.netbeans;
 
+import java.util.concurrent.ExecutionException;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExternalProcessBuilder;
+import org.netbeans.api.extexecution.input.InputProcessor;
+import org.netbeans.api.extexecution.input.InputProcessors;
+import org.netbeans.api.extexecution.input.LineProcessor;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpProgram;
 import org.netbeans.modules.php.api.util.FileUtils;
+import org.netbeans.modules.php.spi.commands.FrameworkCommand;
+import org.netbeans.modules.php.spi.commands.FrameworkCommandSupport;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
+import org.openide.windows.InputOutput;
 
 public class CakeScript extends PhpProgram {
     public static final String SCRIPT_NAME = "cake"; // NOI18N
@@ -86,4 +94,49 @@ public class CakeScript extends PhpProgram {
         }
         executeLater(processBuilder, executionDescriptor, CMD_BAKE);
     }
+    
+    public static String getHelp(PhpModule phpModule, FrameworkCommand command){
+        FrameworkCommandSupport commandSupport = CakePhpFrameworkProvider.getInstance().getFrameworkCommandSupport(phpModule);
+        ExternalProcessBuilder processBuilder = commandSupport.createCommand(command.getCommands(), "--help"); // NOI18N
+        assert processBuilder != null;
+        final HelpLineProcessor lineProcessor = new HelpLineProcessor();
+        ExecutionDescriptor descriptor = new ExecutionDescriptor().inputOutput(InputOutput.NULL)
+                .outProcessorFactory(new ExecutionDescriptor.InputProcessorFactory() {
+		@Override
+                public InputProcessor newInputProcessor(InputProcessor defaultProcessor) {
+                        return InputProcessors.ansiStripping(InputProcessors.bridge(lineProcessor));
+                }
+        });
+        try {
+            executeAndWait(processBuilder, descriptor, "Help");
+        } catch (ExecutionException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+	return lineProcessor.getHelp();
+    }
+	
+    static class HelpLineProcessor implements LineProcessor{
+        private StringBuilder sb = new StringBuilder();
+
+        @Override
+        public void processLine(String line) {
+            sb.append(line);
+	    sb.append("\n"); // NOI18N
+        }
+
+        @Override
+        public void reset() {
+        }
+
+        @Override
+        public void close() {
+        }
+		
+        public String getHelp(){
+            return sb.toString();
+        }	
+    }
+    
 }

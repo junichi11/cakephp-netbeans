@@ -10,6 +10,7 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
+import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.GoToViewAction;
 import org.openide.filesystems.FileObject;
@@ -21,6 +22,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
 
     private final FileObject controller;
     private final int offset;
+    private FileObject theme;
 
     public CakePhpGoToViewAction(FileObject controller, int offset) {
         assert CakePhpUtils.isController(controller);
@@ -35,6 +37,26 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         if (phpElement == null) {
             return false;
         }
+	// Theme
+        if(theme != null){
+            FileObject viewTheme = CakePhpUtils.getView(controller, phpElement, theme);
+            if(viewTheme != null){
+                UiUtils.open(viewTheme, DEFAULT_OFFSET);
+                return true;
+            }
+            return false;
+	}
+        for (PhpClass phpClass : editorSupport.getClasses(controller)) {
+            if (CakePhpUtils.isControllerName(phpClass.getName())) {
+                for (PhpClass.Field field : phpClass.getFields()) {
+                    if (field.getName().equals("$theme")) { // NOI18N
+                        CakePhpGoToViewActionPanel dialog = new CakePhpGoToViewActionPanel(this);
+                        dialog.showDialog();
+			return true;
+                    }
+                }
+            }
+	}
         FileObject view = CakePhpUtils.getView(controller, phpElement);
         if (view != null) {
             UiUtils.open(view, DEFAULT_OFFSET);
@@ -53,5 +75,20 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
             }
 	}
         return false;
+    }
+    
+    public FileObject[] getThemes(){
+        PhpModule phpModule = PhpModule.forFileObject(controller);
+        FileObject[] themes = null;
+        if(CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("2")){//NOI18N
+            themes = controller.getFileObject("../../View/Themed").getChildren(); // NOI18N
+	}else{
+            themes = controller.getFileObject("../../views/themed").getChildren(); // NOI18N
+        }
+        return themes;
+    }
+    
+    public void setTheme(FileObject theme){
+	    this.theme = theme;
     }
 }
