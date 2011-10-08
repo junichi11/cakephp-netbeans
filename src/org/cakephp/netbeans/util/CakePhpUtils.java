@@ -256,7 +256,7 @@ public final class CakePhpUtils {
             String str;
 	    String versionNumber = null;
 	    while((str = reader.readLine()) != null){
-                if(!str.contains("//") && !str.equals("")){
+                if(!str.contains("//") && !str.equals("")){ // NOI18N
                     str = str.trim();
                     versionNumber = str;
 		}
@@ -274,7 +274,7 @@ public final class CakePhpUtils {
 	    if(version == null){
 		    return null;
 	    }
-	    return version.split("[., -]");
+	    return version.split("[., -]"); // NOI18N
     }
     
     public static String getCakePhpVersion(PhpModule phpModule, int kind){
