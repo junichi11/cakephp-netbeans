@@ -152,6 +152,62 @@ TODO: add license
                 <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/templates/cakephp/TaskDescription.html"/>
                 <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
             </file>
+        </folder>
+        <folder name="CakePHP2 Framework">
+            <file name="CtpTemplate.ctp" url="templates/cakephp2/CtpTemplate.ctp">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/CtpTemplate.ctp"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/ctp_icon.png"/>
+                <attr name="position" intvalue="100"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/templates/cakephp2/CtpTemplateDescription.html"/>
+            </file>
+           <file name="Helper.php" url="templates/cakephp2/Helper.php">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/Helper.php"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/php_icon.png"/>
+                <attr name="position" intvalue="200"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/templates/cakephp2/HelperDescription.html"/>
+                <!--Use this line only if your template makes use of the FreeMarker template language:-->
+                <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+            </file>
+            <file name="Component.php" url="templates/cakephp2/Component.php">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/Component.php"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/php_icon.png"/>
+                <attr name="position" intvalue="300"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/templates/cakephp2/ComponentDescription.html"/>
+                <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+            </file>
+            <file name="Behavior.php" url="templates/cakephp2/Behavior.php">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/Behavior.php"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/php_icon.png"/>
+                <attr name="position" intvalue="400"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/templates/cakephp2/BehaviorDescription.html"/>
+                <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+            </file>
+            <file name="Shell.php" url="templates/cakephp2/Shell.php">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/Shell.php"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/php_icon.png"/>
+                <attr name="position" intvalue="500"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/templates/cakephp2/ShellDescription.html"/>
+                <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+            </file>
+            <file name="Task.php" url="templates/cakephp2/Task.php">
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.resources.Bundle#Templates/CakePHP/Task.php"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.cakephp.netbeans.resources.Bundle"/>
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/cakephp/netbeans/resources/php_icon.png"/>
+                <attr name="position" intvalue="600"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/cakephp/netbeans/resources/templates/cakephp2/TaskDescription.html"/>
+                <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+            </file>
          </folder>
     </folder>
 </filesystem>
