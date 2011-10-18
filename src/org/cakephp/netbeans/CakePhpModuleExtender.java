@@ -105,10 +105,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender{
 		
 		Set<FileObject> files = new HashSet<FileObject>();
 		FileObject config;
-		if(phpModule.getSourceDirectory().getFileObject("cake") != null){ // NOI18N
-			config = phpModule.getSourceDirectory().getFileObject("app/config/core.php"); // NOI18N
-		}else{
+		if(phpModule.getSourceDirectory().getFileObject("lib/Cake") != null){ // NOI18N
 			config = phpModule.getSourceDirectory().getFileObject("app/Config/core.php"); // NOI18N
+		}else{
+			config = phpModule.getSourceDirectory().getFileObject("app/config/core.php"); // NOI18N
 		}
 		if(config != null){
 			files.add(config);
