@@ -164,19 +164,25 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 			if (mainCommandsItem.isEmpty()) {
 				return null;
 			}
-			CakeCommandItem main = mainCommandsItem.get(0);
 			// add main command
+			CakeCommandItem main = mainCommandsItem.get(0);
+			String mainCommand = main.getCommand();
+			String provider = item.getDescription();
+			if(!provider.equals("CORE") && !provider.matches("^[a-z0-9-_]+")){
+				mainCommand = provider + "." + mainCommand;
+			}
 			commands.add(new CakePhpCommand(phpModule,
-				main.getCommand(), "[" + item.getDescription() + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
+				mainCommand, "[" + provider + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
+
+			// add subcommands
 			List<CakeCommandItem> subcommands = main.getSubcommands();
 			if(subcommands == null){
 				continue;
 			}
-			// add subcommands
 			for(CakeCommandItem subcommand : subcommands){
-				String[] command = {main.getCommand(), subcommand.getCommand()};
+				String[] command = {mainCommand, subcommand.getCommand()};
 				commands.add(new CakePhpCommand(phpModule,
-					command, "[" + item.getDescription() + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName()));// NOI18N
+					command, "[" + provider + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName()));// NOI18N
 			}
 		}
 		return commands;
