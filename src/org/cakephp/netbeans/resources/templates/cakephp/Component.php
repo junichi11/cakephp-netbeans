@@ -16,7 +16,7 @@ class ${name}Component extends Object {
 		
 	}
 	
-	function beroreRender() {
+	function beforeRender() {
 
 	}
 	

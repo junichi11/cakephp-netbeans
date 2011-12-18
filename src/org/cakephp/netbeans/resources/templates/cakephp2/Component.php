@@ -14,7 +14,7 @@ class ${name} extends Component {
 		
 	}
 	
-	public function beroreRender($controller) {
+	public function beforeRender($controller) {
 
 	}
 
