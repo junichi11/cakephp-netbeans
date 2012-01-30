@@ -150,7 +150,9 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 		for(CakeCommandItem item : commandsItem){
 			File commandXml = getRedirectOutput(item.getCommand(), "--help", "xml"); // NOI18N
 			if(commandXml == null){
-				return null;
+				commands.add(new CakePhpCommand(phpModule,
+					item.getCommand(), item.getDescription(), item.getDisplayName()));
+				continue;
 			}
 			List<CakeCommandItem> mainCommandsItem = new ArrayList<CakeCommandItem>();
 			try {
