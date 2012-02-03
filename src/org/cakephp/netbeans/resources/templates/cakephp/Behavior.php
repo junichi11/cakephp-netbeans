@@ -1,4 +1,9 @@
 <?php
+<#assign licenseFirst = "/* ">
+<#assign licensePrefix = " * ">
+<#assign licenseLast = " */">
+<#include "../Licenses/license-${project.license}.txt">
+
 /**
  * CakePHP Behavior
  * @author ${user}
