@@ -15,6 +15,12 @@ TODO: add license
             <file name="org-cakephp-netbeans-ui-actions-ClearCacheAction.instance">
                 <attr name="instanceCreate" methodvalue="org.cakephp.netbeans.ui.actions.ClearCacheAction.getInstance"/>
             </file>
+            <file name="org-cakephp-netbeans-ui-wizards-InstallPluginsWizardAction.instance_hidden"/>
+            <file name="org-cakephp-netbeans-ui-wizards-InstallPluginsWizardAction.instance">
+                <attr name="displayName" stringvalue="Open InstallPlugins Wizard"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+            </file>
         </folder>
     </folder>
     <folder name="Loaders">
