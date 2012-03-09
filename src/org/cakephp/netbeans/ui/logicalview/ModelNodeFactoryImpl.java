@@ -3,6 +3,7 @@
  */
 package org.cakephp.netbeans.ui.logicalview;
 
+import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.project.ui.support.NodeFactory;
@@ -21,9 +22,9 @@ public class ModelNodeFactoryImpl implements NodeFactory{
 	@Override
 	public NodeList createNodes(Project prj){
 		PhpModule module = prj.getLookup().lookup(PhpModule.class);
-		FileObject targetDir = module.getSourceDirectory().getFileObject("app/models");
+		FileObject targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/models");
 		if(targetDir == null){
-			targetDir = module.getSourceDirectory().getFileObject("app/Model");
+			targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/Model");
 		}
 		if(targetDir != null){
 			try{

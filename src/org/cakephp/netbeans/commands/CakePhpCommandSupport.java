@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.CakeScript;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
@@ -75,7 +76,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 		}
 		assert cakeScript.isValid();
 
-		externalProcessBuilder = externalProcessBuilder.workingDirectory(FileUtil.toFile(phpModule.getSourceDirectory())).addArgument(cakeScript.getProgram());
+		externalProcessBuilder = externalProcessBuilder.workingDirectory(FileUtil.toFile(CakePhpFrameworkProvider.getCakePhpDirectory(phpModule))).addArgument(cakeScript.getProgram());
 		for (String param : cakeScript.getParameters()) {
 			externalProcessBuilder = externalProcessBuilder.addArgument(param);
 		}
@@ -107,7 +108,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 		commands = new ArrayList<FrameworkCommand>();
 		List<FileObject> shellDirs = new ArrayList<FileObject>();
 		for(String shell : shells){
-			FileObject shellFileObject = phpModule.getSourceDirectory().getFileObject(shell);
+			FileObject shellFileObject = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule).getFileObject(shell);
 			if(shellFileObject != null){
 				shellDirs.add(shellFileObject);
 			}
@@ -225,7 +226,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport{
 	
 	private String getShellsPlace(FileObject shellDir){
 		String place = ""; // NOI18N
-		FileObject source = phpModule.getSourceDirectory();
+		FileObject source = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
 		if(source.getFileObject(CORE_SHELLS_DIRECTORY) == shellDir){
 			place = "CORE"; // NOI18N
 		}else if (source.getFileObject(APP_VENDORS_SHELLS_DIRECTORY) == shellDir){

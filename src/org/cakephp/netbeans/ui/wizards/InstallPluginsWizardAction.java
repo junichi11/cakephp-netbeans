@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
+import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.options.CakePhpPlugin;
 import org.cakephp.netbeans.ui.actions.ClearCacheAction;
 import org.cakephp.netbeans.util.CakeZip;
@@ -77,7 +78,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                 if (DialogDisplayer.getDefault().notify(wiz) == WizardDescriptor.FINISH_OPTION) {
                         Panel<WizardDescriptor> panel = (InstallPluginsWizardPanel)panels.get(0);
                         InstallPluginsVisualPanel component = (InstallPluginsVisualPanel) panel.getComponent();
-                        FileObject fo = pm.getSourceDirectory().getFileObject(component.getInstallPathTextField());
+                        FileObject fo = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(component.getInstallPathTextField());
                         List<CakePhpPlugin> plugins = component.getCakePhpPluginList();
                         // error list
                         StringBuilder errors = new StringBuilder();

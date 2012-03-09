@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
+import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -240,7 +241,7 @@ public final class CakePhpUtils {
      * @return String If can't get the version file, return null.
      */
     public static String getCakePhpVersion(PhpModule phpModule){
-        FileObject root = phpModule.getSourceDirectory();
+        FileObject root = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
         FileObject cake = root.getFileObject("cake"); // NOI18N
         FileObject version;
 	if(cake != null){

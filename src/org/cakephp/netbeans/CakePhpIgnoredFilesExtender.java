@@ -18,7 +18,7 @@ public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {
     public CakePhpIgnoredFilesExtender(PhpModule phpModule) {
         assert phpModule != null;
 
-        appTmp = new File(FileUtil.toFile(phpModule.getSourceDirectory()), "app/tmp"); // NOI18N
+        appTmp = new File(FileUtil.toFile(CakePhpFrameworkProvider.getCakePhpDirectory(phpModule)), "app/tmp"); // NOI18N
     }
 
     @Override

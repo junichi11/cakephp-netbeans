@@ -19,6 +19,7 @@ import org.openide.util.NbBundle;
  */
 public final class ClearCacheAction extends BaseAction {
     private static final ClearCacheAction INSTANCE = new ClearCacheAction();
+        private static final long serialVersionUID = -1978960583114966388L;
 
     private ClearCacheAction() {
     }
@@ -33,7 +34,7 @@ public final class ClearCacheAction extends BaseAction {
             // called via shortcut
             return;
         }
-	FileObject cache = phpModule.getSourceDirectory().getFileObject("app/tmp/cache");
+	FileObject cache = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule).getFileObject("app/tmp/cache");
         if (cache != null && cache.isFolder()) {
             Enumeration<? extends FileObject> children = cache.getChildren(true);
             while (children.hasMoreElements()) {

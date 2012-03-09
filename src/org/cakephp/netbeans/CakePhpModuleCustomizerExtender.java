@@ -22,10 +22,14 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 	private final String appName;
 	private final boolean originalAutoCreateState;
 	private CakePhpCustomizerPanel component;
+        private final String cakePhpDirPath;
+        private final boolean isProjectDir;
 	
 	CakePhpModuleCustomizerExtender(PhpModule phpModule){
 		appName = CakePreferences.getAppName(phpModule);
 		originalAutoCreateState = CakePreferences.getAutoCreateView(phpModule);
+                cakePhpDirPath = CakePreferences.getCakePhpDirPath(phpModule);
+                isProjectDir = CakePreferences.useProjectDirectory(phpModule);
 	}
 	
 	@Override
@@ -67,9 +71,16 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 	public EnumSet<Change> save(PhpModule phpModule){
 		String newAppName = getPanel().getAppNameField().getText();
 		boolean newAutoCreateState = getPanel().isAutoCreateView();
+                String newCakePhpDirPath = getPanel().getCakePhpDirTextField();
 		if(newAutoCreateState != originalAutoCreateState){
 			CakePreferences.setAutoCreateView(phpModule, newAutoCreateState);
 		}
+                if(isProjectDir != getPanel().isUseProjectDirectory()){
+                        CakePreferences.setUseProjectDirectory(phpModule, !isProjectDir);
+                }
+                if(!cakePhpDirPath.equals(newCakePhpDirPath)){
+                        CakePreferences.setCakePhpDirPath(phpModule, newCakePhpDirPath);
+                }
 		if(!newAppName.equals(appName) && !newAppName.equals("")){
 			CakePreferences.setAppName(phpModule, newAppName);
 			return EnumSet.of(Change.SOURCES_CHANGE);
@@ -84,6 +95,8 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 			if(!appName.equals("")){
 				component.setAppNameField(appName);
 			}
+                        component.setCakePhpDirTextField(cakePhpDirPath);
+                        component.setUseProjectDirectory(isProjectDir);
 		}
 		return component;
 	}

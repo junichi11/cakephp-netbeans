@@ -47,7 +47,7 @@ public class CakeScript extends PhpProgram {
      * @throws InvalidPhpProgramException if Zend script is not valid or missing completely
      */
     public static CakeScript forPhpModule(PhpModule phpModule) throws InvalidPhpProgramException {
-        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        FileObject sourceDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
 
         // locate
         FileObject cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME_LONG);
@@ -90,7 +90,7 @@ public class CakeScript extends PhpProgram {
         assert phpModule != null;
         if (phpModule != null) {
             processBuilder = processBuilder
-                .workingDirectory(FileUtil.toFile(phpModule.getSourceDirectory()));
+                .workingDirectory(FileUtil.toFile(CakePhpFrameworkProvider.getCakePhpDirectory(phpModule)));
         }
         executeLater(processBuilder, executionDescriptor, CMD_BAKE);
     }
