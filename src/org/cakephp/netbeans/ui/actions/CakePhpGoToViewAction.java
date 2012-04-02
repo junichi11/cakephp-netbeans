@@ -5,6 +5,8 @@
 package org.cakephp.netbeans.ui.actions;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.csl.api.UiUtils;
@@ -14,10 +16,10 @@ import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.GoToViewAction;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 public final class CakePhpGoToViewAction extends GoToViewAction {
+    static final Logger LOGGER = Logger.getLogger(CakePhpGoToViewAction.class.getName());
     private static final long serialVersionUID = 9834759234756237L;
 
     private final FileObject controller;
@@ -62,18 +64,21 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
             UiUtils.open(view, DEFAULT_OFFSET);
             return true;
         }
-	
-	// auto create a view file
-	PhpModule phpModule = PhpModule.forFileObject(controller);
-	if(CakePreferences.getAutoCreateView(phpModule)){
+
+        // auto create a view file
+        PhpModule phpModule = PhpModule.forFileObject(controller);
+        if(CakePreferences.getAutoCreateView(phpModule)){
             try {
                 view = CakePhpUtils.createView(controller, phpElement);
-                UiUtils.open(view, DEFAULT_OFFSET);
-                return true;
+                if(view != null){
+                    UiUtils.open(view, DEFAULT_OFFSET);
+                    return true;
+                }
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+                // do nothing
+                LOGGER.log(Level.WARNING, null, ex);
             }
-	}
+        }
         return false;
     }
     
@@ -82,7 +87,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         FileObject[] themes = null;
         if(CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("2")){//NOI18N
             themes = controller.getFileObject("../../View/Themed").getChildren(); // NOI18N
-	}else{
+        }else{
             themes = controller.getFileObject("../../views/themed").getChildren(); // NOI18N
         }
         return themes;
