@@ -78,7 +78,14 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                 if (DialogDisplayer.getDefault().notify(wiz) == WizardDescriptor.FINISH_OPTION) {
                         Panel<WizardDescriptor> panel = (InstallPluginsWizardPanel)panels.get(0);
                         InstallPluginsVisualPanel component = (InstallPluginsVisualPanel) panel.getComponent();
-                        FileObject fo = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(component.getInstallPathTextField());
+                        String installPath = component.getInstallPathTextField();
+                        FileObject fo = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(installPath);
+                        NotifyDescriptor descriptor = null;
+                        if(fo == null){
+                                descriptor = new NotifyDescriptor.Message(installPath + " dosen't exist.", NotifyDescriptor.ERROR_MESSAGE);
+                                DialogDisplayer.getDefault().notifyLater(descriptor);
+                                return;
+                        }
                         List<CakePhpPlugin> plugins = component.getCakePhpPluginList();
                         // error list
                         StringBuilder errors = new StringBuilder();
@@ -96,7 +103,6 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                         }
                         
                         String errorMessage = errors.toString();
-                        NotifyDescriptor descriptor = null;
                         if(!errorMessage.isEmpty()){ //display error dialog
                                 descriptor = new NotifyDescriptor.Message("Please confirm the URL.\n" + errorMessage, NotifyDescriptor.ERROR_MESSAGE);
                         }else{ // display complete dialog
