@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
+import org.eclipse.jgit.api.Git;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleExtender;
 import org.openide.filesystems.FileObject;
@@ -24,6 +25,7 @@ import org.openide.util.HelpCtx;
  * @author juncihi11
  */
 public class CakePhpModuleExtender extends PhpModuleExtender{
+	private static final String GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT = "git://github.com/cakephp/cakephp.git";
 	
 	private NewProjectConfigurationPanel panel = null;
 
@@ -62,47 +64,58 @@ public class CakePhpModuleExtender extends PhpModuleExtender{
 
 	@Override
 	public Set<FileObject> extend(PhpModule phpModule) throws ExtendingException {
-		Map<String, String> tagsMap = getPanel().getTagsMap();
-		String url = tagsMap.get(getPanel().getVersionList().getSelectedValue().toString());
-		// create cakephp app from zip file.
-		try {
-			URL zipUrl = new URL(url);
-			ZipInputStream zipInputStream = new ZipInputStream(zipUrl.openStream());
-			ZipEntry zipEntry = null;
-			boolean firstFlg = true;
-			String rootDir = ""; // NOI18N
-			while((zipEntry = zipInputStream.getNextEntry()) != null){
-				if(firstFlg == true){
-					rootDir = zipEntry.getName();
-					firstFlg = false;
-					zipInputStream.closeEntry();
-					continue;
-				}
-				String zipName = zipEntry.getName().replace(rootDir, ""); // NOI18N
-				FileObject fo = phpModule.getSourceDirectory();
-				File baseDir = FileUtil.toFile(fo);
-				File outFile = new File(baseDir, zipName);
-				if(fo != null && zipEntry.isDirectory()){
-					outFile.mkdir();
-					zipInputStream.closeEntry();
-					continue;
-				}
-				if(fo != null){
-					BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
-					int data = 0;
-					while((data = zipInputStream.read()) != -1){
-						outputStream.write(data);
+		FileObject localPath = phpModule.getSourceDirectory();
+		
+		if(getPanel().getUnzipRadioButton().isSelected()){
+			Map<String, String> tagsMap = getPanel().getTagsMap();
+			String url = tagsMap.get(getPanel().getVersionList().getSelectedValue().toString());
+			// create cakephp app from zip file.
+			try {
+				URL zipUrl = new URL(url);
+				ZipInputStream zipInputStream = new ZipInputStream(zipUrl.openStream());
+				ZipEntry zipEntry = null;
+				boolean firstFlg = true;
+				String rootDir = ""; // NOI18N
+				while((zipEntry = zipInputStream.getNextEntry()) != null){
+					if(firstFlg == true){
+						rootDir = zipEntry.getName();
+						firstFlg = false;
+						zipInputStream.closeEntry();
+						continue;
 					}
-					zipInputStream.closeEntry();
-					outputStream.close();
+					String zipName = zipEntry.getName().replace(rootDir, ""); // NOI18N
+					File baseDir = FileUtil.toFile(localPath);
+					File outFile = new File(baseDir, zipName);
+					if(localPath != null && zipEntry.isDirectory()){
+						outFile.mkdir();
+						zipInputStream.closeEntry();
+						continue;
+					}
+					if(localPath != null){
+						BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
+						int data = 0;
+						while((data = zipInputStream.read()) != -1){
+							outputStream.write(data);
+						}
+						zipInputStream.closeEntry();
+						outputStream.close();
+					}
+
 				}
-				
+				zipInputStream.close();
+			} catch (IOException ex) {
+				Exceptions.printStackTrace(ex);
 			}
-			zipInputStream.close();
-		} catch (IOException ex) {
-			Exceptions.printStackTrace(ex);
+		}else{
+			// clone to new project from github repo
+			String remotePath = GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT;
+			Git.cloneRepository()
+				.setURI(remotePath)
+				.setDirectory(FileUtil.toFile(localPath))
+				.call();
 		}
 		
+		// set opened file
 		Set<FileObject> files = new HashSet<FileObject>();
 		FileObject config;
 		if(phpModule.getSourceDirectory().getFileObject("lib/Cake") != null){ // NOI18N
