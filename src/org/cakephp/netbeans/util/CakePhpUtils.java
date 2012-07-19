@@ -550,4 +550,25 @@ public final class CakePhpUtils {
         }
         return list;
     }
+    
+    /**
+     * Change app/tmp directory permission (777)
+     * @param tmpDirectory app/tmp Directory
+     */
+    public static void chmodTmpDirectory(FileObject tmpDirectory){
+        if(tmpDirectory == null){
+            return;
+        }
+        File tmp = FileUtil.toFile(tmpDirectory);
+        tmp.setExecutable(true, false);
+        tmp.setReadable(true, false);
+        tmp.setWritable(true, false);
+        Enumeration<? extends FileObject> children = tmpDirectory.getChildren(true);
+        while(children.hasMoreElements()){
+            File child = FileUtil.toFile(children.nextElement());
+            child.setExecutable(true, false);
+            child.setReadable(true, false);
+            child.setWritable(true, false);
+        }
+    }
 }

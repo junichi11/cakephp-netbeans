@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.eclipse.jgit.api.Git;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleExtender;
@@ -133,7 +134,11 @@ public class CakePhpModuleExtender extends PhpModuleExtender{
 			}
 		}
 
-		return files;
+        // change tmp directory permission
+        FileObject tmp = phpModule.getSourceDirectory().getFileObject("app/tmp"); // NOI18N
+        CakePhpUtils.chmodTmpDirectory(tmp);
+
+        return files;
 	}
 	
 	public NewProjectConfigurationPanel getPanel(){
@@ -142,6 +147,6 @@ public class CakePhpModuleExtender extends PhpModuleExtender{
 		}
 		return panel;
 	}
-	
+
 	
 }
