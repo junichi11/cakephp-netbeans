@@ -12,6 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.apache.commons.lang.SystemUtils;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.eclipse.jgit.api.Git;
@@ -26,8 +27,20 @@ import org.openide.util.HelpCtx;
  * @author juncihi11
  */
 public class CakePhpModuleExtender extends PhpModuleExtender {
+    private static final String GIT_COMMAND = "Git Command : ";
 
     private static final String GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT = "git://github.com/cakephp/cakephp.git";
+    private static final String ADD_COMMAND = "add";
+    private static final String BRANCH_MASTER_MERGE = "branch.master.merge";
+    private static final String BRANCH_MASTER_REMOTE = "branch.master.remote";
+    private static final String CONFIG_COMMAND = "config";
+    private static final String GIT = "git";
+    private static final String GIT_REPO = "/.git";
+    private static final String INIT_COMMAND = "init";
+    private static final String ORIGIN = "origin";
+    private static final String PULL_COMMAND = "pull";
+    private static final String REFS_HEADS = "refs/heads/master";
+    private static final String REMOTE_COMMAND = "remote";
     private NewProjectConfigurationPanel panel = null;
 
     @Override
@@ -114,7 +127,46 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         } else {
             // clone to new project from github repo
             String remotePath = GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT;
-            Git.cloneRepository().setURI(remotePath).setDirectory(FileUtil.toFile(localPath)).call();
+            
+            if(SystemUtils.IS_OS_WINDOWS){
+                Git.cloneRepository().setURI(remotePath).setDirectory(FileUtil.toFile(localPath)).call();
+            } else {
+                try {
+                    // Linux Mac ...
+                    // run git command
+                    String repoPath = localPath.getPath();
+                    // env parameter
+                    String[] envp = {"GIT_DIR=" + repoPath + GIT_REPO, "GIT_WORK_TREE=" + repoPath};
+                    // git commands 
+                    String[] initCommand = {GIT, INIT_COMMAND, repoPath};
+                    String[] remoteAddCommand = {GIT, REMOTE_COMMAND, ADD_COMMAND, ORIGIN, GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT};
+                    String[] configMergeCommand = {GIT, CONFIG_COMMAND, BRANCH_MASTER_MERGE, REFS_HEADS};
+                    String[] configRemoteCommand = {GIT, CONFIG_COMMAND, BRANCH_MASTER_REMOTE, ORIGIN};
+                    String[] pullCommand = {GIT, PULL_COMMAND};
+
+                    // Run git Command
+                    getPanel().setGitCommandLabel(GIT_COMMAND + INIT_COMMAND);
+                    Process initProcess = Runtime.getRuntime().exec(initCommand, envp);
+                    initProcess.waitFor();
+                    getPanel().setGitCommandLabel(GIT_COMMAND + REMOTE_COMMAND + " " + ADD_COMMAND);
+                    Process remoteProcess = Runtime.getRuntime().exec(remoteAddCommand, envp);
+                    remoteProcess.waitFor();
+                    getPanel().setGitCommandLabel(GIT_COMMAND + CONFIG_COMMAND + " " + BRANCH_MASTER_MERGE);
+                    Process configMergeProcess = Runtime.getRuntime().exec(configMergeCommand, envp);
+                    configMergeProcess.waitFor();
+                    getPanel().setGitCommandLabel(GIT_COMMAND + CONFIG_COMMAND + " " + BRANCH_MASTER_REMOTE);
+                    Process configRemoteProcess = Runtime.getRuntime().exec(configRemoteCommand, envp);
+                    configRemoteProcess.waitFor();
+                    getPanel().setGitCommandLabel(GIT_COMMAND + PULL_COMMAND);
+                    Process pullProcess = Runtime.getRuntime().exec(pullCommand, envp);
+                    pullProcess.waitFor();
+                    getPanel().setGitCommandLabel("Complete"); // NOI18N
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
         }
 
         // set opened file
