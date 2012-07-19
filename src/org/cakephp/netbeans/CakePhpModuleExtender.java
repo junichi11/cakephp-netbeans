@@ -86,6 +86,9 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                         continue;
                     }
                     String zipName = zipEntry.getName().replace(rootDir, ""); // NOI18N
+                    // display file name in the panel
+                    getPanel().setUnzipFileNameLabel(zipName);
+
                     File baseDir = FileUtil.toFile(localPath);
                     File outFile = new File(baseDir, zipName);
                     if (localPath != null && zipEntry.isDirectory()) {
