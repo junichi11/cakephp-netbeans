@@ -25,83 +25,87 @@ import org.openide.util.Exceptions;
  * @author junichi11
  */
 public class NewProjectConfigurationPanel extends javax.swing.JPanel {
-	private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
-	private static final long serialVersionUID = 7874450246517944114L;
-	private Map<String, String> tagsMap = new HashMap<String, String>();
-	private String errorMessage;
-	
-	/** Creates new form NewProjectConfigurationPanel */
-	public NewProjectConfigurationPanel(){
-		initComponents();
+
+    private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
+    private static final long serialVersionUID = 7874450246517944114L;
+    private Map<String, String> tagsMap = new HashMap<String, String>();
+    private String errorMessage;
+
+    /**
+     * Creates new form NewProjectConfigurationPanel
+     */
+    public NewProjectConfigurationPanel() {
+        initComponents();
         unzipRadioButton.setSelected(true);
-		try {
-			// Get JSON
-			URL tagsJson = new URL(GITHUB_API_REPOS_TAGS);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8")); // NOI18N
-			StringBuilder contents = new StringBuilder();
-			String str;
-			while((str = reader.readLine()) != null){
-				contents.append(str);
-			}
-			
-			JSONArray json = new JSONArray(contents.toString());
-			String[] tagsArray = new String[json.length()];
-			for(int i = 0; i < json.length(); i++){
-				JSONObject jObject = (JSONObject) json.get(i);
-				tagsArray[i] = jObject.getString("name"); // NOI18N
-				tagsMap.put(jObject.getString("name"), jObject.getString("zipball_url")); // NOI18N
-			}
-			Arrays.sort(tagsArray, new Comparator<String>(){
-				public int compare(String a, String b) {
-					String[] aArray = a.split("[., -]"); // NOI18N
-					String[] bArray = b.split("[., -]"); // NOI18N
-					for(int i = 0; i < aArray.length; i++){
-						try {
-							Integer aInt = Integer.parseInt(aArray[i]);
-							Integer bInt = Integer.parseInt(bArray[i]);
-							if (aInt == bInt) {
-								continue;
-							} else{
-								return bInt - aInt;
-							}
-						} catch (NumberFormatException ex) {
-							return 1;
-						}
-					}
-					return 1;
-				}
-			});
-			versionList.setListData(tagsArray);
-			versionList.setSelectedIndex(0);
-		} catch (JSONException ex) {
-			Exceptions.printStackTrace(ex);
-		} catch (IOException ex){
-			errorMessage = "Is not connected to the network.";
-		}
-	}
-	
-	public Map<String, String> getTagsMap(){
-		return tagsMap;
-	}
-	
-	public JList getVersionList(){
-		return versionList;
-	}
-	
-	public String getErrorMessage(){
-		return errorMessage;
-	}
+        try {
+            // Get JSON
+            URL tagsJson = new URL(GITHUB_API_REPOS_TAGS);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8")); // NOI18N
+            StringBuilder contents = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                contents.append(str);
+            }
+
+            JSONArray json = new JSONArray(contents.toString());
+            String[] tagsArray = new String[json.length()];
+            for (int i = 0; i < json.length(); i++) {
+                JSONObject jObject = (JSONObject) json.get(i);
+                tagsArray[i] = jObject.getString("name"); // NOI18N
+                tagsMap.put(jObject.getString("name"), jObject.getString("zipball_url")); // NOI18N
+            }
+            Arrays.sort(tagsArray, new Comparator<String>() {
+
+                public int compare(String a, String b) {
+                    String[] aArray = a.split("[., -]"); // NOI18N
+                    String[] bArray = b.split("[., -]"); // NOI18N
+                    for (int i = 0; i < aArray.length; i++) {
+                        try {
+                            Integer aInt = Integer.parseInt(aArray[i]);
+                            Integer bInt = Integer.parseInt(bArray[i]);
+                            if (aInt == bInt) {
+                                continue;
+                            } else {
+                                return bInt - aInt;
+                            }
+                        } catch (NumberFormatException ex) {
+                            return 1;
+                        }
+                    }
+                    return 1;
+                }
+            });
+            versionList.setListData(tagsArray);
+            versionList.setSelectedIndex(0);
+        } catch (JSONException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            errorMessage = "Is not connected to the network.";
+        }
+    }
+
+    public Map<String, String> getTagsMap() {
+        return tagsMap;
+    }
+
+    public JList getVersionList() {
+        return versionList;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
     public JRadioButton getUnzipRadioButton() {
         return unzipRadioButton;
     }
 
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
