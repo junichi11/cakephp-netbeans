@@ -5,6 +5,7 @@
  */
 package org.cakephp.netbeans.ui.wizards;
 
+import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,8 +14,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JList;
-import javax.swing.JRadioButton;
+import javax.swing.*;
 import org.apache.commons.lang.SystemUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +25,7 @@ import org.openide.util.Exceptions;
  *
  * @author junichi11
  */
-public class NewProjectConfigurationPanel extends javax.swing.JPanel {
+public class NewProjectConfigurationPanel extends javax.swing.JPanel{
 
     private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
     private static final long serialVersionUID = 7874450246517944114L;
@@ -38,7 +38,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     public NewProjectConfigurationPanel() {
         initComponents();
         unzipRadioButton.setSelected(true);
-        unzipFileNameLabel.setText(""); // NOI18N
+        unzipFileNameTextField.setText(""); // NOI18N
 
         try {
             // Get JSON
@@ -104,14 +104,50 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         return unzipRadioButton;
     }
 
-    public void setUnzipFileNameLabel(String fileName) {
-        unzipFileNameLabel.setText(fileName);
-    }
-
     public void setGitCommandLabel(String command) {
         gitCommandLabel.setText(command);
     }
 
+    public JCheckBox getDatabaseCheckBox() {
+        return databaseCheckBox;
+    }
+
+    public JTextField getDatabaseTextField() {
+        return databaseTextField;
+    }
+
+    public JTextField getDatasourceTextField() {
+        return datasourceTextField;
+    }
+
+    public JTextField getEncodingTextField() {
+        return encodingTextField;
+    }
+
+    public JTextField getHostTextField() {
+        return hostTextField;
+    }
+
+    public JTextField getUnzipFileNameTextField() {
+        return unzipFileNameTextField;
+    }
+
+    public JTextField getLoginTextField() {
+        return loginTextField;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
+    }
+
+    public JCheckBox getPersistentCheckBox() {
+        return persistentCheckBox;
+    }
+
+    public JTextField getPrefixTextField() {
+        return prefixTextField;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -127,8 +163,26 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         versionLabel = new javax.swing.JLabel();
         unzipRadioButton = new javax.swing.JRadioButton();
         gitCloneRadioButton = new javax.swing.JRadioButton();
-        unzipFileNameLabel = new javax.swing.JLabel();
         gitCommandLabel = new javax.swing.JLabel();
+        databaseCheckBox = new javax.swing.JCheckBox();
+        datasourceLabel = new javax.swing.JLabel();
+        datasourceTextField = new javax.swing.JTextField();
+        persistentCheckBox = new javax.swing.JCheckBox();
+        hostLabel = new javax.swing.JLabel();
+        loginLabel = new javax.swing.JLabel();
+        passwordLabel = new javax.swing.JLabel();
+        databaseLabel = new javax.swing.JLabel();
+        prefixLabel = new javax.swing.JLabel();
+        encodingLabel = new javax.swing.JLabel();
+        hostTextField = new javax.swing.JTextField();
+        loginTextField = new javax.swing.JTextField();
+        databaseTextField = new javax.swing.JTextField();
+        passwordField = new javax.swing.JPasswordField();
+        prefixTextField = new javax.swing.JTextField();
+        encodingTextField = new javax.swing.JTextField();
+        unzipFileNameTextField = new javax.swing.JTextField();
+
+        setAutoscrolls(true);
 
         versionList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         versionList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -147,9 +201,44 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
             }
         });
 
-        unzipFileNameLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipFileNameLabel.text")); // NOI18N
-
         gitCommandLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.gitCommandLabel.text")); // NOI18N
+
+        databaseCheckBox.setSelected(true);
+        databaseCheckBox.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.databaseCheckBox.text")); // NOI18N
+
+        datasourceLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.datasourceLabel.text")); // NOI18N
+
+        datasourceTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.datasourceTextField.text")); // NOI18N
+
+        persistentCheckBox.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.persistentCheckBox.text")); // NOI18N
+
+        hostLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.hostLabel.text")); // NOI18N
+
+        loginLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.loginLabel.text")); // NOI18N
+
+        passwordLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.passwordLabel.text")); // NOI18N
+
+        databaseLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.databaseLabel.text")); // NOI18N
+
+        prefixLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.prefixLabel.text")); // NOI18N
+
+        encodingLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.encodingLabel.text")); // NOI18N
+
+        hostTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.hostTextField.text")); // NOI18N
+
+        loginTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.loginTextField.text")); // NOI18N
+
+        databaseTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.databaseTextField.text")); // NOI18N
+
+        passwordField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.passwordField.text")); // NOI18N
+
+        prefixTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.prefixTextField.text")); // NOI18N
+
+        encodingTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.encodingTextField.text")); // NOI18N
+
+        unzipFileNameTextField.setEditable(false);
+        unzipFileNameTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipFileNameTextField.text")); // NOI18N
+        unzipFileNameTextField.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -159,32 +248,94 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(gitCloneRadioButton)
+                    .addComponent(gitCommandLabel)
                     .addComponent(versionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                             .addComponent(unzipRadioButton)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(unzipFileNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(gitCommandLabel))
-                .addContainerGap(61, Short.MAX_VALUE))
+                            .addComponent(unzipFileNameTextField))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(3, 3, 3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(datasourceLabel)
+                            .addComponent(hostLabel)
+                            .addComponent(loginLabel)
+                            .addComponent(databaseLabel)
+                            .addComponent(passwordLabel)
+                            .addComponent(prefixLabel)
+                            .addComponent(encodingLabel))
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(hostTextField)
+                            .addComponent(datasourceTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(loginTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(passwordField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(databaseTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(prefixTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(encodingTextField, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(databaseCheckBox)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(persistentCheckBox)))
+                        .addGap(104, 104, 104)))
+                .addGap(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(unzipRadioButton)
-                    .addComponent(unzipFileNameLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(versionLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gitCloneRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gitCommandLabel)
-                .addContainerGap(115, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(unzipRadioButton)
+                            .addComponent(unzipFileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(versionLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(gitCloneRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(gitCommandLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(databaseCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(datasourceLabel)
+                            .addComponent(datasourceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(persistentCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(hostLabel)
+                            .addComponent(hostTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(loginLabel)
+                            .addComponent(loginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(passwordLabel)
+                            .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(databaseLabel)
+                            .addComponent(databaseTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(prefixLabel)
+                            .addComponent(prefixTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(encodingLabel)
+                            .addComponent(encodingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -205,10 +356,26 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
+    private javax.swing.JCheckBox databaseCheckBox;
+    private javax.swing.JLabel databaseLabel;
+    private javax.swing.JTextField databaseTextField;
+    private javax.swing.JLabel datasourceLabel;
+    private javax.swing.JTextField datasourceTextField;
+    private javax.swing.JLabel encodingLabel;
+    private javax.swing.JTextField encodingTextField;
     private javax.swing.JRadioButton gitCloneRadioButton;
     private javax.swing.JLabel gitCommandLabel;
+    private javax.swing.JLabel hostLabel;
+    private javax.swing.JTextField hostTextField;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel unzipFileNameLabel;
+    private javax.swing.JLabel loginLabel;
+    private javax.swing.JTextField loginTextField;
+    private javax.swing.JPasswordField passwordField;
+    private javax.swing.JLabel passwordLabel;
+    private javax.swing.JCheckBox persistentCheckBox;
+    private javax.swing.JLabel prefixLabel;
+    private javax.swing.JTextField prefixTextField;
+    private javax.swing.JTextField unzipFileNameTextField;
     private javax.swing.JRadioButton unzipRadioButton;
     private javax.swing.JLabel versionLabel;
     private javax.swing.JList versionList;
