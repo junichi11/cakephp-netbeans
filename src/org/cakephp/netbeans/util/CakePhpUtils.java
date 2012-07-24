@@ -1,7 +1,6 @@
 /*
  * TODO: add license
  */
-
 package org.cakephp.netbeans.util;
 
 import java.io.*;
@@ -21,6 +20,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 
 public final class CakePhpUtils {
+
     public static final int CAKE_VERSION_MAJOR = 0;
     public static final int CAKE_VERSION_MINOR = 1;
     public static final int CAKE_VERSION_REVISION = 2;
@@ -51,7 +51,6 @@ public final class CakePhpUtils {
     private static final String UNDERSCORE = "_"; // NOI18N
     private static final String DIR_THEMED = "themed"; // NOI18N 
     private static final String DIR_THEMED_2 = "Themed"; // NOI18N 
-
     private static final String FILE_CONTROLLER_RELATIVE = "../../" + DIR_CONTROLLERS + "/%s.php"; // NOI18N
     private static final String FILE_CONTROLLER_RELATIVE_2 = "../../" + DIR_CONTROLLER_2 + "/%s.php"; // NOI18N cake2.0
     private static final String FILE_THEME_CONTROLLER_RELATIVE = "../../../../" + DIR_CONTROLLERS + "/%s.php"; // NOI18N
@@ -141,20 +140,20 @@ public final class CakePhpUtils {
     }
 
     public static boolean isController(FileObject fo) {
-        if(fo.isData()
-                && isControllerFileName(fo.getName())
-                && fo.getParent().getNameExt().equals(DIR_CONTROLLER_2)){
-	    return true;
+        if (fo.isData()
+            && isControllerFileName(fo.getName())
+            && fo.getParent().getNameExt().equals(DIR_CONTROLLER_2)) {
+            return true;
         }
         return fo.isData()
-                && isControllerFileName(fo.getName())
-                && fo.getParent().getNameExt().equals(DIR_CONTROLLERS);
+            && isControllerFileName(fo.getName())
+            && fo.getParent().getNameExt().equals(DIR_CONTROLLERS);
     }
 
     public static FileObject getController(FileObject view) {
         File parent = FileUtil.toFile(view).getParentFile();
         File action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE, getControllerFileName(parent.getName())));
-        if(!action.isFile()){
+        if (!action.isFile()) {
             action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE_2, getControllerFileName(parent.getName())));
         }
         // Theme view file
@@ -230,8 +229,8 @@ public final class CakePhpUtils {
         }
         return sb.toString();
     }
-    
-    public static FileObject createView(FileObject controller, PhpBaseElement phpElement) throws IOException{
+
+    public static FileObject createView(FileObject controller, PhpBaseElement phpElement) throws IOException {
         FileObject fo = null;
         if (phpElement instanceof PhpClass.Method) {
             FileObject view = controller.getFileObject("../../" + DIR_VIEWS);
@@ -250,22 +249,23 @@ public final class CakePhpUtils {
         }
         return fo;
     }
-    
+
     /**
      * Get CakePHP version.
+     *
      * @param PhpModule phpModule
      * @return String If can't get the version file, return null.
      */
-    public static String getCakePhpVersion(PhpModule phpModule){
+    public static String getCakePhpVersion(PhpModule phpModule) {
         FileObject root = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
         FileObject cake = root.getFileObject("cake"); // NOI18N
         FileObject version;
-        if(cake != null){
+        if (cake != null) {
             version = root.getFileObject("cake/VERSION.txt"); // NOI18N
         } else {
             version = root.getFileObject("lib/Cake/VERSION.txt"); // NOI18N
         }
-        if(version == null){
+        if (version == null) {
             return null;
         }
         try {
@@ -285,16 +285,16 @@ public final class CakePhpUtils {
         }
         return null;
     }
-    
-    public static String[] getCakePhpVersionSplit(PhpModule phpModule){
-	    String version = getCakePhpVersion(phpModule);
-	    if(version == null){
-		    return null;
-	    }
-	    return version.split("[., -]"); // NOI18N
+
+    public static String[] getCakePhpVersionSplit(PhpModule phpModule) {
+        String version = getCakePhpVersion(phpModule);
+        if (version == null) {
+            return null;
+        }
+        return version.split("[., -]"); // NOI18N
     }
-    
-    public static String getCakePhpVersion(PhpModule phpModule, int kind){
+
+    public static String getCakePhpVersion(PhpModule phpModule, int kind) {
         String[] versionArray = getCakePhpVersionSplit(phpModule);
         if (kind < CAKE_VERSION_MAJOR || CAKE_VERSION_NOT_STABLE < kind) {
             return null;
@@ -307,38 +307,37 @@ public final class CakePhpUtils {
         }
         return version;
     }
-    
-    public static String getCamelCaseName(String name){
-	    return toCamelCase(name, false);
+
+    public static String getCamelCaseName(String name) {
+        return toCamelCase(name, false);
     }
-    
+
     /**
-     * Create auto completion file
-     * - add to the nbproject directory (only CakePHP 2.x)
-     * 
-     * @return boolean
-     * - if create success, return true.
-     * 
-     * @throws IOException 
+     * Create auto completion file - add to the nbproject directory (only
+     * CakePHP 2.x)
+     *
+     * @return boolean - if create success, return true.
+     *
+     * @throws IOException
      */
-    public static boolean createAutoCompletionFile() throws IOException{
+    public static boolean createAutoCompletionFile() throws IOException {
         PhpModule pm = PhpModule.inferPhpModule();
-        if(!CakePhpFrameworkProvider.getInstance().isInPhpModule(pm)){
+        if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(pm)) {
             // noting
             return false;
         }
-        
+
         FileObject projectDirectory = pm.getProjectDirectory();
         FileObject nbprojectDirectory = projectDirectory.getFileObject(DIR_NBPROJECT); // NOI18N
-        if(nbprojectDirectory == null){
+        if (nbprojectDirectory == null) {
             return false;
         }
         // create a new file for auto completion
         FileObject output = nbprojectDirectory.getFileObject(CAKE_AUTO_COMPLETION_PHP);
-        if(output == null){
+        if (output == null) {
             output = nbprojectDirectory.createData(CAKE_AUTO_COMPLETION_PHP);
         }
-        
+
         PrintWriter pw = new PrintWriter(output.getOutputStream());
         pw.println("<?php"); // NOI18N
         pw.println("/**"); // NOI18N
@@ -355,8 +354,8 @@ public final class CakePhpUtils {
             List<FileObject> behaviorList = getAllBehaviorFiles();
             for (FileObject property : propertyList) {
                 String name = property.getName();
-                if(name.endsWith(COMPONENT)){
-                    if(componentFlg){
+                if (name.endsWith(COMPONENT)) {
+                    if (componentFlg) {
                         pw.println(" * =================================================="); // NOI18N
                         pw.println(" * Component"); // NOI18N
                         pw.println(" * =================================================="); // NOI18N
@@ -364,8 +363,8 @@ public final class CakePhpUtils {
                     }
                     pw.format(PROPERTY_ANNOTATION_PATTERN, name, name.replace(COMPONENT, "")); // NOI18N
                     pw.println();
-                }else{
-                    if(modelFlg){
+                } else {
+                    if (modelFlg) {
                         pw.println(" * =================================================="); // NOI18N
                         pw.println(" * Model"); // NOI18N
                         pw.println(" * =================================================="); // NOI18N
@@ -373,18 +372,18 @@ public final class CakePhpUtils {
                     }
                     pw.format(PROPERTY_ANNOTATION_PATTERN, name, name); // NOI18N
                     pw.println();
-                    for(FileObject behavior : behaviorList){
+                    for (FileObject behavior : behaviorList) {
                         pw.format(PROPERTY_ANNOTATION_PATTERN, behavior.getName(), name); // NOI18N
                         pw.println();
                     }
                 }
             }
         }
-                
+
         pw.println(" */"); // NOI18N
         pw.println("class Controller{}"); // NOI18N
-        
-        
+
+
         pw.println("/**"); // NOI18N
         pw.println(" * For CakePHP Hepler Code Completion"); // NOI18N
 
@@ -396,8 +395,8 @@ public final class CakePhpUtils {
             boolean helperFlg = true;
             for (FileObject property : propertyList) {
                 String name = property.getName();
-                if(name.endsWith(HELPER)){
-                    if(helperFlg){
+                if (name.endsWith(HELPER)) {
+                    if (helperFlg) {
                         pw.println(" * =================================================="); // NOI18N
                         pw.println(" * Helper"); // NOI18N
                         pw.println(" * =================================================="); // NOI18N
@@ -414,34 +413,36 @@ public final class CakePhpUtils {
         UiUtils.open(output, 0);
         return true;
     }
-    
+
     /**
      * Get model files
+     *
      * @return List<FileObject>
      */
-    public static List<FileObject> getModelFiles(){
+    public static List<FileObject> getModelFiles() {
         PhpModule pm = PhpModule.inferPhpModule();
         ArrayList<FileObject> modelList = new ArrayList<FileObject>();
-        FileObject modelDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_APP_MODEL); 
-        if(modelDirectory == null){
+        FileObject modelDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_APP_MODEL);
+        if (modelDirectory == null) {
             return null;
         }
         Enumeration<? extends FileObject> children = modelDirectory.getChildren(false);
-        while(children.hasMoreElements()){
+        while (children.hasMoreElements()) {
             FileObject child = children.nextElement();
             String name = child.getName();
-            if(!child.isFolder() && !name.startsWith(APP) && !name.equals(EMPTY_FILE)){ // NOI18N
+            if (!child.isFolder() && !name.startsWith(APP) && !name.equals(EMPTY_FILE)) { // NOI18N
                 modelList.add(child);
             }
         }
         return modelList;
     }
-    
+
     /**
      * Get all behaviors
+     *
      * @return List<FileObject>
      */
-    public static List<FileObject> getAllBehaviorFiles(){
+    public static List<FileObject> getAllBehaviorFiles() {
         List<FileObject> behaviorFiles = getCoreBehaviorFiles();
         behaviorFiles.addAll(getAppFiles(BEHAVIOR));
         behaviorFiles.addAll(getPluginFiles(BEHAVIOR));
@@ -450,21 +451,23 @@ public final class CakePhpUtils {
 
     /**
      * Get Core behaviors
+     *
      * @return List<FileObject>
      */
-    public static List<FileObject> getCoreBehaviorFiles(){
+    public static List<FileObject> getCoreBehaviorFiles() {
         PhpModule pm = PhpModule.inferPhpModule();
         FileObject behaviorDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_LIB_CAKE_MODEL_BEHAVIOR);
         List<FileObject> behaviorList = new ArrayList<FileObject>();
         behaviorList = fileFilter(behaviorDirectory, behaviorList, BEHAVIOR);
         return behaviorList;
     }
-    
+
     /**
      * Get all helpers
+     *
      * @return List<FileObject>
      */
-    public static List<FileObject> getAllHelperFiles(){
+    public static List<FileObject> getAllHelperFiles() {
         List<FileObject> helperFiles = getAppFiles(HELPER);
         helperFiles.addAll(getPluginFiles(HELPER));
         return helperFiles;
@@ -472,91 +475,94 @@ public final class CakePhpUtils {
 
     /**
      * Get all components
+     *
      * @return List<FileObject>
      */
-    public static List<FileObject> getAllComponentFiles(){
+    public static List<FileObject> getAllComponentFiles() {
         List<FileObject> componentFiles = getAppFiles(COMPONENT);
         componentFiles.addAll(getPluginFiles(COMPONENT));
         return componentFiles;
     }
-    
+
     /**
      * Get app files
+     *
      * @return List<FileObject>
      */
-    public static List<FileObject> getAppFiles(String type){
+    public static List<FileObject> getAppFiles(String type) {
         PhpModule pm = PhpModule.inferPhpModule();
         FileObject targetDirectory = null;
-        if(type.equals(HELPER)){
+        if (type.equals(HELPER)) {
             targetDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_APP_VIEW_HELPER);
-        }else if(type.equals(COMPONENT)){
+        } else if (type.equals(COMPONENT)) {
             targetDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_APP_CONTROLLER_COMPONENT);
-        }else if(type.equals(BEHAVIOR)){
+        } else if (type.equals(BEHAVIOR)) {
             targetDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_APP_MODEL_BEHAVIOR);
         }
-        
-        if(targetDirectory == null){
+
+        if (targetDirectory == null) {
             return null;
         }
         ArrayList<FileObject> addList = new ArrayList<FileObject>();
-        
+
         return fileFilter(targetDirectory, addList, type);
     }
-    
+
     /**
      * Get plugin files
-     * @param String type
-     * - Component, Behavior, Helper
-     * @return List<FileObject>
-     * return selected type list 
+     *
+     * @param String type - Component, Behavior, Helper
+     * @return List<FileObject> return selected type list
      */
-    public static List<FileObject> getPluginFiles(String type){
+    public static List<FileObject> getPluginFiles(String type) {
         String[] fileTypes = {COMPONENT, BEHAVIOR, HELPER};
-        
+
         PhpModule pm = PhpModule.inferPhpModule();
         List<FileObject> targetList = new ArrayList<FileObject>();
         ArrayList<FileObject> pluginList = new ArrayList<FileObject>();
 
-        if(!Arrays.asList(fileTypes).contains(type)){
+        if (!Arrays.asList(fileTypes).contains(type)) {
             return targetList;
         }
         pluginList.add(CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_APP_PLUGIN));
         pluginList.add(CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(DIR_PLUGINS));
-        
-        for(FileObject pluginDirectory : pluginList){
+
+        for (FileObject pluginDirectory : pluginList) {
             targetList = fileFilter(pluginDirectory, targetList, type);
         }
-        
+
         return targetList;
     }
-    
+
     /**
      * Files filter
+     *
      * @param targetDirectory FileObject
      * @param list List<FileObject>
      * @return List<FileObject>
      */
-    private static List<FileObject> fileFilter(FileObject targetDirectory, List<FileObject> list, String type){
-        if(targetDirectory == null){
+    private static List<FileObject> fileFilter(FileObject targetDirectory, List<FileObject> list, String type) {
+        if (targetDirectory == null) {
             return list;
         }
         Enumeration<? extends FileObject> children = targetDirectory.getChildren(true);
-        while(children.hasMoreElements()){
+        while (children.hasMoreElements()) {
             FileObject child = children.nextElement();
             String name = child.getName();
-            if(!child.isFolder() && name.endsWith(type) && !name.startsWith(APP)){ // NOI18N
+            if (!child.isFolder() && name.endsWith(type) && !name.startsWith(APP)) { // NOI18N
                 list.add(child);
             }
         }
         return list;
     }
-    
+
     /**
      * Change app/tmp directory permission (777)
+     *
      * @param tmpDirectory app/tmp Directory
      */
-    public static void chmodTmpDirectory(FileObject tmpDirectory){
-        if(tmpDirectory == null){
+    public static void chmodTmpDirectory(FileObject tmpDirectory) {
+        if (tmpDirectory == null) {
             return;
         }
         File tmp = FileUtil.toFile(tmpDirectory);
@@ -564,7 +570,7 @@ public final class CakePhpUtils {
         tmp.setReadable(true, false);
         tmp.setWritable(true, false);
         Enumeration<? extends FileObject> children = tmpDirectory.getChildren(true);
-        while(children.hasMoreElements()){
+        while (children.hasMoreElements()) {
             File child = FileUtil.toFile(children.nextElement());
             child.setExecutable(true, false);
             child.setReadable(true, false);
