@@ -11,16 +11,36 @@ import java.util.List;
 import java.util.regex.Pattern;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.netbeans.modules.csl.api.UiUtils;
+import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 
 public final class CakePhpUtils {
 
+    public enum DIR {
+
+        APP,
+        APP_PLUGIN,
+        CORE,
+        PLUGIN,;
+    }
+
+    public enum FILE {
+
+        MODEL,
+        VIEW,
+        CONTROLLER,
+        BEHAVIOR,
+        HELPER,
+        COMPONENT,;
+    }
     public static final int CAKE_VERSION_MAJOR = 0;
     public static final int CAKE_VERSION_MINOR = 1;
     public static final int CAKE_VERSION_REVISION = 2;
@@ -40,6 +60,8 @@ public final class CakePhpUtils {
     private static final String DIR_CONTROLLERS = "controllers"; // NOI18N
     private static final String DIR_CONTROLLER_2 = "Controller"; // NOI18N cake2.x.x
     private static final String DIR_LIB_CAKE_MODEL_BEHAVIOR = "lib/Cake/Model/Behavior"; // NOI18N
+    private static final String DIR_MODELS = "models";
+    private static final String DIR_MODEL_2 = "Model";
     private static final String DIR_NBPROJECT = "nbproject"; // NOI18N
     private static final String DIR_PLUGINS = "plugins"; // NOI18N
     private static final String DIR_VIEWS = "views"; // NOI18N
@@ -167,6 +189,423 @@ public final class CakePhpUtils {
             return FileUtil.toFileObject(action);
         }
         return null;
+    }
+
+    /**
+     * Get class name
+     * @param fo FileObject
+     * @return class name
+     */
+    public static String getClassName(FileObject fo){
+        EditorSupport support = Lookup.getDefault().lookup(EditorSupport.class);
+        for(PhpClass phpClass : support.getClasses(fo)){
+            return phpClass.getName();
+        }
+        return null;
+    }
+
+    /**
+     * Check component file
+     *
+     * @param fo
+     * @return component true, otherwise false
+     */
+    public static boolean isComponent(FileObject fo) {
+        if (fo.isData()
+            && fo.getParent().getNameExt().equals("Component") // NOI18N
+            && FileUtils.isPhpFile(fo)) {
+            return true;
+        }
+
+        if (fo.isData()
+            && fo.getParent().getNameExt().equals("components") // NOI18N
+            && FileUtils.isPhpFile(fo)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check component file
+     *
+     * @param fo
+     * @return component true, otherwise false
+     */
+    public static boolean isHelper(FileObject fo) {
+        if (fo.isData()
+            && fo.getParent().getNameExt().equals("Helper") // NOI18N
+            && FileUtils.isPhpFile(fo)) {
+            return true;
+        }
+
+        if (fo.isData()
+            && fo.getParent().getNameExt().equals("helpers") // NOI18N
+            && FileUtils.isPhpFile(fo)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check model file
+     *
+     * @param fo file
+     * @return model true, otherwise false
+     */
+    public static boolean isModel(FileObject fo) {
+        // CakePHP 2.x
+        if (fo.isData()
+            && fo.getParent().getNameExt().equals(DIR_MODEL_2)
+            && FileUtils.isPhpFile(fo)) {
+            return true;
+        }
+
+        // CakePHP 1.x
+        if (fo.isData()
+            && fo.getParent().getNameExt().equals(DIR_MODELS)
+            && FileUtils.isPhpFile(fo)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get model file
+     *
+     * @param name model name
+     * @return model FileObject | null
+     */
+    public static FileObject getModel(String name) {
+        FileObject modelDirectory = getDirectory(DIR.APP, FILE.MODEL, null);
+        return modelDirectory.getFileObject(getFileNameWithExt(FILE.MODEL, name));
+    }
+
+    /**
+     * Get app component file
+     *
+     * @param name component name
+     * @return component FileObject | null
+     */
+    public static FileObject getAppComponent(String name) {
+        FileObject directory = getDirectory(DIR.APP, FILE.COMPONENT, null);
+        return directory.getFileObject(getFileNameWithExt(FILE.COMPONENT, name));
+    }
+
+    /**
+     * Get plugin component file
+     *
+     * @param split first plugin name, second component name e.g. {DebugKit,
+     * Toolbar}
+     * @return if array length > 2 ,return plugin component FileObject,
+     * otherwise null
+     */
+    public static FileObject getPluginComponent(String[] split) {
+        if (split.length > 2) {
+            return null;
+        }
+        String pluginName = split[0];
+        String componentName = split[1];
+        FileObject directory = getDirectory(DIR.APP_PLUGIN, FILE.COMPONENT, pluginName);
+        if (directory == null) {
+            directory = getDirectory(DIR.PLUGIN, FILE.COMPONENT, pluginName);
+        }
+        if (directory == null) {
+            return null;
+        }
+        return directory.getFileObject(getFileNameWithExt(FILE.COMPONENT, componentName));
+    }
+
+    /**
+     * Get core components
+     *
+     * @return component files List
+     */
+    public static List<FileObject> getCoreComponents() {
+        List<FileObject> list = new ArrayList();
+        FileObject componentDirectory = getDirectory(DIR.CORE, FILE.COMPONENT, null);
+
+        if (componentDirectory == null) {
+            return null;
+        }
+        for (FileObject fo : componentDirectory.getChildren()) {
+            if (fo.isData() && FileUtils.isPhpFile(fo)) {
+                list.add(fo);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Get app helper file
+     *
+     * @param name helper name
+     * @return helper FileObject | null
+     */
+    public static FileObject getAppHelper(String name) {
+        FileObject directory = getDirectory(DIR.APP, FILE.HELPER, null);
+        return directory.getFileObject(getFileNameWithExt(FILE.HELPER, name));
+    }
+
+    /**
+     * Get plugin helper file
+     *
+     * @param split first plugin name, second helper name
+     * @return if array length > 2 ,return plugin helper FileObject, otherwise
+     * null
+     */
+    public static FileObject getPluginHelper(String[] split) {
+        if (split.length > 2) {
+            return null;
+        }
+        String pluginName = split[0];
+        String helperName = split[1];
+        FileObject directory = getDirectory(DIR.APP_PLUGIN, FILE.HELPER, pluginName);
+        if (directory == null) {
+            directory = getDirectory(DIR.PLUGIN, FILE.HELPER, pluginName);
+        }
+        if (directory == null) {
+            return null;
+        }
+        return directory.getFileObject(getFileNameWithExt(FILE.HELPER, helperName));
+    }
+
+    /**
+     * Get core helpers
+     *
+     * @return core helper files list
+     */
+    public static List<FileObject> getCoreHelpers() {
+        List<FileObject> list = new ArrayList();
+        FileObject helperDirectory = getDirectory(DIR.CORE, FILE.HELPER, null);
+        if (helperDirectory == null) {
+            return null;
+        }
+        for (FileObject fo : helperDirectory.getChildren()) {
+            if (fo.isData() && FileUtils.isPhpFile(fo)) {
+                list.add(fo);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Get directory
+     *
+     * @param dirType APP, CORE, PLUGIN
+     * @param fileType
+     * @return
+     */
+    public static FileObject getDirectory(DIR dirType, FILE fileType, String pluginName) {
+        PhpModule pm = PhpModule.inferPhpModule();
+        FileObject sourceDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm);
+        if (pluginName != null && pluginName.isEmpty()) {
+            pluginName = null;
+        }
+
+        StringBuilder directoryPath = new StringBuilder();
+        String version = getCakePhpVersion(pm, CAKE_VERSION_MAJOR);
+        if (version.equals("1")) { // NOI18N
+            switch (dirType) {
+                case APP:
+                    directoryPath.append("app/"); // NOI18N
+                    break;
+                case CORE:
+                    directoryPath.append("cake/libs/"); // NOI18N
+                    break;
+                case APP_PLUGIN:
+                    directoryPath.append("app/plugins/"); // NOI18N
+                    break;
+                case PLUGIN:
+                    directoryPath.append("plugins/"); // NOI18N
+                    break;
+                default:
+                    return null;
+            }
+
+            if (dirType == DIR.APP_PLUGIN || dirType == DIR.PLUGIN) {
+                if (pluginName == null) {
+                    return sourceDirectory.getFileObject(directoryPath.toString());
+                } else {
+                    pluginName = toUnderscore(pluginName);
+                    directoryPath.append(pluginName).append("/"); // NOI18N
+                }
+            }
+
+            switch (dirType) {
+                case APP:
+                case APP_PLUGIN:
+                case PLUGIN:
+                    switch (fileType) {
+                        case MODEL:
+                            directoryPath.append("models/"); // NOI18N
+                            break;
+                        case BEHAVIOR:
+                            directoryPath.append("models/behaviors/"); // NOI18N
+                            break;
+                        case VIEW:
+                            directoryPath.append("views/"); // NOI18N
+                            break;
+                        case HELPER:
+                            directoryPath.append("views/helpers/"); // NOI18N
+                            break;
+                        case CONTROLLER:
+                            directoryPath.append("controllers/"); // NOI18N
+                            break;
+                        case COMPONENT:
+                            directoryPath.append("controllers/components/"); // NOI18N
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case CORE:
+                    switch (fileType) {
+                        case MODEL:
+                            directoryPath.append("model/"); // NOI18N
+                            break;
+                        case BEHAVIOR:
+                            directoryPath.append("model/behaviors/"); // NOI18N
+                            break;
+                        case VIEW:
+                            directoryPath.append("view/"); // NOI18N
+                            break;
+                        case HELPER:
+                            directoryPath.append("view/helpers/"); // NOI18N
+                            break;
+                        case CONTROLLER:
+                            directoryPath.append("controller/"); // NOI18N
+                            break;
+                        case COMPONENT:
+                            directoryPath.append("controller/components/"); // NOI18N
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } else if (version.equals("2")) { // NOI18N
+            switch (dirType) {
+                case APP:
+                    directoryPath.append("app/"); // NOI18N
+                    break;
+                case CORE:
+                    directoryPath.append("lib/Cake/"); // NOI18N
+                    break;
+                case APP_PLUGIN:
+                    directoryPath.append("app/Plugin/"); // NOI18N
+                    break;
+                case PLUGIN:
+                    directoryPath.append("plugins/"); // NOI18N
+                    break;
+                default:
+                    return null;
+            }
+
+            if (dirType == DIR.APP_PLUGIN || dirType == DIR.PLUGIN) {
+                if (pluginName == null) {
+                    return sourceDirectory.getFileObject(directoryPath.toString());
+                } else {
+                    directoryPath.append(pluginName).append("/"); // NOI18N
+                }
+            }
+
+            switch (dirType) {
+                case APP:
+                case APP_PLUGIN:
+                case PLUGIN:
+                    switch (fileType) {
+                        case MODEL:
+                            directoryPath.append("Model/"); // NOI18N
+                            break;
+                        case BEHAVIOR:
+                            directoryPath.append("Model/Behavior/"); // NOI18N
+                            break;
+                        case VIEW:
+                            directoryPath.append("View/"); // NOI18N
+                            break;
+                        case HELPER:
+                            directoryPath.append("View/Helper/"); // NOI18N
+                            break;
+                        case CONTROLLER:
+                            directoryPath.append("Controller/"); // NOI18N
+                            break;
+                        case COMPONENT:
+                            directoryPath.append("Controller/Component/"); // NOI18N
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case CORE:
+                    switch (fileType) {
+                        case MODEL:
+                            directoryPath.append("Model/"); // NOI18N
+                            break;
+                        case BEHAVIOR:
+                            directoryPath.append("Model/Behavior/"); // NOI18N
+                            break;
+                        case VIEW:
+                            directoryPath.append("View/"); // NOI18N
+                            break;
+                        case HELPER:
+                            directoryPath.append("View/Helper/"); // NOI18N
+                            break;
+                        case CONTROLLER:
+                            directoryPath.append("Controller/"); // NOI18N
+                            break;
+                        case COMPONENT:
+                            directoryPath.append("Controller/Component/"); // NOI18N
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return sourceDirectory.getFileObject(directoryPath.toString());
+    }
+
+    /**
+     * Get file name
+     *
+     * @param fileType
+     * @param name e.g. TreeBehavior->Tree, HtmlHelper->Html,...
+     * @return file name with extension | null
+     */
+    public static String getFileNameWithExt(FILE fileType, String name) {
+        String fileName = null;
+        PhpModule pm = PhpModule.inferPhpModule();
+        String version = getCakePhpVersion(pm, CAKE_VERSION_MAJOR);
+        if (version.equals("1")) { // NOI18N
+            fileName = toUnderscore(name);
+        } else if (version.equals("2")) { // NOI18N
+            switch (fileType) {
+                case MODEL:
+                    fileName = name;
+                    break;
+                case BEHAVIOR:
+                    fileName = name + "Behavior"; // NOI18N
+                    break;
+                case HELPER:
+                    fileName = name + "Helper"; // NOI18N
+                    break;
+                case CONTROLLER:
+                    fileName = name + "Controller"; // NOI18N
+                    break;
+                case COMPONENT:
+                    fileName = name + "Component"; // NOI18N
+                    break;
+                case VIEW:
+                default:
+                    break;
+            }
+        }
+        return fileName + ".php"; // NOI18N
     }
 
     public static String getActionName(FileObject view) {
