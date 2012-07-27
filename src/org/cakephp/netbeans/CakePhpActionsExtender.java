@@ -26,7 +26,6 @@ public class CakePhpActionsExtender extends PhpModuleActionsExtender {
     @Override
     public List<? extends Action> getActions() {
         List<Action> list = new ArrayList<Action>();
-        list.add(RunBakeAction.getInstance());
         list.add(ClearCacheAction.getInstance());
         list.add(InstallPluginsWizardAction.getInstance());
         list.add(CreateAutoCompletionFileAction.getInstance());

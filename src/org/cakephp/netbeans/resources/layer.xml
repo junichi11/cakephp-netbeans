@@ -6,9 +6,6 @@ TODO: add license
 <filesystem>
     <folder name="Actions">
         <folder name="PHP">
-            <file name="org-cakephp-netbeans-ui-actions-RunBakeAction.instance">
-                <attr name="instanceCreate" methodvalue="org.cakephp.netbeans.ui.actions.RunBakeAction.getInstance"/>
-            </file>
             <file name="org-cakephp-netbeans-ui-actions-CakePhpRunCommandAction.instance">
                 <attr name="instanceCreate" methodvalue="org.cakephp.netbeans.ui.actions.CakePhpRunCommandAction.getInstance"/>
             </file>

@@ -1,20 +1,18 @@
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 2010/07/16
+2012/07/28 update
 
 WHAT WORKS:
 - badge icon
 - configuration files
 - ignored files
 - actions: bake, go to view, go to action
-
-WHAT NEEDS TO BE DONE:
-- non-interactive way for creating new CakePHP projects (CakePHP's side and then PhpModuleExtender)
-- list of possible cake's commands in XML format (CakePHP's side and then FrameworkCommandSupport)
-- code completion support (NetBeans internal: ideally move NB's editor API to PHP API)
+- create new CakePHP projects from new project option
+- code completion support
 
 HOW TO RUN:
-- download development build of NetBeans [1] (the newer the better, at least build 2071 needed)
+- download NBM file or manually create NBM file
 - manually install NBM file
 
 HOW TO DEVELOP:
