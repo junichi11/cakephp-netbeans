@@ -14,6 +14,7 @@ import org.openide.util.NbBundle;
 
 /**
  * Create a file for auto code complete Action
+ *
  * @author junichi11
  */
 public final class CreateAutoCompletionFileAction extends BaseAction {
@@ -29,19 +30,19 @@ public final class CreateAutoCompletionFileAction extends BaseAction {
     }
 
     /**
-     * action performed
-     * (support only CakePHP 2.x)
-     * @param phpModule 
+     * action performed (support only CakePHP 2.x)
+     *
+     * @param phpModule
      */
     @Override
     public void actionPerformed(PhpModule phpModule) {
         if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)
-            || CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("1")) {
+            || CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("1")) { // NOI18N
             // called via shortcut
             return;
         }
         try {
-            if(!CakePhpUtils.createAutoCompletionFile()){
+            if (!CakePhpUtils.createAutoCompletionFile()) {
                 NotifyDescriptor descriptor = new NotifyDescriptor.Message(NbBundle.getMessage(CreateAutoCompletionFileAction.class, "MSG_Failure"), NotifyDescriptor.ERROR_MESSAGE);
                 DialogDisplayer.getDefault().notifyLater(descriptor);
             }

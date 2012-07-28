@@ -18,22 +18,23 @@ import org.openide.util.Exceptions;
  * @author junichi11
  */
 @NodeFactory.Registration(projectType = "org-netbeans-modules-php-project", position = 700)
-public class ViewNodeFactoryImpl implements NodeFactory{
-	@Override
-	public NodeList createNodes(Project prj){
-		PhpModule module = prj.getLookup().lookup(PhpModule.class);
-		FileObject targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/views");
-		if(targetDir == null){
-			targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/View");
-		}
-		if(targetDir != null){
-			try{
-				ViewNode node = new ViewNode(targetDir);
-				return NodeFactorySupport.fixedNodeList(node);
-			}catch(DataObjectNotFoundException ex){
-				Exceptions.printStackTrace(ex);
-			}
-		}
-		return NodeFactorySupport.fixedNodeList();
-	}
+public class ViewNodeFactoryImpl implements NodeFactory {
+
+    @Override
+    public NodeList createNodes(Project prj) {
+        PhpModule module = prj.getLookup().lookup(PhpModule.class);
+        FileObject targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/views"); // NOI18N
+        if (targetDir == null) {
+            targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/View"); // NOI18N
+        }
+        if (targetDir != null) {
+            try {
+                ViewNode node = new ViewNode(targetDir);
+                return NodeFactorySupport.fixedNodeList(node);
+            } catch (DataObjectNotFoundException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return NodeFactorySupport.fixedNodeList();
+    }
 }

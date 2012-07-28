@@ -1,7 +1,6 @@
 /*
  * TODO: add license
  */
-
 package org.cakephp.netbeans.ui.actions;
 
 import java.io.IOException;
@@ -19,9 +18,9 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 
 public final class CakePhpGoToViewAction extends GoToViewAction {
+
     static final Logger LOGGER = Logger.getLogger(CakePhpGoToViewAction.class.getName());
     private static final long serialVersionUID = 9834759234756237L;
-
     private final FileObject controller;
     private final int offset;
     private FileObject theme;
@@ -39,26 +38,26 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         if (phpElement == null) {
             return false;
         }
-	// Theme
-        if(theme != null){
+        // Theme
+        if (theme != null) {
             FileObject viewTheme = CakePhpUtils.getView(controller, phpElement, theme);
-            if(viewTheme != null){
+            if (viewTheme != null) {
                 UiUtils.open(viewTheme, DEFAULT_OFFSET);
                 return true;
             }
             return false;
-	}
+        }
         for (PhpClass phpClass : editorSupport.getClasses(controller)) {
             if (CakePhpUtils.isControllerName(phpClass.getName())) {
                 for (PhpClass.Field field : phpClass.getFields()) {
                     if (field.getName().equals("$theme")) { // NOI18N
                         CakePhpGoToViewActionPanel dialog = new CakePhpGoToViewActionPanel(this);
                         dialog.showDialog();
-			return true;
+                        return true;
                     }
                 }
             }
-	}
+        }
         FileObject view = CakePhpUtils.getView(controller, phpElement);
         if (view != null) {
             UiUtils.open(view, DEFAULT_OFFSET);
@@ -67,10 +66,10 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
 
         // auto create a view file
         PhpModule phpModule = PhpModule.forFileObject(controller);
-        if(CakePreferences.getAutoCreateView(phpModule)){
+        if (CakePreferences.getAutoCreateView(phpModule)) {
             try {
                 view = CakePhpUtils.createView(controller, phpElement);
-                if(view != null){
+                if (view != null) {
                     UiUtils.open(view, DEFAULT_OFFSET);
                     return true;
                 }
@@ -81,19 +80,19 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         }
         return false;
     }
-    
-    public FileObject[] getThemes(){
+
+    public FileObject[] getThemes() {
         PhpModule phpModule = PhpModule.forFileObject(controller);
         FileObject[] themes = null;
-        if(CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("2")){//NOI18N
+        if (CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("2")) {//NOI18N
             themes = controller.getFileObject("../../View/Themed").getChildren(); // NOI18N
-        }else{
+        } else {
             themes = controller.getFileObject("../../views/themed").getChildren(); // NOI18N
         }
         return themes;
     }
-    
-    public void setTheme(FileObject theme){
-	    this.theme = theme;
+
+    public void setTheme(FileObject theme) {
+        this.theme = theme;
     }
 }

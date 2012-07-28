@@ -1,7 +1,6 @@
 /*
  * TODO: add license
  */
-
 package org.cakephp.netbeans;
 
 import java.util.concurrent.ExecutionException;
@@ -22,13 +21,12 @@ import org.openide.util.NbBundle;
 import org.openide.windows.InputOutput;
 
 public class CakeScript extends PhpProgram {
+
     public static final String SCRIPT_NAME = "cake"; // NOI18N
     public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + ".php"; // NOI18N
-
     private static final String SCRIPT_DIRECTORY = "cake/console/"; // NOI18N
     private static final String SCRIPT_DIRECTORY_2 = "Console/"; // NOI18N cake2.x.x
     private static final String CMD_BAKE = "bake"; // NOI18N
-
     private final PhpModule phpModule;
 
     private CakeScript(String command) {
@@ -41,10 +39,13 @@ public class CakeScript extends PhpProgram {
     }
 
     /**
-     * Get the project specific, <b>valid only</b> Cake script. If not found, the {@link InvalidPhpProgramException} is thrown.
+     * Get the project specific, <b>valid only</b> Cake script. If not found,
+     * the {@link InvalidPhpProgramException} is thrown.
+     *
      * @param phpModule PHP module for which Cake script is taken
      * @return the project specific, <b>valid only</b> Cake script
-     * @throws InvalidPhpProgramException if Zend script is not valid or missing completely
+     * @throws InvalidPhpProgramException if Zend script is not valid or missing
+     * completely
      */
     public static CakeScript forPhpModule(PhpModule phpModule) throws InvalidPhpProgramException {
         FileObject sourceDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
@@ -52,10 +53,10 @@ public class CakeScript extends PhpProgram {
         // locate
         FileObject cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME_LONG);
         if (cake == null) {
-	    String app = "app/"; // NOI18N
+            String app = "app/"; // NOI18N
             cake = sourceDirectory.getFileObject(app + SCRIPT_DIRECTORY_2 + SCRIPT_NAME_LONG);
         }
-	
+
         if (cake == null) {
             throw new InvalidPhpProgramException(NbBundle.getMessage(CakeScript.class, "MSG_CakeNotFound"));
         }
@@ -82,11 +83,11 @@ public class CakeScript extends PhpProgram {
     // TODO: later, run it via FrameworkCommandSupport
     public void runBake() {
         ExecutionDescriptor executionDescriptor = getExecutionDescriptor()
-                .outProcessorFactory(ANSI_STRIPPING_FACTORY)
-                .errProcessorFactory(ANSI_STRIPPING_FACTORY);
+            .outProcessorFactory(ANSI_STRIPPING_FACTORY)
+            .errProcessorFactory(ANSI_STRIPPING_FACTORY);
 
         ExternalProcessBuilder processBuilder = getProcessBuilder()
-                .addArgument(CMD_BAKE);
+            .addArgument(CMD_BAKE);
         assert phpModule != null;
         if (phpModule != null) {
             processBuilder = processBuilder
@@ -94,18 +95,18 @@ public class CakeScript extends PhpProgram {
         }
         executeLater(processBuilder, executionDescriptor, CMD_BAKE);
     }
-    
-    public static String getHelp(PhpModule phpModule, FrameworkCommand command){
+
+    public static String getHelp(PhpModule phpModule, FrameworkCommand command) {
         FrameworkCommandSupport commandSupport = CakePhpFrameworkProvider.getInstance().getFrameworkCommandSupport(phpModule);
         ExternalProcessBuilder processBuilder = commandSupport.createCommand(command.getCommands(), "--help"); // NOI18N
         assert processBuilder != null;
         final HelpLineProcessor lineProcessor = new HelpLineProcessor();
         ExecutionDescriptor descriptor = new ExecutionDescriptor().inputOutput(InputOutput.NULL)
-                .outProcessorFactory(new ExecutionDescriptor.InputProcessorFactory() {
-		@Override
-                public InputProcessor newInputProcessor(InputProcessor defaultProcessor) {
-                        return InputProcessors.ansiStripping(InputProcessors.bridge(lineProcessor));
-                }
+            .outProcessorFactory(new ExecutionDescriptor.InputProcessorFactory() {
+            @Override
+            public InputProcessor newInputProcessor(InputProcessor defaultProcessor) {
+                return InputProcessors.ansiStripping(InputProcessors.bridge(lineProcessor));
+            }
         });
         try {
             executeAndWait(processBuilder, descriptor, "Help");
@@ -114,16 +115,17 @@ public class CakeScript extends PhpProgram {
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         }
-	return lineProcessor.getHelp();
+        return lineProcessor.getHelp();
     }
-	
-    static class HelpLineProcessor implements LineProcessor{
+
+    static class HelpLineProcessor implements LineProcessor {
+
         private StringBuilder sb = new StringBuilder();
 
         @Override
         public void processLine(String line) {
             sb.append(line);
-	    sb.append("\n"); // NOI18N
+            sb.append("\n"); // NOI18N
         }
 
         @Override
@@ -133,10 +135,9 @@ public class CakeScript extends PhpProgram {
         @Override
         public void close() {
         }
-		
-        public String getHelp(){
+
+        public String getHelp() {
             return sb.toString();
-        }	
+        }
     }
-    
 }

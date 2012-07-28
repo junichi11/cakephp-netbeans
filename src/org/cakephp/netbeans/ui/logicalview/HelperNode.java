@@ -15,29 +15,31 @@ import org.openide.util.ImageUtilities;
 /**
  * @author junichi11
  */
-public class HelperNode extends FilterNode{
-	private static Image smallImage = ImageUtilities.loadImage("org/cakephp/netbeans/ui/resources/cakephp_icon_8.png");
-	
-	public HelperNode(FileObject fo) throws DataObjectNotFoundException{
-            super(DataObject.find(fo).getNodeDelegate());
-	}
-	
-	@Override
-	public String getDisplayName(){
-		return "Helper";
-	}
-	
-	public Image getIcon(int type){
-		DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
-		Image original = root.getNodeDelegate().getIcon(type);
-		return ImageUtilities.mergeImages(original, smallImage, 7, 7);
-//		return smallImage;
-	}
+public class HelperNode extends FilterNode {
 
-	public Image getOpenIcon(int type){
-		DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
-		Image original = root.getNodeDelegate().getIcon(type);
-		return ImageUtilities.mergeImages(original, smallImage, 7, 7);
+    private static Image smallImage = ImageUtilities.loadImage("org/cakephp/netbeans/ui/resources/cakephp_icon_8.png"); // NOI18N
+
+    public HelperNode(FileObject fo) throws DataObjectNotFoundException {
+        super(DataObject.find(fo).getNodeDelegate());
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Helper"; // NOI18N
+    }
+
+    @Override
+    public Image getIcon(int type) {
+        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
+        Image original = root.getNodeDelegate().getIcon(type);
+        return ImageUtilities.mergeImages(original, smallImage, 7, 7);
 //		return smallImage;
-	}
+    }
+
+    public Image getOpenIcon(int type) {
+        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
+        Image original = root.getNodeDelegate().getIcon(type);
+        return ImageUtilities.mergeImages(original, smallImage, 7, 7);
+//		return smallImage;
+    }
 }

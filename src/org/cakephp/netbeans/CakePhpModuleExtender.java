@@ -28,24 +28,24 @@ import org.openide.util.HelpCtx;
  * @author juncihi11
  */
 public class CakePhpModuleExtender extends PhpModuleExtender {
-    private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT = "\tConfigure::write('Security.cipherSeed', '%s');";
-    private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN = "Configure::write('Security.cipherSeed";
-    private static final String CONFIGURE_WRITE_SECURITY_SALTS_FORMAT = "\tConfigure::write('Security.salt', '%s');";
-    private static final String CONFIGURE_WRITE_SECURITY_SALT_PATTERN = "Configure::write('Security.salt'";
+    private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT = "\tConfigure::write('Security.cipherSeed', '%s');"; // NOI18N
+    private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN = "Configure::write('Security.cipherSeed"; // NOI18N
+    private static final String CONFIGURE_WRITE_SECURITY_SALTS_FORMAT = "\tConfigure::write('Security.salt', '%s');"; // NOI18N
+    private static final String CONFIGURE_WRITE_SECURITY_SALT_PATTERN = "Configure::write('Security.salt'"; // NOI18N
 
-    private static final String GIT_COMMAND = "Git Command : ";
-    private static final String GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT = "git://github.com/cakephp/cakephp.git";
-    private static final String ADD_COMMAND = "add";
-    private static final String BRANCH_MASTER_MERGE = "branch.master.merge";
-    private static final String BRANCH_MASTER_REMOTE = "branch.master.remote";
-    private static final String CONFIG_COMMAND = "config";
-    private static final String GIT = "git";
-    private static final String GIT_REPO = "/.git";
-    private static final String INIT_COMMAND = "init";
-    private static final String ORIGIN = "origin";
-    private static final String PULL_COMMAND = "pull";
-    private static final String REFS_HEADS = "refs/heads/master";
-    private static final String REMOTE_COMMAND = "remote";
+    private static final String GIT_COMMAND = "Git Command : "; // NOI18N
+    private static final String GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT = "git://github.com/cakephp/cakephp.git"; // NOI18N
+    private static final String ADD_COMMAND = "add"; // NOI18N
+    private static final String BRANCH_MASTER_MERGE = "branch.master.merge"; // NOI18N
+    private static final String BRANCH_MASTER_REMOTE = "branch.master.remote"; // NOI18N
+    private static final String CONFIG_COMMAND = "config"; // NOI18N
+    private static final String GIT = "git"; // NOI18N
+    private static final String GIT_REPO = "/.git"; // NOI18N
+    private static final String INIT_COMMAND = "init"; // NOI18N
+    private static final String ORIGIN = "origin"; // NOI18N
+    private static final String PULL_COMMAND = "pull"; // NOI18N
+    private static final String REFS_HEADS = "refs/heads/master"; // NOI18N
+    private static final String REMOTE_COMMAND = "remote"; // NOI18N
     private NewProjectConfigurationPanel panel = null;
 
     @Override
@@ -276,7 +276,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         try {
             String repoPath = localPath.getPath();
             // env parameter
-            String[] envp = {"GIT_DIR=" + repoPath + GIT_REPO, "GIT_WORK_TREE=" + repoPath};
+            String[] envp = {"GIT_DIR=" + repoPath + GIT_REPO, "GIT_WORK_TREE=" + repoPath}; // NOI18N
             // git commands 
             String[] initCommand = {GIT, INIT_COMMAND, repoPath};
             String[] remoteAddCommand = {GIT, REMOTE_COMMAND, ADD_COMMAND, ORIGIN, GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT};
@@ -288,13 +288,13 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             getPanel().setGitCommandLabel(GIT_COMMAND + INIT_COMMAND);
             Process initProcess = Runtime.getRuntime().exec(initCommand, envp);
             initProcess.waitFor();
-            getPanel().setGitCommandLabel(GIT_COMMAND + REMOTE_COMMAND + " " + ADD_COMMAND);
+            getPanel().setGitCommandLabel(GIT_COMMAND + REMOTE_COMMAND + " " + ADD_COMMAND); // NOI18N
             Process remoteProcess = Runtime.getRuntime().exec(remoteAddCommand, envp);
             remoteProcess.waitFor();
-            getPanel().setGitCommandLabel(GIT_COMMAND + CONFIG_COMMAND + " " + BRANCH_MASTER_MERGE);
+            getPanel().setGitCommandLabel(GIT_COMMAND + CONFIG_COMMAND + " " + BRANCH_MASTER_MERGE); // NOI18N
             Process configMergeProcess = Runtime.getRuntime().exec(configMergeCommand, envp);
             configMergeProcess.waitFor();
-            getPanel().setGitCommandLabel(GIT_COMMAND + CONFIG_COMMAND + " " + BRANCH_MASTER_REMOTE);
+            getPanel().setGitCommandLabel(GIT_COMMAND + CONFIG_COMMAND + " " + BRANCH_MASTER_REMOTE); // NOI18N
             Process configRemoteProcess = Runtime.getRuntime().exec(configRemoteCommand, envp);
             configRemoteProcess.waitFor();
             getPanel().setGitCommandLabel(GIT_COMMAND + PULL_COMMAND);

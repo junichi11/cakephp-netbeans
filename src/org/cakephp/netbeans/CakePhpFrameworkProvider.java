@@ -1,7 +1,6 @@
 /*
  * TODO: add license
  */
-
 package org.cakephp.netbeans;
 
 import java.io.File;
@@ -41,17 +40,16 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
             return o1.getName().compareToIgnoreCase(o2.getName());
         }
     };
-
     private final BadgeIcon badgeIcon;
 
     private CakePhpFrameworkProvider() {
         super(NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"), NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
         badgeIcon = new BadgeIcon(
-                ImageUtilities.loadImage(ICON_PATH),
-                CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
+            ImageUtilities.loadImage(ICON_PATH),
+            CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
     }
 
-    @PhpFrameworkProvider.Registration(position=500)
+    @PhpFrameworkProvider.Registration(position = 500)
     public static CakePhpFrameworkProvider getInstance() {
         return INSTANCE;
     }
@@ -60,8 +58,8 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     public BadgeIcon getBadgeIcon() {
         return badgeIcon;
     }
-    
-    public static FileObject getCakePhpDirectory(PhpModule phpModule){
+
+    public static FileObject getCakePhpDirectory(PhpModule phpModule) {
         FileObject fo = null;
         if (CakePreferences.useProjectDirectory(phpModule)) {
             fo = phpModule.getProjectDirectory().getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
@@ -70,15 +68,15 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         }
         return fo;
     }
-    
+
     @Override
     public boolean isInPhpModule(PhpModule phpModule) {
         // TODO: is this detection enough?
         FileObject cake = getCakePhpDirectory(phpModule).getFileObject("cake"); // NOI18N
         // cake 2.x.x
-	if(cake == null){
-		cake = getCakePhpDirectory(phpModule).getFileObject("lib/Cake"); // NOI18N
-	}
+        if (cake == null) {
+            cake = getCakePhpDirectory(phpModule).getFileObject("lib/Cake"); // NOI18N
+        }
         return cake != null && cake.isFolder();
     }
 
@@ -87,12 +85,12 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         // return all php files from app/config
         List<File> configFiles = new LinkedList<File>();
         FileObject config;
-	if(getCakePhpDirectory(phpModule).getFileObject("lib/Cake") != null){ // NOI18N
-                // cake 2.x.x
-                config = getCakePhpDirectory(phpModule).getFileObject("app/Config"); // NOI18N
-	}else{
-                config = getCakePhpDirectory(phpModule).getFileObject("app/config"); // NOI18N
-	}
+        if (getCakePhpDirectory(phpModule).getFileObject("lib/Cake") != null) { // NOI18N
+            // cake 2.x.x
+            config = getCakePhpDirectory(phpModule).getFileObject("app/Config"); // NOI18N
+        } else {
+            config = getCakePhpDirectory(phpModule).getFileObject("app/config"); // NOI18N
+        }
         assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
         if (config != null && config.isFolder()) {
             Enumeration<? extends FileObject> children = config.getChildren(true);
@@ -111,29 +109,28 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public PhpModuleExtender createPhpModuleExtender(PhpModule phpModule) {
-        // TODO: can we non-interactively create a project via 'cake' command?
         return new CakePhpModuleExtender();
     }
 
     @Override
-    public PhpModuleCustomizerExtender createPhpModuleCustomizerExtender(PhpModule phpModule){
-	    return new CakePhpModuleCustomizerExtender(phpModule);
+    public PhpModuleCustomizerExtender createPhpModuleCustomizerExtender(PhpModule phpModule) {
+        return new CakePhpModuleCustomizerExtender(phpModule);
     }
-    
+
     @Override
     public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
         PhpModuleProperties properties = new PhpModuleProperties();
-	FileObject webroot = getCakePhpDirectory(phpModule).getFileObject("app/webroot"); // NOI18N
-	if(webroot != null){
-	    properties.setWebRoot(webroot);
-	}
-	FileObject test = getCakePhpDirectory(phpModule).getFileObject("app/tests"); // NOI18N
-	if(test == null){
-	    test = getCakePhpDirectory(phpModule).getFileObject("app/Test"); // NOI18N
-	}
-	if(test != null){
-	    properties.setTests(test);
-	}
+        FileObject webroot = getCakePhpDirectory(phpModule).getFileObject("app/webroot"); // NOI18N
+        if (webroot != null) {
+            properties.setWebRoot(webroot);
+        }
+        FileObject test = getCakePhpDirectory(phpModule).getFileObject("app/tests"); // NOI18N
+        if (test == null) {
+            test = getCakePhpDirectory(phpModule).getFileObject("app/Test"); // NOI18N
+        }
+        if (test != null) {
+            properties.setTests(test);
+        }
         return properties;
     }
 
@@ -149,7 +146,6 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public FrameworkCommandSupport getFrameworkCommandSupport(PhpModule phpModule) {
-        // TODO: provide list of commands (preferably in XML format)
         return new CakePhpCommandSupport(phpModule);
     }
 
