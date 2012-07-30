@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
@@ -84,7 +85,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
     public FileObject[] getThemes() {
         PhpModule phpModule = PhpModule.forFileObject(controller);
         FileObject[] themes = null;
-        if (CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("2")) {//NOI18N
+        if (CakeVersion.getInstance(phpModule).isCakePhp(2)) {
             themes = controller.getFileObject("../../View/Themed").getChildren(); // NOI18N
         } else {
             themes = controller.getFileObject("../../views/themed").getChildren(); // NOI18N

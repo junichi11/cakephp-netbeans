@@ -3,7 +3,7 @@
  */
 package org.cakephp.netbeans.ui.logicalview;
 
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.project.ui.support.NodeFactory;
@@ -23,10 +23,7 @@ public class HelperNodeFactoryImpl implements NodeFactory {
     @Override
     public NodeList createNodes(Project prj) {
         PhpModule module = prj.getLookup().lookup(PhpModule.class);
-        FileObject targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/views/helpers"); // NOI18N
-        if (targetDir == null) {
-            targetDir = CakePhpFrameworkProvider.getCakePhpDirectory(module).getFileObject("app/View/Helper"); // NOI18N
-        }
+        FileObject targetDir = CakePhpUtils.getDirectory(module, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.HELPER, null);
         if (targetDir != null) {
             try {
                 HelperNode node = new HelperNode(targetDir);

@@ -6,6 +6,7 @@ package org.cakephp.netbeans.ui.actions;
 import java.io.IOException;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.BaseAction;
 import org.openide.DialogDisplayer;
@@ -37,7 +38,7 @@ public final class CreateAutoCompletionFileAction extends BaseAction {
     @Override
     public void actionPerformed(PhpModule phpModule) {
         if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)
-            || CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("1")) { // NOI18N
+            || CakeVersion.getInstance(phpModule).isCakePhp(1)) {
             // called via shortcut
             return;
         }

@@ -16,6 +16,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.eclipse.jgit.api.Git;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleExtender;
@@ -148,12 +149,8 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
 
         // set opened file
         Set<FileObject> files = new HashSet<FileObject>();
-        FileObject config;
-        if (phpModule.getSourceDirectory().getFileObject("lib/Cake") != null) { // NOI18N
-            config = phpModule.getSourceDirectory().getFileObject("app/Config/core.php"); // NOI18N
-        } else {
-            config = phpModule.getSourceDirectory().getFileObject("app/config/core.php"); // NOI18N
-        }
+        FileObject configDirectory = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null);
+        FileObject config = configDirectory.getFileObject("core.php");
         if (config != null) {
             files.add(config);
         }
@@ -207,18 +204,14 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         NewProjectConfigurationPanel p = getPanel();
         if(p.getDatabaseCheckBox().isSelected()){
 
-            if (phpModule.getSourceDirectory().getFileObject("lib/Cake") != null) { // NOI18N
-                configDirectory = phpModule.getSourceDirectory().getFileObject("app/Config"); // NOI18N
-            } else {
-                configDirectory = phpModule.getSourceDirectory().getFileObject("app/config"); // NOI18N
-            }
+            configDirectory = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null);
             try {
                     PrintWriter pw = new PrintWriter(configDirectory.createAndOpen("database.php")); // NOI18N
                     pw.println("<?php"); // NOI18N
                     pw.println("class DATABASE_CONFIG {\n"); // NOI18N
 
                     pw.println("\tpublic $default = array("); // NOI18N
-                    if(CakePhpUtils.getCakePhpVersion(phpModule, CakePhpUtils.CAKE_VERSION_MAJOR).equals("2")){ // NOI18N
+                    if(CakeVersion.getInstance(phpModule).isCakePhp(2)){
                         pw.println("\t\t'datasource' => 'Database/" + p.getDatasourceTextField().getText() + "',"); // NOI18N
                     }else{
                         pw.println("\t\t'driver' => '" + p.getDatasourceTextField().getText().toLowerCase() + "',"); // NOI18N

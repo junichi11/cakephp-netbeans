@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
@@ -63,19 +64,20 @@ public class CakePhpEditorExtender extends EditorExtender {
         elements = new LinkedList<PhpBaseElement>();
 
         for (PhpClass phpClass : parseFields(fo)) {
-            // CakePHP 1.x
             PhpModule pm = PhpModule.forFileObject(fo);
-            if (CakePhpUtils.getCakePhpVersion(pm, CakePhpUtils.CAKE_VERSION_MAJOR).equals("1")) { // NOI18N
-                if (isView || isHelper) {
-                    for (FileObject helper : CakePhpUtils.getCoreHelpers()) {
-                        String name = CakePhpUtils.getCamelCaseName(helper.getName());
-                        String className = name + "Helper"; // NOI18N
+            if (isView || isHelper) {
+                if (!(isView && CakeVersion.getInstance(pm).isCakePhp(2))) {
+                    for (FileObject helper : CakePhpUtils.getFiles(pm, CakePhpUtils.DIR.CORE, CakePhpUtils.FILE.HELPER)) {
+                        String className = CakePhpUtils.getClassName(helper);
+                        String name = className.replace(CakePhpUtils.FILE.HELPER.toString(), "");
                         phpClass.addField(name, new PhpClass(name, className), fo, 0);
                     }
-                } else {
-                    for (FileObject component : CakePhpUtils.getCoreComponents()) {
-                        String name = CakePhpUtils.getCamelCaseName(component.getName());
-                        String className = name + "Component"; // NOI18N
+                }
+            } else {
+                if (!(isController && CakeVersion.getInstance(pm).isCakePhp(2))) {
+                    for (FileObject component : CakePhpUtils.getFiles(pm, CakePhpUtils.DIR.CORE, CakePhpUtils.FILE.COMPONENT)) {
+                        String className = CakePhpUtils.getClassName(component);
+                        String name = className.replace(CakePhpUtils.FILE.COMPONENT.toString(), "");
                         phpClass.addField(name, new PhpClass(name, className), fo, 0);
                     }
                 }
@@ -160,11 +162,10 @@ public class CakePhpEditorExtender extends EditorExtender {
         private String className = null;
         private String methodName = null;
         private String viewName = null;
-        private boolean models = false;
-        private boolean components = false;
-        private boolean helpers = false;
+        private PhpModule pm = null;
 
         public CakePhpControllerVisitor(FileObject fo, PHPParseResult actionParseResult) {
+            pm = PhpModule.forFileObject(fo);
             if (CakePhpUtils.isView(fo)) {
                 viewName = CakePhpUtils.getActionName(fo);
             }
@@ -246,99 +247,95 @@ public class CakePhpEditorExtender extends EditorExtender {
             List<SingleFieldDeclaration> controllerFields = node.getFields();
             for (SingleFieldDeclaration field : controllerFields) {
                 String name = CodeUtils.extractVariableName(field.getName());
-                if (viewName == null) {
-                    if (name.equals("$uses")) { // NOI18N
-                        models = true;
-                    }
-                    if (name.equals("$components")) { // NOI18N
-                        components = true;
-                    }
-                } else {
-                    if (name.equals("$helpers")) { // NOI18N
-                        helpers = true;
-                    }
+                // get ArrayCreation
+                ArrayCreation arrayCreation = null;
+                Expression value = field.getValue();
+                if (value instanceof ArrayCreation) {
+                    arrayCreation = (ArrayCreation) value;
                 }
-            }
-            super.visit(node);
-        }
-
-        @Override
-        public void visit(ArrayCreation node) {
-            super.visit(node);
-            if (models == false && components == false && helpers == false) {
-                return;
-            }
-
-            for (ArrayElement element : node.getElements()) {
-                Expression e = null;
-                if (element.getKey() != null) {
-                    e = element.getKey();
-                } else {
-                    e = element.getValue();
-                }
-                if (e == null) {
+                if (arrayCreation == null) {
                     continue;
                 }
 
-                String name = getStringName(e);
-
-                // model
                 FileObject object = null;
-                if (viewName == null && models == true) {
-                    object = CakePhpUtils.getModel(name);
+                for (ArrayElement element : arrayCreation.getElements()) {
+                    Expression e = null;
+                    if (element.getKey() != null) {
+                        e = element.getKey();
+                    } else {
+                        e = element.getValue();
+                    }
+                    if (e == null) {
+                        continue;
+                    }
 
-                    if (object != null) {
-                        synchronized (controllerClasses) {
-                            controllerClasses.addField(name, new PhpClass(name, name), object, 0);
+                    String elementName = getStringName(e);
+
+                    // model
+                    if (viewName == null && name.equals("$uses")) { // NOI18N
+                        object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.MODEL, elementName);
+
+                        if (object != null) {
+                            synchronized (controllerClasses) {
+                                controllerClasses.addField(elementName, new PhpClass(elementName, elementName), object, 0);
+                            }
                         }
                     }
-                }
 
-                // check app or plugin component
-                if (viewName == null && components == true) {
-                    String[] split = name.split("[.]"); // NOI18N
-                    int len = split.length;
-                    switch (len) {
-                        case 1:
-                            object = CakePhpUtils.getAppComponent(name);
-                            break;
-                        case 2:
-                            name = split[1];
-                            object = CakePhpUtils.getPluginComponent(split);
-                            break;
-                        default:
-                            break;
-                    }
-                    String componentClassName = name + "Component"; // NOI18N
-                    if (object != null) {
-                        synchronized (controllerClasses) {
-                            controllerClasses.addField(name, new PhpClass(name, componentClassName), object, 0);
+                    // check app or plugin component
+                    if (viewName == null && name.equals("$components")) { // NOI18N
+                        String[] split = elementName.split("[.]"); // NOI18N
+                        int len = split.length;
+                        switch (len) {
+                            case 1:
+                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.COMPONENT, elementName);
+                                break;
+                            case 2:
+                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                                if (object == null) {
+                                    object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                                }
+                                elementName = split[1];
+                                break;
+                            default:
+                                break;
+                        }
+                        String componentClassName = elementName + "Component"; // NOI18N
+                        if (object != null) {
+                            synchronized (controllerClasses) {
+                                controllerClasses.addField(elementName, new PhpClass(elementName, componentClassName), object, 0);
+                            }
                         }
                     }
-                }
 
-                if (viewName != null && helpers == true) {
-                    String[] split = name.split("[.]"); // NOI18N
-                    int len = split.length;
-                    switch (len) {
-                        case 1:
-                            object = CakePhpUtils.getAppHelper(name);
-                            break;
-                        case 2:
-                            name = split[1];
-                            object = CakePhpUtils.getPluginHelper(split);
-                            break;
-                        default:
-                            break;
-                    }
-                    String helperClassName = name + "Helper"; // NOI18N
-                    if (object != null) {
-                        synchronized (viewClasses) {
-                            viewClasses.addField(name, new PhpClass(name, helperClassName), object, 0);
+                    // check app or plugin component
+                    if (viewName != null && name.equals("$helpers")) { // NOI18N
+                        String[] split = elementName.split("[.]"); // NOI18N
+                        int len = split.length;
+                        switch (len) {
+                            case 1:
+                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.HELPER, elementName);
+                                break;
+                            case 2:
+                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                                if (object == null) {
+                                    object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                                }
+                                elementName = split[1];
+                                break;
+                            default:
+                                break;
+                        }
+                        String helperClassName = elementName + "Helper"; // NOI18N
+                        if (object != null) {
+                            synchronized (viewClasses) {
+                                viewClasses.addField(elementName, new PhpClass(elementName, helperClassName), object, 0);
+                            }
                         }
                     }
                 }
             }
+            super.visit(node);
         }
 
         private String prepareViewVar(String viewVarName) {
@@ -374,14 +371,15 @@ public class CakePhpEditorExtender extends EditorExtender {
     private static final class CakePhpComponentVisitor extends DefaultVisitor {
 
         private final PhpClass componentClass;
-        private boolean components = false;
+        private PhpModule pm;
 
         public CakePhpComponentVisitor(FileObject fo) {
-            String version = CakePhpUtils.getCakePhpVersion(PhpModule.inferPhpModule(), CakePhpUtils.CAKE_VERSION_MAJOR);
-            String name = CakePhpUtils.getClassName(fo);
-            if (version.equals("1")) {
+            pm = PhpModule.forFileObject(fo);
+            CakeVersion version = CakeVersion.getInstance(pm);
+
+            if (version.isCakePhp(1)) {
                 componentClass = new PhpClass("Object", "Object"); // NOI18N
-            } else if (version.equals("2")) {
+            } else if (version.isCakePhp(2)) {
                 componentClass = new PhpClass("Component", "Component"); // NOI18N
             } else {
                 componentClass = null;
@@ -403,67 +401,65 @@ public class CakePhpEditorExtender extends EditorExtender {
 
         @Override
         public void visit(FieldsDeclaration node) {
-            List<SingleFieldDeclaration> controllerFields = node.getFields();
-            for (SingleFieldDeclaration field : controllerFields) {
+            super.visit(node);
+            List<SingleFieldDeclaration> componentFields = node.getFields();
+            for (SingleFieldDeclaration field : componentFields) {
                 String name = CodeUtils.extractVariableName(field.getName());
-                if (componentClass == null) {
+                if (componentClass == null || !name.equals("$components")) { // NOI18N
                     return;
                 }
-                if (name.equals("$components")) { // NOI18N
-                    components = true;
+                // get ArrayCreation
+                ArrayCreation arrayCreation = null;
+                Expression value = field.getValue();
+                if (value instanceof ArrayCreation) {
+                    arrayCreation = (ArrayCreation) value;
                 }
-            }
-            super.visit(node);
-        }
-
-        @Override
-        public void visit(ArrayCreation node) {
-            super.visit(node);
-            if (components == false) {
-                return;
-            }
-
-            for (ArrayElement element : node.getElements()) {
-                Expression e = null;
-                if (element.getKey() != null) {
-                    e = element.getKey();
-                } else {
-                    e = element.getValue();
-                }
-                if (e == null) {
+                if (arrayCreation == null) {
                     continue;
                 }
-
-                String name = ""; // NOI18N
-                if (e instanceof Scalar) {
-                    Scalar s = (Scalar) e;
-                    if (s.getScalarType() == Scalar.Type.STRING) {
-                        name = s.getStringValue();
-                        name = name.replaceAll("\"", ""); // NOI18N
-                        name = name.replaceAll("'", ""); // NOI18N
+                for (ArrayElement element : arrayCreation.getElements()) {
+                    Expression e = null;
+                    if (element.getKey() != null) {
+                        e = element.getKey();
+                    } else {
+                        e = element.getValue();
                     }
-                }
+                    if (e == null) {
+                        continue;
+                    }
 
-                FileObject object = null;
-                // check app or plugin component
-                if (components == true) {
-                    String[] split = name.split("[.]"); // NOI18N
+                    String elementName = ""; // NOI18N
+                    if (e instanceof Scalar) {
+                        Scalar s = (Scalar) e;
+                        if (s.getScalarType() == Scalar.Type.STRING) {
+                            elementName = s.getStringValue();
+                            elementName = elementName.replaceAll("\"", ""); // NOI18N
+                            elementName = elementName.replaceAll("'", ""); // NOI18N
+                        }
+                    }
+
+                    FileObject object = null;
+                    // check app or plugin component
+                    String[] split = elementName.split("[.]"); // NOI18N
                     int len = split.length;
                     switch (len) {
                         case 1:
-                            object = CakePhpUtils.getAppComponent(name);
+                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.COMPONENT, elementName);
                             break;
                         case 2:
-                            name = split[1];
-                            object = CakePhpUtils.getPluginComponent(split);
+                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                            if (object == null) {
+                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                            }
+                            elementName = split[1];
                             break;
                         default:
                             break;
                     }
-                    String componentClassName = name + "Component"; // NOI18N
+                    String componentClassName = elementName + "Component"; // NOI18N
                     if (object != null) {
                         synchronized (componentClass) {
-                            componentClass.addField(name, new PhpClass(name, componentClassName), object, 0);
+                            componentClass.addField(elementName, new PhpClass(elementName, componentClassName), object, 0);
                         }
                     }
                 }
@@ -474,9 +470,10 @@ public class CakePhpEditorExtender extends EditorExtender {
     private static final class CakePhpHelperVisitor extends DefaultVisitor {
 
         private final PhpClass helperClass = new PhpClass("AppHelper", "AppHelper");
-        private boolean helpers = false;
+        private PhpModule pm;
 
         public CakePhpHelperVisitor(FileObject fo) {
+            pm = PhpModule.forFileObject(fo);
         }
 
         /**
@@ -494,67 +491,65 @@ public class CakePhpEditorExtender extends EditorExtender {
 
         @Override
         public void visit(FieldsDeclaration node) {
-            List<SingleFieldDeclaration> controllerFields = node.getFields();
-            for (SingleFieldDeclaration field : controllerFields) {
+            super.visit(node);
+            List<SingleFieldDeclaration> helperFields = node.getFields();
+            for (SingleFieldDeclaration field : helperFields) {
                 String name = CodeUtils.extractVariableName(field.getName());
-                if (helperClass == null) {
+                if (helperClass == null || !name.equals("$helpers")) { // NOI18N
                     return;
                 }
-                if (name.equals("$helpers")) { // NOI18N
-                    helpers = true;
+                // get ArrayCreation
+                ArrayCreation arrayCreation = null;
+                Expression value = field.getValue();
+                if (value instanceof ArrayCreation) {
+                    arrayCreation = (ArrayCreation) value;
                 }
-            }
-            super.visit(node);
-        }
-
-        @Override
-        public void visit(ArrayCreation node) {
-            super.visit(node);
-            if (helpers == false) {
-                return;
-            }
-
-            for (ArrayElement element : node.getElements()) {
-                Expression e = null;
-                if (element.getKey() != null) {
-                    e = element.getKey();
-                } else {
-                    e = element.getValue();
-                }
-                if (e == null) {
+                if (arrayCreation == null) {
                     continue;
                 }
-
-                String name = ""; // NOI18N
-                if (e instanceof Scalar) {
-                    Scalar s = (Scalar) e;
-                    if (s.getScalarType() == Scalar.Type.STRING) {
-                        name = s.getStringValue();
-                        name = name.replaceAll("\"", ""); // NOI18N
-                        name = name.replaceAll("'", ""); // NOI18N
+                for (ArrayElement element : arrayCreation.getElements()) {
+                    Expression e = null;
+                    if (element.getKey() != null) {
+                        e = element.getKey();
+                    } else {
+                        e = element.getValue();
                     }
-                }
+                    if (e == null) {
+                        continue;
+                    }
 
-                FileObject object = null;
-                // check app or plugin helper
-                if (helpers == true) {
-                    String[] split = name.split("[.]"); // NOI18N
+                    String elementName = ""; // NOI18N
+                    if (e instanceof Scalar) {
+                        Scalar s = (Scalar) e;
+                        if (s.getScalarType() == Scalar.Type.STRING) {
+                            elementName = s.getStringValue();
+                            elementName = elementName.replaceAll("\"", ""); // NOI18N
+                            elementName = elementName.replaceAll("'", ""); // NOI18N
+                        }
+                    }
+
+                    FileObject object = null;
+                    // check app or plugin helper
+                    String[] split = elementName.split("[.]"); // NOI18N
                     int len = split.length;
                     switch (len) {
                         case 1:
-                            object = CakePhpUtils.getAppComponent(name);
+                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.HELPER, elementName);
                             break;
                         case 2:
-                            name = split[1];
-                            object = CakePhpUtils.getPluginComponent(split);
+                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                            if (object == null) {
+                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                            }
+                            elementName = split[1];
                             break;
                         default:
                             break;
                     }
-                    String helperClassName = name + "Helper"; // NOI18N
+                    String helperClassName = elementName + "Helper"; // NOI18N
                     if (object != null) {
                         synchronized (helperClass) {
-                            helperClass.addField(name, new PhpClass(name, helperClassName), object, 0);
+                            helperClass.addField(elementName, new PhpClass(elementName, helperClassName), object, 0);
                         }
                     }
                 }
