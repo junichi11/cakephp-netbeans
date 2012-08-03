@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.spi.ParserResult;
@@ -259,9 +260,21 @@ public class CakePhpEditorExtender extends EditorExtender {
 
                 FileObject object = null;
                 for (ArrayElement element : arrayCreation.getElements()) {
-                    Expression e = null;
-                    if (element.getKey() != null) {
-                        e = element.getKey();
+                    String aliasName = null;
+                    Expression entity = null;
+                    Expression e = element.getKey();
+                    if (e != null) {
+                        Expression elementValue = element.getValue();
+                        if(elementValue != null && elementValue instanceof ArrayCreation){
+                            ArrayCreation ac = (ArrayCreation) elementValue;
+                            entity = CakePhpCodeUtils.getEntity(ac);
+                        }
+
+                        // check entity
+                        if(entity != null){
+                            aliasName = CakePhpCodeUtils.getStringValue(e);
+                            e = entity;
+                        }
                     } else {
                         e = element.getValue();
                     }
@@ -269,7 +282,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                         continue;
                     }
 
-                    String elementName = getStringName(e);
+                    String elementName = CakePhpCodeUtils.getStringValue(e);
 
                     // model
                     if (viewName == null && name.equals("$uses")) { // NOI18N
@@ -303,7 +316,11 @@ public class CakePhpEditorExtender extends EditorExtender {
                         String componentClassName = elementName + "Component"; // NOI18N
                         if (object != null) {
                             synchronized (controllerClasses) {
-                                controllerClasses.addField(elementName, new PhpClass(elementName, componentClassName), object, 0);
+                                if(aliasName == null){
+                                    controllerClasses.addField(elementName, new PhpClass(elementName, componentClassName), object, 0);
+                                }else{
+                                    controllerClasses.addField(aliasName, new PhpClass(elementName, componentClassName), object, 0);
+                                }
                             }
                         }
                     }
@@ -329,7 +346,11 @@ public class CakePhpEditorExtender extends EditorExtender {
                         String helperClassName = elementName + "Helper"; // NOI18N
                         if (object != null) {
                             synchronized (viewClasses) {
-                                viewClasses.addField(elementName, new PhpClass(elementName, helperClassName), object, 0);
+                                if(aliasName == null){
+                                    viewClasses.addField(elementName, new PhpClass(elementName, helperClassName), object, 0);
+                                } else {
+                                    viewClasses.addField(aliasName, new PhpClass(elementName, helperClassName), object, 0);
+                                }
                             }
                         }
                     }
@@ -346,25 +367,6 @@ public class CakePhpEditorExtender extends EditorExtender {
                 }
             }
             return viewVarName;
-        }
-
-        /**
-         * Get string name from Expression
-         *
-         * @param e Expression
-         * @return strin name
-         */
-        private String getStringName(Expression e) {
-            String name = ""; // NOI18N
-            if (e instanceof Scalar) {
-                Scalar s = (Scalar) e;
-                if (s.getScalarType() == Scalar.Type.STRING) {
-                    name = s.getStringValue();
-                    name = name.replaceAll("\"", ""); // NOI18N
-                    name = name.replaceAll("'", ""); // NOI18N
-                }
-            }
-            return name;
         }
     }
 
@@ -418,9 +420,20 @@ public class CakePhpEditorExtender extends EditorExtender {
                     continue;
                 }
                 for (ArrayElement element : arrayCreation.getElements()) {
-                    Expression e = null;
-                    if (element.getKey() != null) {
-                        e = element.getKey();
+                    Expression entity = null;
+                    String aliasName = null;
+                    Expression e = element.getKey();
+                    if (e != null) {
+                        // get value
+                        Expression elementValue = element.getValue();
+                        if(elementValue != null && elementValue instanceof ArrayCreation){
+                            ArrayCreation ac = (ArrayCreation) elementValue;
+                            entity = CakePhpCodeUtils.getEntity(ac);
+                        }
+                        if(entity != null){
+                            aliasName = CakePhpCodeUtils.getStringValue(e);
+                            e = entity;
+                        }
                     } else {
                         e = element.getValue();
                     }
@@ -428,15 +441,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                         continue;
                     }
 
-                    String elementName = ""; // NOI18N
-                    if (e instanceof Scalar) {
-                        Scalar s = (Scalar) e;
-                        if (s.getScalarType() == Scalar.Type.STRING) {
-                            elementName = s.getStringValue();
-                            elementName = elementName.replaceAll("\"", ""); // NOI18N
-                            elementName = elementName.replaceAll("'", ""); // NOI18N
-                        }
-                    }
+                    String elementName = CakePhpCodeUtils.getStringValue(e);
 
                     FileObject object = null;
                     // check app or plugin component
@@ -459,7 +464,11 @@ public class CakePhpEditorExtender extends EditorExtender {
                     String componentClassName = elementName + "Component"; // NOI18N
                     if (object != null) {
                         synchronized (componentClass) {
-                            componentClass.addField(elementName, new PhpClass(elementName, componentClassName), object, 0);
+                            if(aliasName == null){
+                                componentClass.addField(elementName, new PhpClass(elementName, componentClassName), object, 0);
+                            } else {
+                                componentClass.addField(aliasName, new PhpClass(elementName, componentClassName), object, 0);
+                            }
                         }
                     }
                 }
@@ -508,9 +517,20 @@ public class CakePhpEditorExtender extends EditorExtender {
                     continue;
                 }
                 for (ArrayElement element : arrayCreation.getElements()) {
-                    Expression e = null;
-                    if (element.getKey() != null) {
-                        e = element.getKey();
+                    String aliasName = null;
+                    Expression entity = null;
+                    Expression e = element.getKey();
+                    if (e != null) {
+                        // get value
+                        Expression elementValue = element.getValue();
+                        if(elementValue != null && elementValue instanceof ArrayCreation){
+                            ArrayCreation ac = (ArrayCreation) elementValue;
+                            entity = CakePhpCodeUtils.getEntity(ac);
+                        }
+                        if(entity != null){
+                            aliasName = CakePhpCodeUtils.getStringValue(e);
+                            e = entity;
+                        }
                     } else {
                         e = element.getValue();
                     }
@@ -518,15 +538,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                         continue;
                     }
 
-                    String elementName = ""; // NOI18N
-                    if (e instanceof Scalar) {
-                        Scalar s = (Scalar) e;
-                        if (s.getScalarType() == Scalar.Type.STRING) {
-                            elementName = s.getStringValue();
-                            elementName = elementName.replaceAll("\"", ""); // NOI18N
-                            elementName = elementName.replaceAll("'", ""); // NOI18N
-                        }
-                    }
+                    String elementName = CakePhpCodeUtils.getStringValue(e);
 
                     FileObject object = null;
                     // check app or plugin helper
@@ -549,7 +561,11 @@ public class CakePhpEditorExtender extends EditorExtender {
                     String helperClassName = elementName + "Helper"; // NOI18N
                     if (object != null) {
                         synchronized (helperClass) {
-                            helperClass.addField(elementName, new PhpClass(elementName, helperClassName), object, 0);
+                            if(aliasName == null){
+                                helperClass.addField(elementName, new PhpClass(elementName, helperClassName), object, 0);
+                            } else {
+                                helperClass.addField(aliasName, new PhpClass(elementName, helperClassName), object, 0);
+                            }
                         }
                     }
                 }
