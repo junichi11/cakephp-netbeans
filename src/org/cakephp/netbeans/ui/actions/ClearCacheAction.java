@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.spi.actions.BaseAction;
+import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;

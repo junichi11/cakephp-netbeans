@@ -2,7 +2,7 @@ package org.cakephp.netbeans.ui.actions;
 
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.spi.actions.RunCommandAction;
+import org.netbeans.modules.php.spi.framework.actions.RunCommandAction;
 import org.openide.util.NbBundle;
 
 /**
@@ -26,7 +26,7 @@ public final class CakePhpRunCommandAction extends RunCommandAction {
         if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
             return;
         }
-        CakePhpFrameworkProvider.getInstance().getFrameworkCommandSupport(phpModule).runCommand();
+        CakePhpFrameworkProvider.getInstance().getFrameworkCommandSupport(phpModule).openPanel();
     }
 
     @Override

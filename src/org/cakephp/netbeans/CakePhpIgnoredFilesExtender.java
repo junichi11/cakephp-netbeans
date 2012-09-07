@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Set;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.spi.phpmodule.PhpModuleIgnoredFilesExtender;
+import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
 import org.openide.filesystems.FileUtil;
 
 public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {

@@ -9,10 +9,10 @@ import javax.swing.Action;
 import org.cakephp.netbeans.ui.actions.*;
 import org.cakephp.netbeans.ui.wizards.InstallPluginsWizardAction;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.netbeans.modules.php.spi.actions.GoToActionAction;
-import org.netbeans.modules.php.spi.actions.GoToViewAction;
-import org.netbeans.modules.php.spi.actions.RunCommandAction;
-import org.netbeans.modules.php.spi.phpmodule.PhpModuleActionsExtender;
+import org.netbeans.modules.php.spi.framework.PhpModuleActionsExtender;
+import org.netbeans.modules.php.spi.framework.actions.GoToActionAction;
+import org.netbeans.modules.php.spi.framework.actions.GoToViewAction;
+import org.netbeans.modules.php.spi.framework.actions.RunCommandAction;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 

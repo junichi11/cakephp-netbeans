@@ -8,7 +8,7 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpClass;
-import org.netbeans.modules.php.spi.actions.GoToActionAction;
+import org.netbeans.modules.php.spi.framework.actions.GoToActionAction;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 
