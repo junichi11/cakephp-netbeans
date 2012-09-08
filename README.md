@@ -3,8 +3,14 @@
 This plugin provides support for CakePHP.
 
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
-2010/07/16
-2012/07/28 update
+
+- 2010/07/16
+- 2012/07/28 update
+- 2012/09/08 Support for NetBeans7.3
+
+## ENVIRONMENT
+
+- [Development build of NetBeans](http://bits.netbeans.org/download/trunk/nightly/latest/) (At least build netbeans-trunk-nightly-201209080001)
 
 ## WHAT WORKS:
 
@@ -26,7 +32,14 @@ This plugin provides support for CakePHP.
 
 ## HOW TO DEVELOP:
 
-- [1] http://bertram.netbeans.org/hudson/job/PHP-build/
-- [2] http://wiki.netbeans.org/PhpFrameworkDevelopment
-- [3] http://wiki.netbeans.org/WorkingWithNetBeansSources
-- [4] http://bits.netbeans.org/download/trunk/nightly/latest/zip/
+- read this page [1] for the general overview but notice that current sources need to be used, then
+- checkout NB sources via Mercurial [2] (preferred, easy updates) or download archive with latest NB sources from NB download site [3]
+- Tools > NetBeans Platforms - add new platform "NetBeans IDE Dev" that points to the cloned/downloaded sources
+- if not done yet, open this module in NetBeans
+- Run
+
+### References
+
+1. [Php Framework Development](http://wiki.netbeans.org/PhpFrameworkDevelopment)
+2. [Working With NetBeans Sources](http://wiki.netbeans.org/WorkingWithNetBeansSources)
+3. [Nightly latest zip](http://bits.netbeans.org/download/trunk/nightly/latest/zip/)
