@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.input.InputProcessor;
 import org.netbeans.api.extexecution.input.InputProcessors;
@@ -157,7 +158,9 @@ public final class CakeScript {
             return freshCommands;
         }
         // XXX some error => rerun command with console
-        runCommand(phpModule, Collections.singletonList(LIST_COMMAND), null);
+        if (CakeVersion.getInstance(phpModule).isCakePhp(2)) {
+            runCommand(phpModule, Collections.singletonList(LIST_COMMAND), null);
+        }
         return null;
     }
 
@@ -167,7 +170,7 @@ public final class CakeScript {
 
     private PhpExecutable createPhpExecutable(PhpModule phpModule) {
         return new PhpExecutable(cakePath)
-                .workDir(FileUtil.toFile(phpModule.getSourceDirectory()));
+                .workDir(FileUtil.toFile(CakePhpFrameworkProvider.getCakePhpDirectory(phpModule)));
     }
 
     private List<String> getAllParams(List<String> params) {
