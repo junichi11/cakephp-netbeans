@@ -23,7 +23,7 @@ TODO: add license
             </file>
         </folder>
     </folder>
-    <folder name="Loaders">
+<!--    <folder name="Loaders">
         <folder name="text">
             <folder name="x-php5">
                 <folder name="Actions">
@@ -94,7 +94,7 @@ TODO: add license
                 </folder>
             </folder>
         </folder>
-    </folder>
+    </folder>-->
     <folder name="Services">
         <folder name="MIMEResolver">
             <file name="CtpResolver.xml" url="CtpResolver.xml">
