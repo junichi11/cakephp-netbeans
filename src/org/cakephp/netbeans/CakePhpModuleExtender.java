@@ -1,3 +1,44 @@
+/*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ *
+ * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+ * Other names may be trademarks of their respective owners.
+ *
+ * The contents of this file are subject to the terms of either the GNU
+ * General Public License Version 2 only ("GPL") or the Common
+ * Development and Distribution License("CDDL") (collectively, the
+ * "License"). You may not use this file except in compliance with the
+ * License. You can obtain a copy of the License at
+ * http://www.netbeans.org/cddl-gplv2.html
+ * or nbbuild/licenses/CDDL-GPL-2-CP. See the License for the
+ * specific language governing permissions and limitations under the
+ * License.  When distributing the software, include this License Header
+ * Notice in each file and include the License file at
+ * nbbuild/licenses/CDDL-GPL-2-CP.  Oracle designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Oracle in the GPL Version 2 section of the License file that
+ * accompanied this code. If applicable, add the following below the
+ * License Header, with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * If you wish your version of this file to be governed by only the CDDL
+ * or only the GPL Version 2, indicate your decision by adding
+ * "[Contributor] elects to include this software in this distribution
+ * under the [CDDL or GPL Version 2] license." If you do not indicate a
+ * single choice of license, a recipient has the option to distribute
+ * your version of this file under either the CDDL, the GPL Version 2 or
+ * to extend the choice of license to its licensees as provided above.
+ * However, if you add GPL Version 2 code and therefore, elected the GPL
+ * Version 2 license, then the option applies only if the new code is
+ * made subject to such option by the copyright holder.
+ *
+ * Contributor(s):
+ *
+ * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ */
 package org.cakephp.netbeans;
 
 import java.awt.Component;
@@ -171,7 +212,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-        
+
         // create database.php
         createDatabaseFile(phpModule);
 
@@ -196,7 +237,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
 
     /**
      * Create database.php file
-     * @param phpModule 
+     * @param phpModule
      */
     private void createDatabaseFile(PhpModule phpModule) {
         // create database.php file
@@ -240,13 +281,13 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     /**
      * Change Security.salt and Security.cipherSeed
      * @param config core.php file
-     * @throws IOException 
+     * @throws IOException
      */
     private void changeSecurityString(FileObject config) throws IOException {
         List<String> lines = config.asLines();
         String salt = RandomStringUtils.randomAlphanumeric(40);
         String cipherSeed = RandomStringUtils.randomNumeric(29);
-        
+
         PrintWriter pw = new PrintWriter(config.getOutputStream());
         for(String line : lines){
             if(line.contains(CONFIGURE_WRITE_SECURITY_SALT_PATTERN)){
@@ -270,7 +311,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             String repoPath = localPath.getPath();
             // env parameter
             String[] envp = {"GIT_DIR=" + repoPath + GIT_REPO, "GIT_WORK_TREE=" + repoPath}; // NOI18N
-            // git commands 
+            // git commands
             String[] initCommand = {GIT, INIT_COMMAND, repoPath};
             String[] remoteAddCommand = {GIT, REMOTE_COMMAND, ADD_COMMAND, ORIGIN, GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT};
             String[] configMergeCommand = {GIT, CONFIG_COMMAND, BRANCH_MASTER_MERGE, REFS_HEADS};

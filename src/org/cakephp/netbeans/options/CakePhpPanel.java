@@ -1,3 +1,44 @@
+/*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ *
+ * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+ * Other names may be trademarks of their respective owners.
+ *
+ * The contents of this file are subject to the terms of either the GNU
+ * General Public License Version 2 only ("GPL") or the Common
+ * Development and Distribution License("CDDL") (collectively, the
+ * "License"). You may not use this file except in compliance with the
+ * License. You can obtain a copy of the License at
+ * http://www.netbeans.org/cddl-gplv2.html
+ * or nbbuild/licenses/CDDL-GPL-2-CP. See the License for the
+ * specific language governing permissions and limitations under the
+ * License.  When distributing the software, include this License Header
+ * Notice in each file and include the License file at
+ * nbbuild/licenses/CDDL-GPL-2-CP.  Oracle designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Oracle in the GPL Version 2 section of the License file that
+ * accompanied this code. If applicable, add the following below the
+ * License Header, with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * If you wish your version of this file to be governed by only the CDDL
+ * or only the GPL Version 2, indicate your decision by adding
+ * "[Contributor] elects to include this software in this distribution
+ * under the [CDDL or GPL Version 2] license." If you do not indicate a
+ * single choice of license, a recipient has the option to distribute
+ * your version of this file under either the CDDL, the GPL Version 2 or
+ * to extend the choice of license to its licensees as provided above.
+ * However, if you add GPL Version 2 code and therefore, elected the GPL
+ * Version 2 license, then the option applies only if the new code is
+ * made subject to such option by the copyright holder.
+ *
+ * Contributor(s):
+ *
+ * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ */
 package org.cakephp.netbeans.options;
 
 import java.awt.Dimension;
@@ -35,7 +76,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 column = columnModel.getColumn(CakePhpPluginTableModel.URL);
                 column.setMinWidth(450);
                 column.setPreferredWidth(450);
-                
+
         }
         /**
          * This method is called from within the constructor to initialize the
@@ -132,15 +173,15 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 initDialog();
                 dialog.setTitle("Add");
                 dialog.setVisible(true);
-                
+
                 // validate
                 if(!isRegisterOK()){
                         return;
                 }
-                
+
                 // Resiter plugins
                 model.addPlugin(new CakePhpPlugin(dialog.getPluginName().trim(), dialog.getUrl().trim()));
-                
+
                 controller.changed();
         }//GEN-LAST:event_addButtonActionPerformed
 
@@ -162,7 +203,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 if(!isRegisterOK()){
                         return;
                 }
-                
+
                 // Resiter plugins
                 CakePhpPlugin plugin = new CakePhpPlugin(dialog.getPluginName().trim(), dialog.getUrl().trim());
                 model.editPlugin(index, plugin);
@@ -185,7 +226,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 int y = f.getY() + (f.getHeight() - dialog.getHeight()) / 2;
                 dialog.setLocation(x, y);
         }
-        
+
         private boolean isRegisterOK(){
                 if(dialog != null){
                         if(dialog.getPluginName().isEmpty() || dialog.getUrl().isEmpty()){
@@ -194,7 +235,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 }
                 return true;
         }
-        
+
         void load() {
                 model.setPlugins(CakePhpOptions.getInstance().getPlugins());
         }
@@ -204,18 +245,18 @@ final class CakePhpPanel extends javax.swing.JPanel {
                         CakePhpOptions.getInstance().setPlugins(model.getPlugins());
                 }
         }
-        
+
         boolean valid() {
                 return true;
         }
-        
+
         private class CakePhpPluginTableModel extends AbstractTableModel{
                 private static final int NAME = 0;
                 private static final int URL = 1;
                 private static final long serialVersionUID = 6148058724466511289L;
                 private List<CakePhpPlugin> plugins;
                 private String[] column;
-                
+
                 public CakePhpPluginTableModel(){
                         column = new String[]{
                                 NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.pluginTable.columnModel.title0"),
@@ -233,7 +274,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 public int getColumnCount() {
                         return column.length;
                 }
-                
+
                 @Override
                 public Object getValueAt(int rowIndex, int columnIndex) {
                         CakePhpPlugin plugin = plugins.get(rowIndex);
@@ -249,7 +290,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 public  String getColumnName(int columnIndex){
                         return column[columnIndex];
                 }
-                
+
                 public void setPlugins(List<CakePhpPlugin> plugins){
                         this.plugins = plugins;
                 }
@@ -257,13 +298,13 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 public List<CakePhpPlugin> getPlugins(){
                         return plugins;
                 }
-                
+
                 public void addPlugin(CakePhpPlugin plugin){
                         plugins.add(plugin);
                         int index = plugins.indexOf(plugin);
                         fireTableRowsInserted(index, index);
                 }
-                
+
                 public void editPlugin(int index, CakePhpPlugin plugin){
                         plugins.set(index, plugin);
                         fireTableRowsUpdated(index, index);
@@ -274,7 +315,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                         fireTableRowsDeleted(index, index);
                 }
         }
-        
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton deleteButton;
