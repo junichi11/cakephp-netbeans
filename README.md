@@ -14,16 +14,86 @@ This plugin provides support for CakePHP.
 
 ## WHAT WORKS:
 
-- badge icon
-- configuration files
-- view file path
-- ignored files
-- cake commands support
+- badge icon (displayed on project folder)
+- configuration files (add app/config files to important files)
+- display file path in Toolbar
+(If you don't want to display, uncheck Display > Toolbar > View.)
+- ignored files (hide app/tmp directory)
+- cake commands support [*1]
 - go to view, go to action
-- clear cache action
-- install plugins action (from zip file URL)
+- clear cache action [*1]
+- install plugins action (from zip file URL)[*1]
 - create new CakePHP projects from new project option
 - code completion support [New:v0.6]
+
+[*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
+
+### Create New CakePHP Project
+
+**You need to connect the network.**
+
+1. File > New Project (`Ctrl + Shift + N`)
+2. PHP > PHP Application
+3. Set the project name
+4. Run Configuration
+5. PHP Framework > check CakePHP PHP Web Framework
+
+Select `Unzip` or `git command`.
+If you select `Unzip`, also select CakePHP version.
+If you want to create a database.php file, please, check the Create database.php.
+
+Also set the following automatically.
+
+- change permission of app/tmp directory (777)
+- change Security.salt and Security.cipherSeed values
+
+create a database, you can immediately start development in a local environment.
+
+### Code Completion
+
+Support for core components and helpers (default).
+Also support for classes in $uses, $components, $helpers.(also contain the alias)
+
+	// e.g.
+	public $uses('Comment', 'Member', 'User');
+	// $this->Comm [Ctrl + Space] => $this->Comment [Ctrl + Space]
+
+	public $components('Search.Prg', 'Foo');
+	// $this->P [Ctrl + Space] => $this->Prg-> [Ctrl + Space] => display methods and fields
+
+	public $helpers('Session', 'Html' => array('className' => 'MyHtml'));
+	// $this->Html-> [Ctrl + Space] => display MyHtmlHelper class methods and fields
+
+### Go To View Action
+You can move from controller action to view file.
+
+1. Right-click at the controller action
+2. Navigate > Go to view
+
+e.g.
+
+	class MainController extends AppController{
+		// ... something
+		public function index() {
+			// Right-click or shortcut here
+		}
+	}
+
+If you use shortcut, register with Keymap.
+
+When the view file doesn't exist, create the empty view file automatically if set as follows.
+
+Check `Auto create a view file when go to view action is run`
+at Right-click on project node > property > Framework > CakePHP
+
+If you use the theme, set $theme to controller field.
+
+### Go To Action Action
+
+Similar to Go to view action.
+
+1. Right-click on the view file (in editor)
+2. Navigate > Go to action
 
 ## HOW TO RUN:
 
