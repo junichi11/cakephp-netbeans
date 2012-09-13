@@ -11,10 +11,12 @@ This plugin provides support for CakePHP.
 ## ENVIRONMENT
 
 - [NetBeans IDE 7.2](http://netbeans.org/downloads/index.html)
+- CakePHP 1.3.x
+- CakePHP 2.x
 
 ## WHAT WORKS:
 
-- badge icon (displayed on project folder)
+- badge icon ![badge icon](https://raw.github.com/junichi11/cakephp-netbeans/cakephp2/src/org/cakephp/netbeans/ui/resources/cakephp_badge_8.png) (displayed on project folder)
 - configuration files (add app/config files to important files)
 - display file path in Toolbar
 (If you don't want to display, uncheck Display > Toolbar > View.)
@@ -23,10 +25,26 @@ This plugin provides support for CakePHP.
 - go to view, go to action
 - clear cache action [*1]
 - install plugins action (from zip file URL)[*1]
+- template files (ctp, helper, component, behavior, shell, task)
 - create new CakePHP projects from new project option
 - code completion support [New:v0.6]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
+
+### Clear Cache Action
+
+Delete each files of app/tmp/cache/* directorys.
+
+### Install Plugins Action
+
+Settings: `Tool > Option > PHP > CakePHP`
+
+- Name : Set Plugin name. This name is Folder name.
+- Url : Set github zipball url
+
+**Url is only zipball url.**
+
+Run Action: see [*1]
 
 ### Create New CakePHP Project
 
