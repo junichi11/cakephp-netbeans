@@ -31,6 +31,37 @@ This plugin provides support for CakePHP.
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
+### Existing Source
+
+Your NetBeans Project needs to have the following trees.
+
+CakePHP 1.3.x
+
+    myproject
+    ├─nbproject
+    ├─app
+    ├─cake
+    ├─plugins
+    ├─vendors
+    ├─...
+
+CakePHP 2.x
+
+    myproject
+    ├─nbproject
+    ├─app
+    ├─lib
+    │  └─Cake
+    ├─plugins
+    ├─vendors
+    ├─...
+
+### App Directory Name
+
+This plugin support only for **"app"** .
+
+Perhaps, can't use a lot of features if you use another name.  
+
 ### Clear Cache Action
 
 Delete each files of app/tmp/cache/* directorys.
