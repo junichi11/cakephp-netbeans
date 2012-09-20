@@ -45,20 +45,20 @@ import java.awt.Component;
 import java.awt.Container;
 import java.io.*;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
+import org.cakephp.netbeans.util.CakePhpSecurity;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
-import org.eclipse.jgit.api.Git;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleExtender;
 import org.openide.filesystems.FileObject;
@@ -70,10 +70,8 @@ import org.openide.util.HelpCtx;
  * @author juncihi11
  */
 public class CakePhpModuleExtender extends PhpModuleExtender {
-    private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT = "\tConfigure::write('Security.cipherSeed', '%s');"; // NOI18N
-    private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN = "Configure::write('Security.cipherSeed"; // NOI18N
-    private static final String CONFIGURE_WRITE_SECURITY_SALTS_FORMAT = "\tConfigure::write('Security.salt', '%s');"; // NOI18N
-    private static final String CONFIGURE_WRITE_SECURITY_SALT_PATTERN = "Configure::write('Security.salt'"; // NOI18N
+
+    static final Logger LOGGER = Logger.getLogger(CakePhpModuleExtender.class.getName());
 
     private static final String GIT_COMMAND = "Git Command : "; // NOI18N
     private static final String GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT = "git://github.com/cakephp/cakephp.git"; // NOI18N
@@ -177,15 +175,8 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 Exceptions.printStackTrace(ex);
             }
         } else {
-            // clone to new project from github repo
-            String remotePath = GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT;
-
-            if (SystemUtils.IS_OS_WINDOWS) {
-                Git.cloneRepository().setURI(remotePath).setDirectory(FileUtil.toFile(localPath)).call();
-            } else {
-                // Linux Mac ... run git command
-                createProjectFromGitCommand(localPath);
-            }
+            // Linux Mac ... run git command
+            createProjectFromGitCommand(localPath);
         }
 
         // set opened file
@@ -208,9 +199,12 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
 
         // change security string
         try {
-            changeSecurityString(config);
+            CakePhpSecurity.changeSecurityString(config);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
+        } catch (NoSuchAlgorithmException nsaex){
+            // do nothing
+            LOGGER.log(Level.WARNING, null, nsaex);
         }
 
         // create database.php
@@ -276,30 +270,6 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 Exceptions.printStackTrace(ex);
             }
         }
-    }
-
-    /**
-     * Change Security.salt and Security.cipherSeed
-     * @param config core.php file
-     * @throws IOException
-     */
-    private void changeSecurityString(FileObject config) throws IOException {
-        List<String> lines = config.asLines();
-        String salt = RandomStringUtils.randomAlphanumeric(40);
-        String cipherSeed = RandomStringUtils.randomNumeric(29);
-
-        PrintWriter pw = new PrintWriter(config.getOutputStream());
-        for(String line : lines){
-            if(line.contains(CONFIGURE_WRITE_SECURITY_SALT_PATTERN)){
-                line = String.format(CONFIGURE_WRITE_SECURITY_SALTS_FORMAT, salt);
-            }else if(line.contains(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN)){
-                line = String.format(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT, cipherSeed);
-            }else{
-                // nothing
-            }
-            pw.println(line);
-        }
-        pw.close();
     }
 
     /**

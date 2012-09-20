@@ -55,7 +55,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
-import org.apache.commons.lang.SystemUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -380,17 +379,15 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel{
     }// </editor-fold>//GEN-END:initComponents
 
     private void gitCloneRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gitCloneRadioButtonActionPerformed
-        if(!SystemUtils.IS_OS_WINDOWS){
-            try {
-                Process process = Runtime.getRuntime().exec("git"); // NOI18N
-                process.waitFor();
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                gitCloneRadioButton.setSelected(false);
-                unzipRadioButton.setSelected(true);
-                gitCloneRadioButton.setEnabled(false);
-            }
+        try {
+            Process process = Runtime.getRuntime().exec("git"); // NOI18N
+            process.waitFor();
+        } catch (InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            gitCloneRadioButton.setSelected(false);
+            unzipRadioButton.setSelected(true);
+            gitCloneRadioButton.setEnabled(false);
         }
     }//GEN-LAST:event_gitCloneRadioButtonActionPerformed
 
