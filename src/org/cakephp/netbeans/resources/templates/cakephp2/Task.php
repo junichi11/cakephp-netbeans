@@ -11,8 +11,8 @@
 class ${name} extends Shell {
 
 	public $uses = array();
-	
+
 	public function execute(){
-		
+
 	}
 }

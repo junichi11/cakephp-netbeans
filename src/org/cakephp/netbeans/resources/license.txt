@@ -319,13 +319,13 @@ Participant Software against such Participant either
 unilaterally or pursuant to a written agreement with
 Participant.
 
-6.3. If You assert a patent infringement claim against 
-Participant alleging that the Participant Software directly 
-or indirectly infringes any patent where such claim is 
-resolved (such as by license or settlement) prior to the 
-initiation of patent infringement litigation, then the 
-reasonable value of the licenses granted by such Participant 
-under Sections 2.1 or 2.2 shall be taken into account in 
+6.3. If You assert a patent infringement claim against
+Participant alleging that the Participant Software directly
+or indirectly infringes any patent where such claim is
+resolved (such as by license or settlement) prior to the
+initiation of patent infringement litigation, then the
+reasonable value of the licenses granted by such Participant
+under Sections 2.1 or 2.2 shall be taken into account in
 determining the amount or value of any payment or license.
 
 6.4. In the event of termination under Sections 6.1 or 6.2
@@ -401,15 +401,15 @@ distribute such responsibility on an equitable basis. Nothing
 herein is intended or shall be deemed to constitute any admission
 of liability.
 
-NOTICE PURSUANT TO SECTION 9 OF THE COMMON DEVELOPMENT AND 
+NOTICE PURSUANT TO SECTION 9 OF THE COMMON DEVELOPMENT AND
 DISTRIBUTION LICENSE (CDDL)
 
-The code released under the CDDL shall be governed by the laws 
-of the State of California (excluding conflict-of-law provisions). 
-Any litigation relating to this License shall be subject to the 
-jurisdiction of the Federal Courts of the Northern District of 
-California and the state courts of the State of California, with 
-venue lying in Santa Clara County, California. 
+The code released under the CDDL shall be governed by the laws
+of the State of California (excluding conflict-of-law provisions).
+Any litigation relating to this License shall be subject to the
+jurisdiction of the Federal Courts of the Northern District of
+California and the state courts of the State of California, with
+venue lying in Santa Clara County, California.
 
 
 The GNU General Public License (GPL)

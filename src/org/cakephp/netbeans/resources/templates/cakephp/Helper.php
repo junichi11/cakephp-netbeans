@@ -12,13 +12,13 @@ class ${name}Helper extends AppHelper {
 	public $helpers = array();
 	public $settings = null;
 	public $view = null;
-	
+
 	function __construct($settings){
 		$this->settings = $settings;
-		
+
 		$this->view = ClassRegistry::getObject('view');
 	}
-	
+
 	function beforeRender() {
 
 	}
@@ -26,11 +26,11 @@ class ${name}Helper extends AppHelper {
 	function afterRender() {
 
 	}
-	
+
 	function beforeLayout() {
 
 	}
-	
+
 	function afterLayout() {
 
 	}

@@ -10,15 +10,15 @@
  */
 class ${name} extends Component {
 	public $components = array();
-	
+
 	public function initialize($controller) {
-		
+
 	}
-		
+
 	public function startup($controller){
-		
+
 	}
-	
+
 	public function beforeRender($controller) {
 
 	}
@@ -26,9 +26,9 @@ class ${name} extends Component {
 	public function shutDown($controller) {
 
 	}
-	
+
 	public function beforeRedirect($controller, $url, $status = null, $exit = true) {
 
 	}
-	
+
 }
