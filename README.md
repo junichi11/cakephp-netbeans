@@ -5,8 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/07/28 update
-- 2012/09/11 update
+- 2012/09/30 last update
 
 ## ENVIRONMENT
 
@@ -56,11 +55,14 @@ CakePHP 2.x
     ├─vendors
     ├─...
 
+NewProject (Ctrl + Shift + N) > PHP > PHP Application with Existing Source
+Please select your cakephp dir(e.g. /home/NetBeansProjects/myproject)
+
 ### App Directory Name
 
 This plugin support only for **"app"** .
 
-Perhaps, can't use a lot of features if you use another name.  
+Perhaps, can't use a lot of features if you use another name.
 
 ### Clear Cache Action
 
@@ -143,6 +145,16 @@ Similar to Go to view action.
 
 1. Right-click on the view file (in editor)
 2. Navigate > Go to action
+
+## Format+ Action (beta)
+This action run the following.
+
+1. Reformat (format settings : Tool > Option > Editor > Format)
+2. Remove indents of Document Block
+3. Change line separator to LF(Unix)
+
+Q. Why do you add this action?
+A. I add in order to follow the [CakePHP Coding Standars](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
 
 ## HOW TO RUN:
 
