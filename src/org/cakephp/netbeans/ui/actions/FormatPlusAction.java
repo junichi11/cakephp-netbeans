@@ -70,7 +70,7 @@ id = "org.cakephp.netbeans.ui.actions.FormatPlusAction")
     @ActionReference(path = "Menu/Source", position = 350),
     @ActionReference(path = "Editors/text/x-php5/Popup", position = 765)
 })
-@Messages("CTL_FormatPlusAction=Format+")
+@Messages("CTL_FormatPlusAction=Format for CakePHP")
 public final class FormatPlusAction implements ActionListener {
 
     private static final String REGEX = "^\\t(\\/\\*| \\*)"; // NOI18N
