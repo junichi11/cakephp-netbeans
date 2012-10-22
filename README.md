@@ -5,7 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/09/30 last update
+- 2012/10/23 last update
 
 ## ENVIRONMENT
 
@@ -27,6 +27,7 @@ This plugin provides support for CakePHP.
 - template files (ctp, helper, component, behavior, shell, task)
 - create new CakePHP projects from new project option
 - code completion support [New:v0.6]
+- format for CakePHP action [New:v0.6.8]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -146,7 +147,8 @@ Similar to Go to view action.
 1. Right-click on the view file (in editor)
 2. Navigate > Go to action
 
-## Format+ Action (beta)
+### Format+ Action (Format for CakePHP)
+
 This action run the following.
 
 1. Reformat (format settings : Tool > Option > Editor > Format)
@@ -154,6 +156,7 @@ This action run the following.
 3. Change line separator to LF(Unix)
 
 Q. Why do you add this action?
+
 A. I add in order to follow the [CakePHP Coding Standars](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
 
 ## HOW TO RUN:
