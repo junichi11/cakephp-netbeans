@@ -82,7 +82,9 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     private final BadgeIcon badgeIcon;
 
     private CakePhpFrameworkProvider() {
-        super(NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"), NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
+        super("cakephp", // NOI18N
+                NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"),
+                NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
         badgeIcon = new BadgeIcon(
             ImageUtilities.loadImage(ICON_PATH),
             CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
