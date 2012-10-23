@@ -47,7 +47,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
-import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
@@ -91,8 +90,6 @@ public final class CakePhpUtils {
     public static final int CAKE_VERSION_REVISION = 2;
     public static final int CAKE_VERSION_NOT_STABLE = 3;
     private static final String APP = "App"; // NOI18N
-    private static final String CAKE_AUTO_COMPLETION_PHP = "_cake_auto_completion_.php"; // NOI18N
-    private static final String COMPONENT = "Component"; // NOI18N
     private static final String CONTROLLER_CLASS_SUFFIX = "Controller"; // NOI18N
     private static final String CONTROLLER_FILE_SUFIX = "_controller"; // NOI18N
     private static final String CONTROLLER_FILE_SUFIX_2 = "Controller"; // NOI18N cake2.x.x
@@ -100,12 +97,9 @@ public final class CakePhpUtils {
     private static final String DIR_CONTROLLER_2 = "Controller"; // NOI18N cake2.x.x
     private static final String DIR_MODELS = "models";
     private static final String DIR_MODEL_2 = "Model";
-    private static final String DIR_NBPROJECT = "nbproject"; // NOI18N
     private static final String DIR_VIEWS = "views"; // NOI18N
     private static final String DIR_VIEW_2 = "View"; // NOI18N cake2.x.x
     private static final String FILE_VIEW_EXT = "ctp"; // NOI18N
-    private static final String HELPER = "Helper"; // NOI18N
-    private static final String PROPERTY_ANNOTATION_PATTERN = " * @property %s $%s"; // NOI18N
     private static final String UNDERSCORE = "_"; // NOI18N
     private static final String DIR_THEMED = "themed"; // NOI18N
     private static final String DIR_THEMED_2 = "Themed"; // NOI18N
@@ -500,7 +494,10 @@ public final class CakePhpUtils {
      * @param pm
      * @param dirType
      * @param fileType
-     * @param name Call name (e.g. Plugin -> DebugKit.Toolbar, HtmlHelper -> Html, ...
+     * @param name Call name
+     * - Plugin -> DebugKit.Toolbar
+     * - HtmlHelper -> Html
+     * - View file -> Elements/sample
      * @return
      */
     public static FileObject getFile(PhpModule pm, DIR dirType, FILE fileType, String name){
@@ -620,9 +617,13 @@ public final class CakePhpUtils {
                     fileName = name + "Component"; // NOI18N
                     break;
                 case VIEW:
+                    fileName = name;
                 default:
                     break;
             }
+        }
+        if (fileType == FILE.VIEW){
+            return fileName + "." + FILE_VIEW_EXT; // NOI18N
         }
         return fileName + ".php"; // NOI18N
     }
