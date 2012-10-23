@@ -28,6 +28,7 @@ This plugin provides support for CakePHP.
 - create new CakePHP projects from new project option
 - code completion support [New:v0.6]
 - format for CakePHP action [New:v0.6.8]
+- go to element file from view file (beta)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -106,15 +107,17 @@ create a database, you can immediately start development in a local environment.
 Support for core components and helpers (default).
 Also support for classes in $uses, $components, $helpers.(also contain the alias)
 
-	// e.g.
-	public $uses('Comment', 'Member', 'User');
-	// $this->Comm [Ctrl + Space] => $this->Comment [Ctrl + Space]
+```php
+// e.g.
+public $uses('Comment', 'Member', 'User');
+// $this->Comm [Ctrl + Space] => $this->Comment [Ctrl + Space]
 
-	public $components('Search.Prg', 'Foo');
-	// $this->P [Ctrl + Space] => $this->Prg-> [Ctrl + Space] => display methods and fields
+public $components('Search.Prg', 'Foo');
+// $this->P [Ctrl + Space] => $this->Prg-> [Ctrl + Space] => display methods and fields
 
-	public $helpers('Session', 'Html' => array('className' => 'MyHtml'));
-	// $this->Html-> [Ctrl + Space] => display MyHtmlHelper class methods and fields
+public $helpers('Session', 'Html' => array('className' => 'MyHtml'));
+// $this->Html-> [Ctrl + Space] => display MyHtmlHelper class methods and fields
+```
 
 ### Go To View Action
 You can move from controller action to view file.
@@ -124,12 +127,14 @@ You can move from controller action to view file.
 
 e.g.
 
-	class MainController extends AppController{
-		// ... something
-		public function index() {
-			// Right-click or shortcut here
-		}
+```php
+class MainController extends AppController{
+	// ... something
+	public function index() {
+		// Right-click or shortcut here
 	}
+}
+```
 
 If you use shortcut, register with Keymap.
 
@@ -158,6 +163,25 @@ This action run the following.
 Q. Why do you add this action?
 
 A. I add in order to follow the [CakePHP Coding Standars](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
+
+### Hyperlink for view element files (beta)
+
+You can go to the element file from view file.
+
+Search the following element file directories:
+
+- app(app/View/Elements, app/views/elememts)
+- core(lib/cake/View/Elements, cake/views/elements)
+
+e.g.
+
+```php
+$this->element('sample');
+```
+Hold down Ctrl key and click on 'sample'.
+
+If there is sample.ctp in the above directories, open the sample.ctp.
+Otherwise do nothing.
 
 ## HOW TO RUN:
 
