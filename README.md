@@ -5,7 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/10/23 last update
+- 2012/11/05 last update
 
 ## ENVIRONMENT
 
@@ -28,7 +28,8 @@ This plugin provides support for CakePHP.
 - create new CakePHP projects from new project option
 - code completion support [New:v0.6]
 - format for CakePHP action [New:v0.6.8]
-- go to element file from view file (beta)
+- go to element file from view file [New:v0.6.9]
+- display and change debug level [New:v0.6.10]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -164,7 +165,7 @@ Q. Why do you add this action?
 
 A. I add in order to follow the [CakePHP Coding Standars](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
 
-### Hyperlink for view element files (beta)
+### Hyperlink for view element files (v0.6.9)
 
 You can go to the element file from view file.
 
@@ -182,6 +183,15 @@ Hold down Ctrl key and click on 'sample'.
 
 If there is sample.ctp in the above directories, open the sample.ctp.
 Otherwise do nothing.
+
+
+### Display and Change debug level (v0.6.10)
+
+You can change debug level on popup list.
+
+When you choose the CakePHP file node, you would find the cake icon and debug level number at the lower right of the window.
+
+If you change debug level, click the icon. Then the popup is displayed. Please, select the debug level number.
 
 ## HOW TO RUN:
 
