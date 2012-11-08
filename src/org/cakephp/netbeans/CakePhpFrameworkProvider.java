@@ -157,14 +157,14 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         PhpModuleProperties properties = new PhpModuleProperties();
         FileObject webroot = getCakePhpDirectory(phpModule).getFileObject("app/webroot"); // NOI18N
         if (webroot != null) {
-            properties.setWebRoot(webroot);
+            properties = properties.setWebRoot(webroot);
         }
         FileObject test = getCakePhpDirectory(phpModule).getFileObject("app/tests"); // NOI18N
         if (test == null) {
             test = getCakePhpDirectory(phpModule).getFileObject("app/Test"); // NOI18N
         }
         if (test != null) {
-            properties.setTests(test);
+            properties = properties.setTests(test);
         }
         return properties;
     }
