@@ -69,8 +69,8 @@ import org.openide.util.NbBundle;
 @ActionRegistration(displayName = "Install Plugins")
 // @ActionReference(path="Menu/Tools", position=...)
 public final class InstallPluginsWizardAction extends BaseAction implements ActionListener {
-    private static final String LF = "\n";
 
+    private static final String LF = "\n";
     private static final long serialVersionUID = 4405963698419409213L;
     private static InstallPluginsWizardAction INSTANCE = new InstallPluginsWizardAction();
 
@@ -94,7 +94,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
     @Override
     protected void actionPerformed(PhpModule pm) {
         List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
-        panels.add(new InstallPluginsWizardPanel());
+        panels.add(new InstallPluginsWizardPanel(pm));
         String[] steps = new String[panels.size()];
         for (int i = 0; i < panels.size(); i++) {
             Component c = panels.get(i).getComponent();
@@ -135,8 +135,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
             installStatusDialog.setModal(false);
             installStatusDialog.setVisible(true);
 
-            new Thread(new Runnable(){
-
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     // unzip
@@ -164,17 +163,14 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                     }
                     DialogDisplayer.getDefault().notifyLater(d);
 
-                    SwingUtilities.invokeLater(new Runnable(){
-
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             installStatusDialog.setVisible(false);
                             installStatusDialog.dispose();
                         }
-
                     });
                 }
-
             }).start();
         }
     }

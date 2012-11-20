@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.ui.wizards;
 
 import javax.swing.event.ChangeListener;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
@@ -52,6 +53,11 @@ public class InstallPluginsWizardPanel implements WizardDescriptor.Panel<WizardD
      * component from this class, just use getComponent().
      */
     private InstallPluginsVisualPanel component;
+    private PhpModule phpModule;
+
+    public InstallPluginsWizardPanel(PhpModule phpModule) {
+        this.phpModule = phpModule;
+    }
 
     // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
@@ -60,7 +66,7 @@ public class InstallPluginsWizardPanel implements WizardDescriptor.Panel<WizardD
     @Override
     public InstallPluginsVisualPanel getComponent() {
         if (component == null) {
-            component = new InstallPluginsVisualPanel();
+            component = new InstallPluginsVisualPanel(phpModule);
         }
         return component;
     }
