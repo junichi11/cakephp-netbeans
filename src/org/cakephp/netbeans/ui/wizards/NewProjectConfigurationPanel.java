@@ -54,26 +54,33 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
 
 /**
  *
  * @author junichi11
  */
-public class NewProjectConfigurationPanel extends javax.swing.JPanel{
+public class NewProjectConfigurationPanel extends javax.swing.JPanel {
 
     private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
     private static final long serialVersionUID = 7874450246517944114L;
     private Map<String, String> tagsMap = new HashMap<String, String>();
     private String errorMessage;
+    private static final Logger LOGGER = Logger.getLogger(NewProjectConfigurationPanel.class.getName());
 
     /**
      * Creates new form NewProjectConfigurationPanel
      */
+    @NbBundle.Messages({
+        "LBL_ConnectErrorMessage=Is not connected to the network."
+    })
     public NewProjectConfigurationPanel() {
         initComponents();
         unzipRadioButton.setSelected(true);
@@ -97,22 +104,37 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel{
                 tagsMap.put(jObject.getString("name"), jObject.getString("zipball_url")); // NOI18N
             }
             Arrays.sort(tagsArray, new Comparator<String>() {
+                private static final String NUMBER_REGEX = "[0-9]+"; // NOI18N
+                private static final String SPLIT_REGEX = "[., -]"; // NOI18N
 
                 @Override
                 public int compare(String a, String b) {
-                    String[] aArray = a.split("[., -]"); // NOI18N
-                    String[] bArray = b.split("[., -]"); // NOI18N
-                    for (int i = 0; i < aArray.length; i++) {
-                        try {
-                            Integer aInt = Integer.parseInt(aArray[i]);
-                            Integer bInt = Integer.parseInt(bArray[i]);
-                            if (aInt == bInt) {
-                                continue;
-                            } else {
-                                return bInt - aInt;
+                    String[] aArray = a.split(SPLIT_REGEX);
+                    String[] bArray = b.split(SPLIT_REGEX);
+                    int aLength = aArray.length;
+                    int bLength = bArray.length;
+                    for (int i = 0; i < aLength; i++) {
+                        if (i == aLength - 1) {
+                            if ((bLength - aLength) < 0) {
+                                return -1;
                             }
-                        } catch (NumberFormatException ex) {
-                            return 1;
+                        }
+                        String aString = aArray[i];
+                        String bString = bArray[i];
+                        if (aString.matches(NUMBER_REGEX) && bString.matches(NUMBER_REGEX)) {
+                            try {
+                                Integer aInt = Integer.parseInt(aString);
+                                Integer bInt = Integer.parseInt(bString);
+                                if (aInt == bInt) {
+                                    continue;
+                                } else {
+                                    return bInt - aInt;
+                                }
+                            } catch (NumberFormatException ex) {
+                                return 1;
+                            }
+                        } else {
+                            return b.compareTo(a);
                         }
                     }
                     return 1;
@@ -121,9 +143,10 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel{
             versionList.setListData(tagsArray);
             versionList.setSelectedIndex(0);
         } catch (JSONException ex) {
-            Exceptions.printStackTrace(ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (IOException ex) {
-            errorMessage = "Is not connected to the network.";
+            errorMessage = Bundle.LBL_ConnectErrorMessage();
+            LOGGER.log(Level.WARNING, errorMessage, ex);
         }
     }
 
@@ -385,12 +408,12 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel{
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, null, ex);
             gitCloneRadioButton.setSelected(false);
             unzipRadioButton.setSelected(true);
             gitCloneRadioButton.setEnabled(false);
         }
     }//GEN-LAST:event_gitCloneRadioButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JCheckBox databaseCheckBox;

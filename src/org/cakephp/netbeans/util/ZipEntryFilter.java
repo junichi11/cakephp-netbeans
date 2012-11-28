@@ -41,42 +41,38 @@
  */
 package org.cakephp.netbeans.util;
 
-import org.junit.Test;
-import org.netbeans.junit.NbTestCase;
+import java.util.zip.ZipEntry;
 
-public class CakePhpUtilsTest extends NbTestCase {
+/**
+ * Filter file when unzip file.
+ *
+ * @author junichi11
+ */
+public interface ZipEntryFilter {
 
-    public CakePhpUtilsTest(String name) {
-        super(name);
-    }
+    /**
+     * Verify whether accept ZipEntry. If you don't need the ZipEntry, return
+     * false.
+     *
+     * @param entry
+     * @return
+     */
+    public boolean accept(ZipEntry entry);
 
-    @Test
-    public void testActionName() {
-        assertEquals("index", CakePhpUtils.getActionName("index"));
-        assertEquals("myIndex", CakePhpUtils.getActionName("my_index"));
-    }
+    /**
+     * Get path for unzip. e.g. Original path is sample/foo/bar/moge.php. If you
+     * would like to get /foo/bar/moge.php, return it. i.e. You can change the
+     * path for unzipping.
+     *
+     * @param entry
+     * @return
+     */
+    public String getPath(ZipEntry entry);
 
-    @Test
-    public void testViewName() {
-        assertEquals("index", CakePhpUtils.getViewFileName("index"));
-        assertEquals("my_index", CakePhpUtils.getViewFileName("myIndex"));
-    }
-
-    @Test
-    public void testIsControllerName() {
-        assertTrue(CakePhpUtils.isControllerName("PostsController"));
-
-        assertFalse(CakePhpUtils.isControllerName("Postscontroller"));
-        assertFalse(CakePhpUtils.isControllerName("PostsHelper"));
-    }
-
-    @Test
-    public void testIsControllerFileName() {
-        assertTrue(CakePhpUtils.isControllerFileName("PostsController"));
-        assertTrue(CakePhpUtils.isControllerFileName("posts_controller"));
-
-        assertFalse(CakePhpUtils.isControllerFileName("PostsComponent"));
-        assertFalse(CakePhpUtils.isControllerFileName("postscontroller"));
-        assertFalse(CakePhpUtils.isControllerFileName("posts_helper"));
-    }
+    /**
+     * For example, set text for JTextComponent.
+     *
+     * @param text
+     */
+    public void setText(String text);
 }
