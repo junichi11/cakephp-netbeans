@@ -1,0 +1,3 @@
+[submodule "test/unit/data"]
+	path = test/unit/data
+	url = git://github.com/junichi11/cakephp-netbeans-test-data.git
