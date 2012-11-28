@@ -53,7 +53,8 @@ import javax.swing.SwingUtilities;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.options.CakePhpPlugin;
 import org.cakephp.netbeans.ui.actions.ClearCacheAction;
-import org.cakephp.netbeans.util.CakeZip;
+import org.cakephp.netbeans.util.CakeDefaultZipEntryFilter;
+import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.BaseAction;
 import org.openide.*;
@@ -61,6 +62,7 @@ import org.openide.WizardDescriptor.Panel;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
 // An example action demonstrating how the wizard could be called from within
@@ -91,6 +93,9 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
         return NbBundle.getMessage(InstallPluginsWizardAction.class, "LBL_InstallPlugin");
     }
 
+    @NbBundle.Messages({
+        "LBL_InstallPluginsTitle=CakePHP Install Plugins"
+    })
     @Override
     protected void actionPerformed(PhpModule pm) {
         List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
@@ -112,14 +117,15 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
         WizardDescriptor wiz = new WizardDescriptor(new WizardDescriptor.ArrayIterator<WizardDescriptor>(panels));
         // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
         wiz.setTitleFormat(new MessageFormat("{0}"));
-        wiz.setTitle("CakePHP Install Plugins");
+        wiz.setTitle(Bundle.LBL_InstallPluginsTitle());
         if (DialogDisplayer.getDefault().notify(wiz) == WizardDescriptor.FINISH_OPTION) {
             Panel<WizardDescriptor> panel = (InstallPluginsWizardPanel) panels.get(0);
             InstallPluginsVisualPanel component = (InstallPluginsVisualPanel) panel.getComponent();
+
             String installPath = component.getInstallPathTextField();
-            final FileObject fo = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(installPath);
+            final FileObject installDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(installPath);
             NotifyDescriptor descriptor = null;
-            if (fo == null) {
+            if (installDirectory == null) {
                 descriptor = new NotifyDescriptor.Message(installPath + " dosen't exist.", NotifyDescriptor.ERROR_MESSAGE);
                 DialogDisplayer.getDefault().notifyLater(descriptor);
                 return;
@@ -144,21 +150,33 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                             String pluginName = plugin.getName();
                             // set status
                             installStatusDisplayPanel.getDisplayStatusTextArea().append(pluginName + " : ");
-                            CakeZip zip = new CakeZip(pluginName);
                             try {
-                                zip.unzip(plugin.getUrl(), fo);
-                                installStatusDisplayPanel.getDisplayStatusTextArea().append("Done" + LF);
+                                FileObject pluginDirectory = installDirectory.getFileObject(pluginName);
+                                if (pluginDirectory == null) {
+                                    pluginDirectory = installDirectory.createFolder(pluginName);
+                                }
+
+                                // unzip
+                                if (pluginDirectory != null) {
+                                    CakePhpFileUtils.unzip(plugin.getUrl(), FileUtil.toFile(pluginDirectory), new CakeDefaultZipEntryFilter());
+                                    installStatusDisplayPanel.getDisplayStatusTextArea().append("Done" + LF);
+                                } else {
+                                    installStatusDisplayPanel.getDisplayStatusTextArea().append("Can't find plugin directory" + LF);
+                                }
                             } catch (IOException ex) {
                                 errors.append(pluginName).append(LF);
                                 installStatusDisplayPanel.getDisplayStatusTextArea().append("Error" + LF);
                             }
                         }
                     }
+
                     String errorMessage = errors.toString();
                     NotifyDescriptor d = null;
-                    if (!errorMessage.isEmpty()) { //display error dialog
+                    if (!errorMessage.isEmpty()) {
+                        //display error dialog
                         d = new NotifyDescriptor.Message("Please confirm the URL.\n" + errorMessage, NotifyDescriptor.ERROR_MESSAGE);
-                    } else { // display complete dialog
+                    } else {
+                        // display complete dialog
                         d = new NotifyDescriptor.Message("Install Complete!", NotifyDescriptor.INFORMATION_MESSAGE);
                     }
                     DialogDisplayer.getDefault().notifyLater(d);
