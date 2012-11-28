@@ -30,6 +30,7 @@ This plugin provides support for CakePHP.
 - format for CakePHP action [New:v0.6.8]
 - go to element file from view file [New:v0.6.9]
 - display and change debug level [New:v0.6.10]
+- multiple app directories support [ **beta** ]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -63,9 +64,72 @@ Please select your cakephp dir(e.g. /home/NetBeansProjects/myproject)
 
 ### App Directory Name
 
-This plugin support only for **"app"** .
+Multiple app directory names support. [ **beta** ]
 
-Perhaps, can't use a lot of features if you use another name.
+#### Change app directory name
+
+Please set the following if you would like to different app directory name.
+
+1. Project properties > Framework > CakePHP
+2. `app Folder name` : please set your new app folder name
+
+#### Use multiple app directories
+
+If you use multiple app directories:
+
+```
+// CakePHP 1
+cakephp1.3
+├─app
+├─app2
+├─app3
+├─myapp
+├─...
+├─cake
+├─plugins
+├─vendors
+├─...
+
+// CakePHP 2
+cakephp2.x
+├─app
+├─app2
+├─app3
+├─mycustom
+├─...
+├─lib
+│  └─Cake
+├─plugins
+├─vendors
+├─...
+
+```
+
+Use **app** directory as NetBeans project e.g. app1, app2, myapp, e.t.c.:
+
+```
+myproject(e.g. myapp)
+├── nbproject
+├── Config
+├── Console
+├── Controller
+├── Lib
+├── Locale
+├── Model
+├── Plugin
+├── Test
+├── Vendor
+├── View
+├── index.php
+├── tmp
+└── webroot
+```
+
+1. Project properties > Framework > CakePHP
+2. Check `Use the relative path to the CakePHP directory from the project directory.`
+3. `CakePHP Directory` : "../"
+
+Please notice that Code Completion is not available. You have to add the cakephp core path to include path.
 
 ### Clear Cache Action
 
