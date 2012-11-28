@@ -42,9 +42,8 @@
 package org.cakephp.netbeans.editor;
 
 import javax.swing.text.Document;
-import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakePhpUtils.DIR;
-import org.cakephp.netbeans.util.CakePhpUtils.FILE;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
@@ -62,6 +61,7 @@ import org.openide.filesystems.FileObject;
 @MimeRegistration(mimeType = "text/x-php5", service = HyperlinkProvider.class)
 public class CakePhpHyperlinkProvider implements HyperlinkProvider {
 
+    private static final String ELEMENTS_DIR_NAME = "Elements";
     private FileObject element;
     private String target;
     private int targetStart;
@@ -99,9 +99,10 @@ public class CakePhpHyperlinkProvider implements HyperlinkProvider {
                 return false;
             }
             PhpModule pm = PhpModule.inferPhpModule();
-            element = CakePhpUtils.getFile(pm, DIR.APP, FILE.VIEW, "Elements/" + target);  // NOI18N
+            CakePhpModule module = CakePhpModule.forPhpModule(pm);
+            element = module.getViewFile(DIR_TYPE.APP, ELEMENTS_DIR_NAME, target);
             if (element == null) {
-                element = CakePhpUtils.getFile(pm, DIR.CORE, FILE.VIEW, "Elements/" + target);  // NOI18N
+                element = module.getViewFile(DIR_TYPE.CORE, ELEMENTS_DIR_NAME, target);
             }
             if (element != null) {
                 targetStart = newOffset + 1;

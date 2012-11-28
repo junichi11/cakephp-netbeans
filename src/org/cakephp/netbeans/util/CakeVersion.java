@@ -42,7 +42,7 @@
 package org.cakephp.netbeans.util;
 
 import java.io.IOException;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
@@ -61,25 +61,49 @@ public class CakeVersion {
     private static PhpModule pm;
 
     private CakeVersion(PhpModule pm) {
-        CakeVersion.pm = pm;
         String[] split = getCakePhpVersionSplit(pm);
-        switch (split.length) {
-            case 4:
-                notStable = split[3];
-            case 3:
-                revision = Integer.parseInt(split[2]);
-            case 2:
-                minor = Integer.parseInt(split[1]);
-            case 1:
-                mejor = Integer.parseInt(split[0]);
-                break;
-            case 0:
-            default:
-                mejor = -1;
+        if (split != null) {
+            switch (split.length) {
+                case 4:
+                    notStable = split[3];
+                case 3:
+                    revision = Integer.parseInt(split[2]);
+                case 2:
+                    minor = Integer.parseInt(split[1]);
+                case 1:
+                    mejor = Integer.parseInt(split[0]);
+                    break;
+                case 0:
+                default:
+                    mejor = -1;
+                    minor = -1;
+                    revision = -1;
+                    notStable = ""; // NOI18N
+                    break;
+            }
+            CakeVersion.pm = pm;
+        } else {
+            FileObject cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("cake");
+            if (cake != null) {
+                mejor = 1;
                 minor = -1;
                 revision = -1;
                 notStable = ""; // NOI18N
-                break;
+            } else {
+                cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("lib/Cake");
+                if (cake != null) {
+                    mejor = 2;
+                    minor = -1;
+                    revision = -1;
+                    notStable = ""; // NOI18N
+                }
+            }
+            if (cake == null) {
+                CakeVersion.pm = null;
+            } else {
+                CakeVersion.pm = pm;
+            }
+
         }
     }
 
@@ -123,7 +147,7 @@ public class CakeVersion {
      * @return String If can't get the version file, return null.
      */
     private String getCakePhpVersion(PhpModule phpModule) {
-        FileObject root = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
+        FileObject root = CakePhpModule.getCakePhpDirectory(phpModule);
         FileObject cake = root.getFileObject("cake"); // NOI18N
         FileObject version;
         if (cake != null) {

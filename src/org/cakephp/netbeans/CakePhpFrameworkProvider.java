@@ -49,8 +49,8 @@ import java.util.LinkedList;
 import java.util.List;
 import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.CakePhpEditorExtender;
-import org.cakephp.netbeans.preferences.CakePreferences;
-import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.phpmodule.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
@@ -86,8 +86,8 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
                 NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"),
                 NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
         badgeIcon = new BadgeIcon(
-            ImageUtilities.loadImage(ICON_PATH),
-            CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
+                ImageUtilities.loadImage(ICON_PATH),
+                CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
     }
 
     @PhpFrameworkProvider.Registration(position = 500)
@@ -100,24 +100,17 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         return badgeIcon;
     }
 
-    public static FileObject getCakePhpDirectory(PhpModule phpModule) {
-        FileObject fo = null;
-        if (CakePreferences.useProjectDirectory(phpModule)) {
-            fo = phpModule.getProjectDirectory().getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
-        } else {
-            fo = phpModule.getSourceDirectory();
-        }
-        return fo;
-    }
-
     @Override
     public boolean isInPhpModule(PhpModule phpModule) {
-        // TODO: is this detection enough?
-        FileObject cake = getCakePhpDirectory(phpModule).getFileObject("cake"); // NOI18N
-        // cake 2.x.x
-        if (cake == null) {
-            cake = getCakePhpDirectory(phpModule).getFileObject("lib/Cake"); // NOI18N
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return false;
         }
+        FileObject app = module.getDirectory(DIR_TYPE.APP);
+        if (app == null) {
+            return false;
+        }
+        FileObject cake = module.getDirectory(DIR_TYPE.CORE);
         return cake != null && cake.isFolder();
     }
 
@@ -125,7 +118,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     public File[] getConfigurationFiles(PhpModule phpModule) {
         // return all php files from app/config
         List<File> configFiles = new LinkedList<File>();
-        FileObject config = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null);
+        FileObject config = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(DIR_TYPE.APP);
         assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
         if (config != null && config.isFolder()) {
             Enumeration<? extends FileObject> children = config.getChildren(true);
@@ -155,14 +148,12 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     @Override
     public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
         PhpModuleProperties properties = new PhpModuleProperties();
-        FileObject webroot = getCakePhpDirectory(phpModule).getFileObject("app/webroot"); // NOI18N
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject webroot = module.getWebrootDirectory(DIR_TYPE.APP);
         if (webroot != null) {
             properties = properties.setWebRoot(webroot);
         }
-        FileObject test = getCakePhpDirectory(phpModule).getFileObject("app/tests"); // NOI18N
-        if (test == null) {
-            test = getCakePhpDirectory(phpModule).getFileObject("app/Test"); // NOI18N
-        }
+        FileObject test = module.getTestDirectory(DIR_TYPE.APP);
         if (test != null) {
             properties = properties.setTests(test);
         }

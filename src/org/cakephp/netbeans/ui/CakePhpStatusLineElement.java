@@ -68,9 +68,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
-import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakePhpUtils.DIR;
-import org.cakephp.netbeans.util.CakePhpUtils.FILE;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.awt.StatusLineElementProvider;
 import org.openide.filesystems.FileChangeAdapter;
@@ -226,13 +225,13 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     }
 
     /**
-     * Write core file.
-     * change debug level.
+     * Write core file. change debug level.
      *
      * @param debugLv
      */
     private void writeCore(String debugLv) {
-        FileObject config = CakePhpUtils.getDirectory(phpModule, DIR.APP, FILE.CONFIG, null);
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject config = module.getConfigDirectory(DIR_TYPE.APP);
         if (config == null) {
             return;
         }
@@ -257,7 +256,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         }
     }
 
-    public void setLevel(String level){
+    public void setLevel(String level) {
         this.level = level;
     }
 
@@ -301,7 +300,11 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                 setPhpModule(pm);
             }
 
-            FileObject config = CakePhpUtils.getDirectory(pm, DIR.APP, FILE.CONFIG, null);
+            CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+            FileObject config = module.getConfigDirectory(DIR_TYPE.APP);
+            if (config == null) {
+                return;
+            }
             FileObject core = config.getFileObject("core.php"); // NOI18N
             if (core == null) {
                 return;

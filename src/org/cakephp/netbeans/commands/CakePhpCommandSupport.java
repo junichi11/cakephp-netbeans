@@ -53,8 +53,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.CakeScript;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
 import org.netbeans.api.extexecution.ExternalProcessBuilder;
@@ -81,8 +82,6 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
     static final Logger LOGGER = Logger.getLogger(CakePhpCommandSupport.class.getName());
     private static final String CORE_SHELLS_DIRECTORY = "cake/console/libs"; // NOI18N
     private static final String VENDORS_SHELLS_DIRECTORY = "vendors/shells"; // NOI18N
-    private static final String APP_VENDORS_SHELLS_DIRECTORY = "app/vendors/shells"; // NOI18N
-    private static final String[] shells = {CORE_SHELLS_DIRECTORY, VENDORS_SHELLS_DIRECTORY, APP_VENDORS_SHELLS_DIRECTORY}; // NOI18N
 
     public CakePhpCommandSupport(PhpModule phpModule) {
         super(phpModule);
@@ -118,7 +117,13 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
         }
         assert cakeScript.isValid();
 
-        externalProcessBuilder = externalProcessBuilder.workingDirectory(FileUtil.toFile(CakePhpFrameworkProvider.getCakePhpDirectory(phpModule))).addArgument(cakeScript.getProgram());
+        externalProcessBuilder = externalProcessBuilder.workingDirectory(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule))).addArgument(cakeScript.getProgram());
+        if (!CakePreferences.getAppName(phpModule).equals("app")) { // NOI18N
+            FileObject app = CakePhpModule.forPhpModule(phpModule).getDirectory(CakePhpModule.DIR_TYPE.APP);
+            externalProcessBuilder = externalProcessBuilder.addArgument("-app"); // NOI18N
+            externalProcessBuilder = externalProcessBuilder.addArgument(app.getPath());
+        }
+
         for (String param : cakeScript.getParameters()) {
             externalProcessBuilder = externalProcessBuilder.addArgument(param);
         }
@@ -149,8 +154,9 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
         // cakephp1.3+
         commands = new ArrayList<FrameworkCommand>();
         List<FileObject> shellDirs = new ArrayList<FileObject>();
+        String[] shells = {CORE_SHELLS_DIRECTORY, VENDORS_SHELLS_DIRECTORY, CakePreferences.getAppName(phpModule) + "/" + VENDORS_SHELLS_DIRECTORY};
         for (String shell : shells) {
-            FileObject shellFileObject = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule).getFileObject(shell);
+            FileObject shellFileObject = CakePhpModule.getCakePhpDirectory(phpModule).getFileObject(shell);
             if (shellFileObject != null) {
                 shellDirs.add(shellFileObject);
             }
@@ -194,7 +200,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
             File commandXml = getRedirectOutput(item.getCommand(), "--help", "xml"); // NOI18N
             if (commandXml == null) {
                 commands.add(new CakePhpCommand(phpModule,
-                    item.getCommand(), item.getDescription(), item.getDisplayName()));
+                        item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
             }
             List<CakeCommandItem> mainCommandsItem = new ArrayList<CakeCommandItem>();
@@ -203,7 +209,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
             } catch (SAXException ex) {
                 LOGGER.log(Level.WARNING, "Xml file Error:{0}", ex.getMessage());
                 commands.add(new CakePhpCommand(phpModule,
-                    item.getCommand(), item.getDescription(), item.getDisplayName()));
+                        item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
             }
             if (mainCommandsItem.isEmpty()) {
@@ -217,7 +223,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
                 mainCommand = provider + "." + mainCommand;
             }
             commands.add(new CakePhpCommand(phpModule,
-                mainCommand, "[" + provider + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
+                    mainCommand, "[" + provider + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
 
             // add subcommands
             List<CakeCommandItem> subcommands = main.getSubcommands();
@@ -227,7 +233,7 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
             for (CakeCommandItem subcommand : subcommands) {
                 String[] command = {mainCommand, subcommand.getCommand()};
                 commands.add(new CakePhpCommand(phpModule,
-                    command, "[" + provider + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName()));// NOI18N
+                        command, "[" + provider + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName()));// NOI18N
             }
         }
         return commands;
@@ -268,10 +274,11 @@ public final class CakePhpCommandSupport extends FrameworkCommandSupport {
 
     private String getShellsPlace(FileObject shellDir) {
         String place = ""; // NOI18N
-        FileObject source = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
+        String app = CakePreferences.getAppName(phpModule);
+        FileObject source = CakePhpModule.getCakePhpDirectory(phpModule);
         if (source.getFileObject(CORE_SHELLS_DIRECTORY) == shellDir) {
             place = "CORE"; // NOI18N
-        } else if (source.getFileObject(APP_VENDORS_SHELLS_DIRECTORY) == shellDir) {
+        } else if (source.getFileObject(app + "/" + VENDORS_SHELLS_DIRECTORY) == shellDir) {
             place = "APP VENDOR"; // NOI18N
         } else if (source.getFileObject(VENDORS_SHELLS_DIRECTORY) == shellDir) {
             place = "VENDOR"; // NOI18N
