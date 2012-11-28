@@ -41,42 +41,50 @@
  */
 package org.cakephp.netbeans.util;
 
+import java.util.zip.ZipEntry;
 import org.junit.Test;
 import org.netbeans.junit.NbTestCase;
 
-public class CakePhpUtilsTest extends NbTestCase {
+/**
+ *
+ * @author junichi11
+ */
+public class CakeDefaultZipEntryFilterTest extends NbTestCase {
 
-    public CakePhpUtilsTest(String name) {
+    public CakeDefaultZipEntryFilterTest(String name) {
         super(name);
     }
 
+    /**
+     * Test of accept method, of class CakeDefaultZipEntryFilter.
+     */
     @Test
-    public void testActionName() {
-        assertEquals("index", CakePhpUtils.getActionName("index"));
-        assertEquals("myIndex", CakePhpUtils.getActionName("my_index"));
+    public void testAccept() {
+        CakeDefaultZipEntryFilter filter = new CakeDefaultZipEntryFilter();
+        assertTrue(filter.accept(new ZipEntry("top/sub/foo.php")));
+        assertTrue(filter.accept(new ZipEntry("top/sub/")));
+        assertTrue(filter.accept(new ZipEntry("file")));
+
+        assertFalse(filter.accept(new ZipEntry("directory/")));
     }
 
+    /**
+     * Test of getPath method, of class CakeDefaultZipEntryFilter.
+     */
     @Test
-    public void testViewName() {
-        assertEquals("index", CakePhpUtils.getViewFileName("index"));
-        assertEquals("my_index", CakePhpUtils.getViewFileName("myIndex"));
+    public void testGetPath() {
+        CakeDefaultZipEntryFilter filter = new CakeDefaultZipEntryFilter();
+        assertEquals("sub/foo.php", filter.getPath(new ZipEntry("top/sub/foo.php")));
+        assertEquals("sub/", filter.getPath(new ZipEntry("top/sub/")));
+        assertEquals("file", filter.getPath(new ZipEntry("file")));
+
+        assertEquals("", filter.getPath(new ZipEntry("directory/")));
     }
 
+    /**
+     * Test of setText method, of class CakeDefaultZipEntryFilter.
+     */
     @Test
-    public void testIsControllerName() {
-        assertTrue(CakePhpUtils.isControllerName("PostsController"));
-
-        assertFalse(CakePhpUtils.isControllerName("Postscontroller"));
-        assertFalse(CakePhpUtils.isControllerName("PostsHelper"));
-    }
-
-    @Test
-    public void testIsControllerFileName() {
-        assertTrue(CakePhpUtils.isControllerFileName("PostsController"));
-        assertTrue(CakePhpUtils.isControllerFileName("posts_controller"));
-
-        assertFalse(CakePhpUtils.isControllerFileName("PostsComponent"));
-        assertFalse(CakePhpUtils.isControllerFileName("postscontroller"));
-        assertFalse(CakePhpUtils.isControllerFileName("posts_helper"));
+    public void testSetText() {
     }
 }

@@ -41,42 +41,34 @@
  */
 package org.cakephp.netbeans.util;
 
-import org.junit.Test;
-import org.netbeans.junit.NbTestCase;
+import java.util.zip.ZipEntry;
 
-public class CakePhpUtilsTest extends NbTestCase {
+/**
+ *
+ * @author junichi11
+ */
+public class CakeDefaultZipEntryFilter implements ZipEntryFilter {
 
-    public CakePhpUtilsTest(String name) {
-        super(name);
+    @Override
+    public boolean accept(ZipEntry entry) {
+        String name = entry.getName();
+        String[] splits = name.split("/"); // NOI18N
+        if (splits.length == 1 && entry.isDirectory()) {
+            return false;
+        }
+        return true;
     }
 
-    @Test
-    public void testActionName() {
-        assertEquals("index", CakePhpUtils.getActionName("index"));
-        assertEquals("myIndex", CakePhpUtils.getActionName("my_index"));
+    @Override
+    public String getPath(ZipEntry entry) {
+        String name = entry.getName();
+        String[] splits = name.split("/"); // NOI18N
+        String topDirectory = splits[0];
+
+        return name.replace(topDirectory + "/", ""); // NOI18N
     }
 
-    @Test
-    public void testViewName() {
-        assertEquals("index", CakePhpUtils.getViewFileName("index"));
-        assertEquals("my_index", CakePhpUtils.getViewFileName("myIndex"));
-    }
-
-    @Test
-    public void testIsControllerName() {
-        assertTrue(CakePhpUtils.isControllerName("PostsController"));
-
-        assertFalse(CakePhpUtils.isControllerName("Postscontroller"));
-        assertFalse(CakePhpUtils.isControllerName("PostsHelper"));
-    }
-
-    @Test
-    public void testIsControllerFileName() {
-        assertTrue(CakePhpUtils.isControllerFileName("PostsController"));
-        assertTrue(CakePhpUtils.isControllerFileName("posts_controller"));
-
-        assertFalse(CakePhpUtils.isControllerFileName("PostsComponent"));
-        assertFalse(CakePhpUtils.isControllerFileName("postscontroller"));
-        assertFalse(CakePhpUtils.isControllerFileName("posts_helper"));
+    @Override
+    public void setText(String text) {
     }
 }

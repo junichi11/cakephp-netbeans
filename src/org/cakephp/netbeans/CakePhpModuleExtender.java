@@ -44,21 +44,22 @@ package org.cakephp.netbeans;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.*;
-import java.net.URL;
+import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
+import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.cakephp.netbeans.util.CakePhpSecurity;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.util.CakeZipEntryFilter;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.phpmodule.PhpModuleExtender;
 import org.openide.filesystems.FileObject;
@@ -72,7 +73,6 @@ import org.openide.util.HelpCtx;
 public class CakePhpModuleExtender extends PhpModuleExtender {
 
     static final Logger LOGGER = Logger.getLogger(CakePhpModuleExtender.class.getName());
-
     private static final String GIT_COMMAND = "Git Command : "; // NOI18N
     private static final String GIT_GITHUB_COM_CAKEPHP_CAKEPHP_GIT = "git://github.com/cakephp/cakephp.git"; // NOI18N
     private static final String ADD_COMMAND = "add"; // NOI18N
@@ -123,7 +123,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
 
     @Override
     public Set<FileObject> extend(PhpModule phpModule) throws ExtendingException {
-        FileObject localPath = phpModule.getSourceDirectory();
+        FileObject targetDirectory = phpModule.getSourceDirectory();
+        if (targetDirectory == null) {
+            return Collections.emptySet();
+        }
 
         // disabled components
         Container parent = getPanel().getParent().getParent();
@@ -131,99 +134,55 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
 
         // create cakephp files
         if (getPanel().getUnzipRadioButton().isSelected()) {
+            // unzip
             Map<String, String> tagsMap = getPanel().getTagsMap();
             String url = tagsMap.get(getPanel().getVersionList().getSelectedValue().toString());
-            // create cakephp app from zip file.
+            File target = FileUtil.toFile(targetDirectory);
+            boolean deleteEmpty = false;
             try {
-                URL zipUrl = new URL(url);
-                ZipInputStream zipInputStream = new ZipInputStream(zipUrl.openStream());
-                ZipEntry zipEntry = null;
-                boolean firstFlg = true;
-                String rootDir = ""; // NOI18N
-
-                while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                    if (firstFlg == true) {
-                        rootDir = zipEntry.getName();
-                        firstFlg = false;
-                        zipInputStream.closeEntry();
-                        continue;
-                    }
-                    String zipName = zipEntry.getName().replace(rootDir, ""); // NOI18N
-                    // display file name in the panel
-                    getPanel().getUnzipFileNameTextField().setText(zipName);
-
-                    File baseDir = FileUtil.toFile(localPath);
-                    File outFile = new File(baseDir, zipName);
-                    if (localPath != null && zipEntry.isDirectory()) {
-                        outFile.mkdir();
-                        zipInputStream.closeEntry();
-                        continue;
-                    }
-                    if (localPath != null) {
-                        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
-                        int data = 0;
-                        while ((data = zipInputStream.read()) != -1) {
-                            outputStream.write(data);
-                        }
-                        zipInputStream.closeEntry();
-                        outputStream.close();
-                    }
-
-                }
-                zipInputStream.close();
+                CakePhpFileUtils.unzip(url, target, new CakeZipEntryFilter(deleteEmpty, getPanel().getUnzipFileNameTextField()));
+            } catch (MalformedURLException ex) {
+                Exceptions.printStackTrace(ex);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         } else {
             // Linux Mac ... run git command
-            createProjectFromGitCommand(localPath);
-        }
-
-        // set opened file
-        Set<FileObject> files = new HashSet<FileObject>();
-        FileObject configDirectory = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null);
-        FileObject config = configDirectory.getFileObject("core.php");
-        if (config != null) {
-            files.add(config);
-        }
-        if (files.isEmpty()) {
-            FileObject index = phpModule.getSourceDirectory().getFileObject("app/webroot/index.php"); // NOI18N
-            if (index != null) {
-                files.add(index);
-            }
+            createProjectFromGitCommand(targetDirectory);
         }
 
         // change tmp directory permission
-        FileObject tmp = phpModule.getSourceDirectory().getFileObject("app/tmp"); // NOI18N
-        CakePhpUtils.chmodTmpDirectory(tmp);
+        FileObject tmp = targetDirectory.getFileObject("app/tmp"); // NOI18N
+        if (tmp != null) {
+            CakePhpFileUtils.chmodTmpDirectory(tmp);
+        }
 
-        // change security string
-        try {
-            CakePhpSecurity.changeSecurityString(config);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (NoSuchAlgorithmException nsaex){
-            // do nothing
-            LOGGER.log(Level.WARNING, null, nsaex);
+        FileObject configDir = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null); // NOI18N
+        FileObject config = null;
+        if (configDir != null) {
+            config = configDir.getFileObject("core.php"); // NOI18N
+            // change security string
+            changeSecurityString(config);
         }
 
         // create database.php
         createDatabaseFile(phpModule);
-
+        Set<FileObject> files = getOpenedFiles(config, targetDirectory);
         return files;
     }
 
     /**
      * Change enabled componets
+     *
      * @param parent root container
      * @param enabled enabled true, disable false
      */
     private void enabledComponents(Container parent, boolean enabled) {
         parent.setEnabled(enabled);
-        for(Component component : parent.getComponents()){
-            if(component instanceof Container){
-                enabledComponents((Container)component, enabled);
-            }else{
+        for (Component component : parent.getComponents()) {
+            if (component instanceof Container) {
+                enabledComponents((Container) component, enabled);
+            } else {
                 component.setEnabled(false);
             }
         }
@@ -231,41 +190,42 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
 
     /**
      * Create database.php file
+     *
      * @param phpModule
      */
     private void createDatabaseFile(PhpModule phpModule) {
         // create database.php file
         FileObject configDirectory;
         NewProjectConfigurationPanel p = getPanel();
-        if(p.getDatabaseCheckBox().isSelected()){
+        if (p.getDatabaseCheckBox().isSelected()) {
 
             configDirectory = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null);
             try {
-                    PrintWriter pw = new PrintWriter(configDirectory.createAndOpen("database.php")); // NOI18N
-                    pw.println("<?php"); // NOI18N
-                    pw.println("class DATABASE_CONFIG {\n"); // NOI18N
+                PrintWriter pw = new PrintWriter(configDirectory.createAndOpen("database.php")); // NOI18N
+                pw.println("<?php"); // NOI18N
+                pw.println("class DATABASE_CONFIG {\n"); // NOI18N
 
-                    pw.println("\tpublic $default = array("); // NOI18N
-                    if(CakeVersion.getInstance(phpModule).isCakePhp(2)){
-                        pw.println("\t\t'datasource' => 'Database/" + p.getDatasourceTextField().getText() + "',"); // NOI18N
-                    }else{
-                        pw.println("\t\t'driver' => '" + p.getDatasourceTextField().getText().toLowerCase() + "',"); // NOI18N
-                    }
-                    pw.println("\t\t'persistent' => " + String.valueOf(p.getPersistentCheckBox().isSelected()) +","); // NOI18N
-                    pw.println("\t\t'host' => '" + p.getHostTextField().getText() + "',"); // NOI18N
-                    pw.println("\t\t'login' => '" + p.getLoginTextField().getText() + "',"); // NOI18N
-                    pw.println("\t\t'password' => '" + String.valueOf(p.getPasswordField().getPassword()) + "',"); // NOI18N
-                    pw.println("\t\t'database' => '" + p.getDatabaseTextField().getText() + "',"); // NOI18N
-                    pw.println("\t\t'prefix' => '" + p.getPrefixTextField().getText() + "',"); // NOI18N
-                    String encoding = p.getEncodingTextField().getText();
-                    if(!encoding.isEmpty()){
-                        pw.println("\t\t'encoding' => '" + p.getEncodingTextField().getText() + "'"); // NOI18N
-                    }
+                pw.println("\tpublic $default = array("); // NOI18N
+                if (CakeVersion.getInstance(phpModule).isCakePhp(2)) {
+                    pw.println("\t\t'datasource' => 'Database/" + p.getDatasourceTextField().getText() + "',"); // NOI18N
+                } else {
+                    pw.println("\t\t'driver' => '" + p.getDatasourceTextField().getText().toLowerCase() + "',"); // NOI18N
+                }
+                pw.println("\t\t'persistent' => " + String.valueOf(p.getPersistentCheckBox().isSelected()) + ","); // NOI18N
+                pw.println("\t\t'host' => '" + p.getHostTextField().getText() + "',"); // NOI18N
+                pw.println("\t\t'login' => '" + p.getLoginTextField().getText() + "',"); // NOI18N
+                pw.println("\t\t'password' => '" + String.valueOf(p.getPasswordField().getPassword()) + "',"); // NOI18N
+                pw.println("\t\t'database' => '" + p.getDatabaseTextField().getText() + "',"); // NOI18N
+                pw.println("\t\t'prefix' => '" + p.getPrefixTextField().getText() + "',"); // NOI18N
+                String encoding = p.getEncodingTextField().getText();
+                if (!encoding.isEmpty()) {
+                    pw.println("\t\t'encoding' => '" + p.getEncodingTextField().getText() + "'"); // NOI18N
+                }
 
-                    pw.println("\t);"); // NOI18N
-                    pw.println("}"); // NOI18N
+                pw.println("\t);"); // NOI18N
+                pw.println("}"); // NOI18N
 
-                    pw.close();
+                pw.close();
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -274,6 +234,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
 
     /**
      * Create cakephp directorys from git command
+     *
      * @param localPath Source directory
      */
     private void createProjectFromGitCommand(FileObject localPath) {
@@ -313,7 +274,58 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     }
 
     /**
+     * Change security string. Security.salt and Security.cipherSeed.
+     *
+     * @param config app/Config/core.php
+     */
+    private void changeSecurityString(FileObject config) {
+        if (config == null) {
+            return;
+        }
+        if (!config.getNameExt().equals("core.php")) { // NOI18N
+            LOGGER.log(Level.WARNING, "Not Found core.php");
+            return;
+        }
+        try {
+            CakePhpSecurity.changeSecurityString(config);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (NoSuchAlgorithmException nsaex) {
+            // do nothing
+            LOGGER.log(Level.WARNING, null, nsaex);
+        }
+    }
+
+    /**
+     * Get opend files. Get files to be opened When New CakePHP Project is
+     * opened.
+     *
+     * @param config
+     * @param targetDirectory
+     * @return file set if plugin can find app/Config/core.php or
+     * app/webroot/index.php, otherwize return empty set.
+     */
+    private Set<FileObject> getOpenedFiles(FileObject config, FileObject targetDirectory) {
+        if (config == null) {
+            return Collections.emptySet();
+        }
+
+        Set<FileObject> files = new HashSet<FileObject>();
+        if (config != null) {
+            files.add(config);
+        }
+        if (files.isEmpty()) {
+            FileObject index = targetDirectory.getFileObject("app/webroot/index.php"); // NOI18N
+            if (index != null) {
+                files.add(index);
+            }
+        }
+        return files;
+    }
+
+    /**
      * Get NewProjectConfigurationPanel
+     *
      * @return panel
      */
     public NewProjectConfigurationPanel getPanel() {
