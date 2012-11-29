@@ -131,6 +131,8 @@ myproject(e.g. myapp)
 
 Please notice that Code Completion is not available. You have to add the cakephp core path to include path.
 
+After settings, please close your project and reopen it.
+
 ### Clear Cache Action
 
 Delete each files of app/tmp/cache/* directorys.
