@@ -39,34 +39,68 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.util;
+package org.cakephp.netbeans.module;
 
-import org.junit.Test;
-import org.netbeans.junit.NbTestCase;
+import java.util.HashMap;
+import java.util.Map;
+import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.util.CakeVersion;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.openide.filesystems.FileObject;
 
-public class CakePhpUtilsTest extends NbTestCase {
+/**
+ *
+ * @author junichi11
+ */
+public class CakePhpModuleFactory {
 
-    public CakePhpUtilsTest(String name) {
-        super(name);
+    private Map<PhpModule, CakePhpModule> modules = new HashMap<PhpModule, CakePhpModule>();
+    private static final CakePhpModuleFactory INSTANCE = new CakePhpModuleFactory();
+
+    /**
+     * Get instance. singleton
+     *
+     * @return CakePhpMuduleFactory
+     */
+    public static CakePhpModuleFactory getInstance() {
+        return INSTANCE;
     }
 
-    @Test
-    public void testActionName() {
-        assertEquals("index", CakePhpUtils.getActionName("index"));
-        assertEquals("myIndex", CakePhpUtils.getActionName("my_index"));
+    private CakePhpModuleFactory() {
     }
 
-    @Test
-    public void testViewName() {
-        assertEquals("index", CakePhpUtils.getViewFileName("index"));
-        assertEquals("my_index", CakePhpUtils.getViewFileName("myIndex"));
-    }
+    /**
+     * Create CakePhpModule instance. Keep created instances by Factory.
+     *
+     * @param phpModule
+     * @return CakePhpModule if it can create instance of implementation class,
+     * otherwise null
+     */
+    public synchronized CakePhpModule create(PhpModule phpModule) {
+        CakePhpModule module = modules.get(phpModule);
+        if (module == null) {
+            // create implementation class
+            CakeVersion version = CakeVersion.getInstance(phpModule);
+            CakePhpModuleImpl impl = null;
+            if (version.isCakePhp(1)) {
+                impl = new CakePhp1ModuleImpl(phpModule);
+            } else if (version.isCakePhp(2)) {
+                impl = new CakePhp2ModuleImpl(phpModule);
+            }
 
-    @Test
-    public void testIsControllerName() {
-        assertTrue(CakePhpUtils.isControllerName("PostsController"));
-
-        assertFalse(CakePhpUtils.isControllerName("Postscontroller"));
-        assertFalse(CakePhpUtils.isControllerName("PostsHelper"));
+            // can't know version
+            if (impl == null) {
+                return null;
+            }
+            String appName = CakePreferences.getAppName(phpModule);
+            FileObject app = CakePhpModule.getCakePhpDirectory(phpModule).getFileObject(appName);
+            if (app == null) {
+                return null;
+            }
+            // create module class
+            module = new CakePhpModule(phpModule, impl);
+            modules.put(phpModule, module);
+        }
+        return module;
     }
 }

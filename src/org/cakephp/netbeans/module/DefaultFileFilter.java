@@ -39,34 +39,22 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.util;
+package org.cakephp.netbeans.module;
 
-import org.junit.Test;
-import org.netbeans.junit.NbTestCase;
+import org.openide.filesystems.FileObject;
 
-public class CakePhpUtilsTest extends NbTestCase {
+/**
+ *
+ * @author junichi11
+ */
+public class DefaultFileFilter implements FileFilter {
 
-    public CakePhpUtilsTest(String name) {
-        super(name);
-    }
-
-    @Test
-    public void testActionName() {
-        assertEquals("index", CakePhpUtils.getActionName("index"));
-        assertEquals("myIndex", CakePhpUtils.getActionName("my_index"));
-    }
-
-    @Test
-    public void testViewName() {
-        assertEquals("index", CakePhpUtils.getViewFileName("index"));
-        assertEquals("my_index", CakePhpUtils.getViewFileName("myIndex"));
-    }
-
-    @Test
-    public void testIsControllerName() {
-        assertTrue(CakePhpUtils.isControllerName("PostsController"));
-
-        assertFalse(CakePhpUtils.isControllerName("Postscontroller"));
-        assertFalse(CakePhpUtils.isControllerName("PostsHelper"));
+    @Override
+    public boolean accept(FileObject fo) {
+        String name = fo.getName();
+        if (name.startsWith("App") || name.startsWith("app") || name.equals("empty")) { // NOI18N
+            return false;
+        }
+        return true;
     }
 }

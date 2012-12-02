@@ -42,6 +42,9 @@
 package org.cakephp.netbeans;
 
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExternalProcessBuilder;
 import org.netbeans.api.extexecution.input.InputProcessor;
@@ -62,8 +65,6 @@ public class CakeScript extends PhpProgram {
 
     public static final String SCRIPT_NAME = "cake"; // NOI18N
     public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + ".php"; // NOI18N
-    private static final String SCRIPT_DIRECTORY = "cake/console/"; // NOI18N
-    private static final String SCRIPT_DIRECTORY_2 = "Console/"; // NOI18N cake2.x.x
     private static final String CMD_BAKE = "bake"; // NOI18N
     private final PhpModule phpModule;
 
@@ -86,14 +87,13 @@ public class CakeScript extends PhpProgram {
      * completely
      */
     public static CakeScript forPhpModule(PhpModule phpModule) throws InvalidPhpProgramException {
-        FileObject sourceDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule);
-
-        // locate
-        FileObject cake = sourceDirectory.getFileObject(SCRIPT_DIRECTORY + SCRIPT_NAME_LONG);
-        if (cake == null) {
-            String app = "app/"; // NOI18N
-            cake = sourceDirectory.getFileObject(app + SCRIPT_DIRECTORY_2 + SCRIPT_NAME_LONG);
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject consoleDirectory = module.getConsoleDirectory(DIR_TYPE.APP);
+        if (consoleDirectory == null) {
+            LOGGER.log(Level.WARNING, "Not found " + SCRIPT_NAME);
+            throw new InvalidPhpProgramException(NbBundle.getMessage(CakeScript.class, "MSG_CakeNotFound"));
         }
+        FileObject cake = consoleDirectory.getFileObject(SCRIPT_NAME_LONG);
 
         if (cake == null) {
             throw new InvalidPhpProgramException(NbBundle.getMessage(CakeScript.class, "MSG_CakeNotFound"));
@@ -121,15 +121,15 @@ public class CakeScript extends PhpProgram {
     // TODO: later, run it via FrameworkCommandSupport
     public void runBake() {
         ExecutionDescriptor executionDescriptor = getExecutionDescriptor()
-            .outProcessorFactory(ANSI_STRIPPING_FACTORY)
-            .errProcessorFactory(ANSI_STRIPPING_FACTORY);
+                .outProcessorFactory(ANSI_STRIPPING_FACTORY)
+                .errProcessorFactory(ANSI_STRIPPING_FACTORY);
 
         ExternalProcessBuilder processBuilder = getProcessBuilder()
-            .addArgument(CMD_BAKE);
+                .addArgument(CMD_BAKE);
         assert phpModule != null;
         if (phpModule != null) {
             processBuilder = processBuilder
-                .workingDirectory(FileUtil.toFile(CakePhpFrameworkProvider.getCakePhpDirectory(phpModule)));
+                    .workingDirectory(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)));
         }
         executeLater(processBuilder, executionDescriptor, CMD_BAKE);
     }
@@ -140,7 +140,7 @@ public class CakeScript extends PhpProgram {
         assert processBuilder != null;
         final HelpLineProcessor lineProcessor = new HelpLineProcessor();
         ExecutionDescriptor descriptor = new ExecutionDescriptor().inputOutput(InputOutput.NULL)
-            .outProcessorFactory(new ExecutionDescriptor.InputProcessorFactory() {
+                .outProcessorFactory(new ExecutionDescriptor.InputProcessorFactory() {
             @Override
             public InputProcessor newInputProcessor(InputProcessor defaultProcessor) {
                 return InputProcessors.ansiStripping(InputProcessors.bridge(lineProcessor));

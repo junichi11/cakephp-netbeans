@@ -48,6 +48,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.module.DefaultFileFilter;
 import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
@@ -103,20 +106,29 @@ public class CakePhpEditorExtender extends EditorExtender {
 
         for (PhpClass phpClass : parseFields(fo)) {
             PhpModule pm = PhpModule.forFileObject(fo);
+            CakePhpModule module = CakePhpModule.forPhpModule(pm);
             if (isView || isHelper) {
                 if (!(isView && CakeVersion.getInstance(pm).isCakePhp(2))) {
-                    for (FileObject helper : CakePhpUtils.getFiles(pm, CakePhpUtils.DIR.CORE, CakePhpUtils.FILE.HELPER)) {
-                        String className = CakePhpUtils.getClassName(helper);
-                        String name = className.replace(CakePhpUtils.FILE.HELPER.toString(), "");
-                        phpClass.addField(name, new PhpClass(name, className), fo, 0);
+                    FileObject helperDirectory = module.getHelperDirectory(DIR_TYPE.CORE);
+                    if (helperDirectory != null) {
+                        List<FileObject> helpers = module.getFiles(helperDirectory, new DefaultFileFilter());
+                        for (FileObject helper : helpers) {
+                            String className = CakePhpUtils.getClassName(helper);
+                            String name = className.replace(CakePhpModule.FILE_TYPE.HELPER.toString(), ""); // NOI18N
+                            phpClass.addField(name, new PhpClass(name, className), fo, 0);
+                        }
                     }
                 }
             } else {
                 if (!(isController && CakeVersion.getInstance(pm).isCakePhp(2))) {
-                    for (FileObject component : CakePhpUtils.getFiles(pm, CakePhpUtils.DIR.CORE, CakePhpUtils.FILE.COMPONENT)) {
-                        String className = CakePhpUtils.getClassName(component);
-                        String name = className.replace(CakePhpUtils.FILE.COMPONENT.toString(), "");
-                        phpClass.addField(name, new PhpClass(name, className), fo, 0);
+                    FileObject componentDirectory = module.getComponentDirectory(DIR_TYPE.CORE);
+                    if (componentDirectory != null) {
+                        List<FileObject> components = module.getFiles(componentDirectory, new DefaultFileFilter());
+                        for (FileObject component : components) {
+                            String className = CakePhpUtils.getClassName(component);
+                            String name = className.replace(CakePhpModule.FILE_TYPE.COMPONENT.toString(), ""); // NOI18N
+                            phpClass.addField(name, new PhpClass(name, className), fo, 0);
+                        }
                     }
                 }
             }
@@ -248,7 +260,7 @@ public class CakePhpEditorExtender extends EditorExtender {
             super.visit(node);
 
             if (!(node.getDispatcher() instanceof Variable)
-                || !"$this".equals(CodeUtils.extractVariableName((Variable) node.getDispatcher()))) {
+                    || !"$this".equals(CodeUtils.extractVariableName((Variable) node.getDispatcher()))) { // NOI18N
                 return;
             }
 
@@ -262,7 +274,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                 e = params.get(0);
             }
 
-            String viewVarName = "";
+            String viewVarName = ""; // NOI18N
             if (e instanceof Scalar) {
                 Scalar s = (Scalar) e;
                 if (s.getScalarType() == Scalar.Type.STRING) {
@@ -271,11 +283,11 @@ public class CakePhpEditorExtender extends EditorExtender {
             }
 
             if (methodName.equals(viewName)
-                && invokedMethodName.equals("set")
-                && CakePhpUtils.isControllerName(className)
-                && !viewVarName.isEmpty()) {
+                    && invokedMethodName.equals("set") // NOI18N
+                    && CakePhpUtils.isControllerName(className)
+                    && !viewVarName.isEmpty()) {
                 synchronized (fields) {
-                    fields.add(new PhpVariable("$" + viewVarName, new PhpClass("stdClass", "stdClass")));
+                    fields.add(new PhpVariable("$" + viewVarName, new PhpClass("stdClass", "stdClass"))); // NOI18N
                 }
             }
         }
@@ -320,10 +332,10 @@ public class CakePhpEditorExtender extends EditorExtender {
                     }
 
                     String elementName = CakePhpCodeUtils.getStringValue(e);
-
+                    CakePhpModule module = CakePhpModule.forPhpModule(pm);
                     // model
                     if (viewName == null && name.equals("$uses")) { // NOI18N
-                        object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.MODEL, elementName);
+                        object = module.getModelFile(DIR_TYPE.APP, elementName);
 
                         if (object != null) {
                             synchronized (controllerClasses) {
@@ -338,14 +350,19 @@ public class CakePhpEditorExtender extends EditorExtender {
                         int len = split.length;
                         switch (len) {
                             case 1:
-                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.COMPONENT, elementName);
+                                FileObject component = module.getComponentDirectory(DIR_TYPE.APP);
+                                if (component != null) {
+                                    object = component.getFileObject(elementName + ".php"); // NOI18N
+                                }
                                 break;
                             case 2:
-                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                                String pluginName = split[0];
+                                String componentName = split[1];
+                                object = module.getComponentFile(DIR_TYPE.APP_PLUGIN, componentName, pluginName);
                                 if (object == null) {
-                                    object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                                    object = module.getComponentFile(DIR_TYPE.PLUGIN, componentName, pluginName);
                                 }
-                                elementName = split[1];
+                                elementName = componentName;
                                 break;
                             default:
                                 break;
@@ -362,20 +379,22 @@ public class CakePhpEditorExtender extends EditorExtender {
                         }
                     }
 
-                    // check app or plugin component
+                    // check app or plugin helper
                     if (viewName != null && name.equals("$helpers")) { // NOI18N
                         String[] split = elementName.split("[.]"); // NOI18N
                         int len = split.length;
                         switch (len) {
                             case 1:
-                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.HELPER, elementName);
+                                object = module.getHelperFile(DIR_TYPE.APP, elementName);
                                 break;
                             case 2:
-                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                                String pluginName = split[0];
+                                String helperName = split[1];
+                                object = module.getHelperFile(DIR_TYPE.APP_PLUGIN, helperName, pluginName);
                                 if (object == null) {
-                                    object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                                    object = module.getHelperFile(DIR_TYPE.PLUGIN, helperName, pluginName);
                                 }
-                                elementName = split[1];
+                                elementName = helperName;
                                 break;
                             default:
                                 break;
@@ -399,8 +418,8 @@ public class CakePhpEditorExtender extends EditorExtender {
         private String prepareViewVar(String viewVarName) {
             if (!viewVarName.isEmpty()) {
                 viewVarName = viewVarName.substring(1, viewVarName.length() - 1).trim();
-                if (!viewVarName.matches("[A-Za-z_][A-Za-z0-9_]*")) {
-                    viewVarName = "";
+                if (!viewVarName.matches("[A-Za-z_][A-Za-z0-9_]*")) { // NOI18N
+                    viewVarName = ""; // NOI18N
                 }
             }
             return viewVarName;
@@ -481,19 +500,22 @@ public class CakePhpEditorExtender extends EditorExtender {
                     String elementName = CakePhpCodeUtils.getStringValue(e);
 
                     FileObject object = null;
+                    CakePhpModule module = CakePhpModule.forPhpModule(pm);
                     // check app or plugin component
                     String[] split = elementName.split("[.]"); // NOI18N
                     int len = split.length;
                     switch (len) {
                         case 1:
-                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.COMPONENT, elementName);
+                            object = module.getComponentFile(DIR_TYPE.APP, elementName);
                             break;
                         case 2:
-                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                            String pluginName = split[0];
+                            String componentName = split[1];
+                            object = module.getComponentFile(DIR_TYPE.APP_PLUGIN, componentName, pluginName);
                             if (object == null) {
-                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.COMPONENT, elementName);
+                                object = module.getComponentFile(DIR_TYPE.PLUGIN, componentName, pluginName);
                             }
-                            elementName = split[1];
+                            elementName = componentName;
                             break;
                         default:
                             break;
@@ -515,7 +537,7 @@ public class CakePhpEditorExtender extends EditorExtender {
 
     private static final class CakePhpHelperVisitor extends DefaultVisitor {
 
-        private final PhpClass helperClass = new PhpClass("AppHelper", "AppHelper");
+        private final PhpClass helperClass = new PhpClass("AppHelper", "AppHelper"); // NOI18N
         private PhpModule pm;
 
         public CakePhpHelperVisitor(FileObject fo) {
@@ -579,18 +601,21 @@ public class CakePhpEditorExtender extends EditorExtender {
 
                     FileObject object = null;
                     // check app or plugin helper
+                    CakePhpModule module = CakePhpModule.forPhpModule(pm);
                     String[] split = elementName.split("[.]"); // NOI18N
                     int len = split.length;
                     switch (len) {
                         case 1:
-                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.HELPER, elementName);
+                            object = module.getHelperFile(DIR_TYPE.APP, elementName);
                             break;
                         case 2:
-                            object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.APP_PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                            String pluginName = split[0];
+                            String helperName = split[1];
+                            object = module.getHelperFile(DIR_TYPE.APP_PLUGIN, helperName, pluginName);
                             if (object == null) {
-                                object = CakePhpUtils.getFile(pm, CakePhpUtils.DIR.PLUGIN, CakePhpUtils.FILE.HELPER, elementName);
+                                object = module.getHelperFile(DIR_TYPE.PLUGIN, helperName, pluginName);
                             }
-                            elementName = split[1];
+                            elementName = helperName;
                             break;
                         default:
                             break;

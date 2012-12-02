@@ -54,10 +54,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.cakephp.netbeans.util.CakePhpSecurity;
-import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.CakeZipEntryFilter;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -157,13 +157,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             CakePhpFileUtils.chmodTmpDirectory(tmp);
         }
 
-        FileObject configDir = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null); // NOI18N
-        FileObject config = null;
-        if (configDir != null) {
-            config = configDir.getFileObject("core.php"); // NOI18N
-            // change security string
-            changeSecurityString(config);
-        }
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject config = module.getConfigDirectory(CakePhpModule.DIR_TYPE.APP).getFileObject("core.php"); // NOI18N
+        // change security string
+        changeSecurityString(config);
 
         // create database.php
         createDatabaseFile(phpModule);
@@ -199,7 +196,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         NewProjectConfigurationPanel p = getPanel();
         if (p.getDatabaseCheckBox().isSelected()) {
 
-            configDirectory = CakePhpUtils.getDirectory(phpModule, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.CONFIG, null);
+            configDirectory = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
             try {
                 PrintWriter pw = new PrintWriter(configDirectory.createAndOpen("database.php")); // NOI18N
                 pw.println("<?php"); // NOI18N

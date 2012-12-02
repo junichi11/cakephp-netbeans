@@ -44,6 +44,8 @@ package org.cakephp.netbeans.ui.actions;
 import java.io.IOException;
 import java.util.Enumeration;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.BaseAction;
 import org.openide.filesystems.FileObject;
@@ -71,7 +73,9 @@ public final class ClearCacheAction extends BaseAction {
             // called via shortcut
             return;
         }
-        FileObject cache = CakePhpFrameworkProvider.getCakePhpDirectory(phpModule).getFileObject("app/tmp/cache");
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject app = module.getDirectory(DIR_TYPE.APP);
+        FileObject cache = app.getFileObject("tmp/cache");
         if (cache != null && cache.isFolder()) {
             Enumeration<? extends FileObject> children = cache.getChildren(true);
             while (children.hasMoreElements()) {

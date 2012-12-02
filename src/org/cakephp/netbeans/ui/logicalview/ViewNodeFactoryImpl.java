@@ -42,7 +42,8 @@
 package org.cakephp.netbeans.ui.logicalview;
 
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
-import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.project.ui.support.NodeFactory;
@@ -61,13 +62,14 @@ public class ViewNodeFactoryImpl implements NodeFactory {
 
     @Override
     public NodeList createNodes(Project prj) {
-        PhpModule module = prj.getLookup().lookup(PhpModule.class);
+        PhpModule phpModule = prj.getLookup().lookup(PhpModule.class);
         // check cake project
-        if(!CakePhpFrameworkProvider.getInstance().isInPhpModule(module)){
+        if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
             return NodeFactorySupport.fixedNodeList();
         }
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject targetDir = module.getViewDirectory(DIR_TYPE.APP);
 
-        FileObject targetDir = CakePhpUtils.getDirectory(module, CakePhpUtils.DIR.APP, CakePhpUtils.FILE.VIEW, null);
         if (targetDir != null) {
             try {
                 ViewNode node = new ViewNode(targetDir);

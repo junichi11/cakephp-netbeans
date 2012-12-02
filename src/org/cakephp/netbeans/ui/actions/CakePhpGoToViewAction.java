@@ -86,13 +86,16 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
             }
             return false;
         }
-        for (PhpClass phpClass : editorSupport.getClasses(controller)) {
-            if (CakePhpUtils.isControllerName(phpClass.getName())) {
-                for (PhpClass.Field field : phpClass.getFields()) {
-                    if (field.getName().equals("$theme")) { // NOI18N
-                        CakePhpGoToViewActionPanel dialog = new CakePhpGoToViewActionPanel(this);
-                        dialog.showDialog();
-                        return true;
+        // check theme directory
+        if (getThemes() != null) {
+            for (PhpClass phpClass : editorSupport.getClasses(controller)) {
+                if (CakePhpUtils.isControllerName(phpClass.getName())) {
+                    for (PhpClass.Field field : phpClass.getFields()) {
+                        if (field.getName().equals("$theme")) { // NOI18N
+                            CakePhpGoToViewActionPanel dialog = new CakePhpGoToViewActionPanel(this);
+                            dialog.showDialog();
+                            return true;
+                        }
                     }
                 }
             }
@@ -123,10 +126,14 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
     public FileObject[] getThemes() {
         PhpModule phpModule = PhpModule.forFileObject(controller);
         FileObject[] themes = null;
+        FileObject themeDirectory = null;
         if (CakeVersion.getInstance(phpModule).isCakePhp(2)) {
-            themes = controller.getFileObject("../../View/Themed").getChildren(); // NOI18N
+            themeDirectory = controller.getFileObject("../../View/Themed"); // NOI18N
         } else {
-            themes = controller.getFileObject("../../views/themed").getChildren(); // NOI18N
+            themeDirectory = controller.getFileObject("../../views/themed"); // NOI18N
+        }
+        if (themeDirectory != null) {
+            themes = themeDirectory.getChildren();
         }
         return themes;
     }

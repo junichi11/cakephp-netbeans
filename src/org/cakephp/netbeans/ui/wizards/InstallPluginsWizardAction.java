@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpPlugin;
 import org.cakephp.netbeans.ui.actions.ClearCacheAction;
 import org.cakephp.netbeans.util.CakeDefaultZipEntryFilter;
@@ -123,7 +123,9 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
             InstallPluginsVisualPanel component = (InstallPluginsVisualPanel) panel.getComponent();
 
             String installPath = component.getInstallPathTextField();
-            final FileObject installDirectory = CakePhpFrameworkProvider.getCakePhpDirectory(pm).getFileObject(installPath);
+            CakePhpModule module = CakePhpModule.forPhpModule(pm);
+            FileObject cakePhpDirectory = CakePhpModule.getCakePhpDirectory(pm);
+            final FileObject installDirectory = cakePhpDirectory.getFileObject(installPath);
             NotifyDescriptor descriptor = null;
             if (installDirectory == null) {
                 descriptor = new NotifyDescriptor.Message(installPath + " dosen't exist.", NotifyDescriptor.ERROR_MESSAGE);

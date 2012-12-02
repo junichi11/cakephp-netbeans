@@ -64,13 +64,14 @@ public final class InstallPluginsVisualPanel extends JPanel {
     /**
      * Creates new form InstallPluginsVisualPanel
      */
-    public InstallPluginsVisualPanel(PhpModule phpModule) {
+    public InstallPluginsVisualPanel(PhpModule pm) {
         model.setPlugins(CakePhpOptions.getInstance().getPlugins());
         initComponents();
-        if (CakeVersion.getInstance(phpModule).isCakePhp(1)) {
-            installPathTextField.setText(CakePreferences.getAppName(phpModule) + "/plugins");
+        String appName = CakePreferences.getAppName(pm);
+        if (CakeVersion.getInstance(pm).isCakePhp(2)) {
+            installPathTextField.setText(appName + "/Plugin");
         } else {
-            installPathTextField.setText(CakePreferences.getAppName(phpModule) + "/Plugin");
+            installPathTextField.setText(appName + "/plugins");
         }
 
         pluginTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
@@ -128,7 +129,7 @@ public final class InstallPluginsVisualPanel extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(installPathLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -172,14 +173,17 @@ public final class InstallPluginsVisualPanel extends JPanel {
             plugins = new ArrayList<CakePhpPlugin>();
         }
 
+        @Override
         public int getRowCount() {
             return plugins.size();
         }
 
+        @Override
         public int getColumnCount() {
             return column.length;
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             CakePhpPlugin plugin = plugins.get(rowIndex);
             if (columnIndex == INSTALL) {
