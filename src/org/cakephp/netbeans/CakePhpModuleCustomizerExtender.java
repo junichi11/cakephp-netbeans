@@ -120,7 +120,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         }
         if (!newAppName.equals(appName) && !newAppName.equals("")) { // NOI18N
             CakePreferences.setAppName(phpModule, newAppName);
-            return EnumSet.of(Change.SOURCES_CHANGE);
+            return EnumSet.of(Change.FRAMEWORK_CHANGE);
         }
         return null;
     }
