@@ -43,13 +43,17 @@ package org.cakephp.netbeans.ui.actions;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.BaseAction;
+import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
 /**
@@ -59,6 +63,7 @@ public final class ClearCacheAction extends BaseAction {
 
     private static final ClearCacheAction INSTANCE = new ClearCacheAction();
     private static final long serialVersionUID = -1978960583114966388L;
+    private static final Logger LOGGER = Logger.getLogger(ClearCacheAction.class.getName());
 
     private ClearCacheAction() {
     }
@@ -75,7 +80,7 @@ public final class ClearCacheAction extends BaseAction {
         }
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
         FileObject app = module.getDirectory(DIR_TYPE.APP);
-        FileObject cache = app.getFileObject("tmp/cache");
+        FileObject cache = app.getFileObject("tmp/cache"); // NOI18N
         if (cache != null && cache.isFolder()) {
             Enumeration<? extends FileObject> children = cache.getChildren(true);
             while (children.hasMoreElements()) {
@@ -86,10 +91,14 @@ public final class ClearCacheAction extends BaseAction {
                     try {
                         grandChild.delete();
                     } catch (IOException ex) {
-                        Exceptions.printStackTrace(ex);
+                        LOGGER.log(Level.WARNING, "can't delete: " + grandChild.getNameExt(), ex);
+                        Icon icon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"));
+                        NotificationDisplayer.getDefault().notify(getPureName(), icon, "Delete fail", null);
                     }
                 }
             }
+            Icon icon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png"));
+            NotificationDisplayer.getDefault().notify(getPureName(), icon, "Complete success", null);
         }
     }
 
