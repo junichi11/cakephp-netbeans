@@ -30,7 +30,8 @@ This plugin provides support for CakePHP.
 - format for CakePHP action [New:v0.6.8]
 - go to element file from view file [New:v0.6.9]
 - display and change debug level [New:v0.6.10]
-- multiple app directories support [ **beta** ]
+- multiple app directories support [v0.6.14]
+- verify CakePHP action [v0.6.15]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -258,6 +259,12 @@ You can change debug level on popup list.
 When you choose the CakePHP file node, you would find the cake icon and debug level number at the lower right of the window.
 
 If you change debug level, click the icon. Then the popup is displayed. Please, select the debug level number.
+
+### Verify CakePHP Action (v0.6.15)
+
+Verify default asset names. (e.g. css/cake.generic.css, img/cake.icon.png, ...)
+
+Verify whether favicon.ico is changed.
 
 ## HOW TO RUN:
 
