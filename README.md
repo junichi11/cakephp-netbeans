@@ -5,7 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/11/05 last update
+- 2012/12/11 last update
 
 ## ENVIRONMENT
 
@@ -32,6 +32,7 @@ This plugin provides support for CakePHP.
 - display and change debug level [New:v0.6.10]
 - multiple app directories support [v0.6.14]
 - verify CakePHP action [v0.6.15]
+- image and element code completion [v0.6.16]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -185,6 +186,26 @@ public $components('Search.Prg', 'Foo');
 
 public $helpers('Session', 'Html' => array('className' => 'MyHtml'));
 // $this->Html-> [Ctrl + Space] => display MyHtmlHelper class methods and fields
+```
+
+image file completion
+
+```php
+$this->Html->image('[Ctrl + Space]');
+// popup file and directory names in the webroot/img
+$this->Html->image('subdir/[Ctrl + Space]');
+// popup file and directory names in the webroot/img/subdir
+// ...
+$this->Html->image('/mydir/[Ctrl + Space]');
+// if you want to use files or directories in the webroot directory,
+// please, start with "/"
+```
+
+element file completion
+
+```php
+$this->element('[Ctrl + Space]');
+// popup file names in the appdir/View/Elements/
 ```
 
 ### Go To View Action
