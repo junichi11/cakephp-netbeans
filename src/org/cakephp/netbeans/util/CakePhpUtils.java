@@ -43,6 +43,7 @@ package org.cakephp.netbeans.util;
 
 import java.io.*;
 import java.util.regex.Pattern;
+import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
@@ -57,6 +58,13 @@ public final class CakePhpUtils {
     private static final String UNDERSCORE = "_"; // NOI18N
 
     private CakePhpUtils() {
+    }
+
+    public static boolean isCakePHP(PhpModule phpModule) {
+        if (phpModule == null) {
+            return false;
+        }
+        return CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule);
     }
 
     public static boolean isView(FileObject fo) {
@@ -106,12 +114,13 @@ public final class CakePhpUtils {
 
     /**
      * Get class name
+     *
      * @param fo FileObject
      * @return class name
      */
-    public static String getClassName(FileObject fo){
+    public static String getClassName(FileObject fo) {
         EditorSupport support = Lookup.getDefault().lookup(EditorSupport.class);
-        for(PhpClass phpClass : support.getClasses(fo)){
+        for (PhpClass phpClass : support.getClasses(fo)) {
             return phpClass.getName();
         }
         return null;
