@@ -280,7 +280,11 @@ public class CakePhpModule {
     }
 
     public boolean isModel(FileObject fo) {
-        return impl.isController(fo);
+        return impl.isModel(fo);
+    }
+
+    public boolean isBehavior(FileObject fo) {
+        return impl.isBehavior(fo);
     }
 
     public boolean isView(FileObject fo) {

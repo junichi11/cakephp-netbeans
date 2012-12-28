@@ -320,6 +320,11 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     }
 
     @Override
+    public boolean isBehavior(FileObject fo) {
+        return isSpecifiedFile(fo, DIR_BEHAVIOR);
+    }
+
+    @Override
     public boolean isComponent(FileObject fo) {
         return isSpecifiedFile(fo, DIR_COMPONENT);
     }

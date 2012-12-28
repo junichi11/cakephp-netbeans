@@ -159,6 +159,17 @@ public final class CakePhpUtils {
         return CakePhpModule.forPhpModule(phpModule).isModel(fo);
     }
 
+    /**
+     * Check model file
+     *
+     * @param fo file
+     * @return model true, otherwise false
+     */
+    public static boolean isBehavior(FileObject fo) {
+        PhpModule phpModule = PhpModule.forFileObject(fo);
+        return CakePhpModule.forPhpModule(phpModule).isBehavior(fo);
+    }
+
     public static String getActionName(FileObject view) {
         return getActionName(view.getName());
     }

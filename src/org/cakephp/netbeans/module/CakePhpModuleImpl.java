@@ -218,6 +218,8 @@ public abstract class CakePhpModuleImpl {
 
     public abstract boolean isModel(FileObject fo);
 
+    public abstract boolean isBehavior(FileObject fo);
+
     public abstract boolean isComponent(FileObject fo);
 
     public abstract boolean isHelper(FileObject fo);

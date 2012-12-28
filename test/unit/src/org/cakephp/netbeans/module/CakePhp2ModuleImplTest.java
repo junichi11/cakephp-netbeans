@@ -659,6 +659,22 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
     }
 
     /**
+     * Test of isBehavior method, of class CakePhp2ModuleImpl.
+     */
+    @Test
+    public void testIsBehavior() {
+        FileObject fo = null;
+        boolean result;
+        fo = getCakePhpDir().getFileObject(app + "/Model/Behavior/NbtestBehavior.php");
+        result = module.isBehavior(fo);
+        assertTrue(result);
+
+        fo = getCakePhpDir().getFileObject(app + "/Controller/NbtestsController.php");
+        result = module.isBehavior(fo);
+        assertFalse(result);
+    }
+
+    /**
      * Test of isComponent method, of class CakePhp2ModuleImpl.
      */
     @Test
