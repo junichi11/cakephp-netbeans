@@ -61,29 +61,29 @@ import org.openide.util.NbBundle;
  *
  * @author junichi11
  */
-public class VerifyCakePhp extends BaseAction {
+public class CheckDefault extends BaseAction {
 
-    private static final Logger LOGGER = Logger.getLogger(VerifyCakePhp.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CheckDefault.class.getName());
     private static final long serialVersionUID = 3438128008537517533L;
     private static final String CAKE_FAVICON_ICO = "org-cakephp-netbeans/favicon.ico";
-    private static final VerifyCakePhp INSTANCE = new VerifyCakePhp();
+    private static final CheckDefault INSTANCE = new CheckDefault();
     private static final String OK_NOT_FOUND = "OK:Not Found";
     private static final String OK_CHANGED = "OK:Changed";
     private JPanel panel;
 
-    private VerifyCakePhp() {
+    private CheckDefault() {
     }
 
-    public static VerifyCakePhp getInstance() {
+    public static CheckDefault getInstance() {
         return INSTANCE;
     }
 
     @Override
     protected String getFullName() {
-        return NbBundle.getMessage(VerifyCakePhp.class, "LBL_CakePhpAction", getPureName());
+        return NbBundle.getMessage(CheckDefault.class, "LBL_CakePhpAction", getPureName());
     }
 
-    @NbBundle.Messages("LBL_VerifyCakePHP=Verify CakePHP")
+    @NbBundle.Messages("LBL_VerifyCakePHP=Check Default")
     @Override
     protected String getPureName() {
         return Bundle.LBL_VerifyCakePHP();
@@ -96,7 +96,7 @@ public class VerifyCakePhp extends BaseAction {
             return;
         }
         // get panel
-        VerifyCakePhpPanel verifyPanel = getPanel();
+        CheckDefaultPanel verifyPanel = getPanel();
         verifyPanel.reset();
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
         FileObject webroot = module.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
@@ -145,7 +145,7 @@ public class VerifyCakePhp extends BaseAction {
         }
 
         // Config/core.php :Session name
-        if (isChangedSessionName(module)) { // NOI18N
+        if (isChangedSessionName(module)) {
             verifyPanel.setSessionCookieStatusLabel(OK_CHANGED);
         }
 
@@ -169,7 +169,7 @@ public class VerifyCakePhp extends BaseAction {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         FileObject webrootDirectory = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
         if (webrootDirectory != null) {
-            targetFavicon = webrootDirectory.getFileObject("favicon.ico");
+            targetFavicon = webrootDirectory.getFileObject("favicon.ico"); // NOI18N
         }
         // not found
         if (targetFavicon == null) {
@@ -253,14 +253,14 @@ public class VerifyCakePhp extends BaseAction {
     }
 
     /**
-     * Get VerifyCakePhpPanel
+     * Get CheckDefaultPanel
      *
      * @return
      */
-    private VerifyCakePhpPanel getPanel() {
+    private CheckDefaultPanel getPanel() {
         if (panel == null) {
-            panel = new VerifyCakePhpPanel();
+            panel = new CheckDefaultPanel();
         }
-        return (VerifyCakePhpPanel) panel;
+        return (CheckDefaultPanel) panel;
     }
 }

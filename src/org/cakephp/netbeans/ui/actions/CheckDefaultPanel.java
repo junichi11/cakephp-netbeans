@@ -54,22 +54,22 @@ import org.openide.DialogDisplayer;
  *
  * @author junichi11
  */
-public class VerifyCakePhpPanel extends JPanel implements ActionListener {
+public class CheckDefaultPanel extends JPanel implements ActionListener {
 
     private static final long serialVersionUID = -9147653710118986641L;
     private static final String DEFAULT = "default";
-    private static final String OK_PREFIX = "OK";
+    private static final String OK_PREFIX = "OK"; // NOI18N
     private DialogDescriptor dialogDescriptor;
     private Dialog dialog;
-    private Icon successIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png"));
-    private Icon failIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"));
+    private Icon successIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png")); // NOI18N
+    private Icon failIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png")); // NOI18N
 
     /**
-     * Creates new form VerifyCakePhpPanel
+     * Creates new form CheckDefaultPanel
      */
-    public VerifyCakePhpPanel() {
+    public CheckDefaultPanel() {
         initComponents();
-        dialogDescriptor = new DialogDescriptor(this, "Verify CakePHP", true, this);
+        dialogDescriptor = new DialogDescriptor(this, "Check Default", true, this);
     }
 
     /**
@@ -222,59 +222,59 @@ public class VerifyCakePhpPanel extends JPanel implements ActionListener {
         sessionCookieStatusLabel = new javax.swing.JLabel();
 
         faviconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(faviconLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.faviconLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(faviconLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.faviconLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(faviconStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.faviconStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(faviconStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.faviconStatusLabel.text")); // NOI18N
 
         cakeGenericCssLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(cakeGenericCssLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.cakeGenericCssLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cakeGenericCssLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.cakeGenericCssLabel.text")); // NOI18N
 
         filesEmptyLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(filesEmptyLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.filesEmptyLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(filesEmptyLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.filesEmptyLabel.text")); // NOI18N
 
         testPhpLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(testPhpLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testPhpLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testPhpLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testPhpLabel.text")); // NOI18N
 
         cakeIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(cakeIconLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.cakeIconLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cakeIconLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.cakeIconLabel.text")); // NOI18N
 
         cakePowerLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(cakePowerLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.cakePowerLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cakePowerLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.cakePowerLabel.text")); // NOI18N
 
         testErrorIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(testErrorIconLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testErrorIconLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testErrorIconLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testErrorIconLabel.text")); // NOI18N
 
         testFailIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(testFailIconLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testFailIconLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testFailIconLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testFailIconLabel.text")); // NOI18N
 
         testPassIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(testPassIconLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testPassIconLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testPassIconLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testPassIconLabel.text")); // NOI18N
 
         testSkipIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(testSkipIconLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testSkipIconLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testSkipIconLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testSkipIconLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(cakeGenericCssStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.cakeGenericCssStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cakeGenericCssStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.cakeGenericCssStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(filesEmptyStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.filesEmptyStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(filesEmptyStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.filesEmptyStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(testPhpStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testPhpStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testPhpStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testPhpStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(cakeIconStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.cakeIconStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cakeIconStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.cakeIconStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(cakePowerStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.cakePowerStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cakePowerStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.cakePowerStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(testErrorIconStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testErrorIconStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testErrorIconStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testErrorIconStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(testFailIconStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testFailIconStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testFailIconStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testFailIconStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(testPassIconStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testPassIconStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testPassIconStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testPassIconStatusLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(testSkipIconStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.testSkipIconStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testSkipIconStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.testSkipIconStatusLabel.text")); // NOI18N
 
         sessionCookieLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(sessionCookieLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.sessionCookieLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(sessionCookieLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.sessionCookieLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(sessionCookieStatusLabel, org.openide.util.NbBundle.getMessage(VerifyCakePhpPanel.class, "VerifyCakePhpPanel.sessionCookieStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(sessionCookieStatusLabel, org.openide.util.NbBundle.getMessage(CheckDefaultPanel.class, "CheckDefaultPanel.sessionCookieStatusLabel.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

@@ -119,14 +119,14 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.faviconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.faviconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="faviconStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.faviconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.faviconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -136,7 +136,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.cakeGenericCssLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.cakeGenericCssLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -146,7 +146,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.filesEmptyLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.filesEmptyLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -156,7 +156,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testPhpLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testPhpLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -166,7 +166,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.cakeIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.cakeIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -176,7 +176,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.cakePowerLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.cakePowerLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -186,7 +186,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testErrorIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testErrorIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -196,7 +196,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testFailIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testFailIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -206,7 +206,7 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testPassIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testPassIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -216,70 +216,70 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testSkipIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testSkipIconLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="cakeGenericCssStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.cakeGenericCssStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.cakeGenericCssStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="filesEmptyStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.filesEmptyStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.filesEmptyStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="testPhpStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testPhpStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testPhpStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="cakeIconStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.cakeIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.cakeIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="cakePowerStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.cakePowerStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.cakePowerStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="testErrorIconStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testErrorIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testErrorIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="testFailIconStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testFailIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testFailIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="testPassIconStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testPassIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testPassIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="testSkipIconStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.testSkipIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.testSkipIconStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -289,14 +289,14 @@
           <Image iconType="3" name="/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.sessionCookieLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.sessionCookieLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="sessionCookieStatusLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="VerifyCakePhpPanel.sessionCookieStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/cakephp/netbeans/ui/actions/Bundle.properties" key="CheckDefaultPanel.sessionCookieStatusLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

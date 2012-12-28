@@ -66,7 +66,7 @@ public class CakePhpActionsExtender extends PhpModuleActionsExtender {
         List<Action> list = new ArrayList<Action>();
         list.add(ClearCacheAction.getInstance());
         list.add(InstallPluginsWizardAction.getInstance());
-        list.add(VerifyCakePhp.getInstance());
+        list.add(CheckDefault.getInstance());
         list.add(PHPUnitInitAction.getInstance());
         return list;
     }
