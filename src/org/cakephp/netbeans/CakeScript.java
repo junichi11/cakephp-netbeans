@@ -45,6 +45,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExternalProcessBuilder;
 import org.netbeans.api.extexecution.input.InputProcessor;
@@ -66,6 +67,7 @@ public class CakeScript extends PhpProgram {
     public static final String SCRIPT_NAME = "cake"; // NOI18N
     public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + ".php"; // NOI18N
     private static final String CMD_BAKE = "bake"; // NOI18N
+    private static final String TEST = "test";
     private final PhpModule phpModule;
 
     private CakeScript(String command) {
@@ -132,6 +134,25 @@ public class CakeScript extends PhpProgram {
                     .workingDirectory(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)));
         }
         executeLater(processBuilder, executionDescriptor, CMD_BAKE);
+    }
+
+    public void runBakeTest(FILE_TYPE fileType, String className, String pluginName) {
+        ExecutionDescriptor executionDescriptor = getExecutionDescriptor()
+                .outProcessorFactory(ANSI_STRIPPING_FACTORY)
+                .errProcessorFactory(ANSI_STRIPPING_FACTORY);
+        FrameworkCommandSupport commandSupport = CakePhpFrameworkProvider.getInstance().getFrameworkCommandSupport(phpModule);
+        ExternalProcessBuilder processBuilder;
+        if (pluginName != null && !pluginName.isEmpty()) {
+            processBuilder = commandSupport.createSilentCommand(CMD_BAKE, TEST, "--plugin", pluginName, fileType.toString().toLowerCase(), className);
+        } else {
+            processBuilder = commandSupport.createSilentCommand(CMD_BAKE, TEST, fileType.toString().toLowerCase(), className);
+        }
+        assert phpModule != null;
+        if (phpModule != null) {
+            processBuilder = processBuilder
+                    .workingDirectory(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)));
+        }
+        executeLater(processBuilder, executionDescriptor, CMD_BAKE + "" + TEST);
     }
 
     public static String getHelp(PhpModule phpModule, FrameworkCommand command) {
