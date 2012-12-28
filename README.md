@@ -5,7 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/12/11 last update
+- 2012/12/29 last update
 
 ## ENVIRONMENT
 
@@ -281,11 +281,31 @@ When you choose the CakePHP file node, you would find the cake icon and debug le
 
 If you change debug level, click the icon. Then the popup is displayed. Please, select the debug level number.
 
-### Verify CakePHP Action (v0.6.15)
+### Check Default Action (v0.6.15)
 
-Verify default asset names. (e.g. css/cake.generic.css, img/cake.icon.png, ...)
+Check default asset names. (e.g. css/cake.generic.css, img/cake.icon.png, ...)
 
-Verify whether favicon.ico is changed.
+Check whether favicon.ico is changed.
+
+### PHPUnit Test settings (PHPUnit Test Init Action)
+**Support for only CakePHP2.x**
+
+Project-right-click > CakePHP > PHPUnit Test Init
+
+Do settings for doing PHPUnit Test with NetBeans.
+
+Create following files:
+
+- nbproject/NetBeansSuite.php
+- nbproject/phpunit.bat or phpunit.sh
+- app/webroot/bootstrap_phpunit.php
+
+And set PHPUnit settings of Project properties:
+
+- bootstrap
+- custome script
+
+If you run this action, you can test using fixture with NetBeans.
 
 ## HOW TO RUN:
 
