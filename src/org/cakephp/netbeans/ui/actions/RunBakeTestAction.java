@@ -49,6 +49,7 @@ import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
+import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpProgram;
 import org.openide.DialogDisplayer;
@@ -83,6 +84,7 @@ public class RunBakeTestAction implements ActionListener {
     private DataObject context;
     private FileObject targetFile;
     private PhpModule phpModule;
+    private FileObject test;
 
     public RunBakeTestAction(DataObject context) {
         this.context = context;
@@ -100,6 +102,13 @@ public class RunBakeTestAction implements ActionListener {
         if (!CakeVersion.getInstance(phpModule).isCakePhp(2)) {
             return;
         }
+
+        // already exist?
+        if(existTest()){
+            UiUtils.open(test, 0);
+            return;
+        }
+
         try {
             DIR_TYPE dirType = getDirType();
             if (dirType != DIR_TYPE.APP && dirType != DIR_TYPE.APP_PLUGIN && dirType != DIR_TYPE.PLUGIN) {
@@ -197,5 +206,43 @@ public class RunBakeTestAction implements ActionListener {
             }
         }
         return null;
+    }
+
+    private boolean existTest() {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        DIR_TYPE dirType = getDirType();
+        FILE_TYPE fileType = getFileType();
+        String pluginName = getPluginName(dirType);
+        FileObject testDirectory = cakeModule.getTestDirectory(dirType, pluginName);
+        if (testDirectory == null) {
+            return false;
+        }
+        String dirPath = fileType.toString() + "/"; // NOI18N
+        switch (fileType) {
+            case CONTROLLER: // no break
+            case MODEL: // no break
+            case VIEW:
+                // do nothing
+                break;
+            case COMPONENT:
+                dirPath = "Controller/" + dirPath; // NOI18N
+                break;
+            case BEHAVIOR:
+                dirPath = "Model/" + dirPath; // NOI18N
+                break;
+            case HELPER:
+                dirPath = "View/" + dirPath; // NOI18N
+                break;
+            default:
+                return false;
+        }
+        dirPath = "Case/" + dirPath + targetFile.getName() + "Test." + targetFile.getExt(); // NOI18N
+
+        test = testDirectory.getFileObject(dirPath);
+        if(test != null) {
+            return true;
+        }
+
+        return false;
     }
 }
