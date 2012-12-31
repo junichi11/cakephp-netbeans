@@ -5,7 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/12/29 last update
+- 2013/01/01 last update
 
 ## ENVIRONMENT
 
@@ -26,13 +26,14 @@ This plugin provides support for CakePHP.
 - install plugins action (from zip file URL)[*1]
 - template files (ctp, helper, component, behavior, shell, task)
 - create new CakePHP projects from new project option
-- code completion support [New:v0.6]
-- format for CakePHP action [New:v0.6.8]
-- go to element file from view file [New:v0.6.9]
-- display and change debug level [New:v0.6.10]
+- code completion support [v0.6]
+- format for CakePHP action [v0.6.8]
+- go to element file from view file [v0.6.9]
+- display and change debug level [v0.6.10]
 - multiple app directories support [v0.6.14]
-- verify CakePHP action [v0.6.15]
+- check default action [v0.6.15]
 - image and element code completion [v0.6.16]
+- support for PHPUnit settings and create test case [v0.6.17]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -66,7 +67,7 @@ Please select your cakephp dir(e.g. /home/NetBeansProjects/myproject)
 
 ### App Directory Name
 
-Multiple app directory names support. [ **beta** ]
+Multiple app directory names support.
 
 #### Change app directory name
 
@@ -306,6 +307,10 @@ And set PHPUnit settings of Project properties:
 - custome script
 
 If you run this action, you can test using fixture with NetBeans.
+
+#### bootstrap and NetBeansSuite Sources
+
+https://gist.github.com/2055307 ([nojimage](https://github.com/nojimage))
 
 ## HOW TO RUN:
 
