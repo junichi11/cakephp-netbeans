@@ -42,7 +42,7 @@
 package org.cakephp.netbeans.editor;
 
 import javax.swing.text.JTextComponent;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.parsing.api.Source;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.editor.completion.CompletionProvider;
@@ -61,7 +61,7 @@ public abstract class CakePhpCompletionProvider implements CompletionProvider {
             return null;
         }
         PhpModule phpModule = getPhpModule(jtc);
-        if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
+        if (!CakePhpUtils.isCakePHP(phpModule)) {
             return null;
         }
         return createTask(queryType, jtc, phpModule);
