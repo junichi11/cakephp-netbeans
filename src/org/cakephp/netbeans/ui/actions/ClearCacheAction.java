@@ -47,9 +47,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.BaseAction;
 import org.openide.awt.NotificationDisplayer;
@@ -74,7 +74,7 @@ public final class ClearCacheAction extends BaseAction {
 
     @Override
     public void actionPerformed(PhpModule phpModule) {
-        if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
+        if (!CakePhpUtils.isCakePHP(phpModule)) {
             // called via shortcut
             return;
         }

@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.ui.actions;
 
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.RunCommandAction;
 import org.openide.util.NbBundle;
@@ -64,7 +65,7 @@ public final class CakePhpRunCommandAction extends RunCommandAction {
 
     @Override
     public void actionPerformed(PhpModule phpModule) {
-        if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
+        if (!CakePhpUtils.isCakePHP(phpModule)) {
             return;
         }
         CakePhpFrameworkProvider.getInstance().getFrameworkCommandSupport(phpModule).runCommand();

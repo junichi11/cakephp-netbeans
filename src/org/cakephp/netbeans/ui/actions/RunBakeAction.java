@@ -41,8 +41,8 @@
  */
 package org.cakephp.netbeans.ui.actions;
 
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.CakeScript;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpProgram.InvalidPhpProgramException;
 import org.netbeans.modules.php.spi.actions.BaseAction;
@@ -63,7 +63,7 @@ public final class RunBakeAction extends BaseAction {
 
     @Override
     public void actionPerformed(PhpModule phpModule) {
-        if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
+        if (!CakePhpUtils.isCakePHP(phpModule)) {
             // called via shortcut
             return;
         }

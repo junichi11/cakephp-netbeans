@@ -70,6 +70,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.awt.StatusLineElementProvider;
 import org.openide.filesystems.FileChangeAdapter;
@@ -287,7 +288,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
             }
 
             PhpModule pmTemp = PhpModule.forFileObject(fileObject);
-            if (pmTemp == null || !CakePhpFrameworkProvider.getInstance().isInPhpModule(pmTemp)) {
+            if (!CakePhpUtils.isCakePHP(pmTemp)) {
                 clearLabel();
                 return;
             }
