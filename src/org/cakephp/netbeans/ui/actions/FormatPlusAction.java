@@ -49,7 +49,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.modules.editor.lib2.search.EditorFindSupport;
@@ -85,7 +85,7 @@ public final class FormatPlusAction implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         // Check CakePHP project
         PhpModule phpModule = PhpModule.inferPhpModule();
-        if (phpModule == null || !CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
+        if (!CakePhpUtils.isCakePHP(phpModule)) {
             return;
         }
 

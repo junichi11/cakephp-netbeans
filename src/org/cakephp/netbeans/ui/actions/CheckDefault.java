@@ -45,11 +45,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.actions.BaseAction;
 import org.openide.filesystems.FileObject;
@@ -92,7 +91,7 @@ public class CheckDefault extends BaseAction {
     @Override
     protected void actionPerformed(PhpModule phpModule) {
         // is it cake module? called via shortcut
-        if (!CakePhpFrameworkProvider.getInstance().isInPhpModule(phpModule)) {
+        if (!CakePhpUtils.isCakePHP(phpModule)) {
             return;
         }
         // get panel
