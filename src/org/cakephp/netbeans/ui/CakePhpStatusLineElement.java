@@ -67,7 +67,6 @@ import javax.swing.PopupFactory;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
@@ -94,31 +93,35 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private static final String CONFIGURE_WRITE_DEBUG = "\tConfigure::write('debug', %s);"; // NOI18N
     private final ImageIcon icon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_icon_16.png")); // NOI18N
     private final JLabel debugLabel = new JLabel(""); // NOI18N
-    private static final Map<String, String> debugLevel = new HashMap();
+    private static final Map<String, String> debugLevel = new HashMap<String, String>();
     private Lookup.Result result = null;
     private PhpModule phpModule = null;
-    private String level = "";
+    private String level = ""; // NOI18N
     private JList list;
     private DefaultListModel model;
     private Popup popup;
     private boolean popupFlg = false;
+    private FileChangeAdapterImpl fileChangeListener;
 
     static {
-        debugLevel.put("0", "0");
-        debugLevel.put("1", "1");
-        debugLevel.put("2", "2");
+        debugLevel.put("0", "0"); // NOI18N
+        debugLevel.put("1", "1"); // NOI18N
+        debugLevel.put("2", "2"); // NOI18N
     }
 
     public CakePhpStatusLineElement() {
+        // add lookup listener
         result = Utilities.actionsGlobalContext().lookupResult(FileObject.class);
         result.addLookupListener(new LookupListenerImpl());
 
+        // create list
         model = new DefaultListModel();
         for (String debugLv : debugLevel.keySet()) {
             model.addElement(debugLv);
         }
         list = new JList(model);
 
+        // add mouse listener
         debugLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -160,7 +163,14 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         return panelWithSeparator(debugLabel);
     }
 
+    /**
+     * Create Component(JPanel) and add separator and JLabel to it.
+     *
+     * @param cell JLabel
+     * @return panel
+     */
     private Component panelWithSeparator(JLabel cell) {
+        // create separator
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL) {
             private static final long serialVersionUID = -6385848933295984637L;
 
@@ -171,6 +181,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         };
         separator.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
+        // create panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(separator, BorderLayout.WEST);
         panel.add(cell);
@@ -184,7 +195,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
      * @return debug level
      */
     public String getDebugLevel(FileObject core) {
-        String debubLv = "";
+        String debubLv = ""; // NOI18N
         Pattern pattern = Pattern.compile(DEBUG_REGEX);
 
         try {
@@ -231,12 +242,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
      * @param debugLv
      */
     private void writeCore(String debugLv) {
-        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        FileObject config = module.getConfigDirectory(DIR_TYPE.APP);
-        if (config == null) {
-            return;
-        }
-        FileObject core = config.getFileObject("core.php"); // NOI18N
+        FileObject core = getCoreFile();
         if (core == null) {
             return;
         }
@@ -265,64 +271,103 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         return level;
     }
 
-    public void setPhpModule(PhpModule phpModule) {
-        this.phpModule = phpModule;
+    /**
+     * Get app/Config/core.php file
+     *
+     * @return core.php if it exists, otherwise null
+     */
+    public FileObject getCoreFile() {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject config = module.getConfigDirectory(DIR_TYPE.APP);
+        if (config == null) {
+            return null;
+        }
+        return config.getFileObject("core.php"); // NOI18N
     }
 
-    public PhpModule getPhpModule() {
-        return phpModule;
-    }
-
+    //~ Inner classes
     private class LookupListenerImpl implements LookupListener {
 
         @Override
         public void resultChanged(LookupEvent lookupEvent) {
+            // get FileObject
+            FileObject fileObject = getFileObject(lookupEvent);
+            if (fileObject == null) {
+                clearLabel();
+                return;
+            }
+
+            // get PhpModule
+            PhpModule currentPhpModule = PhpModule.forFileObject(fileObject);
+            if (!CakePhpUtils.isCakePHP(currentPhpModule)) {
+                clearLabel();
+                return;
+            }
+
+            // check whether move to other project
+            if (phpModule == currentPhpModule) {
+                String lv = getLevel();
+                setDebugLevelLabel(lv);
+                list.setSelectedValue(lv, false);
+                return;
+            } else {
+                // phpModule is null at first time
+                if (phpModule != null) {
+                    FileObject core = getCoreFile();
+                    if (core != null && fileChangeListener != null) {
+                        core.removeFileChangeListener(fileChangeListener);
+                    }
+                }
+                phpModule = currentPhpModule;
+            }
+
+            // get core file
+            FileObject core = getCoreFile();
+            if (core == null) {
+                return;
+            }
+
+            // add FileChangeListener to core file
+            if (fileChangeListener == null) {
+                fileChangeListener = new FileChangeAdapterImpl();
+            }
+            core.addFileChangeListener(fileChangeListener);
+
+            // set debug level
+            String level = getDebugLevel(core);
+            setLevel(level);
+            setDebugLevelLabel(level);
+            list.setSelectedValue(level, false);
+        }
+
+        /**
+         * Get FileObject
+         *
+         * @param lookupEvent
+         * @return current FileObject if exists, otherwise null
+         */
+        private FileObject getFileObject(LookupEvent lookupEvent) {
             Lookup.Result lookupResult = (Lookup.Result) lookupEvent.getSource();
             Collection c = lookupResult.allInstances();
             FileObject fileObject = null;
             if (!c.isEmpty()) {
                 fileObject = (FileObject) c.iterator().next();
-            } else {
-                clearLabel();
-                return;
             }
+            return fileObject;
+        }
+    }
 
-            PhpModule pmTemp = PhpModule.forFileObject(fileObject);
-            if (!CakePhpUtils.isCakePHP(pmTemp)) {
-                clearLabel();
-                return;
-            }
-            PhpModule pm = getPhpModule();
-            if (pm == pmTemp) {
-                setDebugLevelLabel(getLevel());
-                return;
-            } else {
-                pm = pmTemp;
-                setPhpModule(pm);
-            }
+    private class FileChangeAdapterImpl extends FileChangeAdapter {
 
-            CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-            FileObject config = module.getConfigDirectory(DIR_TYPE.APP);
-            if (config == null) {
-                return;
-            }
-            FileObject core = config.getFileObject("core.php"); // NOI18N
-            if (core == null) {
-                return;
-            }
+        public FileChangeAdapterImpl() {
+        }
 
-            core.addFileChangeListener(new FileChangeAdapter() {
-                @Override
-                public void fileChanged(FileEvent fe) {
-                    String level = getDebugLevel(fe.getFile());
-                    setLevel(level);
-                    setDebugLevelLabel(level);
-                }
-            });
-
-            String level = getDebugLevel(core);
+        @Override
+        public void fileChanged(FileEvent fe) {
+            String level = getDebugLevel(fe.getFile());
             setLevel(level);
             setDebugLevelLabel(level);
+            list.setSelectedValue(level, false);
         }
     }
 }
