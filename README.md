@@ -5,11 +5,12 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2013/01/01 last update
+- 2012/09/08 Support for NetBeans7.3
+- 2013/02/11 last update
 
 ## ENVIRONMENT
 
-- [NetBeans IDE 7.2](http://netbeans.org/downloads/index.html)
+- [Development build of NetBeans](http://bits.netbeans.org/download/trunk/nightly/latest/) (At least build netbeans-trunk-nightly-201209080001)
 - CakePHP 1.3.x
 - CakePHP 2.x
 

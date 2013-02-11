@@ -41,6 +41,7 @@
  */
 package org.cakephp.netbeans.module;
 
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -2413,5 +2414,13 @@ public class CakePhpModuleTest extends NbTestCase {
             };
         }
 
+        @Override
+        public boolean isBroken() {
+            return false;
+        }
+
+        @Override
+        public void propertyChanged(PropertyChangeEvent pce) {
+        }
     }
 }

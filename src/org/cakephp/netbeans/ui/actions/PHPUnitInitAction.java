@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.module.CakePhpModule;
@@ -57,7 +58,7 @@ import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.project.PhpProject;
 import org.netbeans.modules.php.project.ui.customizer.PhpProjectProperties;
 import org.netbeans.modules.php.project.ui.options.PhpOptions;
-import org.netbeans.modules.php.spi.actions.BaseAction;
+import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -167,14 +168,23 @@ public class PHPUnitInitAction extends BaseAction {
      */
     private void createNetBeansSuite(PhpModule phpModule) {
         FileObject nbproject = getNbproject(phpModule);
-        if (nbproject.getFileObject(NET_BEANS_SUITE_PHP) == null) {
-            FileObject suite = FileUtil.getConfigFile(CONFIG_NET_BEANS_SUITE_PHP);
+        if (nbproject == null) {
+            return;
+        }
+        FileObject nbSuite = nbproject.getFileObject(NET_BEANS_SUITE_PHP);
+        if (nbSuite != null) {
             try {
-                suite.copy(nbproject, NET_BEANS_SUITE, "php"); // NOI18N
-                messages.put(NET_BEANS_SUITE, SUCCESS_MSG);
+                nbSuite.delete();
             } catch (IOException ex) {
-                messages.put(NET_BEANS_SUITE, FAIL_MSG);
+                LOGGER.log(Level.WARNING, null, ex);
             }
+        }
+        FileObject suite = FileUtil.getConfigFile(CONFIG_NET_BEANS_SUITE_PHP);
+        try {
+            suite.copy(nbproject, NET_BEANS_SUITE, "php"); // NOI18N
+            messages.put(NET_BEANS_SUITE, SUCCESS_MSG);
+        } catch (IOException ex) {
+            messages.put(NET_BEANS_SUITE, FAIL_MSG);
         }
     }
 

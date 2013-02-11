@@ -63,7 +63,7 @@ import org.openide.util.NbBundle.Messages;
 
 @ActionID(
     category = "Source",
-id = "org.cakephp.netbeans.ui.actions.FormatPlusAction")
+    id = "org.cakephp.netbeans.ui.actions.FormatPlusAction")
 @ActionRegistration(
     displayName = "#CTL_FormatPlusAction")
 @ActionReferences({
@@ -109,12 +109,20 @@ public final class FormatPlusAction implements ActionListener {
      * @param doc
      */
     private void reformat(Document doc) {
-        Reformat reformat = Reformat.get(doc);
+        final BaseDocument baseDoc = (BaseDocument) doc;
+        final Reformat reformat = Reformat.get(baseDoc);
         reformat.lock();
         try {
-            reformat.reformat(0, doc.getLength());
-        } catch (BadLocationException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
+            baseDoc.runAtomic(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        reformat.reformat(0, baseDoc.getLength());
+                    } catch (BadLocationException ex) {
+                        LOGGER.log(Level.WARNING, null, ex);
+                    }
+                }
+            });
         } finally {
             reformat.unlock();
         }

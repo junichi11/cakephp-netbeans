@@ -254,7 +254,7 @@ public class CakePhpModule {
         if (filter == null) {
             filter = new DefaultFileFilter();
         }
-        List<FileObject> list = new ArrayList();
+        List<FileObject> list = new ArrayList<FileObject>();
         FileObject[] children = targetDirectory.getChildren();
         for (FileObject child : children) {
             if (child.isFolder()) {

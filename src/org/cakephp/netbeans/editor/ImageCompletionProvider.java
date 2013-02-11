@@ -41,6 +41,7 @@
  */
 package org.cakephp.netbeans.editor;
 
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.module.CakePhpModule;
@@ -64,85 +65,92 @@ import org.openide.filesystems.FileObject;
 @MimeRegistration(mimeType = "text/x-php5", service = CompletionProvider.class)
 public class ImageCompletionProvider extends CakePhpCompletionProvider {
 
-    private static final String SLASH = "/";
+    private static final String SLASH = "/"; // NOI18N
 
     @Override
     public CompletionTask createTask(int queryType, JTextComponent jtc, PhpModule phpModule) {
         final CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
 
         return new AsyncCompletionTask(new AsyncCompletionQuery() {
+            @SuppressWarnings("unchecked")
             @Override
             protected void query(CompletionResultSet completionResultSet, Document doc, int caretOffset) {
                 // check $this->Html->image()
-                TokenHierarchy hierarchy = TokenHierarchy.get(doc);
-                TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
-                ts.move(caretOffset);
-                ts.moveNext();
-                Token<PHPTokenId> token = ts.token();
-                if (token.id() != PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
-                    completionResultSet.finish();
-                    return;
-                }
-                String caretInput = ts.token().text().toString();
+                AbstractDocument ad = (AbstractDocument) doc;
+                ad.readLock();
+                try {
+                    TokenHierarchy hierarchy = TokenHierarchy.get(doc);
+                    TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
+                    ts.move(caretOffset);
+                    ts.moveNext();
+                    Token<PHPTokenId> token = ts.token();
+                    if (token.id() != PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
+                        completionResultSet.finish();
+                        return;
+                    }
+                    String caretInput = ts.token().text().toString();
 
-                int startOffset = ts.offset() + 1;
-                int removeLength = caretInput.length() - 2;
-                if (removeLength < 0) {
-                    removeLength = 0;
-                }
-                // brace?
-                ts.movePrevious();
-                // image?
-                ts.movePrevious();
-                String imageMethod = ts.token().text().toString();
-                if (!imageMethod.equals("image") || ts.token().id() != PHPTokenId.PHP_STRING) { // NOI18N
-                    completionResultSet.finish();
-                    return;
-                }
+                    int startOffset = ts.offset() + 1;
+                    int removeLength = caretInput.length() - 2;
+                    if (removeLength < 0) {
+                        removeLength = 0;
+                    }
+                    // brace?
+                    ts.movePrevious();
+                    // image?
+                    ts.movePrevious();
+                    String imageMethod = ts.token().text().toString();
+                    if (!imageMethod.equals("image") || ts.token().id() != PHPTokenId.PHP_STRING) { // NOI18N
+                        completionResultSet.finish();
+                        return;
+                    }
 
-                String filter = caretInput.substring(1, caretOffset - startOffset + 1);
+                    String filter = caretInput.substring(1, caretOffset - startOffset + 1);
 
-                // get webroot/img files
-                // to a CompletionResultSet
-                FileObject webroot = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
-                if (webroot == null) {
-                    completionResultSet.finish();
-                    return;
-                }
-                // get image directory
-                FileObject imgDirectory = getImgDirectory(webroot, filter);
-                if (imgDirectory == null) {
-                    completionResultSet.finish();
-                    return;
-                }
-                // exist subdirectory
-                int lastIndexOfSlash = filter.lastIndexOf(SLASH);
-                String directory = ""; // NOI18N
-                if (lastIndexOfSlash > 0) {
-                    directory = filter.substring(0, lastIndexOfSlash + 1);
-                    filter = filter.substring(lastIndexOfSlash + 1);
-                    imgDirectory = imgDirectory.getFileObject(directory);
+                    // get webroot/img files
+                    // to a CompletionResultSet
+                    FileObject webroot = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
+                    if (webroot == null) {
+                        completionResultSet.finish();
+                        return;
+                    }
+                    // get image directory
+                    FileObject imgDirectory = getImgDirectory(webroot, filter);
                     if (imgDirectory == null) {
                         completionResultSet.finish();
                         return;
                     }
-                }
+                    // exist subdirectory
+                    int lastIndexOfSlash = filter.lastIndexOf(SLASH);
+                    String directory = ""; // NOI18N
+                    if (lastIndexOfSlash > 0) {
+                        directory = filter.substring(0, lastIndexOfSlash + 1);
+                        filter = filter.substring(lastIndexOfSlash + 1);
+                        imgDirectory = imgDirectory.getFileObject(directory);
+                        if (imgDirectory == null) {
+                            completionResultSet.finish();
+                            return;
+                        }
+                    }
 
-                FileObject[] imgs = imgDirectory.getChildren();
-                for (int i = 0; i < imgs.length; i++) {
-                    final FileObject img = imgs[i];
-                    String image = img.getNameExt();
-                    if (img.isFolder()) {
-                        image = image + SLASH;
-                    }
-                    if (filter.startsWith(SLASH)) {
-                        filter = filter.replaceFirst(SLASH, ""); // NOI18N
-                        directory = SLASH + directory;
-                    }
-                    if (!image.isEmpty()
+                    FileObject[] imgs = imgDirectory.getChildren();
+                    for (int i = 0; i < imgs.length; i++) {
+                        final FileObject img = imgs[i];
+                        String image = img.getNameExt();
+                        if (img.isFolder()) {
+                            image = image + SLASH;
+                        }
+                        if (filter.startsWith(SLASH)) {
+                            filter = filter.replaceFirst(SLASH, ""); // NOI18N
+                            directory = SLASH + directory;
+                        }
+                        if (!image.isEmpty()
                             && image.startsWith(filter)) {
-                        completionResultSet.addItem(new CakePhpCompletionItem(directory + image, startOffset, removeLength));
+                            completionResultSet.addItem(new CakePhpCompletionItem(directory + image, startOffset, removeLength));
+                        }
                     }
+                } finally {
+                    ad.readUnlock();
                 }
 
                 completionResultSet.finish();

@@ -41,16 +41,17 @@
  */
 package org.cakephp.netbeans.ui.actions;
 
-import org.cakephp.netbeans.CakeScript;
+import org.cakephp.netbeans.commands.CakeScript;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.api.phpmodule.PhpProgram.InvalidPhpProgramException;
-import org.netbeans.modules.php.spi.actions.BaseAction;
+import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
 
 public final class RunBakeAction extends BaseAction {
+
     private static final long serialVersionUID = 534878564698977L;
     private static final RunBakeAction INSTANCE = new RunBakeAction();
 
@@ -68,8 +69,8 @@ public final class RunBakeAction extends BaseAction {
             return;
         }
         try {
-            CakeScript.forPhpModule(phpModule).runBake();
-        } catch (InvalidPhpProgramException ex) {
+            CakeScript.forPhpModule(phpModule, true).bake(phpModule);
+        } catch (InvalidPhpExecutableException ex) {
             NotifyDescriptor descriptor = new NotifyDescriptor.Message(ex.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
             DialogDisplayer.getDefault().notifyLater(descriptor);
         }

@@ -43,15 +43,15 @@ package org.cakephp.netbeans.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.cakephp.netbeans.CakeScript;
+import org.cakephp.netbeans.commands.CakeScript;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.api.UiUtils;
+import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.api.phpmodule.PhpProgram;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
@@ -68,10 +68,10 @@ import org.openide.util.NbBundle;
  */
 @ActionID(
     category = "UnitTests",
-id = "org.cakephp.netbeans.ui.actions.RunBakeTestAction")
+    id = "org.cakephp.netbeans.ui.actions.RunBakeTestAction")
 @ActionRegistration(
     iconBase = "org/cakephp/netbeans/ui/resources/cakephp_icon_16.png",
-displayName = "#CTL_RunBakeTestAction")
+    displayName = "#CTL_RunBakeTestAction")
 @ActionReferences({
     @ActionReference(path = "Menu/Tools", position = 1800),
     @ActionReference(path = "Loaders/text/x-php5/Actions", position = 1550),
@@ -104,7 +104,7 @@ public class RunBakeTestAction implements ActionListener {
         }
 
         // already exist?
-        if(existTest()){
+        if (existTest()) {
             UiUtils.open(test, 0);
             return;
         }
@@ -124,9 +124,9 @@ public class RunBakeTestAction implements ActionListener {
 
             FILE_TYPE fileType = getFileType();
             if (fileType != FILE_TYPE.NONE) {
-                CakeScript.forPhpModule(phpModule).runBakeTest(fileType, targetFile.getName(), pluginName);
+                CakeScript.forPhpModule(phpModule, true).bakeTest(phpModule, fileType, targetFile.getName(), pluginName);
             }
-        } catch (PhpProgram.InvalidPhpProgramException ex) {
+        } catch (InvalidPhpExecutableException ex) {
             NotifyDescriptor descriptor = new NotifyDescriptor.Message(ex.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
             DialogDisplayer.getDefault().notifyLater(descriptor);
         }
@@ -239,7 +239,7 @@ public class RunBakeTestAction implements ActionListener {
         dirPath = "Case/" + dirPath + targetFile.getName() + "Test." + targetFile.getExt(); // NOI18N
 
         test = testDirectory.getFileObject(dirPath);
-        if(test != null) {
+        if (test != null) {
             return true;
         }
 

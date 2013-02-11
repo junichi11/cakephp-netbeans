@@ -56,7 +56,7 @@ import org.cakephp.netbeans.ui.actions.ClearCacheAction;
 import org.cakephp.netbeans.util.CakeDefaultZipEntryFilter;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.spi.actions.BaseAction;
+import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.*;
 import org.openide.WizardDescriptor.Panel;
 import org.openide.awt.ActionID;

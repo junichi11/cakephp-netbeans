@@ -47,7 +47,7 @@ import java.util.Set;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.spi.phpmodule.PhpModuleIgnoredFilesExtender;
+import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
 import org.openide.filesystems.FileUtil;
 
 public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {

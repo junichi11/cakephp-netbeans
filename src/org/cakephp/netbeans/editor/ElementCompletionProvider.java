@@ -41,6 +41,7 @@
  */
 package org.cakephp.netbeans.editor;
 
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.module.CakePhpModule;
@@ -73,61 +74,68 @@ public class ElementCompletionProvider extends CakePhpCompletionProvider {
 
         return new AsyncCompletionTask(new AsyncCompletionQuery() {
             @Override
+            @SuppressWarnings("unchecked")
             protected void query(CompletionResultSet completionResultSet, Document doc, int caretOffset) {
                 // check $this->element()
-                TokenHierarchy hierarchy = TokenHierarchy.get(doc);
-                TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
-                ts.move(caretOffset);
-                ts.moveNext();
-                Token<PHPTokenId> token = ts.token();
-                if (token.id() != PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
-                    completionResultSet.finish();
-                    return;
-                }
-                String caretInput = ts.token().text().toString();
-
-                int startOffset = ts.offset() + 1;
-                int removeLength = caretInput.length() - 2;
-                if (removeLength < 0) {
-                    removeLength = 0;
-                }
-                // brace?
-                ts.movePrevious();
-                // element?
-                ts.movePrevious();
-                String imageMethod = ts.token().text().toString();
-                if (!imageMethod.equals(ELEMENT) || ts.token().id() != PHPTokenId.PHP_STRING) {
-                    completionResultSet.finish();
-                    return;
-                }
-
-                String filter = caretInput.substring(1, caretInput.length() - 1);
-
-                // get webroot/img files
-                // to a CompletionResultSet
-                FileObject view = cakeModule.getViewDirectory(CakePhpModule.DIR_TYPE.APP);
-                if (view == null) {
-                    completionResultSet.finish();
-                    return;
-                }
-                FileObject elementDirectory = view.getFileObject("Elements"); // NOI18N
-                if (elementDirectory == null) {
-                    completionResultSet.finish();
-                    return;
-                }
-                FileObject[] elements = elementDirectory.getChildren();
-                for (int i = 0; i < elements.length; i++) {
-                    final FileObject element = elements[i];
-                    String ext = element.getExt();
-                    if (ext.isEmpty()) {
-                        continue;
+                AbstractDocument ad = (AbstractDocument) doc;
+                ad.readLock();
+                try {
+                    TokenHierarchy hierarchy = TokenHierarchy.get(doc);
+                    TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
+                    ts.move(caretOffset);
+                    ts.moveNext();
+                    Token<PHPTokenId> token = ts.token();
+                    if (token.id() != PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
+                        completionResultSet.finish();
+                        return;
                     }
-                    final String elementName = element.getName();
-                    if (!elementName.isEmpty() // NOI18N
+                    String caretInput = ts.token().text().toString();
+
+                    int startOffset = ts.offset() + 1;
+                    int removeLength = caretInput.length() - 2;
+                    if (removeLength < 0) {
+                        removeLength = 0;
+                    }
+                    // brace?
+                    ts.movePrevious();
+                    // element?
+                    ts.movePrevious();
+                    String imageMethod = ts.token().text().toString();
+                    if (!imageMethod.equals(ELEMENT) || ts.token().id() != PHPTokenId.PHP_STRING) {
+                        completionResultSet.finish();
+                        return;
+                    }
+
+                    String filter = caretInput.substring(1, caretInput.length() - 1);
+
+                    // get webroot/img files
+                    // to a CompletionResultSet
+                    FileObject view = cakeModule.getViewDirectory(CakePhpModule.DIR_TYPE.APP);
+                    if (view == null) {
+                        completionResultSet.finish();
+                        return;
+                    }
+                    FileObject elementDirectory = view.getFileObject("Elements"); // NOI18N
+                    if (elementDirectory == null) {
+                        completionResultSet.finish();
+                        return;
+                    }
+                    FileObject[] elements = elementDirectory.getChildren();
+                    for (int i = 0; i < elements.length; i++) {
+                        final FileObject element = elements[i];
+                        String ext = element.getExt();
+                        if (ext.isEmpty()) {
+                            continue;
+                        }
+                        final String elementName = element.getName();
+                        if (!elementName.isEmpty() // NOI18N
                             && !element.isFolder()
                             && elementName.startsWith(filter)) {
-                        completionResultSet.addItem(new CakePhpCompletionItem(elementName, startOffset, removeLength));
+                            completionResultSet.addItem(new CakePhpCompletionItem(elementName, startOffset, removeLength));
+                        }
                     }
+                } finally {
+                    ad.readUnlock();
                 }
 
                 completionResultSet.finish();

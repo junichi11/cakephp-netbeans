@@ -41,6 +41,7 @@
  */
 package org.cakephp.netbeans.editor;
 
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
@@ -72,43 +73,50 @@ public class CakePhpHyperlinkProvider implements HyperlinkProvider {
         return verifyState(doc, offset);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean verifyState(Document doc, int offset) {
-        TokenHierarchy hierarchy = TokenHierarchy.get(doc);
-        TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
-        if (ts == null) {
-            return false;
-        }
-
-        ts.move(offset);
-        ts.moveNext();
-        Token<PHPTokenId> token = ts.token();
-        target = token.toString();
-        PHPTokenId id = token.id();
-        int newOffset = ts.offset();
-
-        if (!isElement(ts)) {
-            return false;
-        }
-
-        if (id == PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
-            target = token.toString();
-            if (target.length() > 2) {
-                target = target.substring(1, target.length() - 1);
-            } else {
-                target = ""; // NOI18N
+        AbstractDocument ad = (AbstractDocument) doc;
+        ad.readLock();
+        try {
+            TokenHierarchy hierarchy = TokenHierarchy.get(doc);
+            TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
+            if (ts == null) {
                 return false;
             }
-            PhpModule pm = PhpModule.inferPhpModule();
-            CakePhpModule module = CakePhpModule.forPhpModule(pm);
-            element = module.getViewFile(DIR_TYPE.APP, ELEMENTS_DIR_NAME, target);
-            if (element == null) {
-                element = module.getViewFile(DIR_TYPE.CORE, ELEMENTS_DIR_NAME, target);
+
+            ts.move(offset);
+            ts.moveNext();
+            Token<PHPTokenId> token = ts.token();
+            target = token.text().toString();
+            PHPTokenId id = token.id();
+            int newOffset = ts.offset();
+
+            if (!isElement(ts)) {
+                return false;
             }
-            if (element != null) {
-                targetStart = newOffset + 1;
-                targetEnd = targetStart + target.length();
-                return true;
+
+            if (id == PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
+                target = token.text().toString();
+                if (target.length() > 2) {
+                    target = target.substring(1, target.length() - 1);
+                } else {
+                    target = ""; // NOI18N
+                    return false;
+                }
+                PhpModule pm = PhpModule.inferPhpModule();
+                CakePhpModule module = CakePhpModule.forPhpModule(pm);
+                element = module.getViewFile(DIR_TYPE.APP, ELEMENTS_DIR_NAME, target);
+                if (element == null) {
+                    element = module.getViewFile(DIR_TYPE.CORE, ELEMENTS_DIR_NAME, target);
+                }
+                if (element != null) {
+                    targetStart = newOffset + 1;
+                    targetEnd = targetStart + target.length();
+                    return true;
+                }
             }
+        } finally {
+            ad.readUnlock();
         }
 
         return false;
@@ -140,8 +148,9 @@ public class CakePhpHyperlinkProvider implements HyperlinkProvider {
         ts.movePrevious();
         ts.movePrevious();
         Token<PHPTokenId> method = ts.token();
+        String methodName = method.text().toString();
         PHPTokenId methodId = method.id();
-        if (!method.toString().equals("element") || methodId != PHPTokenId.PHP_STRING) { // NOI18N
+        if (!methodName.equals("element") || methodId != PHPTokenId.PHP_STRING) { // NOI18N
             return false;
         }
         return true;

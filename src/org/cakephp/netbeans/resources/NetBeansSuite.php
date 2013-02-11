@@ -54,21 +54,18 @@
  * For file:<br/>
  * Just the file is added.
  *
- * To run this suite from CLI: phpunit NetBeansSuite.php run=<file-or-directory>
+ * To run this suite from CLI: phpunit NetBeansSuite.php --run=<file-or-directory>
  *
  * <b>WARNING: User changes to this file should be avoided.</b>
  *
  * @package NetBeans
- * 
- * Source :
- * @link    https://gist.github.com/2055307
  */
 class NetBeansSuite extends PHPUnit_Framework_TestSuite {
     /**
      * The name of the parameter followed by equals sign ("=") of the file or directory to be run by PHPUnit.
      * @see toRun()
      */
-    const RUN = "run=";
+    const RUN = "--run=";
 
     /**
      * Suite factory.
@@ -110,7 +107,7 @@ class NetBeansSuite extends PHPUnit_Framework_TestSuite {
             }
         }
         if ($run === null) {
-            throw new Exception("No argument to run found.");
+            throw new Exception(sprintf("No argument to run (%s) found.", self::RUN));
         }
         if (is_dir($run)) {
             return self::rglob("*[Tt]est.php", $run.DIRECTORY_SEPARATOR);
