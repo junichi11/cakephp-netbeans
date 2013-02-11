@@ -72,6 +72,7 @@ public class ElementCompletionProvider extends CakePhpCompletionProvider {
         final CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
 
         return new AsyncCompletionTask(new AsyncCompletionQuery() {
+            @SuppressWarnings("unchecked")
             @Override
             protected void query(CompletionResultSet completionResultSet, Document doc, int caretOffset) {
                 // check $this->element()

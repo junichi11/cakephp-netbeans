@@ -72,6 +72,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProvider {
         return verifyState(doc, offset);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean verifyState(Document doc, int offset) {
         TokenHierarchy hierarchy = TokenHierarchy.get(doc);
         TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
