@@ -6,11 +6,11 @@ This plugin provides support for CakePHP.
 
 - 2010/07/16
 - 2012/09/08 Support for NetBeans7.3
-- 2013/02/11 last update
+- 2013/02/19 last update
 
 ## ENVIRONMENT
 
-- [Development build of NetBeans](http://bits.netbeans.org/download/trunk/nightly/latest/) (At least build netbeans-trunk-nightly-201209080001)
+- NetBeans 7.3+
 - CakePHP 1.3.x
 - CakePHP 2.x
 
@@ -35,6 +35,7 @@ This plugin provides support for CakePHP.
 - check default action [v0.6.15]
 - image and element code completion [v0.6.16]
 - support for PHPUnit settings and create test case [v0.6.17]
+- code generate [v0.8.1]
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -312,6 +313,56 @@ If you run this action, you can test using fixture with NetBeans.
 #### bootstrap and NetBeansSuite Sources
 
 https://gist.github.com/2055307 ([nojimage](https://github.com/nojimage))
+
+### Code Generate
+#### How to run
+`Alt` + `Insert` or Right-click on editor, select `Insert Code`.
+
+#### Generate uses, helpers, components and actsAs fields
+Dialog is displayed when you run Insert Code action.  
+Please select what you want to use. And code like followings are inserted.
+
+```php
+$helpers = array('Html', ..., 'PluignName.SomeHelper');
+$componens = array('Session', ..., 'MyComponent');
+$uses = array('Post');
+$actsAs = array('Tree', ..., 'PluignName.SomeBehavior');
+```
+You have to add settings for each classes by yourself if you need it.
+
+#### Generate validations
+This provides support for only **Core validations**.(e.g. notEmpty, isUnique, e.t.c)  
+At first, you have to write the following before you run this feature.
+
+```php
+public $validate = array(
+    'fieldName' => array(
+        // please set caret to here
+    ),
+);
+```
+
+Please move caret to place which you want to insert, and run Insert Code action.
+Then, code like followings will be inserted:
+
+```php
+// template
+'validationName' => array(
+    'rule' => 'validationName',
+    'message' => 'validationNamemessage'
+},
+// template : has arguments(are not initialized)
+'validationName' => array(
+    'rule' => array('validationName', validationName_arg1, validationName_arg2),
+    'message' => 'validationNamemessage'
+},
+```
+
+Since message is focused, you can change it to your message.  
+Please push `Enter` key after you change it. And you can move to next message.
+If you want to move to previous message, please push `Shift` + `Tab`.
+
+Please see also #12
 
 ## HOW TO RUN:
 
