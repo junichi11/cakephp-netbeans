@@ -41,13 +41,15 @@
  */
 package org.cakephp.netbeans.editor;
 
-import javax.swing.text.AbstractDocument;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
-import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.editor.lexer.PHPTokenId;
@@ -65,114 +67,136 @@ import org.openide.filesystems.FileObject;
 @MimeRegistration(mimeType = "text/x-php5", service = CompletionProvider.class)
 public class ImageCompletionProvider extends CakePhpCompletionProvider {
 
-    private static final String SLASH = "/"; // NOI18N
-
     @Override
     public CompletionTask createTask(int queryType, JTextComponent jtc, PhpModule phpModule) {
         final CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-
-        return new AsyncCompletionTask(new AsyncCompletionQuery() {
-            @SuppressWarnings("unchecked")
-            @Override
-            protected void query(CompletionResultSet completionResultSet, Document doc, int caretOffset) {
-                // check $this->Html->image()
-                AbstractDocument ad = (AbstractDocument) doc;
-                ad.readLock();
-                try {
-                    TokenHierarchy hierarchy = TokenHierarchy.get(doc);
-                    TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
-                    ts.move(caretOffset);
-                    ts.moveNext();
-                    Token<PHPTokenId> token = ts.token();
-                    if (token.id() != PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
-                        completionResultSet.finish();
-                        return;
-                    }
-                    String caretInput = ts.token().text().toString();
-
-                    int startOffset = ts.offset() + 1;
-                    int removeLength = caretInput.length() - 2;
-                    if (removeLength < 0) {
-                        removeLength = 0;
-                    }
-                    // brace?
-                    ts.movePrevious();
-                    // image?
-                    ts.movePrevious();
-                    String imageMethod = ts.token().text().toString();
-                    if (!imageMethod.equals("image") || ts.token().id() != PHPTokenId.PHP_STRING) { // NOI18N
-                        completionResultSet.finish();
-                        return;
-                    }
-
-                    String filter = caretInput.substring(1, caretOffset - startOffset + 1);
-
-                    // get webroot/img files
-                    // to a CompletionResultSet
-                    FileObject webroot = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
-                    if (webroot == null) {
-                        completionResultSet.finish();
-                        return;
-                    }
-                    // get image directory
-                    FileObject imgDirectory = getImgDirectory(webroot, filter);
-                    if (imgDirectory == null) {
-                        completionResultSet.finish();
-                        return;
-                    }
-                    // exist subdirectory
-                    int lastIndexOfSlash = filter.lastIndexOf(SLASH);
-                    String directory = ""; // NOI18N
-                    if (lastIndexOfSlash > 0) {
-                        directory = filter.substring(0, lastIndexOfSlash + 1);
-                        filter = filter.substring(lastIndexOfSlash + 1);
-                        imgDirectory = imgDirectory.getFileObject(directory);
-                        if (imgDirectory == null) {
-                            completionResultSet.finish();
-                            return;
-                        }
-                    }
-
-                    FileObject[] imgs = imgDirectory.getChildren();
-                    for (int i = 0; i < imgs.length; i++) {
-                        final FileObject img = imgs[i];
-                        String image = img.getNameExt();
-                        if (img.isFolder()) {
-                            image = image + SLASH;
-                        }
-                        if (filter.startsWith(SLASH)) {
-                            filter = filter.replaceFirst(SLASH, ""); // NOI18N
-                            directory = SLASH + directory;
-                        }
-                        if (!image.isEmpty()
-                            && image.startsWith(filter)) {
-                            completionResultSet.addItem(new CakePhpCompletionItem(directory + image, startOffset, removeLength));
-                        }
-                    }
-                } finally {
-                    ad.readUnlock();
-                }
-
-                completionResultSet.finish();
-            }
-        }, jtc);
+        return new AsyncCompletionTask(new AsyncCompletionQueryImpl(cakeModule), jtc);
     }
 
-    /**
-     * Get img directory.
-     *
-     * @param webroot
-     * @param filter
-     * @return img directory webroot if directory name starts with "/",
-     * otherwise webroot/img
-     */
-    private FileObject getImgDirectory(FileObject webroot, String filter) {
-        FileObject imgDirectory = null;
-        if (filter.startsWith(SLASH)) {
-            imgDirectory = webroot;
-        } else {
-            imgDirectory = webroot.getFileObject("img"); // NOI18N
+    class AsyncCompletionQueryImpl extends AsyncCompletionQuery {
+
+        private final CakePhpModule cakeModule;
+        int startOffset;
+        int removeLength;
+        private String filter;
+        private String directoryPath;
+        private final List<String> imgExts = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "ico"); // NOI18N
+        private static final String SLASH = "/"; // NOI18N
+
+        public AsyncCompletionQueryImpl(CakePhpModule cakeModule) {
+            this.cakeModule = cakeModule;
         }
-        return imgDirectory;
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void query(CompletionResultSet completionResultSet, Document doc, int caretOffset) {
+            try {
+                TokenSequence<PHPTokenId> ts = CakePhpDocUtils.getTokenSequence(doc, caretOffset);
+                Token<PHPTokenId> token = ts.token();
+                // check string ('' or "")
+                if (token.id() != PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
+                    return;
+                }
+
+                // set start offset and remove length
+                String caretInput = ts.token().text().toString();
+                setStartAndRemoveLength(ts, caretInput);
+
+                // check $this->Html->image()
+                int endIndex = caretOffset - startOffset + 1;
+                if (!isSpecifiedMethod(ts, "image") || endIndex < 1) { // NOI18N
+                    return;
+                }
+
+                // init
+                filter = caretInput.substring(1, endIndex);
+                directoryPath = ""; // NOI18N
+
+                // get target directory
+                FileObject targetDirectory = getTargetDirectory("img"); // NOI18N
+                if (targetDirectory == null) {
+                    return;
+                }
+
+                // exist subdirectory
+                targetDirectory = getSubDirectory(targetDirectory);
+                if (targetDirectory == null) {
+                    return;
+                }
+
+                FileObject[] targets = targetDirectory.getChildren();
+                for (FileObject target : targets) {
+                    String targetFileName = target.getNameExt();
+                    if (target.isFolder()) {
+                        targetFileName = targetFileName + SLASH;
+                    }
+                    if (filter.startsWith(SLASH)) {
+                        filter = filter.replaceFirst(SLASH, ""); // NOI18N
+                        directoryPath = SLASH + directoryPath;
+                    }
+                    if (!targetFileName.isEmpty()
+                            && targetFileName.startsWith(filter)) {
+                        if (target.isFolder() || imgExts.contains(target.getExt().toLowerCase(Locale.ENGLISH))) {
+                            completionResultSet.addItem(new ImageCompletionItem(directoryPath + targetFileName, startOffset, removeLength, target));
+                        }
+                    }
+                }
+            } finally {
+                completionResultSet.finish();
+            }
+        }
+
+        private void setStartAndRemoveLength(TokenSequence<PHPTokenId> ts, String caretInput) {
+            startOffset = ts.offset() + 1;
+            removeLength = caretInput.length() - 2;
+            if (removeLength < 0) {
+                removeLength = 0;
+            }
+        }
+
+        private FileObject getSubDirectory(FileObject targetDirectory) {
+            int lastIndexOfSlash = filter.lastIndexOf(SLASH);
+            if (lastIndexOfSlash > 0) {
+                directoryPath = filter.substring(0, lastIndexOfSlash + 1);
+                filter = filter.substring(lastIndexOfSlash + 1);
+                return targetDirectory.getFileObject(directoryPath);
+            }
+            return targetDirectory;
+        }
+
+        private boolean isSpecifiedMethod(TokenSequence<PHPTokenId> ts, String methodName) {
+            while (ts.movePrevious()) {
+                Token<PHPTokenId> token = ts.token();
+                String text = token.text().toString();
+                if (text.equals(methodName) && token.id() == PHPTokenId.PHP_STRING) {
+                    return true;
+                }
+                if (ts.token().id() == PHPTokenId.PHP_SEMICOLON) {
+                    break;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Get img directory.
+         *
+         * @param target
+         * @return img directory webroot if directory name starts with "/",
+         * otherwise webroot/img
+         */
+        private FileObject getTargetDirectory(String target) {
+            FileObject webroot = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
+            if (webroot == null) {
+                return null;
+            }
+            FileObject imgDirectory = null;
+            if (filter.startsWith(SLASH)) {
+                imgDirectory = webroot;
+            } else {
+                imgDirectory = webroot.getFileObject(target);
+            }
+            return imgDirectory;
+        }
     }
 }
