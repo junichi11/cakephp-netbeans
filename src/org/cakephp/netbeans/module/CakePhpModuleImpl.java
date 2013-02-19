@@ -202,7 +202,7 @@ public abstract class CakePhpModuleImpl {
         return getDirectory(type, fileType, null);
     }
 
-    protected abstract FileObject getDirectory(DIR_TYPE type, FILE_TYPE fileType, String pluginName);
+    public abstract FileObject getDirectory(DIR_TYPE type, FILE_TYPE fileType, String pluginName);
 
     public abstract FileObject getDirectory(DIR_TYPE type);
 

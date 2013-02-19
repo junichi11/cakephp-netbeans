@@ -247,6 +247,10 @@ public class CakePhpModule {
         return impl.getDirectory(type);
     }
 
+    public FileObject getDirectory(DIR_TYPE dirType, FILE_TYPE fileType, String pluginName) {
+        return impl.getDirectory(dirType, fileType, pluginName);
+    }
+
     public List<FileObject> getFiles(FileObject targetDirectory, FileFilter filter) {
         if (targetDirectory == null || !targetDirectory.isFolder()) {
             return Collections.emptyList();
