@@ -168,11 +168,15 @@ public class ImageCompletionProvider extends CakePhpCompletionProvider {
             while (ts.movePrevious()) {
                 Token<PHPTokenId> token = ts.token();
                 String text = token.text().toString();
-                if (text.equals(methodName) && token.id() == PHPTokenId.PHP_STRING) {
-                    return true;
-                }
-                if (ts.token().id() == PHPTokenId.PHP_SEMICOLON) {
+                PHPTokenId id = token.id();
+                if (id == PHPTokenId.PHP_SEMICOLON) {
                     break;
+                }
+                if (text.contains(",") && id != PHPTokenId.PHP_STRING) { // NOI18N
+                    break;
+                }
+                if (text.equals(methodName) && id == PHPTokenId.PHP_STRING) {
+                    return true;
                 }
             }
             return false;
