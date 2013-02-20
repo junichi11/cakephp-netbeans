@@ -179,24 +179,24 @@ public class ImageCompletionProvider extends CakePhpCompletionProvider {
         }
 
         /**
-         * Get img directory.
+         * Get target directory.
          *
-         * @param target
-         * @return img directory webroot if directory name starts with "/",
-         * otherwise webroot/img
+         * @param target target directory name
+         * @return target directory webroot if directory name starts with "/",
+         * otherwise webroot/targetName
          */
         private FileObject getTargetDirectory(String target) {
             FileObject webroot = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
             if (webroot == null) {
                 return null;
             }
-            FileObject imgDirectory = null;
+            FileObject targetDirectory = null;
             if (filter.startsWith(SLASH)) {
-                imgDirectory = webroot;
+                targetDirectory = webroot;
             } else {
-                imgDirectory = webroot.getFileObject(target);
+                targetDirectory = webroot.getFileObject(target);
             }
-            return imgDirectory;
+            return targetDirectory;
         }
     }
 }
