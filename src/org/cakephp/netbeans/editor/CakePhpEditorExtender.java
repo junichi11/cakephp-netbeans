@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.DefaultFileFilter;
@@ -96,6 +97,9 @@ public class CakePhpEditorExtender extends EditorExtender {
         boolean isController = CakePhpUtils.isController(fo);
         boolean isComponent = CakePhpUtils.isComponent(fo);
         boolean isHelper = CakePhpUtils.isHelper(fo);
+        if (fo.getExt().equals(CakePhp.CTP)) {
+            isView = true;
+        }
 
         if (!isView && !isController && !isComponent && !isHelper) {
             return Collections.emptyList();
@@ -167,8 +171,11 @@ public class CakePhpEditorExtender extends EditorExtender {
 
     private Set<PhpClass> parseFields(final FileObject fo) {
         FileObject tmp = fo;
-        if (CakePhpUtils.isView(fo)) {
+        if (CakePhpUtils.isView(fo) || fo.getExt().equals(CakePhp.CTP)) {
             tmp = CakePhpUtils.getController(fo);
+            if (tmp == null) {
+                return Collections.singleton(new PhpClass("View", "View")); // NOI18N
+            }
         }
 
         final FileObject target = tmp;
@@ -262,7 +269,7 @@ public class CakePhpEditorExtender extends EditorExtender {
             super.visit(node);
 
             if (!(node.getDispatcher() instanceof Variable)
-                || !"$this".equals(CodeUtils.extractVariableName((Variable) node.getDispatcher()))) { // NOI18N
+                    || !"$this".equals(CodeUtils.extractVariableName((Variable) node.getDispatcher()))) { // NOI18N
                 return;
             }
 
@@ -285,9 +292,9 @@ public class CakePhpEditorExtender extends EditorExtender {
             }
 
             if (methodName.equals(viewName)
-                && invokedMethodName.equals("set") // NOI18N
-                && CakePhpUtils.isControllerName(className)
-                && !viewVarName.isEmpty()) {
+                    && invokedMethodName.equals("set") // NOI18N
+                    && CakePhpUtils.isControllerName(className)
+                    && !viewVarName.isEmpty()) {
                 synchronized (fields) {
                     fields.add(new PhpVariable("$" + viewVarName, new PhpClass("stdClass", "stdClass"), target, 0)); // NOI18N
                 }

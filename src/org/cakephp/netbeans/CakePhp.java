@@ -52,5 +52,5 @@ public class CakePhp {
     public static final String CAKE_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_icon_16.png";
     public static final String CAKE_SUCCESS_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png";
     public static final String CAKE_FAIL_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png";
-
+    public static final String CTP = "ctp";
 }
