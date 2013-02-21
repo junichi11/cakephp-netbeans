@@ -168,35 +168,39 @@ public class ImageCompletionProvider extends CakePhpCompletionProvider {
             while (ts.movePrevious()) {
                 Token<PHPTokenId> token = ts.token();
                 String text = token.text().toString();
-                if (text.equals(methodName) && token.id() == PHPTokenId.PHP_STRING) {
-                    return true;
-                }
-                if (ts.token().id() == PHPTokenId.PHP_SEMICOLON) {
+                PHPTokenId id = token.id();
+                if (id == PHPTokenId.PHP_SEMICOLON) {
                     break;
+                }
+                if (text.contains(",") && id != PHPTokenId.PHP_STRING) { // NOI18N
+                    break;
+                }
+                if (text.equals(methodName) && id == PHPTokenId.PHP_STRING) {
+                    return true;
                 }
             }
             return false;
         }
 
         /**
-         * Get img directory.
+         * Get target directory.
          *
-         * @param target
-         * @return img directory webroot if directory name starts with "/",
-         * otherwise webroot/img
+         * @param target target directory name
+         * @return target directory webroot if directory name starts with "/",
+         * otherwise webroot/targetName
          */
         private FileObject getTargetDirectory(String target) {
             FileObject webroot = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
             if (webroot == null) {
                 return null;
             }
-            FileObject imgDirectory = null;
+            FileObject targetDirectory = null;
             if (filter.startsWith(SLASH)) {
-                imgDirectory = webroot;
+                targetDirectory = webroot;
             } else {
-                imgDirectory = webroot.getFileObject(target);
+                targetDirectory = webroot.getFileObject(target);
             }
-            return imgDirectory;
+            return targetDirectory;
         }
     }
 }
