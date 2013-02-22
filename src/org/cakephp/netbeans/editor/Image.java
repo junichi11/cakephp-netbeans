@@ -43,67 +43,72 @@ package org.cakephp.netbeans.editor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.editor.completion.CompletionItem;
+import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public abstract class Method {
+public class Image extends Asset {
 
-    protected static final String SLASH = "/"; // NOI18N
-    protected static final String DOT = "."; // NOI18N
-    private static final String ELEMENT = "element"; // NOI18N
-    private static final String FETCH = "fetch"; // NOI18N
-    private static final String CSS = "css"; // NOI18N
-    private static final String SCRIPT = "script"; // NOI18N
-    private static final String IMAGE = "image"; // NOI18N
-    protected PhpModule phpModule;
-    // fetch : CakePHP 2.1+
-    public static final List<String> METHODS = Arrays.asList(ELEMENT, FETCH, CSS, SCRIPT, IMAGE);
-    protected static final List<DIR_TYPE> PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
+    private static final List<String> EXT_FILTER = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "ico"); // NOI18N
+    private static final String SPLIT_PLUGIN_REGEX_PATTERN = "^(.+\\.|)(.+\\.[a-zA-Z]+)$";// NOI18N
+    private CakePhpModule cakeModule;
 
-    Method(PhpModule phpModule) {
-        this.phpModule = phpModule;
+    Image(PhpModule phpModule) {
+        super(phpModule);
+        type = ASSET_TYPE.IMAGE;
+        extFilter = EXT_FILTER;
+        cakeModule = CakePhpModule.forPhpModule(phpModule);
     }
 
-    public abstract List<String> getElements(int argCount, String filter);
+    @Override
+    public CompletionItem createCompletionItem(String element, int startOffset, int removeLength) {
+        FileObject target = getFileObject(element);
+        return new ImageCompletionItem(element, startOffset, removeLength, target);
+    }
 
     /**
-     * Create CompletionItem.
+     * Get FileObject for insert element.
      *
-     * @param element
-     * @param startOffset
-     * @param removeLength
-     * @return CompletionItem
+     * @param element string for inserting
+     * @return FileObject
      */
-    public CompletionItem createCompletionItem(String element, int startOffset, int removeLength) {
-        return new CakePhpCompletionItem(element, startOffset, removeLength);
-    }
+    private FileObject getFileObject(String element) {
+        Pattern pattern = Pattern.compile(SPLIT_PLUGIN_REGEX_PATTERN);
+        Matcher matcher = pattern.matcher(element);
+        String pluginName = ""; // NOI18N
+        String filePath = ""; // NOI18N
+        if (matcher.find()) {
+            pluginName = matcher.group(1).replace(DOT, "");
+            filePath = matcher.group(2);
+        }
+        FileObject webrootDirectory = null;
+        if (!filePath.startsWith(SLASH)) {
+            filePath = "img/" + filePath; // NOI18N
+        }
 
-    public static class Factory {
-
-        public static Method create(String method, PhpModule phpModule) {
-            if (method != null && !method.isEmpty()) {
-                if (method.equals(ELEMENT)) { //NOI18N
-                    return new Element(phpModule);
-                }
-                if (method.equals(FETCH)) { // NOI18N
-                    return new Fetch(phpModule);
-                }
-                if (method.equals(CSS)) {
-                    return new Css(phpModule);
-                }
-                if (method.equals(SCRIPT)) {
-                    return new Script(phpModule);
-                }
-                if (method.equals(IMAGE)) {
-                    return new Image(phpModule);
-                }
+        // get webroot directory
+        if (pluginName.isEmpty()) {
+            webrootDirectory = cakeModule.getDirectory(DIR_TYPE.APP, FILE_TYPE.WEBROOT, null);
+        } else {
+            webrootDirectory = cakeModule.getDirectory(DIR_TYPE.APP_PLUGIN, FILE_TYPE.WEBROOT, pluginName);
+            if (webrootDirectory == null) {
+                webrootDirectory = cakeModule.getDirectory(DIR_TYPE.PLUGIN, FILE_TYPE.WEBROOT, pluginName);
             }
+        }
+        if (webrootDirectory == null) {
             return null;
         }
+
+        // get file
+        return webrootDirectory.getFileObject(filePath);
     }
 }

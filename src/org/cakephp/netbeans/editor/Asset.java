@@ -232,7 +232,7 @@ public class Asset extends Method {
      * @return true if add, otherwise false
      */
     protected boolean addElement(FileObject fo, String filter, List<String> elements, String pluginName) {
-        String name = fo.getName();
+        String name = getFileName(fo);
         // set subdirectory path
         if (!subDirectoryPath.isEmpty()) {
             name = subDirectoryPath + SLASH + name; // NOI18N
@@ -245,7 +245,8 @@ public class Asset extends Method {
         }
 
         // filtering
-        if (fo.getName().startsWith(filter)) {
+        String fileName = getFileName(fo);
+        if (fileName.startsWith(filter)) {
             if (!fo.isFolder()
                     && extFilter != null
                     && !extFilter.contains(fo.getExt())) {
@@ -275,5 +276,22 @@ public class Asset extends Method {
             return subDirectoryPath.replaceFirst(SLASH, ""); // NOI18N
         }
         return type.toString() + SLASH + subDirectoryPath;
+    }
+
+    /**
+     * Get file name. If ASSET_TYPE is IMAGE, get name with extention, otherwise
+     * only name.
+     *
+     * @param fo target FileObject
+     * @return file name if type is image, with extention.
+     */
+    private String getFileName(FileObject fo) {
+        String name;
+        if (type == ASSET_TYPE.IMAGE) {
+            name = fo.getNameExt();
+        } else {
+            name = fo.getName();
+        }
+        return name;
     }
 }
