@@ -59,6 +59,10 @@
  * <b>WARNING: User changes to this file should be avoided.</b>
  *
  * @package NetBeans
+ *
+ * Source :
+ * @link    https://gist.github.com/2055307
+ *
  */
 class NetBeansSuite extends PHPUnit_Framework_TestSuite {
     /**
