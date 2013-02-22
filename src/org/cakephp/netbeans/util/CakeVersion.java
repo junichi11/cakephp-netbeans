@@ -147,7 +147,14 @@ public class CakeVersion {
      * @return String If can't get the version file, return null.
      */
     private String getCakePhpVersion(PhpModule phpModule) {
+        // If install this plugin after PHP project was deleted,
+        // PhpModule exists yet, but we can't get Project directory.
+        // So, null might be returned to root variable
         FileObject root = CakePhpModule.getCakePhpDirectory(phpModule);
+        if (root == null) {
+            return null;
+        }
+
         FileObject cake = root.getFileObject("cake"); // NOI18N
         FileObject version;
         if (cake != null) {
