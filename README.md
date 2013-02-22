@@ -202,6 +202,21 @@ $this->Html->image('subdir/[Ctrl + Space]');
 $this->Html->image('/mydir/[Ctrl + Space]');
 // if you want to use files or directories in the webroot directory,
 // please, start with "/"
+
+$this->Html->image('Debug[Ctrl + Space]');
+$this->Html->image('DebugKit.[Ctrl + Space]');
+// support for Plugin images (CakePHP 2.x)
+```
+If target file exists, image will be displayed on document window.
+
+You can run code completion also css and script methods (`$this->Html->css(), script()`) like the same as image method.
+```php
+$this->Html->css('[Ctrl + Space]');
+// popup file and directory names in the webroot/css
+$this->Html->script('subdir/[Ctrl + Space]');
+// popup file and directory names in the webroot/js/subdir
+$this->Html->css('/mydir/[Ctrl + Space]');
+$this->Html->script('PluginName.[Ctrl + Space]');
 ```
 
 element file completion
@@ -209,6 +224,8 @@ element file completion
 ```php
 $this->element('[Ctrl + Space]');
 // popup file names in the appdir/View/Elements/
+$this->element('MyPlugin.[Ctrl + Space]');
+// support for Plugin elements (CakePHP 2.x)
 ```
 
 ### Go To View Action
