@@ -42,21 +42,19 @@
 package org.cakephp.netbeans.editor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.spi.editor.completion.CompletionItem;
 import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public class Element extends Method {
+public class Element extends Asset {
 
     private static final String ELEMENTS = "Elements"; // NOI18N
-    private static final List<CakePhpModule.DIR_TYPE> plugins = Arrays.asList(CakePhpModule.DIR_TYPE.APP_PLUGIN, CakePhpModule.DIR_TYPE.PLUGIN);
 
     public Element(PhpModule phpModule) {
         super(phpModule);
@@ -65,33 +63,36 @@ public class Element extends Method {
     @Override
     public List<String> getElements(int argCount, String filter) {
         List<String> elements = new ArrayList<String>();
+        int cakeVersion = CakeVersion.getInstance(phpModule).getMejor();
+
         if (argCount == 1) {
             String[] split = filter.split("\\."); // NOI18N
             int splitLength = split.length;
             boolean isPlugin = false;
-            if (splitLength > 1) {
-                isPlugin = true;
-                filter = split[1];
-            }
-            if (splitLength == 1 && filter.endsWith(DOT)) {
-                isPlugin = true;
-                filter = ""; // NOI18N
+            if (cakeVersion >= 2) {
+                if (splitLength > 1) {
+                    isPlugin = true;
+                    filter = split[1];
+                }
+                if (splitLength == 1 && filter.endsWith(DOT)) {
+                    isPlugin = true;
+                    filter = ""; // NOI18N
+                }
             }
 
             // check subdirectory
             filter = setSubDirectoryPath(filter);
 
             CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-
             // plugin elements
             // for CakePHP 2.1+
-            if (isPlugin) {
+            if (isPlugin && cakeVersion >= 2) {
                 String pluginName = split[0];
 
-                for (CakePhpModule.DIR_TYPE type : plugins) {
-                    FileObject viewDirectory = cakeModule.getViewDirectory(type, pluginName);
+                for (CakePhpModule.DIR_TYPE dirType : PLUGINS) {
+                    FileObject viewDirectory = cakeModule.getViewDirectory(dirType, pluginName);
                     if (viewDirectory != null) {
-                        FileObject elementsDirectory = viewDirectory.getFileObject(ELEMENTS + subDirectoryPath);
+                        FileObject elementsDirectory = viewDirectory.getFileObject(getRelativePath());
                         if (elementsDirectory != null) {
                             for (FileObject element : elementsDirectory.getChildren()) {
                                 addElement(element, filter, elements, pluginName);
@@ -106,7 +107,7 @@ public class Element extends Method {
             // app elements
             FileObject view = cakeModule.getViewDirectory(CakePhpModule.DIR_TYPE.APP);
             if (view != null) {
-                FileObject elementDirectory = view.getFileObject(ELEMENTS + subDirectoryPath);
+                FileObject elementDirectory = view.getFileObject(getRelativePath());
                 if (elementDirectory != null) {
                     for (FileObject child : elementDirectory.getChildren()) {
                         addElement(child, filter, elements);
@@ -120,17 +121,19 @@ public class Element extends Method {
 
             // plugin names
             // for CakePHP 2.1+
-            for (CakePhpModule.DIR_TYPE type : plugins) {
-                FileObject pluginDirectory = cakeModule.getDirectory(type);
-                if (pluginDirectory != null) {
-                    for (FileObject child : pluginDirectory.getChildren()) {
-                        if (child.isFolder()) {
-                            String name = child.getNameExt();
-                            FileObject viewDirectory = cakeModule.getViewDirectory(type, name);
-                            if (viewDirectory != null && viewDirectory.getFileObject(ELEMENTS) != null) {
-                                if (name.startsWith(filter)) {
-                                    name = name + DOT;
-                                    elements.add(name);
+            if (cakeVersion >= 2) {
+                for (CakePhpModule.DIR_TYPE type : PLUGINS) {
+                    FileObject pluginDirectory = cakeModule.getDirectory(type);
+                    if (pluginDirectory != null) {
+                        for (FileObject child : pluginDirectory.getChildren()) {
+                            if (child.isFolder()) {
+                                String name = child.getNameExt();
+                                FileObject viewDirectory = cakeModule.getViewDirectory(type, name);
+                                if (viewDirectory != null && viewDirectory.getFileObject(ELEMENTS) != null) {
+                                    if (name.startsWith(filter)) {
+                                        name = name + DOT;
+                                        elements.add(name);
+                                    }
                                 }
                             }
                         }
@@ -139,11 +142,6 @@ public class Element extends Method {
             }
         }
         return elements;
-    }
-
-    @Override
-    public CompletionItem createCompletionItem(String element, int startOffset, int removeLength) {
-        return new CakePhpCompletionItem(element, startOffset, removeLength);
     }
 
     /**
@@ -158,35 +156,11 @@ public class Element extends Method {
         return addElement(fo, filter, elements, null);
     }
 
-    /**
-     * Add element starting with filter value to list.
-     *
-     * @param fo FileObject for adding
-     * @param filter filtering with this value
-     * @param elements List for adding (add to this)
-     * @param pluginName plugin name if target is not plugin, set the null
-     * @return true if add, otherwise false
-     */
-    private boolean addElement(FileObject fo, String filter, List<String> elements, String pluginName) {
-        String name = fo.getName();
-        // set subdirectory path
+    private String getRelativePath() {
+        String subPath = ELEMENTS;
         if (!subDirectoryPath.isEmpty()) {
-            name = subDirectoryPath.replaceFirst(SLASH, "") + SLASH + name; // NOI18N
+            subPath = subPath + SLASH + subDirectoryPath;
         }
-
-        // filtering
-        if (name.startsWith(filter)) {
-            if (fo.isFolder() || !fo.getExt().isEmpty()) {
-                if (fo.isFolder()) {
-                    name = name + SLASH;
-                }
-                if (pluginName != null && !pluginName.isEmpty()) {
-                    name = pluginName + DOT + name;
-                }
-                elements.add(name);
-                return true;
-            }
-        }
-        return false;
+        return subPath;
     }
 }

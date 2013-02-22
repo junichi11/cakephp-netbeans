@@ -43,63 +43,19 @@ package org.cakephp.netbeans.editor;
 
 import java.util.Arrays;
 import java.util.List;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.spi.editor.completion.CompletionItem;
 
 /**
  *
  * @author junichi11
  */
-public abstract class Method {
+public class Script extends Asset {
 
-    protected static final String SLASH = "/"; // NOI18N
-    protected static final String DOT = "."; // NOI18N
-    private static final String ELEMENT = "element"; // NOI18N
-    private static final String FETCH = "fetch"; // NOI18N
-    private static final String CSS = "css"; // NOI18N
-    private static final String SCRIPT = "script"; // NOI18N
-    protected PhpModule phpModule;
-    // fetch : CakePHP 2.1+
-    public static final List<String> METHODS = Arrays.asList(ELEMENT, FETCH, CSS, SCRIPT);
-    protected static final List<DIR_TYPE> PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
+    private static final List<String> EXT_FILTER = Arrays.asList("js"); // NOI18N
 
-    Method(PhpModule phpModule) {
-        this.phpModule = phpModule;
-    }
-
-    public abstract List<String> getElements(int argCount, String filter);
-
-    /**
-     * Create CompletionItem.
-     *
-     * @param element
-     * @param startOffset
-     * @param removeLength
-     * @return CompletionItem
-     */
-    protected CompletionItem createCompletionItem(String element, int startOffset, int removeLength) {
-        return new CakePhpCompletionItem(element, startOffset, removeLength);
-    }
-
-    public static class Factory {
-
-        public static Method create(String method, PhpModule phpModule) {
-            if (method != null && !method.isEmpty()) {
-                if (method.equals(ELEMENT)) { //NOI18N
-                    return new Element(phpModule);
-                }
-                if (method.equals(FETCH)) { // NOI18N
-                    return new Fetch(phpModule);
-                }
-                if (method.equals(CSS)) {
-                    return new Css(phpModule);
-                }
-                if (method.equals(SCRIPT)) {
-                    return new Script(phpModule);
-                }
-            }
-            return null;
-        }
+    public Script(PhpModule phpModule) {
+        super(phpModule);
+        type = ASSET_TYPE.SCRIPT;
+        extFilter = EXT_FILTER;
     }
 }
