@@ -2,4 +2,4 @@ Manifest-Version: 1.0
 OpenIDE-Module: org.cakephp.netbeans
 OpenIDE-Module-Layer: org/cakephp/netbeans/resources/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/cakephp/netbeans/resources/Bundle.properties
-OpenIDE-Module-Specification-Version: 0.8.3
+OpenIDE-Module-Specification-Version: 0.8.4
