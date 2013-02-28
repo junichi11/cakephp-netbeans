@@ -42,7 +42,10 @@
 package org.cakephp.netbeans.util;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
@@ -59,6 +62,7 @@ public class CakeVersion {
     private String notStable;
     private static CakeVersion INSTANCE = null;
     private static PhpModule pm;
+    private static final Logger LOGGER = Logger.getLogger(CakeVersion.class.getName());
 
     private CakeVersion(PhpModule pm) {
         String[] split = getCakePhpVersionSplit(pm);
@@ -83,25 +87,30 @@ public class CakeVersion {
             }
             CakeVersion.pm = pm;
         } else {
-            FileObject cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("cake");
-            if (cake != null) {
-                mejor = 1;
-                minor = -1;
-                revision = -1;
-                notStable = ""; // NOI18N
-            } else {
-                cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("lib/Cake");
+            FileObject cakephpDirectory = CakePhpModule.getCakePhpDirectory(pm);
+            if (cakephpDirectory != null) {
+                FileObject cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("cake"); // NOI18N
                 if (cake != null) {
-                    mejor = 2;
+                    mejor = 1;
                     minor = -1;
                     revision = -1;
                     notStable = ""; // NOI18N
+                } else {
+                    cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("lib/Cake"); // NOI18N
+                    if (cake != null) {
+                        mejor = 2;
+                        minor = -1;
+                        revision = -1;
+                        notStable = ""; // NOI18N
+                    }
                 }
-            }
-            if (cake == null) {
-                CakeVersion.pm = null;
+                if (cake == null) {
+                    CakeVersion.pm = null;
+                } else {
+                    CakeVersion.pm = pm;
+                }
             } else {
-                CakeVersion.pm = pm;
+                CakeVersion.pm = null;
             }
 
         }
@@ -152,6 +161,7 @@ public class CakeVersion {
         // So, null might be returned to root variable
         FileObject root = CakePhpModule.getCakePhpDirectory(phpModule);
         if (root == null) {
+            LOGGER.log(Level.INFO, "Not Found:{0}", CakePreferences.getCakePhpDirPath(phpModule));
             return null;
         }
 
