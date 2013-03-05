@@ -47,23 +47,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.util.ProjectPropertiesSupport;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.project.PhpProject;
-import org.netbeans.modules.php.project.ui.customizer.PhpProjectProperties;
-import org.netbeans.modules.php.project.ui.options.PhpOptions;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
+import org.openide.util.NbPreferences;
 import org.openide.util.Utilities;
 
 /**
@@ -195,11 +194,14 @@ public class PHPUnitInitAction extends BaseAction {
      */
     private void createScript(PhpModule phpModule) {
         FileObject nbproject = getNbproject(phpModule);
-        String phpUnit = PhpOptions.getInstance().getPhpUnit();
+
+        // get phpunit path
+        String phpUnit = getPHPUnitPath();
         if (phpUnit == null || phpUnit.isEmpty()) {
             messages.put(PHPUNIT, FAIL_MSG + "(isn't set phpunit option)");
             return;
         }
+
         String scriptFileName = getScriptFileName();
         if (nbproject.getFileObject(scriptFileName) == null) {
             FileObject script = FileUtil.getConfigFile(CONFIG_PATH + scriptFileName);
@@ -207,11 +209,11 @@ public class PHPUnitInitAction extends BaseAction {
                 String format = ""; // NOI18N
                 if (Utilities.isWindows()) {
                     String path = nbproject.getPath().replace("/", "\\"); // NOI18N
-                    format = script.asText();
+                    format = script.asText("UTF-8");
                     format = format.replace(":NetBeansSuite:", path + "\\" + NET_BEANS_SUITE_PHP); // NOI18N
                     format = format.replace(":PHPUnitPath:", phpUnit); // NOI18N
                 } else {
-                    format = String.format(script.asText(), nbproject.getPath() + "/" + NET_BEANS_SUITE_PHP, phpUnit); // NOI18N
+                    format = String.format(script.asText("UTF-8"), nbproject.getPath() + "/" + NET_BEANS_SUITE_PHP, phpUnit); // NOI18N
                 }
                 PrintWriter pw = new PrintWriter(nbproject.createAndOpen(scriptFileName));
                 pw.print(format);
@@ -223,6 +225,11 @@ public class PHPUnitInitAction extends BaseAction {
             FileObject createdFile = nbproject.getFileObject(scriptFileName);
             FileUtil.toFile(createdFile).setExecutable(true);
         }
+    }
+
+    private String getPHPUnitPath() {
+        Preferences preference = NbPreferences.root().node("/org/netbeans/modules/php/project/general"); // NOI18N
+        return preference.get("phpUnit", null); // NOI18N
     }
 
     /**
@@ -242,25 +249,11 @@ public class PHPUnitInitAction extends BaseAction {
      * @param phpModule
      */
     private void setPhpProjectProperties(PhpModule phpModule) {
-        PhpProject phpProject = null;
-        OpenProjects projects = OpenProjects.getDefault();
-
-        for (Project project : projects.getOpenProjects()) {
-            if (project.getProjectDirectory() == phpModule.getProjectDirectory()) {
-                phpProject = project.getLookup().lookup(PhpProject.class);
-            }
-            if (phpProject != null) {
-                break;
-            }
-        }
-        if (phpProject != null) {
-            PhpProjectProperties phpProjectProperties = new PhpProjectProperties(phpProject);
+        Project project = ProjectPropertiesSupport.getProject(webroot);
+        if (project != null) {
             String bootstrapPath = webroot.getPath() + "/" + BOOTSTRAP_PHPUNIT_PHP; // NOI18N
-            phpProjectProperties.setPhpUnitBootstrap(bootstrapPath);
-            phpProjectProperties.setPhpUnitBootstrapForCreateTests(true);
-            String script = getScriptFileName();
-            phpProjectProperties.setPhpUnitScript(getNbproject(phpModule).getPath() + "/" + script); // NOI18N
-            phpProjectProperties.save();
+            String scriptPath = getNbproject(phpModule).getPath() + "/" + getScriptFileName(); // NOI18N
+            ProjectPropertiesSupport.setPHPUnit(phpModule, bootstrapPath, scriptPath);
         }
     }
 
