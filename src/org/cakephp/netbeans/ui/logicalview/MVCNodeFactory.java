@@ -52,8 +52,6 @@ import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.project.PhpProject;
-import org.netbeans.modules.php.project.ui.logicalview.PhpSourcesFilter;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.netbeans.spi.project.ui.support.NodeList;
@@ -70,10 +68,9 @@ public class MVCNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project p) {
-        final PhpProject project = p.getLookup().lookup(PhpProject.class);
         PhpModule phpModule = PhpModule.lookupPhpModule(p);
         if (CakePhpUtils.isCakePHP(phpModule)) {
-            return new MVCNodeList(project, phpModule);
+            return new MVCNodeList(phpModule);
         }
         return NodeFactorySupport.fixedNodeList();
     }
@@ -81,11 +78,9 @@ public class MVCNodeFactory implements NodeFactory {
     private static class MVCNodeList implements NodeList<FileObject> {
 
         private PhpModule phpModule;
-        private PhpProject project;
         private static final Logger LOGGER = Logger.getLogger(MVCNodeList.class.getName());
 
-        public MVCNodeList(PhpProject project, PhpModule phpModule) {
-            this.project = project;
+        public MVCNodeList(PhpModule phpModule) {
             this.phpModule = phpModule;
         }
 
@@ -119,7 +114,7 @@ public class MVCNodeFactory implements NodeFactory {
                 FileObject rootFolder = key;
                 DataFolder folder = getFolder(rootFolder);
                 if (folder != null) {
-                    node = new MVCNode(project, folder, new PhpSourcesFilter(project, rootFolder), key.getName());
+                    node = new MVCNode(folder, null, key.getName());
                 }
             }
             return node;
