@@ -98,7 +98,7 @@ public class CakePhpEmbeddingProvider extends EmbeddingProvider {
 
     @Override
     public int getPriority() {
-        return 200;
+        return 50;
     }
 
     @Override
