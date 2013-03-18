@@ -332,6 +332,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                 fileChangeListener = new FileChangeAdapterImpl();
             }
             core.addFileChangeListener(fileChangeListener);
+            core.refresh();
 
             // set debug level
             String level = getDebugLevel(core);
