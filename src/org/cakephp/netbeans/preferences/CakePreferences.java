@@ -55,6 +55,7 @@ public class CakePreferences {
     private static final String CAKE_PHP_DIR_PATH = "cake-php-dir-path"; // NOI18N
     private static final String DEFAULT_APP_NAME = "app"; // NOI18N
     private static final String USE_PROJECT_DIRECTORY = "use-project-directory"; // NOI18N
+    private static final String IGNORE_TMP_DIRECTORY = "ignore-tmp-directory"; // NOI18N
 
     public static void setAppName(PhpModule phpModule, String appName) {
         getPreferences(phpModule).put(APP_NAME, appName);
@@ -90,6 +91,14 @@ public class CakePreferences {
 
     public static boolean useProjectDirectory(PhpModule phpModule) {
         return getPreferences(phpModule).getBoolean(USE_PROJECT_DIRECTORY, false);
+    }
+
+    public static void setIgnoreTmpDirectory(PhpModule phpModule, boolean ignore) {
+        getPreferences(phpModule).putBoolean(IGNORE_TMP_DIRECTORY, ignore);
+    }
+
+    public static boolean ignoreTmpDirectory(PhpModule phpModule) {
+        return getPreferences(phpModule).getBoolean(IGNORE_TMP_DIRECTORY, true);
     }
 
     private static Preferences getPreferences(PhpModule phpModule) {

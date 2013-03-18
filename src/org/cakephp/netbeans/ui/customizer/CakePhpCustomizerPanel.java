@@ -120,6 +120,14 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         cakePhpDirTextField.setText(cakePhpDir);
     }
 
+    public boolean ignoreTmpDirectory() {
+        return ignoreTmpCheckBox.isSelected();
+    }
+
+    public void setIgnoreTmpDirectory(boolean ignore) {
+        ignoreTmpCheckBox.setSelected(ignore);
+    }
+
     public void addChangeListener(ChangeListener changeListener) {
         changeSupport.addChangeListener(changeListener);
     }
@@ -147,6 +155,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         useProjectDirectoryCheckBox = new javax.swing.JCheckBox();
         cakePhpDirLabel = new javax.swing.JLabel();
         cakePhpDirTextField = new javax.swing.JTextField();
+        ignoreTmpCheckBox = new javax.swing.JCheckBox();
 
         appNameLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.appNameLabel.text")); // NOI18N
 
@@ -165,6 +174,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
 
         cakePhpDirTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.cakePhpDirTextField.text")); // NOI18N
 
+        ignoreTmpCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.ignoreTmpCheckBox.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -177,14 +188,15 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(appNameField))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(autoCreateViewCheckBox)
-                            .addComponent(useProjectDirectoryCheckBox))
-                        .addGap(0, 10, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(cakePhpDirLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cakePhpDirTextField)))
+                        .addComponent(cakePhpDirTextField))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(autoCreateViewCheckBox)
+                            .addComponent(useProjectDirectoryCheckBox)
+                            .addComponent(ignoreTmpCheckBox))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -202,6 +214,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cakePhpDirLabel)
                     .addComponent(cakePhpDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ignoreTmpCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -215,6 +229,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox autoCreateViewCheckBox;
     private javax.swing.JLabel cakePhpDirLabel;
     private javax.swing.JTextField cakePhpDirTextField;
+    private javax.swing.JCheckBox ignoreTmpCheckBox;
     private javax.swing.JCheckBox useProjectDirectoryCheckBox;
     // End of variables declaration//GEN-END:variables
 }
