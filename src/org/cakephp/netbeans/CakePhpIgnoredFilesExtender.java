@@ -57,12 +57,19 @@ public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {
 
     public CakePhpIgnoredFilesExtender(PhpModule phpModule) {
         assert phpModule != null;
+        if (CakePreferences.ignoreTmpDirectory(phpModule)) {
+            appTmp = new File(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)), CakePreferences.getAppName(phpModule) + "/tmp"); // NOI18N
+        } else {
+            appTmp = null;
+        }
 
-        appTmp = new File(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)), CakePreferences.getAppName(phpModule) + "/tmp"); // NOI18N
     }
 
     @Override
     public Set<File> getIgnoredFiles() {
+        if (appTmp == null) {
+            return Collections.emptySet();
+        }
         return Collections.singleton(appTmp);
     }
 }
