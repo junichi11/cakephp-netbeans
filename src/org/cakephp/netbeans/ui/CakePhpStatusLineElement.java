@@ -70,6 +70,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.awt.StatusLineElementProvider;
 import org.openide.filesystems.FileChangeAdapter;
@@ -93,7 +94,8 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private static final String CONFIGURE_WRITE_DEBUG = "\tConfigure::write('debug', %s);"; // NOI18N
     private final ImageIcon icon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_icon_16.png")); // NOI18N
     private final JLabel debugLabel = new JLabel(""); // NOI18N
-    private static final Map<String, String> debugLevel = new HashMap<String, String>();
+    private final JLabel cakeVersionLabel = new JLabel("");
+    private static final Map<String, String> debugLevels = new HashMap<String, String>();
     private Lookup.Result result = null;
     private PhpModule phpModule = null;
     private String level = ""; // NOI18N
@@ -104,9 +106,9 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private FileChangeAdapterImpl fileChangeListener;
 
     static {
-        debugLevel.put("0", "0"); // NOI18N
-        debugLevel.put("1", "1"); // NOI18N
-        debugLevel.put("2", "2"); // NOI18N
+        debugLevels.put("0", "0"); // NOI18N
+        debugLevels.put("1", "1"); // NOI18N
+        debugLevels.put("2", "2"); // NOI18N
     }
 
     public CakePhpStatusLineElement() {
@@ -116,7 +118,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
 
         // create list
         model = new DefaultListModel();
-        for (String debugLv : debugLevel.keySet()) {
+        for (String debugLv : debugLevels.keySet()) {
             model.addElement(debugLv);
         }
         list = new JList(model);
@@ -184,7 +186,8 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         // create panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(separator, BorderLayout.WEST);
-        panel.add(cell);
+        panel.add(cell, BorderLayout.EAST);
+        panel.add(cakeVersionLabel, BorderLayout.CENTER);
         return panel;
     }
 
@@ -221,11 +224,10 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
      */
     private void setDebugLevelLabel(String debugLv) {
         if (debugLv.matches("^[012]$")) { // NOI18N
-            debugLabel.setText(debugLevel.get(debugLv));
+            debugLabel.setText(debugLevels.get(debugLv));
         } else {
             debugLabel.setText(debugLv);
         }
-        debugLabel.setIcon(icon);
     }
 
     /**
@@ -233,7 +235,8 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
      */
     private void clearLabel() {
         debugLabel.setText(""); //NOI18N
-        debugLabel.setIcon(null);
+        cakeVersionLabel.setText(""); //NOI18N
+        cakeVersionLabel.setIcon(null); //NOI18N
     }
 
     /**
@@ -319,6 +322,9 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                     }
                 }
                 phpModule = currentPhpModule;
+
+                // set CakePHP version
+                setCakePHPVersion(phpModule);
             }
 
             // get core file
@@ -355,6 +361,18 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                 fileObject = (FileObject) c.iterator().next();
             }
             return fileObject;
+        }
+
+        /**
+         * Set CakePHP version.
+         *
+         * @param phpModule
+         */
+        private void setCakePHPVersion(PhpModule phpModule) {
+            CakeVersion version = CakeVersion.getInstance(phpModule);
+            String versionNumber = version.getVersion();
+            cakeVersionLabel.setText(versionNumber + ":"); // NOI18N
+            cakeVersionLabel.setIcon(icon);
         }
     }
 

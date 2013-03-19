@@ -60,6 +60,7 @@ public class CakeVersion {
     private int minor;
     private int revision;
     private String notStable;
+    private String versionNumber;
     private static CakeVersion INSTANCE = null;
     private static PhpModule pm;
     private static final Logger LOGGER = Logger.getLogger(CakeVersion.class.getName());
@@ -117,7 +118,7 @@ public class CakeVersion {
     }
 
     public static CakeVersion getInstance(PhpModule pm) {
-        if (INSTANCE == null || CakeVersion.pm != pm) {
+        if (INSTANCE == null || CakeVersion.pm != pm || INSTANCE.versionNumber == null) {
             INSTANCE = new CakeVersion(pm);
         }
         return INSTANCE;
@@ -137,6 +138,10 @@ public class CakeVersion {
 
     public String getNotStable() {
         return notStable;
+    }
+
+    public String getVersion() {
+        return versionNumber;
     }
 
     /**
@@ -176,7 +181,7 @@ public class CakeVersion {
             return null;
         }
         try {
-            String versionNumber = null;
+            versionNumber = "";
             for (String line : version.asLines("UTF-8")) { // NOI18N
                 if (!line.contains("//") && !line.equals("")) { // NOI18N
                     line = line.trim();
