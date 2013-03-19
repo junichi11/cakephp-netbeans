@@ -31,6 +31,7 @@ This plugin provides support for CakePHP.
 - format for CakePHP action [v0.6.8]
 - go to element file from view file [v0.6.9]
 - display and change debug level [v0.6.10]
+- display CakePHP version number on status bar 
 - multiple app directories support [v0.6.14]
 - check default action [v0.6.15]
 - image and element code completion [v0.6.16]
