@@ -47,6 +47,7 @@
 package org.cakephp.netbeans.ui.wizards;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -57,9 +58,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import org.cakephp.netbeans.options.CakePhpOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
@@ -73,18 +76,21 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     private static final long serialVersionUID = 7874450246517944114L;
     private Map<String, String> tagsMap = new HashMap<String, String>();
     private String errorMessage;
+    private boolean isNetworkError = false;
     private static final Logger LOGGER = Logger.getLogger(NewProjectConfigurationPanel.class.getName());
 
     /**
      * Creates new form NewProjectConfigurationPanel
      */
     @NbBundle.Messages({
-        "LBL_ConnectErrorMessage=Is not connected to the network."
+        "LBL_ConnectErrorMessage=Is not connected to the network.",
+        "LBL_NewProjectWizardErrorMessage=Please, connect to the network or set CakePHP local file option"
     })
     public NewProjectConfigurationPanel() {
         initComponents();
         unzipRadioButton.setSelected(true);
         unzipFileNameTextField.setText(""); // NOI18N
+        setLocalPathLabel();
 
         try {
             // Get JSON
@@ -103,50 +109,14 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
                 tagsArray[i] = jObject.getString("name"); // NOI18N
                 tagsMap.put(jObject.getString("name"), jObject.getString("zipball_url")); // NOI18N
             }
-            Arrays.sort(tagsArray, new Comparator<String>() {
-                private static final String NUMBER_REGEX = "[0-9]+"; // NOI18N
-                private static final String SPLIT_REGEX = "[., -]"; // NOI18N
-
-                @Override
-                public int compare(String a, String b) {
-                    String[] aArray = a.split(SPLIT_REGEX);
-                    String[] bArray = b.split(SPLIT_REGEX);
-                    int aLength = aArray.length;
-                    int bLength = bArray.length;
-                    for (int i = 0; i < aLength; i++) {
-                        if (i == aLength - 1) {
-                            if ((bLength - aLength) < 0) {
-                                return -1;
-                            }
-                        }
-                        String aString = aArray[i];
-                        String bString = bArray[i];
-                        if (aString.matches(NUMBER_REGEX) && bString.matches(NUMBER_REGEX)) {
-                            try {
-                                Integer aInt = Integer.parseInt(aString);
-                                Integer bInt = Integer.parseInt(bString);
-                                if (aInt == bInt) {
-                                    continue;
-                                } else {
-                                    return bInt - aInt;
-                                }
-                            } catch (NumberFormatException ex) {
-                                return 1;
-                            }
-                        } else {
-                            return b.compareTo(a);
-                        }
-                    }
-                    return 1;
-                }
-            });
+            Arrays.sort(tagsArray, new ComparatorImpl());
             versionList.setListData(tagsArray);
             versionList.setSelectedIndex(0);
         } catch (JSONException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         } catch (IOException ex) {
-            errorMessage = Bundle.LBL_ConnectErrorMessage();
-            LOGGER.log(Level.WARNING, errorMessage, ex);
+            isNetworkError = true;
+            LOGGER.log(Level.WARNING, Bundle.LBL_ConnectErrorMessage());
         }
     }
 
@@ -210,6 +180,62 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         return prefixTextField;
     }
 
+    public boolean useLocalFile() {
+        return unzipLocalFileRadioButton.isSelected();
+    }
+
+    /**
+     * Set local path label.
+     */
+    private void setLocalPathLabel() {
+        // get Option
+        CakePhpOptions options = CakePhpOptions.getInstance();
+
+        // set local path
+        String localFilePath = options.getLocalZipFilePath();
+        if (StringUtils.isEmpty(localFilePath)) {
+            localPathLabel.setText("");
+            localPathLabel.setEnabled(false);
+        } else {
+            File file = new File(localFilePath);
+            localPathLabel.setText(file.getName());
+        }
+    }
+
+    private boolean isEnabledGit() {
+        try {
+            Process process = Runtime.getRuntime().exec("git"); // NOI18N
+            process.waitFor();
+        } catch (InterruptedException ex) {
+            return false;
+        } catch (IOException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isEnabledLocalPath() {
+        String localZipFilePath = CakePhpOptions.getInstance().getLocalZipFilePath();
+        return !StringUtils.isEmpty(localZipFilePath);
+    }
+
+    public boolean isNetworkError() {
+        return isNetworkError;
+    }
+
+    public void setError() {
+        if (isNetworkError) {
+            if (!isEnabledLocalPath()) {
+                errorMessage = Bundle.LBL_NewProjectWizardErrorMessage();
+            } else {
+                errorMessage = null;
+                unzipRadioButton.setEnabled(false);
+                gitCloneRadioButton.setEnabled(false);
+                unzipLocalFileRadioButton.setEnabled(true);
+            }
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -243,6 +269,8 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         prefixTextField = new javax.swing.JTextField();
         encodingTextField = new javax.swing.JTextField();
         unzipFileNameTextField = new javax.swing.JTextField();
+        unzipLocalFileRadioButton = new javax.swing.JRadioButton();
+        localPathLabel = new javax.swing.JLabel();
 
         setAutoscrolls(true);
 
@@ -302,6 +330,16 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         unzipFileNameTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipFileNameTextField.text")); // NOI18N
         unzipFileNameTextField.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
+        buttonGroup.add(unzipLocalFileRadioButton);
+        unzipLocalFileRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipLocalFileRadioButton.text")); // NOI18N
+        unzipLocalFileRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unzipLocalFileRadioButtonActionPerformed(evt);
+            }
+        });
+
+        localPathLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.localPathLabel.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -311,13 +349,17 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(gitCloneRadioButton)
                     .addComponent(gitCommandLabel)
-                    .addComponent(versionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(unzipLocalFileRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(localPathLabel))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(versionLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                             .addComponent(unzipRadioButton)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(unzipFileNameTextField))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)))
                 .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -354,18 +396,6 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(unzipRadioButton)
-                            .addComponent(unzipFileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(versionLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(gitCloneRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(gitCommandLabel))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(databaseCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -380,8 +410,22 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(loginLabel)
-                            .addComponent(loginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(loginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(unzipRadioButton)
+                            .addComponent(unzipFileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(versionLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(unzipLocalFileRadioButton)
+                            .addComponent(localPathLabel))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(passwordLabel)
                             .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -396,7 +440,11 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(encodingLabel)
-                            .addComponent(encodingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(encodingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(gitCloneRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(gitCommandLabel)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -414,6 +462,15 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
             gitCloneRadioButton.setEnabled(false);
         }
     }//GEN-LAST:event_gitCloneRadioButtonActionPerformed
+
+    private void unzipLocalFileRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unzipLocalFileRadioButtonActionPerformed
+        // TODO add your handling code here:
+        if (localPathLabel.getText().isEmpty()) {
+            unzipLocalFileRadioButton.setSelected(false);
+            unzipRadioButton.setSelected(true);
+            unzipLocalFileRadioButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_unzipLocalFileRadioButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JCheckBox databaseCheckBox;
@@ -428,6 +485,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel hostLabel;
     private javax.swing.JTextField hostTextField;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel localPathLabel;
     private javax.swing.JLabel loginLabel;
     private javax.swing.JTextField loginTextField;
     private javax.swing.JPasswordField passwordField;
@@ -436,8 +494,51 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel prefixLabel;
     private javax.swing.JTextField prefixTextField;
     private javax.swing.JTextField unzipFileNameTextField;
+    private javax.swing.JRadioButton unzipLocalFileRadioButton;
     private javax.swing.JRadioButton unzipRadioButton;
     private javax.swing.JLabel versionLabel;
     private javax.swing.JList versionList;
     // End of variables declaration//GEN-END:variables
+
+    //~ inner class
+    private static class ComparatorImpl implements Comparator<String> {
+
+        public ComparatorImpl() {
+        }
+        private static final String NUMBER_REGEX = "[0-9]+"; // NOI18N
+        private static final String SPLIT_REGEX = "[., -]"; // NOI18N
+
+        @Override
+        public int compare(String a, String b) {
+            String[] aArray = a.split(SPLIT_REGEX);
+            String[] bArray = b.split(SPLIT_REGEX);
+            int aLength = aArray.length;
+            int bLength = bArray.length;
+            for (int i = 0; i < aLength; i++) {
+                if (i == aLength - 1) {
+                    if ((bLength - aLength) < 0) {
+                        return -1;
+                    }
+                }
+                String aString = aArray[i];
+                String bString = bArray[i];
+                if (aString.matches(NUMBER_REGEX) && bString.matches(NUMBER_REGEX)) {
+                    try {
+                        Integer aInt = Integer.parseInt(aString);
+                        Integer bInt = Integer.parseInt(bString);
+                        if (aInt == bInt) {
+                            continue;
+                        } else {
+                            return bInt - aInt;
+                        }
+                    } catch (NumberFormatException ex) {
+                        return 1;
+                    }
+                } else {
+                    return b.compareTo(a);
+                }
+            }
+            return 1;
+        }
+    }
 }
