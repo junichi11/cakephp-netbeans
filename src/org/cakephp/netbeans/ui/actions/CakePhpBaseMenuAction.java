@@ -112,8 +112,9 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     public JMenuItem getPopupPresenter() {
         JMenu menu = new JMenu(Bundle.LBL_CakePHP());
         if (CakePhpUtils.isCakePHP(PhpModule.inferPhpModule())) {
+            boolean isAvaibable = isAvailableWithEditor();
             // format
-            if (isAvailableFormatAction()) {
+            if (isAvaibable) {
                 JMenuItem format = new JMenuItem(FormatPlusAction.getInstance());
                 menu.add(format);
             }
@@ -122,6 +123,12 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
             if (dataObject != null) {
                 JMenuItem createTest = new JMenuItem(new RunBakeTestAction(dataObject));
                 menu.add(createTest);
+            }
+
+            // run action
+            if (isAvaibable) {
+                JMenuItem run = new JMenuItem(RunActionAction.getInstance());
+                menu.add(run);
             }
         }
         if (menu.getItemCount() == 0) {
@@ -146,7 +153,7 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         return cakeToolbarPresenter;
     }
 
-    private boolean isAvailableFormatAction() {
+    private boolean isAvailableWithEditor() {
         Lookup context = Utilities.actionsGlobalContext();
         EditorCookie ec = context.lookup(EditorCookie.class);
         StyledDocument document = ec.getDocument();
@@ -180,6 +187,9 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
             if (dataObject != null) {
                 popup.add(new RunBakeTestAction(dataObject));
             }
+
+            // run action
+            popup.add(RunActionAction.getInstance());
 
             // add listener
             this.addActionListener(new ActionListener() {
