@@ -41,8 +41,6 @@
  */
 package org.cakephp.netbeans.ui.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -54,42 +52,67 @@ import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.modules.editor.lib2.search.EditorFindSupport;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.cookies.EditorCookie;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
 
 @ActionID(
-    category = "Source",
-    id = "org.cakephp.netbeans.ui.actions.FormatPlusAction")
+        category = "Source",
+        id = "org.cakephp.netbeans.ui.actions.FormatPlusAction")
 @ActionRegistration(
-    displayName = "#CTL_FormatPlusAction")
+        lazy = false,
+        displayName = "#CTL_FormatPlusAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/Source", position = 350),
-    @ActionReference(path = "Editors/text/x-php5/Popup", position = 765)
-})
+    @ActionReference(path = "Menu/Source", position = 350)})
 @Messages("CTL_FormatPlusAction=Format for CakePHP")
-public final class FormatPlusAction implements ActionListener {
+public final class FormatPlusAction extends BaseAction {
 
     private static final String REGEX = "^\\t(\\/\\*| \\*)"; // NOI18N
-    private final EditorCookie context;
+    private static final long serialVersionUID = 4090333560871000504L;
     private static final Logger LOGGER = Logger.getLogger(FormatPlusAction.class.getName());
+    private static final FormatPlusAction INSTANCE = new FormatPlusAction();
 
-    public FormatPlusAction(EditorCookie context) {
-        this.context = context;
+    private FormatPlusAction() {
+    }
+
+    public static FormatPlusAction getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public void actionPerformed(ActionEvent ev) {
+    protected String getFullName() {
+        return getPureName();
+    }
+
+    @Override
+    protected String getPureName() {
+        return Bundle.CTL_FormatPlusAction();
+    }
+
+    @Override
+    public void actionPerformed(PhpModule phpModule) {
         // Check CakePHP project
-        PhpModule phpModule = PhpModule.inferPhpModule();
         if (!CakePhpUtils.isCakePHP(phpModule)) {
             return;
         }
 
+        // get EditorCookie
+        Lookup lookup = Utilities.actionsGlobalContext();
+        EditorCookie context = lookup.lookup(EditorCookie.class);
+        if (context == null) {
+            return;
+        }
+
         Document doc = context.getDocument();
+        if (doc == null) {
+            return;
+        }
 
         reformat(doc);
 

@@ -44,6 +44,7 @@ Portions Copyrighted 2012 Sun Microsystems, Inc.
 <filesystem>
     <folder name="Actions">
         <folder name="PHP">
+            <file name="org-cakephp-netbeans-ui-actions-CakePhpBaseMenuAction.instance"/>
             <file name="org-cakephp-netbeans-ui-actions-CakePhpRunCommandAction.instance">
                 <attr name="instanceCreate" methodvalue="org.cakephp.netbeans.ui.actions.CakePhpRunCommandAction.getInstance"/>
             </file>
@@ -252,10 +253,10 @@ Portions Copyrighted 2012 Sun Microsystems, Inc.
          </folder>
     </folder>
     <folder name="org-cakephp-netbeans">
-        <file name="favicon.ico" url="favicon.ico" />
-        <file name="bootstrap_phpunit.php" url="bootstrap_phpunit.php" />
-        <file name="NetBeansSuite.php" url="NetBeansSuite.php" />
-        <file name="phpunit.bat" url="phpunit.bat" />
-        <file name="phpunit.sh" url="phpunit.sh" />
+        <file name="favicon.ico" url="favicon.ico"/>
+        <file name="bootstrap_phpunit.php" url="bootstrap_phpunit.php"/>
+        <file name="NetBeansSuite.php" url="NetBeansSuite.php"/>
+        <file name="phpunit.bat" url="phpunit.bat"/>
+        <file name="phpunit.sh" url="phpunit.sh"/>
     </folder>
 </filesystem>
