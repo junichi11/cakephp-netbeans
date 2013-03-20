@@ -52,15 +52,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.cakephp.netbeans.util.CakePhpSecurity;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.CakeZipEntryFilter;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.spi.framework.PhpModuleExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleExtender.ExtendingException;
 import org.openide.filesystems.FileObject;
@@ -128,22 +131,32 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         if (targetDirectory == null) {
             return Collections.emptySet();
         }
+        // get panel
+        NewProjectConfigurationPanel p = getPanel();
 
         // disabled components
-        Container parent = getPanel().getParent().getParent();
+        Container parent = p.getParent().getParent();
         enabledComponents(parent, false);
 
         // create cakephp files
-        if (getPanel().getUnzipRadioButton().isSelected()) {
+        if (p.getUnzipRadioButton().isSelected()) {
             // unzip
-            Map<String, String> tagsMap = getPanel().getTagsMap();
-            String url = tagsMap.get(getPanel().getVersionList().getSelectedValue().toString());
+            Map<String, String> tagsMap = p.getTagsMap();
+            String url = tagsMap.get(p.getVersionList().getSelectedValue().toString());
             File target = FileUtil.toFile(targetDirectory);
             boolean deleteEmpty = false;
             try {
-                CakePhpFileUtils.unzip(url, target, new CakeZipEntryFilter(deleteEmpty, getPanel().getUnzipFileNameTextField()));
+                CakePhpFileUtils.unzip(url, target, new CakeZipEntryFilter(deleteEmpty, p.getUnzipFileNameTextField()));
             } catch (MalformedURLException ex) {
                 Exceptions.printStackTrace(ex);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } else if (p.useLocalFile()) {
+            // local zip file
+            String path = CakePhpOptions.getInstance().getLocalZipFilePath();
+            try {
+                FileUtils.unzip(path, FileUtil.toFile(targetDirectory), new ZipEntryFilterImpl());
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -330,6 +343,33 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         if (panel == null) {
             panel = new NewProjectConfigurationPanel();
         }
+        panel.setError();
         return panel;
+    }
+
+    private class ZipEntryFilterImpl implements FileUtils.ZipEntryFilter {
+
+        private static final String CAKEPHP = "cakephp"; // NOI18N
+
+        public ZipEntryFilterImpl() {
+        }
+
+        @Override
+        public boolean accept(ZipEntry ze) {
+            if (ze.isDirectory() && ze.getName().startsWith(CAKEPHP)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getName(ZipEntry ze) {
+            String name = ze.getName();
+            if (name.startsWith(CAKEPHP)) {
+                int start = name.indexOf("/"); // NOI118N
+                name = name.substring(start);
+            }
+            return name;
+        }
     }
 }
