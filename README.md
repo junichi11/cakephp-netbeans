@@ -6,7 +6,7 @@ This plugin provides support for CakePHP.
 
 - 2010/07/16
 - 2012/09/08 Support for NetBeans7.3
-- 2013/02/19 last update
+- 2013/03/20 last update
 
 ## ENVIRONMENT
 
@@ -37,6 +37,7 @@ This plugin provides support for CakePHP.
 - image and element code completion [v0.6.16]
 - support for PHPUnit settings and create test case [v0.6.17]
 - code generate [v0.8.1]
+- run action action
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -380,7 +381,25 @@ Since message is focused, you can change it to your message.
 Please push `Enter` key after you change it. And you can move to next message.
 If you want to move to previous message, please push `Shift` + `Tab`.
 
-Please see also #12
+Please see also https://github.com/junichi11/cakephp-netbeans/issues/12
+
+### Run Action Action
+You can run the action for controller.
+
+- move the current caret position to within brace of action method.
+- `right-click > CakePHP > Run Action` or `Editor Toolbar > Cake icon > Run Action`
+- open the browser
+
+```
+public function index() {
+    // move the caret here
+}
+```
+
+#### Notice
+Currently, this is available for the simple situation.
+
+Please also see the following: https://github.com/junichi11/cakephp-netbeans/issues/16
 
 ## HOW TO RUN:
 
