@@ -48,6 +48,7 @@ import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.text.StyledDocument;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -56,8 +57,11 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.cookies.EditorCookie;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -106,9 +110,15 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu menu = new JMenu(Bundle.LBL_CakePHP());
-        // TODO add actions
-        // JMenuItem item = new JMenuItem();
-        // menu.add(item);
+        if (CakePhpUtils.isCakePHP(PhpModule.inferPhpModule())) {
+            if (isAvailableFormatAction()) {
+                JMenuItem format = new JMenuItem(FormatPlusAction.getInstance());
+                menu.add(format);
+            }
+        }
+        if (menu.getItemCount() == 0) {
+            menu.setVisible(false);
+        }
         return menu;
     }
 
@@ -121,6 +131,16 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
             cakeToolbarPresenter.setVisible(false);
         }
         return cakeToolbarPresenter;
+    }
+
+    private boolean isAvailableFormatAction() {
+        Lookup context = Utilities.actionsGlobalContext();
+        EditorCookie ec = context.lookup(EditorCookie.class);
+        StyledDocument document = ec.getDocument();
+        if (document == null) {
+            return false;
+        }
+        return true;
     }
 
     //~ inner classes
@@ -137,9 +157,10 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         CakeToolbarPresenter() {
             this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
             this.popup = new JPopupMenu();
+            // add actions
+            popup.add(FormatPlusAction.getInstance());
 
-            // TODO add actions
-            // this.popup.add();
+            // add listener
             this.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
