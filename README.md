@@ -390,7 +390,7 @@ You can run the action for controller.
 - `right-click > CakePHP > Run Action` or `Editor Toolbar > Cake icon > Run Action`
 - open the browser
 
-```
+```php
 public function index() {
     // move the caret here
 }
