@@ -41,8 +41,6 @@
  */
 package org.cakephp.netbeans.ui.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.cakephp.netbeans.commands.CakeScript;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
@@ -52,11 +50,10 @@ import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
@@ -67,18 +64,12 @@ import org.openide.util.NbBundle;
  * @author junichi11
  */
 @ActionID(
-    category = "UnitTests",
-    id = "org.cakephp.netbeans.ui.actions.RunBakeTestAction")
+        category = "UnitTests",
+        id = "org.cakephp.netbeans.ui.actions.RunBakeTestAction")
 @ActionRegistration(
-    iconBase = "org/cakephp/netbeans/ui/resources/cakephp_icon_16.png",
-    displayName = "#CTL_RunBakeTestAction")
-@ActionReferences({
-    @ActionReference(path = "Menu/Tools", position = 1800),
-    @ActionReference(path = "Loaders/text/x-php5/Actions", position = 1550),
-    @ActionReference(path = "Editors/text/x-php5/Popup", position = 865)
-})
+        displayName = "#CTL_RunBakeTestAction")
 @NbBundle.Messages("CTL_RunBakeTestAction=Create Test with bake")
-public class RunBakeTestAction implements ActionListener {
+public class RunBakeTestAction extends BaseAction {
 
     private static final long serialVersionUID = -3482899506753626339L;
     private DataObject context;
@@ -93,7 +84,17 @@ public class RunBakeTestAction implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    protected String getFullName() {
+        return getPureName();
+    }
+
+    @Override
+    protected String getPureName() {
+        return Bundle.CTL_RunBakeTestAction();
+    }
+
+    @Override
+    public void actionPerformed(PhpModule phpModule) {
         if (!CakePhpUtils.isCakePHP(phpModule)) {
             // called via shortcut
             return;

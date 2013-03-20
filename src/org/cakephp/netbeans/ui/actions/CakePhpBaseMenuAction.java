@@ -58,6 +58,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.cookies.EditorCookie;
+import org.openide.loaders.DataObject;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
@@ -111,15 +112,27 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     public JMenuItem getPopupPresenter() {
         JMenu menu = new JMenu(Bundle.LBL_CakePHP());
         if (CakePhpUtils.isCakePHP(PhpModule.inferPhpModule())) {
+            // format
             if (isAvailableFormatAction()) {
                 JMenuItem format = new JMenuItem(FormatPlusAction.getInstance());
                 menu.add(format);
+            }
+            // create test
+            DataObject dataObject = getDataObject();
+            if (dataObject != null) {
+                JMenuItem createTest = new JMenuItem(new RunBakeTestAction(dataObject));
+                menu.add(createTest);
             }
         }
         if (menu.getItemCount() == 0) {
             menu.setVisible(false);
         }
         return menu;
+    }
+
+    private DataObject getDataObject() {
+        Lookup context = Utilities.actionsGlobalContext();
+        return context.lookup(DataObject.class);
     }
 
     @Override
@@ -157,8 +170,16 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         CakeToolbarPresenter() {
             this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
             this.popup = new JPopupMenu();
+
             // add actions
+            // format
             popup.add(FormatPlusAction.getInstance());
+
+            // create test
+            DataObject dataObject = getDataObject();
+            if (dataObject != null) {
+                popup.add(new RunBakeTestAction(dataObject));
+            }
 
             // add listener
             this.addActionListener(new ActionListener() {
