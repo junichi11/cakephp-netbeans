@@ -43,12 +43,15 @@ package org.cakephp.netbeans.options;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import org.openide.filesystems.FileChooserBuilder;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
@@ -91,7 +94,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
         newProjectPanel = new javax.swing.JPanel();
         localFilePathLabel = new javax.swing.JLabel();
         localFilePathTextField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        browseButton = new javax.swing.JButton();
         pluginsPanel = new javax.swing.JPanel();
         pluginListLabel = new javax.swing.JLabel();
         messageLabel = new javax.swing.JLabel();
@@ -105,7 +108,12 @@ final class CakePhpPanel extends javax.swing.JPanel {
 
         localFilePathTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.localFilePathTextField.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.jButton1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.browseButton.text")); // NOI18N
+        browseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout newProjectPanelLayout = new javax.swing.GroupLayout(newProjectPanel);
         newProjectPanel.setLayout(newProjectPanelLayout);
@@ -117,7 +125,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(localFilePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(browseButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         newProjectPanelLayout.setVerticalGroup(
@@ -127,7 +135,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addGroup(newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(localFilePathLabel)
                     .addComponent(localFilePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(browseButton))
                 .addContainerGap(251, Short.MAX_VALUE))
         );
 
@@ -272,6 +280,22 @@ final class CakePhpPanel extends javax.swing.JPanel {
         controller.changed();
         }//GEN-LAST:event_deleteButtonActionPerformed
 
+    @NbBundle.Messages("LBL_LocalFilePath=Local File Path (zip file)")
+    private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
+        File localFile = new FileChooserBuilder(CakePhpPanel.class.getName())
+                .setTitle(Bundle.LBL_LocalFilePath())
+                .setFilesOnly(true)
+                .setFileFilter(new FileNameExtensionFilter(null, "zip")) // NOI18N
+                .showOpenDialog();
+        if (localFile != null) {
+            setLocalPath(localFile.getAbsolutePath());
+        }
+    }//GEN-LAST:event_browseButtonActionPerformed
+
+    private void setLocalPath(String path) {
+        localFilePathTextField.setText(path);
+    }
+
     private void initDialog() {
         Frame f = WindowManager.getDefault().getMainWindow();
         dialog = new CakePhpOptionsPanelRegisterDialog(f, true);
@@ -371,9 +395,9 @@ final class CakePhpPanel extends javax.swing.JPanel {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
+    private javax.swing.JButton browseButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel localFilePathLabel;
     private javax.swing.JTextField localFilePathTextField;
