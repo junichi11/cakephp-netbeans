@@ -165,8 +165,10 @@ Run Action: see [*1]
 4. Run Configuration
 5. PHP Framework > check CakePHP PHP Web Framework
 
-Select `Unzip` or `git command`.
-If you select `Unzip`, also select CakePHP version.
+Select `Unzip` or `Unzip local file` or `git command`.  
+If you select `Unzip`, also select CakePHP version.  
+If you want to unzip the local file, please set the option   
+(`Tools > Options > PHP > CakePHP > New Project > Local file path`)  
 If you want to create a database.php file, please, check the Create database.php.
 
 Also set the following automatically.
