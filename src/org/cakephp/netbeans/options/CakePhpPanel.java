@@ -95,6 +95,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
         localFilePathLabel = new javax.swing.JLabel();
         localFilePathTextField = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
         pluginsPanel = new javax.swing.JPanel();
         pluginListLabel = new javax.swing.JLabel();
         messageLabel = new javax.swing.JLabel();
@@ -115,18 +116,27 @@ final class CakePhpPanel extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(resetButton, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.resetButton.text")); // NOI18N
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout newProjectPanelLayout = new javax.swing.GroupLayout(newProjectPanel);
         newProjectPanel.setLayout(newProjectPanelLayout);
         newProjectPanelLayout.setHorizontalGroup(
             newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(newProjectPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, newProjectPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(localFilePathLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(localFilePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(localFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(browseButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(browseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(resetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         newProjectPanelLayout.setVerticalGroup(
             newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,7 +146,9 @@ final class CakePhpPanel extends javax.swing.JPanel {
                     .addComponent(localFilePathLabel)
                     .addComponent(localFilePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseButton))
-                .addContainerGap(251, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resetButton)
+                .addContainerGap(334, Short.MAX_VALUE))
         );
 
         optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.newProjectPanel.TabConstraints.tabTitle"), newProjectPanel); // NOI18N
@@ -182,7 +194,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(pluginsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pluginsPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pluginsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -204,7 +216,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                     .addComponent(messageLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pluginsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
                     .addGroup(pluginsPanelLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -221,11 +233,11 @@ final class CakePhpPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(optionsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(optionsTabbedPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(optionsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(optionsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -285,12 +297,18 @@ final class CakePhpPanel extends javax.swing.JPanel {
         File localFile = new FileChooserBuilder(CakePhpPanel.class.getName())
                 .setTitle(Bundle.LBL_LocalFilePath())
                 .setFilesOnly(true)
-                .setFileFilter(new FileNameExtensionFilter(null, "zip")) // NOI18N
+                .setFileFilter(new FileNameExtensionFilter("ZIP File", "zip")) // NOI18N
                 .showOpenDialog();
         if (localFile != null) {
             setLocalPath(localFile.getAbsolutePath());
+            controller.changed();
         }
     }//GEN-LAST:event_browseButtonActionPerformed
+
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        localFilePathTextField.setText("");
+        controller.changed();
+    }//GEN-LAST:event_resetButtonActionPerformed
 
     private void setLocalPath(String path) {
         localFilePathTextField.setText(path);
@@ -314,12 +332,16 @@ final class CakePhpPanel extends javax.swing.JPanel {
     }
 
     void load() {
-        model.setPlugins(CakePhpOptions.getInstance().getPlugins());
+        CakePhpOptions options = CakePhpOptions.getInstance();
+        model.setPlugins(options.getPlugins());
+        localFilePathTextField.setText(options.getLocalZipFilePath());
     }
 
     void store() {
         if (controller.isChanged()) {
-            CakePhpOptions.getInstance().setPlugins(model.getPlugins());
+            CakePhpOptions options = CakePhpOptions.getInstance();
+            options.setPlugins(model.getPlugins());
+            options.setLocalZipFilePath(localFilePathTextField.getText());
         }
     }
 
@@ -407,5 +429,6 @@ final class CakePhpPanel extends javax.swing.JPanel {
     private javax.swing.JLabel pluginListLabel;
     private javax.swing.JTable pluginTable;
     private javax.swing.JPanel pluginsPanel;
+    private javax.swing.JButton resetButton;
     // End of variables declaration//GEN-END:variables
 }

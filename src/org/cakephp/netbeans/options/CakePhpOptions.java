@@ -57,6 +57,8 @@ public class CakePhpOptions {
     private static final int NAME = 0;
     private static final int URL = 1;
     private static final String PLUGINS = "plugins"; // NOI18N
+    private static final String NEW_PROJECT = "new-project"; // NOI18N
+    private static final String LOCAL_ZIP_FILE_PATH = "local-zip-file-path"; // NOI18N
     private static CakePhpOptions INSTANCE = new CakePhpOptions();
 
     private CakePhpOptions() {
@@ -68,7 +70,7 @@ public class CakePhpOptions {
 
     public List<CakePhpPlugin> getPlugins() {
         ArrayList<CakePhpPlugin> plugins = new ArrayList<CakePhpPlugin>();
-        Preferences p = getPreferences().node(PLUGINS);
+        Preferences p = getPreferences().node(PLUGINS).node(PLUGINS);
         String s = "";
         if (p != null) {
             s = p.get(PLUGINS, ""); // NOI18N
@@ -89,7 +91,7 @@ public class CakePhpOptions {
     }
 
     public void setPlugins(List<CakePhpPlugin> plugins) {
-        Preferences p = getPreferences().node(PLUGINS);
+        Preferences p = getPreferences().node(PLUGINS).node(PLUGINS);
         String lists = ""; // NOI18N
         boolean first = true;
         for (CakePhpPlugin plugin : plugins) {
@@ -103,7 +105,15 @@ public class CakePhpOptions {
         p.put(PLUGINS, lists);
     }
 
+    public String getLocalZipFilePath() {
+        return getPreferences().node(NEW_PROJECT).get(LOCAL_ZIP_FILE_PATH, ""); // NOI18N
+    }
+
+    public void setLocalZipFilePath(String path) {
+        getPreferences().node(NEW_PROJECT).put(LOCAL_ZIP_FILE_PATH, path);
+    }
+
     public Preferences getPreferences() {
-        return NbPreferences.forModule(CakePhpOptions.class).node(PLUGINS);
+        return NbPreferences.forModule(CakePhpOptions.class);
     }
 }
