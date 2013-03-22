@@ -454,26 +454,8 @@ public class CakePhpEditorExtender extends EditorExtender {
                 // get entity name
                 String entityName = CakePhpCodeUtils.getStringValue(value);
 
-                // check app or plugin
-                FileObject entityFile = null;
-                boolean isPlugin = false;
-                String pluginName = null;
-                int dotPosition = entityName.indexOf("."); // NOI18N
-                if (dotPosition > 0) {
-                    isPlugin = true;
-                    pluginName = entityName.substring(0, dotPosition);
-                    entityName = entityName.substring(dotPosition + 1);
-                }
-
-                //get entity file
-                FILE_TYPE fileType = FILE_TYPES.get(fieldName);
-                entityFile = getEntityFile(isPlugin, module, fileType, entityName, pluginName);
-                if (entityFile == null) {
-                    continue;
-                }
-
-                // add field
-                addField(entityName, fileType, aliasName, entityFile);
+                // add field to PhpClass
+                addField(entityName, fieldName, module, aliasName);
             }
         }
 
@@ -487,6 +469,29 @@ public class CakePhpEditorExtender extends EditorExtender {
                 }
             }
             return object;
+        }
+
+        private void addField(String entityName, String fieldName, CakePhpModule module, String aliasName) {
+            // check app or plugin
+            FileObject entityFile = null;
+            boolean isPlugin = false;
+            String pluginName = null;
+            int dotPosition = entityName.indexOf("."); // NOI18N
+            if (dotPosition > 0) {
+                isPlugin = true;
+                pluginName = entityName.substring(0, dotPosition);
+                entityName = entityName.substring(dotPosition + 1);
+            }
+
+            //get entity file
+            FILE_TYPE fileType = FILE_TYPES.get(fieldName);
+            entityFile = getEntityFile(isPlugin, module, fileType, entityName, pluginName);
+            if (entityFile == null) {
+                return;
+            }
+
+            // add field
+            addField(entityName, fileType, aliasName, entityFile);
         }
 
         private void addField(String entityName, FILE_TYPE fileType, String aliasName, FileObject entityFile) {
