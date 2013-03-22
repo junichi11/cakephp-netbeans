@@ -79,8 +79,10 @@ import org.netbeans.modules.php.editor.parser.astnodes.FieldsDeclaration;
 import org.netbeans.modules.php.editor.parser.astnodes.FunctionInvocation;
 import org.netbeans.modules.php.editor.parser.astnodes.MethodDeclaration;
 import org.netbeans.modules.php.editor.parser.astnodes.MethodInvocation;
+import org.netbeans.modules.php.editor.parser.astnodes.NamespaceName;
 import org.netbeans.modules.php.editor.parser.astnodes.Scalar;
 import org.netbeans.modules.php.editor.parser.astnodes.SingleFieldDeclaration;
+import org.netbeans.modules.php.editor.parser.astnodes.StaticMethodInvocation;
 import org.netbeans.modules.php.editor.parser.astnodes.Variable;
 import org.netbeans.modules.php.editor.parser.astnodes.visitors.DefaultVisitor;
 import org.netbeans.modules.php.spi.editor.EditorExtender;
@@ -384,6 +386,33 @@ public class CakePhpEditorExtender extends EditorExtender {
         public abstract Set<String> getFieldNames();
 
         @Override
+        public void visit(StaticMethodInvocation node) {
+            super.visit(node);
+            // get class name
+            String methodClassName = getClassName(node);
+            if (methodClassName == null || !methodClassName.equals("ClassRegistry")) { // NOI18N
+                return;
+            }
+
+            // get method name
+            FunctionInvocation method = node.getMethod();
+            String methodName = CodeUtils.extractFunctionName(method);
+            if (!methodName.equals("init")) { // NOI18N
+                return;
+            }
+
+            // add field to PhpClass
+            List<Expression> parameters = method.getParameters();
+            String entityName = ""; // NOI18N
+            CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+            for (Expression parameter : parameters) {
+                entityName = CakePhpCodeUtils.getStringValue(parameter);
+                addField(entityName, USES, module, null);
+                break;
+            }
+        }
+
+        @Override
         public void visit(FieldsDeclaration node) {
             super.visit(node);
             if (phpClass == null) {
@@ -407,6 +436,14 @@ public class CakePhpEditorExtender extends EditorExtender {
                 // set classes
                 setFieldClasses(arrayCreation, fieldName);
             }
+        }
+
+        private String getClassName(StaticMethodInvocation node) {
+            Expression className = node.getClassName();
+            if (className instanceof NamespaceName) {
+                return CodeUtils.extractQualifiedName((NamespaceName) className);
+            }
+            return null;
         }
 
         /**
