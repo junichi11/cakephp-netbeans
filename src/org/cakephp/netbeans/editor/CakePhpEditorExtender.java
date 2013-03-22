@@ -70,7 +70,6 @@ import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.editor.PhpVariable;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.editor.CodeUtils;
-import org.netbeans.modules.php.editor.parser.PHPParseResult;
 import org.netbeans.modules.php.editor.parser.api.Utils;
 import org.netbeans.modules.php.editor.parser.astnodes.ArrayCreation;
 import org.netbeans.modules.php.editor.parser.astnodes.ArrayElement;
@@ -173,7 +172,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                 @Override
                 public void run(ResultIterator resultIterator) throws Exception {
                     ParserResult parseResult = (ParserResult) resultIterator.getParserResult();
-                    final CakePhpControllerVisitor controllerVisitor = new CakePhpControllerVisitor(view, (PHPParseResult) parseResult);
+                    final CakePhpControllerVisitor controllerVisitor = new CakePhpControllerVisitor(view, getPhpClass(view));
                     controllerVisitor.scan(Utils.getRoot(parseResult));
                     phpVariables.addAll(controllerVisitor.getPhpVariables());
                 }
@@ -206,12 +205,11 @@ public class CakePhpEditorExtender extends EditorExtender {
                 public void run(ResultIterator resultIterator) throws Exception {
                     ParserResult parseResult = (ParserResult) resultIterator.getParserResult();
                     if (CakePhpUtils.isView(fo) || CakePhpUtils.isController(fo)) {
-                        final CakePhpControllerVisitor controllerVisitor = new CakePhpControllerVisitor(fo, (PHPParseResult) parseResult);
+                        final CakePhpControllerVisitor controllerVisitor = new CakePhpControllerVisitor(fo, getPhpClass(fo));
                         controllerVisitor.scan(Utils.getRoot(parseResult));
-                        phpClasses.addAll(Collections.singleton(controllerVisitor.getPhpClasses()));
+                        phpClasses.addAll(Collections.singleton(controllerVisitor.getPhpClass()));
                     } else if (CakePhpUtils.isComponent(fo)) {
-                        PhpClass phpClass = getPhpClass(fo, FILE_TYPE.COMPONENT);
-                        final CakePhpComponentVisitor componentVisitor = new CakePhpComponentVisitor(fo, phpClass);
+                        final CakePhpComponentVisitor componentVisitor = new CakePhpComponentVisitor(fo, getPhpClass(fo));
                         componentVisitor.scan(Utils.getRoot(parseResult));
                         phpClasses.addAll(Collections.singleton(componentVisitor.getPhpClass()));
                     } else if (CakePhpUtils.isHelper(fo)) {
@@ -235,42 +233,54 @@ public class CakePhpEditorExtender extends EditorExtender {
      * @param fileType
      * @return
      */
-    private PhpClass getPhpClass(FileObject fo, FILE_TYPE fileType) {
+    private PhpClass getPhpClass(FileObject fo) {
         PhpModule phpModule = PhpModule.forFileObject(fo);
         CakeVersion version = CakeVersion.getInstance(phpModule);
-        String extendsClassName;
-        switch (fileType) {
-            case COMPONENT:
-                if (version.isCakePhp(1)) {
-                    extendsClassName = "Object"; // NOI18N
-                } else {
-                    extendsClassName = "Component"; // NOI18N
-                }
-                break;
-            default:
-                throw new AssertionError();
+        String extendsClassName = null;
+        if (CakePhpUtils.isComponent(fo)) {
+            if (version.isCakePhp(1)) {
+                extendsClassName = "Object"; // NOI18N
+            } else {
+                extendsClassName = FILE_TYPE.COMPONENT.toString();
+            }
+        } else if (CakePhpUtils.isController(fo)) {
+            extendsClassName = FILE_TYPE.CONTROLLER.toString();
+        } else if (CakePhpUtils.isView(fo)) {
+            extendsClassName = FILE_TYPE.VIEW.toString();
+        } else if (CakePhpUtils.isHelper(fo)) {
+            extendsClassName = "AppHelper"; // NOI18N
+        }
+        if (extendsClassName == null) {
+            return null;
         }
         return new PhpClass(extendsClassName, extendsClassName);
     }
 
     //~ inner classes
-    private static final class CakePhpControllerVisitor extends DefaultVisitor {
+    private final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
 
         private final Set<PhpVariable> fields = new HashSet<PhpVariable>();
-        private final PhpClass controllerClasses = new PhpClass("Controller", "Controller"); // NOI18N
-        private final PhpClass viewClasses = new PhpClass("View", "View"); // NOI18N
         private String className = null;
         private String methodName = null;
         private String viewName = null;
-        private PhpModule pm = null;
-        private FileObject target = null;
 
-        public CakePhpControllerVisitor(FileObject fo, PHPParseResult actionParseResult) {
-            this.target = fo;
-            pm = PhpModule.forFileObject(fo);
+        public CakePhpControllerVisitor(FileObject fo, PhpClass phpClass) {
+            super(fo, phpClass);
             if (CakePhpUtils.isView(fo)) {
                 viewName = CakePhpUtils.getActionName(fo);
             }
+        }
+
+        @Override
+        public Set<String> getFieldNames() {
+            Set<String> fieldNames = new HashSet<String>();
+            if (CakePhpUtils.isController(targetFile)) {
+                fieldNames.add(USES);
+                fieldNames.add(COMPONENTS);
+            } else if (CakePhpUtils.isView(targetFile)) {
+                fieldNames.add(HELPERS);
+            }
+            return fieldNames;
         }
 
         public Set<PhpVariable> getPhpVariables() {
@@ -279,20 +289,6 @@ public class CakePhpEditorExtender extends EditorExtender {
                 phpVariables.addAll(fields);
             }
             return phpVariables;
-        }
-
-        public PhpClass getPhpClasses() {
-            PhpClass phpClasses = null;
-            if (viewName != null) {
-                synchronized (viewClasses) {
-                    phpClasses = viewClasses;
-                }
-            } else {
-                synchronized (controllerClasses) {
-                    phpClasses = controllerClasses;
-                }
-            }
-            return phpClasses;
         }
 
         @Override
@@ -339,129 +335,9 @@ public class CakePhpEditorExtender extends EditorExtender {
                     && CakePhpUtils.isControllerName(className)
                     && !viewVarName.isEmpty()) {
                 synchronized (fields) {
-                    fields.add(new PhpVariable("$" + viewVarName, new PhpClass("stdClass", "stdClass"), target, 0)); // NOI18N
+                    fields.add(new PhpVariable("$" + viewVarName, new PhpClass("stdClass", "stdClass"), targetFile, 0)); // NOI18N
                 }
             }
-        }
-
-        @Override
-        public void visit(FieldsDeclaration node) {
-            List<SingleFieldDeclaration> controllerFields = node.getFields();
-            for (SingleFieldDeclaration field : controllerFields) {
-                String name = CodeUtils.extractVariableName(field.getName());
-                // get ArrayCreation
-                ArrayCreation arrayCreation = null;
-                Expression value = field.getValue();
-                if (value instanceof ArrayCreation) {
-                    arrayCreation = (ArrayCreation) value;
-                }
-                if (arrayCreation == null) {
-                    continue;
-                }
-
-                FileObject object = null;
-                for (ArrayElement element : arrayCreation.getElements()) {
-                    String aliasName = null;
-                    Expression entity = null;
-                    Expression e = element.getKey();
-                    if (e != null) {
-                        Expression elementValue = element.getValue();
-                        if (elementValue != null && elementValue instanceof ArrayCreation) {
-                            ArrayCreation ac = (ArrayCreation) elementValue;
-                            entity = CakePhpCodeUtils.getEntity(ac);
-                        }
-
-                        // check entity
-                        if (entity != null) {
-                            aliasName = CakePhpCodeUtils.getStringValue(e);
-                            e = entity;
-                        }
-                    } else {
-                        e = element.getValue();
-                    }
-                    if (e == null) {
-                        continue;
-                    }
-
-                    String elementName = CakePhpCodeUtils.getStringValue(e);
-                    CakePhpModule module = CakePhpModule.forPhpModule(pm);
-                    // model
-                    if (viewName == null && name.equals(USES)) { // NOI18N
-                        object = module.getModelFile(DIR_TYPE.APP, elementName);
-
-                        if (object != null) {
-                            synchronized (controllerClasses) {
-                                controllerClasses.addField(elementName, new PhpClass(elementName, elementName), object, 0);
-                            }
-                        }
-                    }
-
-                    // check app or plugin component
-                    if (viewName == null && name.equals(COMPONENTS)) { // NOI18N
-                        String[] split = elementName.split("[.]"); // NOI18N
-                        int len = split.length;
-                        switch (len) {
-                            case 1:
-                                object = module.getComponentFile(DIR_TYPE.APP, elementName);
-                                break;
-                            case 2:
-                                String pluginName = split[0];
-                                String componentName = split[1];
-                                object = module.getComponentFile(DIR_TYPE.APP_PLUGIN, componentName, pluginName);
-                                if (object == null) {
-                                    object = module.getComponentFile(DIR_TYPE.PLUGIN, componentName, pluginName);
-                                }
-                                elementName = componentName;
-                                break;
-                            default:
-                                break;
-                        }
-                        String componentClassName = elementName + "Component"; // NOI18N
-                        if (object != null) {
-                            synchronized (controllerClasses) {
-                                if (aliasName == null) {
-                                    controllerClasses.addField(elementName, new PhpClass(elementName, componentClassName), object, 0);
-                                } else {
-                                    controllerClasses.addField(aliasName, new PhpClass(elementName, componentClassName), object, 0);
-                                }
-                            }
-                        }
-                    }
-
-                    // check app or plugin helper
-                    if (viewName != null && name.equals(HELPERS)) { // NOI18N
-                        String[] split = elementName.split("[.]"); // NOI18N
-                        int len = split.length;
-                        switch (len) {
-                            case 1:
-                                object = module.getHelperFile(DIR_TYPE.APP, elementName);
-                                break;
-                            case 2:
-                                String pluginName = split[0];
-                                String helperName = split[1];
-                                object = module.getHelperFile(DIR_TYPE.APP_PLUGIN, helperName, pluginName);
-                                if (object == null) {
-                                    object = module.getHelperFile(DIR_TYPE.PLUGIN, helperName, pluginName);
-                                }
-                                elementName = helperName;
-                                break;
-                            default:
-                                break;
-                        }
-                        String helperClassName = elementName + "Helper"; // NOI18N
-                        if (object != null) {
-                            synchronized (viewClasses) {
-                                if (aliasName == null) {
-                                    viewClasses.addField(elementName, new PhpClass(elementName, helperClassName), object, 0);
-                                } else {
-                                    viewClasses.addField(aliasName, new PhpClass(elementName, helperClassName), object, 0);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            super.visit(node);
         }
 
         private String prepareViewVar(String viewVarName) {
@@ -519,7 +395,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                 // check filed name
                 String fieldName = CodeUtils.extractVariableName(field.getName());
                 if (FILE_TYPES.get(fieldName) == null || !containsFieldNames(fieldName, getFieldNames())) {
-                    return;
+                    continue;
                 }
 
                 // get ArrayCreation
@@ -559,7 +435,8 @@ public class CakePhpEditorExtender extends EditorExtender {
 
         private void setFieldClasses(ArrayCreation arrayCreation, String fieldName) {
             CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-            for (ArrayElement element : arrayCreation.getElements()) {
+            List<ArrayElement> elements = arrayCreation.getElements();
+            for (ArrayElement element : elements) {
                 String aliasName = null;
                 Expression entity = null;
                 Expression value = element.getValue();
@@ -578,7 +455,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                 String entityName = CakePhpCodeUtils.getStringValue(value);
 
                 // check app or plugin
-                FileObject object = null;
+                FileObject entityFile = null;
                 boolean isPlugin = false;
                 String pluginName = null;
                 int dotPosition = entityName.indexOf("."); // NOI18N
@@ -587,25 +464,38 @@ public class CakePhpEditorExtender extends EditorExtender {
                     pluginName = entityName.substring(0, dotPosition);
                     entityName = entityName.substring(dotPosition + 1);
                 }
-                //get FileObject
+
+                //get entity file
                 FILE_TYPE fileType = FILE_TYPES.get(fieldName);
-                Set<DIR_TYPE> dirTypes = getDirTypes(isPlugin);
-                for (DIR_TYPE dirType : dirTypes) {
-                    object = module.getFile(dirType, fileType, entityName, pluginName);
-                    if (object != null) {
-                        break;
-                    }
+                entityFile = getEntityFile(isPlugin, module, fileType, entityName, pluginName);
+                if (entityFile == null) {
+                    continue;
                 }
-                if (object == null) {
-                    return;
+
+                // add field
+                addField(entityName, fileType, aliasName, entityFile);
+            }
+        }
+
+        private FileObject getEntityFile(boolean isPlugin, CakePhpModule module, FILE_TYPE fileType, String entityName, String pluginName) {
+            FileObject object = null;
+            Set<DIR_TYPE> dirTypes = getDirTypes(isPlugin);
+            for (DIR_TYPE dirType : dirTypes) {
+                object = module.getFile(dirType, fileType, entityName, pluginName);
+                if (object != null) {
+                    break;
                 }
-                String entityClassName = entityName + fileType.toString(); // NOI18N
-                synchronized (phpClass) {
-                    if (aliasName == null) {
-                        phpClass.addField(entityName, new PhpClass(entityName, entityClassName), object, 0);
-                    } else {
-                        phpClass.addField(aliasName, new PhpClass(entityName, entityClassName), object, 0);
-                    }
+            }
+            return object;
+        }
+
+        private void addField(String entityName, FILE_TYPE fileType, String aliasName, FileObject entityFile) {
+            String entityClassName = entityName + fileType.toString();
+            synchronized (phpClass) {
+                if (aliasName == null) {
+                    phpClass.addField(entityName, new PhpClass(entityName, entityClassName), entityFile, 0);
+                } else {
+                    phpClass.addField(aliasName, new PhpClass(entityName, entityClassName), entityFile, 0);
                 }
             }
         }
