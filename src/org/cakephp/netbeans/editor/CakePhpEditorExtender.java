@@ -490,7 +490,11 @@ public class CakePhpEditorExtender extends EditorExtender {
         }
 
         private void addField(String entityName, FILE_TYPE fileType, String aliasName, FileObject entityFile) {
-            String entityClassName = entityName + fileType.toString();
+            String classNameSuffix = ""; // NOI18N
+            if (fileType != FILE_TYPE.MODEL) {
+                classNameSuffix = fileType.toString();
+            }
+            String entityClassName = entityName + classNameSuffix;
             synchronized (phpClass) {
                 if (aliasName == null) {
                     phpClass.addField(entityName, new PhpClass(entityName, entityClassName), entityFile, 0);
