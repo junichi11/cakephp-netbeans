@@ -45,6 +45,7 @@ import org.netbeans.modules.php.editor.parser.astnodes.ArrayCreation;
 import org.netbeans.modules.php.editor.parser.astnodes.ArrayElement;
 import org.netbeans.modules.php.editor.parser.astnodes.Expression;
 import org.netbeans.modules.php.editor.parser.astnodes.Scalar;
+import org.netbeans.modules.php.editor.parser.astnodes.SingleFieldDeclaration;
 
 /**
  *
@@ -92,5 +93,20 @@ public class CakePhpCodeUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Get ArrayCreation
+     *
+     * @param field
+     * @return
+     */
+    public static ArrayCreation getArrayCreation(SingleFieldDeclaration field) {
+        ArrayCreation arrayCreation = null;
+        Expression value = field.getValue();
+        if (value instanceof ArrayCreation) {
+            arrayCreation = (ArrayCreation) value;
+        }
+        return arrayCreation;
     }
 }
