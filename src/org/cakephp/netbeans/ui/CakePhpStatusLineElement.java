@@ -313,6 +313,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                 String lv = getLevel();
                 setDebugLevelLabel(lv);
                 list.setSelectedValue(lv, false);
+                setCakePHPVersion(phpModule);
                 return;
             } else {
                 // phpModule is null at first time
