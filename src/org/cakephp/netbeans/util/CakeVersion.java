@@ -56,7 +56,7 @@ import org.openide.util.Exceptions;
  */
 public class CakeVersion {
 
-    private int mejor;
+    private int major;
     private int minor;
     private int revision;
     private String notStable;
@@ -76,11 +76,11 @@ public class CakeVersion {
                 case 2:
                     minor = Integer.parseInt(split[1]);
                 case 1:
-                    mejor = Integer.parseInt(split[0]);
+                    major = Integer.parseInt(split[0]);
                     break;
                 case 0:
                 default:
-                    mejor = -1;
+                    major = -1;
                     minor = -1;
                     revision = -1;
                     notStable = ""; // NOI18N
@@ -92,14 +92,14 @@ public class CakeVersion {
             if (cakephpDirectory != null) {
                 FileObject cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("cake"); // NOI18N
                 if (cake != null) {
-                    mejor = 1;
+                    major = 1;
                     minor = -1;
                     revision = -1;
                     notStable = ""; // NOI18N
                 } else {
                     cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("lib/Cake"); // NOI18N
                     if (cake != null) {
-                        mejor = 2;
+                        major = 2;
                         minor = -1;
                         revision = -1;
                         notStable = ""; // NOI18N
@@ -124,8 +124,8 @@ public class CakeVersion {
         return INSTANCE;
     }
 
-    public int getMejor() {
-        return mejor;
+    public int getMajor() {
+        return major;
     }
 
     public int getMinor() {
@@ -145,13 +145,13 @@ public class CakeVersion {
     }
 
     /**
-     * Check CakePHP mejor version
+     * Check CakePHP major version
      *
-     * @param mejorVersion
+     * @param majorVersion
      * @return
      */
-    public boolean isCakePhp(int mejorVersion) {
-        return mejor == mejorVersion;
+    public boolean isCakePhp(int majorVersion) {
+        return major == majorVersion;
     }
 
     /**

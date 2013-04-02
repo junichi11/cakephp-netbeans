@@ -95,7 +95,7 @@ public class Asset extends Method {
 
     @Override
     public List<String> getElements(int argCount, String filter) {
-        int cakeVersion = CakeVersion.getInstance(phpModule).getMejor();
+        int cakeVersion = CakeVersion.getInstance(phpModule).getMajor();
         List<String> elements = new LinkedList<String>();
         if (type == null) {
             return elements;

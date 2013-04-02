@@ -63,7 +63,7 @@ public class Element extends Asset {
     @Override
     public List<String> getElements(int argCount, String filter) {
         List<String> elements = new ArrayList<String>();
-        int cakeVersion = CakeVersion.getInstance(phpModule).getMejor();
+        int cakeVersion = CakeVersion.getInstance(phpModule).getMajor();
 
         if (argCount == 1) {
             String[] split = filter.split("\\."); // NOI18N
