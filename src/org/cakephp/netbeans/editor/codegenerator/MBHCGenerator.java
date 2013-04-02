@@ -192,7 +192,7 @@ public class MBHCGenerator implements CodeGenerator {
             PhpModule phpModule = PhpModule.forFileObject(fileObject);
 
             // check whether this is CakePHP project
-            if (CakePhpUtils.isCakePHP(phpModule) && CakeVersion.getInstance(phpModule).getMejor() > 1) {
+            if (CakePhpUtils.isCakePHP(phpModule) && CakeVersion.getInstance(phpModule).getMajor() > 1) {
                 List<Type> types = new ArrayList<Type>();
                 if (CakePhpUtils.isController(fileObject)) {
                     types.add(Type.USES);

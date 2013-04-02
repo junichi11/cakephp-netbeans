@@ -160,7 +160,7 @@ public class ValidateGenerator implements CodeGenerator {
             int caretOffset = textComponent.getCaretPosition();
             if (validateStartOffset < caretOffset && caretOffset < validateEndOffset) {
                 // check whether file is Model
-                if (CakePhpUtils.isCakePHP(phpModule) && CakeVersion.getInstance(phpModule).getMejor() > 1) {
+                if (CakePhpUtils.isCakePHP(phpModule) && CakeVersion.getInstance(phpModule).getMajor() > 1) {
                     if (CakePhpUtils.isModel(fileObject)) {
                         return Collections.singletonList(new ValidateGenerator(context, Collections.singletonList(Type.VALIDATE)));
                     }
