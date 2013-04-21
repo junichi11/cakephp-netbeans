@@ -90,7 +90,7 @@ public final class CakeScript {
     private static final String CORE_SHELLS_DIRECTORY = "cake/console/libs"; // NOI18N
     private static final String VENDORS_SHELLS_DIRECTORY = "vendors/shells"; // NOI18N
     private final String cakePath;
-    private List<String> appPrams = new ArrayList<String>();
+    private List<String> appParams = new ArrayList<String>();
 
     private CakeScript(String cakePath) {
         this.cakePath = cakePath;
@@ -150,8 +150,8 @@ public final class CakeScript {
     public void runCommand(PhpModule phpModule, List<String> parameters, Runnable postExecution) {
         if (!CakePreferences.getAppName(phpModule).equals("app")) { // NOI18N
             FileObject app = CakePhpModule.forPhpModule(phpModule).getDirectory(CakePhpModule.DIR_TYPE.APP);
-            appPrams.add("-app"); // NOI18N
-            appPrams.add(app.getPath());
+            appParams.add("-app"); // NOI18N
+            appParams.add(app.getPath());
         }
         createPhpExecutable(phpModule)
             .displayName(getDisplayName(phpModule, parameters.get(0)))
@@ -226,7 +226,7 @@ public final class CakeScript {
     private List<String> getAllParams(List<String> params) {
         List<String> allParams = new ArrayList<String>();
         allParams.addAll(DEFAULT_PARAMS);
-        allParams.addAll(appPrams);
+        allParams.addAll(appParams);
         allParams.addAll(params);
         return allParams;
     }
