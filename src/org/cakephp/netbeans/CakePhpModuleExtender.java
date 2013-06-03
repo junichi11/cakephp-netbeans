@@ -57,6 +57,7 @@ import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpOptions;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.cakephp.netbeans.util.CakePhpSecurity;
@@ -170,6 +171,8 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         if (tmp != null) {
             CakePhpFileUtils.chmodTmpDirectory(tmp);
         }
+
+        setIgnoreTmpDirectory(phpModule);
 
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
         FileObject config = module.getConfigDirectory(CakePhpModule.DIR_TYPE.APP).getFileObject("core.php"); // NOI18N
@@ -345,6 +348,13 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
         panel.setError();
         return panel;
+    }
+
+    private void setIgnoreTmpDirectory(PhpModule phpModule) {
+        boolean isIgnore = CakePhpOptions.getInstance().isIgnoreTmpDirectory();
+        if (!isIgnore) {
+            CakePreferences.setIgnoreTmpDirectory(phpModule, isIgnore);
+        }
     }
 
     private class ZipEntryFilterImpl implements FileUtils.ZipEntryFilter {

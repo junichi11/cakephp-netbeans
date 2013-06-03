@@ -59,6 +59,7 @@ public class CakePhpOptions {
     private static final String PLUGINS = "plugins"; // NOI18N
     private static final String NEW_PROJECT = "new-project"; // NOI18N
     private static final String LOCAL_ZIP_FILE_PATH = "local-zip-file-path"; // NOI18N
+    private static final String IGNORE_TMP = "ignore-tmp"; // NOI18N
     private static CakePhpOptions INSTANCE = new CakePhpOptions();
 
     private CakePhpOptions() {
@@ -111,6 +112,14 @@ public class CakePhpOptions {
 
     public void setLocalZipFilePath(String path) {
         getPreferences().node(NEW_PROJECT).put(LOCAL_ZIP_FILE_PATH, path);
+    }
+
+    public boolean isIgnoreTmpDirectory() {
+        return getPreferences().getBoolean(IGNORE_TMP, true);
+    }
+
+    public void setIgnoreTmpDirectory(boolean isIgnore) {
+        getPreferences().putBoolean(IGNORE_TMP, isIgnore);
     }
 
     public Preferences getPreferences() {

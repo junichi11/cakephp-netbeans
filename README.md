@@ -6,7 +6,7 @@ This plugin provides support for CakePHP.
 
 - 2010/07/16
 - 2012/09/08 Support for NetBeans7.3
-- 2013/03/20 last update
+- 2013/06/03 last update
 
 ## ENVIRONMENT
 
@@ -40,6 +40,12 @@ This plugin provides support for CakePHP.
 - run action action
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
+
+### Ignore tmp directory
+app/tmp is ignored with default. If you would like to avoid this, please, uncheck `ignore tmp directory` option.
+
+- Tools > Options > PHP > CakePHP (on create a new project)
+- project properties > Frameworks > CakePHP (existing project)
 
 ### Existing Source
 
