@@ -351,7 +351,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     }
 
     private void setIgnoreTmpDirectory(PhpModule phpModule) {
-        CakePreferences.setIgnoreTmpDirectory(phpModule, CakePhpOptions.getInstance().isIgnoreTmpDirectory());
+        boolean isIgnore = CakePhpOptions.getInstance().isIgnoreTmpDirectory();
+        if (!isIgnore) {
+            CakePreferences.setIgnoreTmpDirectory(phpModule, isIgnore);
+        }
     }
 
     private class ZipEntryFilterImpl implements FileUtils.ZipEntryFilter {
