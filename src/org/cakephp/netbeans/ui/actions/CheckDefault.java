@@ -220,13 +220,13 @@ public class CheckDefault extends BaseAction {
      * @return
      */
     private boolean isChangedSessionName(CakePhpModule module) {
-        FileObject configDirectory = module.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
-        if (configDirectory == null) {
+        FileObject config = module.getConfigFile();
+        if (config == null) {
             return false;
         }
-        FileObject core = configDirectory.getFileObject("core.php"); // NOI18N
+
         try {
-            List<String> lines = core.asLines();
+            List<String> lines = config.asLines("UTF-8");
             boolean existSessionCookie = false;
             for (String line : lines) {
                 if (line.matches("^.*'Session\\.cookie', *'CAKEPHP'.*$")) { // NOI18N
