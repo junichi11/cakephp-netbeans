@@ -47,6 +47,8 @@ import javax.swing.Action;
 import org.cakephp.netbeans.ui.actions.*;
 import org.cakephp.netbeans.ui.wizards.InstallPluginsWizardAction;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.PhpModuleActionsExtender;
 import org.netbeans.modules.php.spi.framework.actions.GoToActionAction;
 import org.netbeans.modules.php.spi.framework.actions.GoToViewAction;
@@ -67,7 +69,10 @@ public class CakePhpActionsExtender extends PhpModuleActionsExtender {
         list.add(ClearCacheAction.getInstance());
         list.add(InstallPluginsWizardAction.getInstance());
         list.add(CheckDefault.getInstance());
-        list.add(PHPUnitInitAction.getInstance());
+        PhpModule phpModule = PhpModule.inferPhpModule();
+        if (CakeVersion.getInstance(phpModule).getMajor() >= 2) {
+            list.add(PHPUnitInitAction.getInstance());
+        }
         return list;
     }
 
