@@ -42,10 +42,20 @@
 package org.cakephp.netbeans.module;
 
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.openide.filesystems.FileObject;
 
 public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
 
     public CakePhp3ModuleImpl(PhpModule phpModule) {
         super(phpModule);
+    }
+
+    @Override
+    public FileObject getConfigFile() {
+        FileObject configDirectory = getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+        if (configDirectory != null) {
+            return configDirectory.getFileObject("app.php"); // NOI18N
+        }
+        return null;
     }
 }
