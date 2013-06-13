@@ -101,7 +101,12 @@ public class CakeVersion {
                 } else {
                     cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("lib/Cake"); // NOI18N
                     if (cake != null) {
-                        major = 2;
+                        FileObject app = CakePhpModule.getCakePhpDirectory(pm).getFileObject("App"); // NOI18N
+                        if (app != null) {
+                            major = 3;
+                        } else {
+                            major = 2;
+                        }
                         minor = -1;
                         revision = -1;
                         notStable = ""; // NOI18N
