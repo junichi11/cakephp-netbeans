@@ -218,6 +218,9 @@ public class MBHCFieldInfo extends FieldInfo {
             list.addAll(getCommonNames(coreDir, editorSupport, null));
             for (DIR_TYPE dirType : Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN)) {
                 FileObject appPlugin = module.getDirectory(dirType);
+                if (appPlugin == null) {
+                    continue;
+                }
                 for (FileObject child : appPlugin.getChildren()) {
                     if (!child.isFolder()) {
                         continue;
