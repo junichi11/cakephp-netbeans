@@ -92,6 +92,8 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     private static final String REFS_HEADS = "refs/heads/master"; // NOI18N
     private static final String REMOTE_COMMAND = "remote"; // NOI18N
     private NewProjectConfigurationPanel panel = null;
+    // CakePHP 1.x, 2.x : app, CakePHP 3.x : App
+    private String appName;
 
     @Override
     public void addChangeListener(ChangeListener cl) {
@@ -166,8 +168,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             createProjectFromGitCommand(targetDirectory);
         }
 
+        setAppName(targetDirectory);
+
         // change tmp directory permission
-        FileObject tmp = targetDirectory.getFileObject("app/tmp"); // NOI18N
+        FileObject tmp = targetDirectory.getFileObject(appName + "/tmp"); // NOI18N
         if (tmp != null) {
             CakePhpFileUtils.chmodTmpDirectory(tmp);
         }
@@ -175,7 +179,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         setIgnoreTmpDirectory(phpModule);
 
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        FileObject config = module.getConfigDirectory(CakePhpModule.DIR_TYPE.APP).getFileObject("core.php"); // NOI18N
+        FileObject config = module.getConfigFile();
         // change security string
         changeSecurityString(config);
 
@@ -296,8 +300,8 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         if (config == null) {
             return;
         }
-        if (!config.getNameExt().equals("core.php")) { // NOI18N
-            LOGGER.log(Level.WARNING, "Not Found core.php");
+        if (!config.getNameExt().equals("core.php") && !config.getNameExt().equals("app.php")) { // NOI18N
+            LOGGER.log(Level.WARNING, "Not Found core.php or app.php");
             return;
         }
         try {
@@ -325,11 +329,9 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
 
         Set<FileObject> files = new HashSet<FileObject>();
-        if (config != null) {
-            files.add(config);
-        }
+        files.add(config);
         if (files.isEmpty()) {
-            FileObject index = targetDirectory.getFileObject("app/webroot/index.php"); // NOI18N
+            FileObject index = targetDirectory.getFileObject(appName + "/webroot/index.php"); // NOI18N
             if (index != null) {
                 files.add(index);
             }
@@ -354,6 +356,20 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         boolean isIgnore = CakePhpOptions.getInstance().isIgnoreTmpDirectory();
         if (!isIgnore) {
             CakePreferences.setIgnoreTmpDirectory(phpModule, isIgnore);
+        }
+    }
+
+    /**
+     * Set app name.
+     *
+     * @param targetDirectory
+     */
+    private void setAppName(FileObject targetDirectory) {
+        FileObject fileObject = targetDirectory.getFileObject("App"); // NOI18N
+        if (fileObject != null) {
+            appName = "App"; // NOI18N
+        } else {
+            appName = "app"; // NOI18N
         }
     }
 
