@@ -60,7 +60,7 @@ import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
-import org.cakephp.netbeans.util.CakePhpSecurity;
+import org.cakephp.netbeans.util.CakePhpSecurityString;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.CakeZipEntryFilter;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -305,7 +305,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             return;
         }
         try {
-            CakePhpSecurity.changeSecurityString(config);
+            CakePhpSecurityString.changeSecurityString(config);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } catch (NoSuchAlgorithmException nsaex) {

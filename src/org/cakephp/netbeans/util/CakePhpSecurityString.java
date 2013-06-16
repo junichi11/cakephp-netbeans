@@ -53,7 +53,7 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public class CakePhpSecurity {
+public class CakePhpSecurityString {
 
     // CakePHP 1.x, 2.x
     private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT = "\tConfigure::write('Security.cipherSeed', '%s');"; // NOI18N
@@ -73,8 +73,8 @@ public class CakePhpSecurity {
      */
     public static void changeSecurityString(FileObject config) throws IOException, NoSuchAlgorithmException {
         List<String> lines = config.asLines();
-        String salt = CakePhpSecurity.generateSecurityKey("SHA-1"); // NOI18N
-        String cipherSeed = CakePhpSecurity.generateCipherSeed();
+        String salt = CakePhpSecurityString.generateSecurityKey("SHA-1"); // NOI18N
+        String cipherSeed = CakePhpSecurityString.generateCipherSeed();
 
         PrintWriter pw = new PrintWriter(config.getOutputStream());
         for(String line : lines){

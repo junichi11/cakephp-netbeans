@@ -49,61 +49,61 @@ import org.netbeans.junit.NbTestCase;
  *
  * @author junichi11
  */
-public class CakePhpSecurityTest extends NbTestCase {
+public class CakePhpSecurityStringTest extends NbTestCase {
 
-    public CakePhpSecurityTest(String name) {
+    public CakePhpSecurityStringTest(String name) {
         super(name);
     }
 
     /**
-     * Test of generateSecurityKey method, of class CakePhpSecurity.
+     * Test of generateSecurityKey method, of class CakePhpSecurityString.
      */
     @Test
     public void testGenerateSecurityKey() throws Exception {
         System.out.println("generateSecurityKey null");
-        String result = CakePhpSecurity.generateSecurityKey(null);
+        String result = CakePhpSecurityString.generateSecurityKey(null);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
     }
 
     /**
-     * Test of generateSecurityKey method, of class CakePhpSecurity.
+     * Test of generateSecurityKey method, of class CakePhpSecurityString.
      */
     @Test
     public void testGenerateSecurityKeySHA1() throws Exception {
         System.out.println("generateSecurityKey SHA-1");
         String algorithm = "SHA-1";
-        String result = CakePhpSecurity.generateSecurityKey(algorithm);
+        String result = CakePhpSecurityString.generateSecurityKey(algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
     }
 
     /**
-     * Test of generateSecurityKey method, of class CakePhpSecurity.
+     * Test of generateSecurityKey method, of class CakePhpSecurityString.
      */
     @Test
     public void testGenerateSecurityKeySHA256() throws Exception {
         System.out.println("generateSecurityKey SHA-256");
         String algorithm = "SHA-256";
-        String result = CakePhpSecurity.generateSecurityKey(algorithm);
+        String result = CakePhpSecurityString.generateSecurityKey(algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
     }
 
     /**
-     * Test of generateSecurityKey method, of class CakePhpSecurity.
+     * Test of generateSecurityKey method, of class CakePhpSecurityString.
      */
     @Test
     public void testGenerateSecurityKeyMD5() throws Exception {
         System.out.println("generateSecurityKey MD5");
         String algorithm = "MD5";
-        String result = CakePhpSecurity.generateSecurityKey(algorithm);
+        String result = CakePhpSecurityString.generateSecurityKey(algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
     }
 
     /**
-     * Test of generateSecurityKey method, of class CakePhpSecurity.
+     * Test of generateSecurityKey method, of class CakePhpSecurityString.
      */
     @Test
     public void testGenerateSecurityKeyException() {
@@ -111,55 +111,55 @@ public class CakePhpSecurityTest extends NbTestCase {
         String algorithm = "Error";
         String result;
         try {
-            result = CakePhpSecurity.generateSecurityKey(algorithm);
+            result = CakePhpSecurityString.generateSecurityKey(algorithm);
             fail("NoSuchAlgorithmException is excepted");
         } catch (NoSuchAlgorithmException ex) {
         }
     }
 
     /**
-     * Test of hash method, of class CakePhpSecurity.
+     * Test of hash method, of class CakePhpSecurityString.
      */
     @Test
     public void testHash() throws Exception {
         System.out.println("hash");
         String algorithm = "SHA-1";
         String string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String result = CakePhpSecurity.hash(string, algorithm);
+        String result = CakePhpSecurityString.hash(string, algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
 
         string = "日本語あいうえおアイウエオ";
-        result = CakePhpSecurity.hash(string, algorithm);
+        result = CakePhpSecurityString.hash(string, algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
 
         string = "1234567890-@!#$%&'()=~|<>?_*+{}`\\";
-        result = CakePhpSecurity.hash(string, algorithm);
+        result = CakePhpSecurityString.hash(string, algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
 
         algorithm = "SHA-256";
-        result = CakePhpSecurity.hash("", algorithm);
+        result = CakePhpSecurityString.hash("", algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
 
         algorithm = "MD5";
-        result = CakePhpSecurity.hash(null, algorithm);
+        result = CakePhpSecurityString.hash(null, algorithm);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
 
-        result = CakePhpSecurity.hash(string, null);
+        result = CakePhpSecurityString.hash(string, null);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
 
-        result = CakePhpSecurity.hash(null, null);
+        result = CakePhpSecurityString.hash(null, null);
         System.out.println(result);
         assertTrue(result.matches("^[0-9a-f]+$"));
     }
 
     /**
-     * Test of hash method, of class CakePhpSecurity.
+     * Test of hash method, of class CakePhpSecurityString.
      */
     @Test
     public void testHashException() {
@@ -168,13 +168,13 @@ public class CakePhpSecurityTest extends NbTestCase {
         String string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String result;
         try {
-            result = CakePhpSecurity.hash(string, algorithm);
+            result = CakePhpSecurityString.hash(string, algorithm);
             fail("NoSuchAlgorithmException is excepted");
         } catch (NoSuchAlgorithmException ex) {
         }
 
         try {
-            result = CakePhpSecurity.hash(null, algorithm);
+            result = CakePhpSecurityString.hash(null, algorithm);
             fail("NoSuchAlgorithmException is excepted");
         } catch (NoSuchAlgorithmException ex) {
         }
@@ -182,12 +182,12 @@ public class CakePhpSecurityTest extends NbTestCase {
     }
 
     /**
-     * Test of generateCipherSeed method, of class CakePhpSecurity.
+     * Test of generateCipherSeed method, of class CakePhpSecurityString.
      */
     @Test
     public void testGenerateCipherSeed() {
         System.out.println("generateCipherSeed");
-        String result = CakePhpSecurity.generateCipherSeed();
+        String result = CakePhpSecurityString.generateCipherSeed();
         System.out.println(result);
         assertTrue(result.matches("^[0-9]+$"));
         assertTrue(result.length() == 30);
