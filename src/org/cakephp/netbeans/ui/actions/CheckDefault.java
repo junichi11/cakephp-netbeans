@@ -49,6 +49,7 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.filesystems.FileObject;
@@ -144,7 +145,7 @@ public class CheckDefault extends BaseAction {
         }
 
         // Config/core.php :Session name
-        if (isChangedSessionName(module)) {
+        if (isChangedSessionName(phpModule)) {
             verifyPanel.setSessionCookieStatusLabel(OK_CHANGED);
         }
 
@@ -216,11 +217,24 @@ public class CheckDefault extends BaseAction {
     /**
      * Verify Session.cookie(default CAKEPHP)
      *
-     * @param module
+     * @param phpModule
      * @return
      */
-    private boolean isChangedSessionName(CakePhpModule module) {
-        FileObject config = module.getConfigFile();
+    private boolean isChangedSessionName(PhpModule phpModule) {
+        FileObject config = null;
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+
+        // CakePHP 1.x, 2.x core.php
+        // CakePHP 3.x session.php
+        if (CakeVersion.getInstance(phpModule).isCakePhp(3)) {
+            FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+            if (configDirectory != null) {
+                config = configDirectory.getFileObject("session.php"); // NOI18N
+            }
+        } else {
+            config = cakeModule.getConfigFile();
+        }
+
         if (config == null) {
             return false;
         }
