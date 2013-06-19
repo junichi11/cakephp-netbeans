@@ -51,6 +51,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.text.StyledDocument;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.awt.ActionID;
@@ -130,6 +131,12 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
                 JMenuItem run = new JMenuItem(RunActionAction.getInstance());
                 menu.add(run);
             }
+
+            // fix namespace
+            if (isAvaibable && CakeVersion.getInstance(PhpModule.inferPhpModule()).isCakePhp(3)) {
+                JMenuItem fixNamespace = new JMenuItem(new FixNamespaceAction());
+                menu.add(fixNamespace);
+            }
         }
         if (menu.getItemCount() == 0) {
             menu.setVisible(false);
@@ -190,6 +197,11 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
 
             // run action
             popup.add(RunActionAction.getInstance());
+
+            // fix namespace
+            if (CakeVersion.getInstance(PhpModule.inferPhpModule()).isCakePhp(3)) {
+                popup.add(new FixNamespaceAction());
+            }
 
             // add listener
             this.addActionListener(new ActionListener() {
