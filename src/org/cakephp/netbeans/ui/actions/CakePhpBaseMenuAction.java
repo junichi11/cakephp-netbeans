@@ -59,6 +59,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.cookies.EditorCookie;
+import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
@@ -134,8 +135,11 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
 
             // fix namespace
             if (isAvaibable && CakeVersion.getInstance(PhpModule.inferPhpModule()).isCakePhp(3)) {
-                JMenuItem fixNamespace = new JMenuItem(new FixNamespaceAction());
-                menu.add(fixNamespace);
+                FileObject fileObject = getFileObject();
+                if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
+                    JMenuItem fixNamespace = new JMenuItem(new FixNamespaceAction());
+                    menu.add(fixNamespace);
+                }
             }
         }
         if (menu.getItemCount() == 0) {
@@ -147,6 +151,14 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     private DataObject getDataObject() {
         Lookup context = Utilities.actionsGlobalContext();
         return context.lookup(DataObject.class);
+    }
+
+    private FileObject getFileObject() {
+        DataObject dataObject = getDataObject();
+        if (dataObject != null) {
+            return dataObject.getPrimaryFile();
+        }
+        return null;
     }
 
     @Override
@@ -200,7 +212,10 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
 
             // fix namespace
             if (CakeVersion.getInstance(PhpModule.inferPhpModule()).isCakePhp(3)) {
-                popup.add(new FixNamespaceAction());
+                FileObject fileObject = getFileObject();
+                if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
+                    popup.add(new FixNamespaceAction());
+                }
             }
 
             // add listener

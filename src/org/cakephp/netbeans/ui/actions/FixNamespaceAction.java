@@ -125,7 +125,9 @@ public class FixNamespaceAction extends BaseAction {
         if (!hasNamespace) {
             try {
                 FileObject fileObject = NbEditorUtilities.getFileObject(document);
-                document.insertString(addingOffset, getNamespace(fileObject), null);
+                if (!CakePhpUtils.isCtpFile(fileObject)) {
+                    document.insertString(addingOffset, getNamespace(fileObject), null);
+                }
             } catch (BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
             }
