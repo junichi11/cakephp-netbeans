@@ -36,7 +36,7 @@ This plugin provides support for CakePHP.
 - check default action [v0.6.15]
 - image and element code completion [v0.6.16]
 - support for PHPUnit settings and create test case [v0.6.17]
-- code generate [v0.8.1]
+- code generation [v0.8.1]
 - run action action
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
@@ -341,7 +341,7 @@ If you run this action, you can test using fixture with NetBeans.
 
 https://gist.github.com/2055307 ([nojimage](https://github.com/nojimage))
 
-### Code Generate
+### Code Generation
 #### How to run
 `Alt` + `Insert` or Right-click on editor, select `Insert Code`.
 
