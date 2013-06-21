@@ -68,10 +68,10 @@ public final class InstallPluginsVisualPanel extends JPanel {
         model.setPlugins(CakePhpOptions.getInstance().getPlugins());
         initComponents();
         String appName = CakePreferences.getAppName(pm);
-        if (CakeVersion.getInstance(pm).isCakePhp(2)) {
-            installPathTextField.setText(appName + "/Plugin");
+        if (CakeVersion.getInstance(pm).getMajor() >= 2) {
+            installPathTextField.setText(appName + "/Plugin"); // NOI18N
         } else {
-            installPathTextField.setText(appName + "/plugins");
+            installPathTextField.setText(appName + "/plugins"); // NOI18N
         }
 
         pluginTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
