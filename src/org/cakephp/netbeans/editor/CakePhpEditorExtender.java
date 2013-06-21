@@ -58,7 +58,6 @@ import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.module.DefaultFileFilter;
 import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
@@ -69,6 +68,7 @@ import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.editor.PhpVariable;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.editor.CodeUtils;
 import org.netbeans.modules.php.editor.parser.api.Utils;
 import org.netbeans.modules.php.editor.parser.astnodes.ArrayCreation;
@@ -92,7 +92,7 @@ import org.openide.filesystems.FileObject;
  *
  * @author igorf
  */
-public class CakePhpEditorExtender extends EditorExtender {
+public abstract class CakePhpEditorExtender extends EditorExtender {
 
     static final Logger LOGGER = Logger.getLogger(CakePhpEditorExtender.class.getName());
     private static final Map<String, FILE_TYPE> FILE_TYPES = new HashMap<String, FILE_TYPE>();
@@ -100,6 +100,15 @@ public class CakePhpEditorExtender extends EditorExtender {
     private static final String COMPONENTS = "$components"; // NOI18N
     private static final String HELPERS = "$helpers"; // NOI18N
     private static final String ACTS_AS = "$actsAs"; // NOI18N
+    private boolean isView = false;
+    private boolean isController = false;
+    private boolean isComponent = false;
+    private boolean isHelper = false;
+    private PhpModule phpModule;
+
+    public CakePhpEditorExtender(PhpModule phpModule) {
+        this.phpModule = phpModule;
+    }
 
     static {
         FILE_TYPES.put(USES, FILE_TYPE.MODEL);
@@ -110,11 +119,11 @@ public class CakePhpEditorExtender extends EditorExtender {
 
     @Override
     public List<PhpBaseElement> getElementsForCodeCompletion(FileObject fo) {
-        boolean isView = CakePhpUtils.isView(fo);
-        boolean isController = CakePhpUtils.isController(fo);
-        boolean isComponent = CakePhpUtils.isComponent(fo);
-        boolean isHelper = CakePhpUtils.isHelper(fo);
-        if (fo.getExt().equals(CakePhp.CTP)) {
+        isView = CakePhpUtils.isView(fo);
+        isController = CakePhpUtils.isController(fo);
+        isComponent = CakePhpUtils.isComponent(fo);
+        isHelper = CakePhpUtils.isHelper(fo);
+        if (CakePhpUtils.isCtpFile(fo)) {
             isView = true;
         }
 
@@ -126,32 +135,10 @@ public class CakePhpEditorExtender extends EditorExtender {
         elements = new LinkedList<PhpBaseElement>();
 
         for (PhpClass phpClass : parseFields(fo)) {
-            PhpModule pm = PhpModule.forFileObject(fo);
-            CakePhpModule module = CakePhpModule.forPhpModule(pm);
             if (isView || isHelper) {
-                if (!(isView && CakeVersion.getInstance(pm).isCakePhp(2))) {
-                    FileObject helperDirectory = module.getHelperDirectory(DIR_TYPE.CORE);
-                    if (helperDirectory != null) {
-                        List<FileObject> helpers = module.getFiles(helperDirectory, new DefaultFileFilter());
-                        for (FileObject helper : helpers) {
-                            String className = CakePhpUtils.getClassName(helper);
-                            String name = className.replace(CakePhpModule.FILE_TYPE.HELPER.toString(), ""); // NOI18N
-                            phpClass.addField(name, new PhpClass(name, className), fo, 0);
-                        }
-                    }
-                }
+                addDefaultHelpers(phpClass, fo);
             } else {
-                if (!(isController && CakeVersion.getInstance(pm).isCakePhp(2))) {
-                    FileObject componentDirectory = module.getComponentDirectory(DIR_TYPE.CORE);
-                    if (componentDirectory != null) {
-                        List<FileObject> components = module.getFiles(componentDirectory, new DefaultFileFilter());
-                        for (FileObject component : components) {
-                            String className = CakePhpUtils.getClassName(component);
-                            String name = className.replace(CakePhpModule.FILE_TYPE.COMPONENT.toString(), ""); // NOI18N
-                            phpClass.addField(name, new PhpClass(name, className), fo, 0);
-                        }
-                    }
-                }
+                addDefaultComponents(phpClass, fo);
             }
             elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
         }
@@ -161,6 +148,26 @@ public class CakePhpEditorExtender extends EditorExtender {
         }
 
         return elements;
+    }
+
+    public boolean isView() {
+        return isView;
+    }
+
+    public boolean isController() {
+        return isController;
+    }
+
+    public boolean isComponent() {
+        return isComponent;
+    }
+
+    public boolean isHelper() {
+        return isHelper;
+    }
+
+    public PhpModule getPhpModule() {
+        return phpModule;
     }
 
     private Set<PhpVariable> parseAction(final FileObject view) {
@@ -191,7 +198,7 @@ public class CakePhpEditorExtender extends EditorExtender {
         if (CakePhpUtils.isView(fo) || fo.getExt().equals(CakePhp.CTP)) {
             tmp = CakePhpUtils.getController(fo);
             if (tmp == null) {
-                return Collections.singleton(new PhpClass("View", "View")); // NOI18N
+                return Collections.singleton(getViewPhpClass());
             }
         }
 
@@ -215,7 +222,7 @@ public class CakePhpEditorExtender extends EditorExtender {
                         componentVisitor.scan(Utils.getRoot(parseResult));
                         phpClasses.addAll(Collections.singleton(componentVisitor.getPhpClass()));
                     } else if (CakePhpUtils.isHelper(fo)) {
-                        final CakePhpHelperVisitor helperVisitor = new CakePhpHelperVisitor(fo);
+                        final CakePhpHelperVisitor helperVisitor = new CakePhpHelperVisitor(fo, getPhpClass(fo));
                         helperVisitor.scan(Utils.getRoot(parseResult));
                         phpClasses.addAll(Collections.singleton(helperVisitor.getPhpClass()));
                     }
@@ -236,27 +243,69 @@ public class CakePhpEditorExtender extends EditorExtender {
      * @return
      */
     private PhpClass getPhpClass(FileObject fo) {
-        PhpModule phpModule = PhpModule.forFileObject(fo);
-        CakeVersion version = CakeVersion.getInstance(phpModule);
-        String extendsClassName = null;
         if (CakePhpUtils.isComponent(fo)) {
-            if (version.isCakePhp(1)) {
-                extendsClassName = "Object"; // NOI18N
-            } else {
-                extendsClassName = FILE_TYPE.COMPONENT.toString();
-            }
+            return getComponentPhpClass();
         } else if (CakePhpUtils.isController(fo)) {
-            extendsClassName = FILE_TYPE.CONTROLLER.toString();
+            return getControllerPhpClass();
         } else if (CakePhpUtils.isView(fo)) {
-            extendsClassName = FILE_TYPE.VIEW.toString();
+            return getViewPhpClass();
         } else if (CakePhpUtils.isHelper(fo)) {
-            extendsClassName = "AppHelper"; // NOI18N
+            return getHelperPhpClass();
         }
-        if (extendsClassName == null) {
-            return null;
-        }
-        return new PhpClass(extendsClassName, extendsClassName);
+        return null;
     }
+
+    public abstract PhpClass getViewPhpClass();
+
+    public abstract PhpClass getControllerPhpClass();
+
+    public abstract PhpClass getComponentPhpClass();
+
+    public abstract PhpClass getHelperPhpClass();
+
+    public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return;
+        }
+
+        FileObject helperDirectory = module.getHelperDirectory(DIR_TYPE.CORE);
+        if (helperDirectory != null) {
+            List<FileObject> helpers = module.getFiles(helperDirectory, new DefaultFileFilter());
+            for (FileObject helper : helpers) {
+                String fullyQualifiedName = getFullyQualifiedClassName(helper);
+                if (StringUtils.isEmpty(fullyQualifiedName)) {
+                    continue;
+                }
+                String className = CakePhpUtils.getClassName(helper);
+                String name = className.replace(CakePhpModule.FILE_TYPE.HELPER.toString(), ""); // NOI18N
+                phpClass.addField(name, new PhpClass(name, fullyQualifiedName), fo, 0);
+            }
+        }
+    }
+
+    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return;
+        }
+
+        FileObject componentDirectory = module.getComponentDirectory(DIR_TYPE.CORE);
+        if (componentDirectory != null) {
+            List<FileObject> components = module.getFiles(componentDirectory, new DefaultFileFilter());
+            for (FileObject component : components) {
+                String fullyQualifiedName = getFullyQualifiedClassName(component);
+                if (StringUtils.isEmpty(fullyQualifiedName)) {
+                    continue;
+                }
+                String className = CakePhpUtils.getClassName(component);
+                String name = className.replace(CakePhpModule.FILE_TYPE.COMPONENT.toString(), ""); // NOI18N
+                phpClass.addField(name, new PhpClass(name, fullyQualifiedName), fo, 0);
+            }
+        }
+    }
+
+    public abstract String getFullyQualifiedClassName(FileObject target);
 
     //~ inner classes
     private final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
@@ -536,7 +585,7 @@ public class CakePhpEditorExtender extends EditorExtender {
             if (fileType != FILE_TYPE.MODEL) {
                 classNameSuffix = fileType.toString();
             }
-            String entityClassName = entityName + classNameSuffix;
+            String entityClassName = getFullyQualifiedClassName(entityFile);
             synchronized (phpClass) {
                 if (aliasName == null) {
                     phpClass.addField(entityName, new PhpClass(entityName, entityClassName), entityFile, 0);

@@ -128,6 +128,20 @@ public final class CakePhpUtils {
     }
 
     /**
+     * Get fully qualified class name
+     *
+     * @param fo FileObject
+     * @return fully quqlified class name if class exists, otherwise null
+     */
+    public static String getFullyQualifiedClassName(FileObject fo) {
+        EditorSupport support = Lookup.getDefault().lookup(EditorSupport.class);
+        for (PhpClass phpClass : support.getClasses(fo)) {
+            return phpClass.getFullyQualifiedName();
+        }
+        return null;
+    }
+
+    /**
      * Check component file
      *
      * @param fo
