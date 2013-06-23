@@ -452,10 +452,9 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
 
             // add field to PhpClass
             List<Expression> parameters = method.getParameters();
-            String entityName = ""; // NOI18N
             CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
             for (Expression parameter : parameters) {
-                entityName = CakePhpCodeUtils.getStringValue(parameter);
+                String entityName = CakePhpCodeUtils.getStringValue(parameter);
                 addField(entityName, USES, module, null);
                 break;
             }
@@ -577,14 +576,10 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
             }
 
             // add field
-            addField(entityName, fileType, aliasName, entityFile);
+            addField(entityName, aliasName, entityFile);
         }
 
-        private void addField(String entityName, FILE_TYPE fileType, String aliasName, FileObject entityFile) {
-            String classNameSuffix = ""; // NOI18N
-            if (fileType != FILE_TYPE.MODEL) {
-                classNameSuffix = fileType.toString();
-            }
+        private void addField(String entityName, String aliasName, FileObject entityFile) {
             String entityClassName = getFullyQualifiedClassName(entityFile);
             synchronized (phpClass) {
                 if (aliasName == null) {
