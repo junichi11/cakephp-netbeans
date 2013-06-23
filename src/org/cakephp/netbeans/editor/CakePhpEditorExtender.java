@@ -213,18 +213,20 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
                 @Override
                 public void run(ResultIterator resultIterator) throws Exception {
                     ParserResult parseResult = (ParserResult) resultIterator.getParserResult();
-                    if (CakePhpUtils.isView(fo) || CakePhpUtils.isController(fo)) {
-                        final CakePhpControllerVisitor controllerVisitor = new CakePhpControllerVisitor(fo, getPhpClass(fo));
-                        controllerVisitor.scan(Utils.getRoot(parseResult));
-                        phpClasses.addAll(Collections.singleton(controllerVisitor.getPhpClass()));
-                    } else if (CakePhpUtils.isComponent(fo)) {
-                        final CakePhpComponentVisitor componentVisitor = new CakePhpComponentVisitor(fo, getPhpClass(fo));
-                        componentVisitor.scan(Utils.getRoot(parseResult));
-                        phpClasses.addAll(Collections.singleton(componentVisitor.getPhpClass()));
-                    } else if (CakePhpUtils.isHelper(fo)) {
-                        final CakePhpHelperVisitor helperVisitor = new CakePhpHelperVisitor(fo, getPhpClass(fo));
-                        helperVisitor.scan(Utils.getRoot(parseResult));
-                        phpClasses.addAll(Collections.singleton(helperVisitor.getPhpClass()));
+                    final CakePhpFieldsVisitor visitor;
+                    if (isView || isController) {
+                        visitor = new CakePhpControllerVisitor(fo, getPhpClass(fo));
+                    } else if (isComponent) {
+                        visitor = new CakePhpComponentVisitor(fo, getPhpClass(fo));
+                    } else if (isHelper) {
+                        visitor = new CakePhpHelperVisitor(fo, getPhpClass(fo));
+                    } else {
+                        visitor = null;
+                    }
+
+                    if (visitor != null) {
+                        visitor.scan(Utils.getRoot(parseResult));
+                        phpClasses.addAll(Collections.singleton(visitor.getPhpClass()));
                     }
                 }
             });
@@ -558,7 +560,6 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
 
         private void addField(String entityName, String fieldName, CakePhpModule module, String aliasName) {
             // check app or plugin
-            FileObject entityFile = null;
             boolean isPlugin = false;
             String pluginName = null;
             int dotPosition = entityName.indexOf("."); // NOI18N
@@ -570,7 +571,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
 
             //get entity file
             FILE_TYPE fileType = FILE_TYPES.get(fieldName);
-            entityFile = getEntityFile(isPlugin, module, fileType, entityName, pluginName);
+            FileObject entityFile = getEntityFile(isPlugin, module, fileType, entityName, pluginName);
             if (entityFile == null) {
                 return;
             }
@@ -604,12 +605,6 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
     }
 
     private final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
-
-        private static final String APP_HELPER = "AppHelper"; // NOI8N
-
-        public CakePhpHelperVisitor(FileObject fo) {
-            super(fo, new PhpClass(APP_HELPER, APP_HELPER));
-        }
 
         public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
             super(targetFile, phpClass);
