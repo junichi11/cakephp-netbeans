@@ -229,7 +229,13 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                     name += type.toString();
                     break;
                 case VIEW:
-                    name = CakePhpUtils.toUnderscoreCase(name);
+                    // change only file name if name is file path
+                    int lastIndexOfSlash = name.lastIndexOf("/");
+                    if (lastIndexOfSlash != -1) {
+                        name = name.substring(0, lastIndexOfSlash) + CakePhpUtils.toUnderscoreCase(name.substring(lastIndexOfSlash));
+                    } else {
+                        name = CakePhpUtils.toUnderscoreCase(name);
+                    }
                     break;
                 default:
                     break;
