@@ -39,45 +39,70 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
-import javax.swing.text.Document;
-import org.netbeans.spi.editor.completion.CompletionResultSet;
-import org.netbeans.spi.editor.completion.CompletionTask;
-import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
-import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
+import java.awt.Image;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import org.netbeans.spi.editor.completion.CompletionDocumentation;
 import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public class ImageCompletionItem extends CakePhpCompletionItem {
+public class ImageCompletionDocumentation implements CompletionDocumentation {
 
-    private final FileObject target;
+    private final ImageCompletionItem item;
+    private static final List<String> exts = Arrays.asList("jpg", "jpeg", "gif", "png", "bmp", "ico"); // NOI18N
 
-    public ImageCompletionItem(String text, int startOffset, int removeLength) {
-        super(text, startOffset, removeLength);
-        this.target = null;
-    }
-
-    public ImageCompletionItem(String text, int startOffset, int removeLength, FileObject target) {
-        super(text, startOffset, removeLength);
-        this.target = target;
+    ImageCompletionDocumentation(ImageCompletionItem item) {
+        this.item = item;
     }
 
     @Override
-    public CompletionTask createDocumentationTask() {
-        return new AsyncCompletionTask(new AsyncCompletionQuery() {
-            @Override
-            protected void query(CompletionResultSet completionResultSet, Document document, int i) {
-                completionResultSet.setDocumentation(new ImageCompletionDocumentation(ImageCompletionItem.this));
-                completionResultSet.finish();
+    public String getText() {
+        FileObject fileObject = item.getFileObject();
+        StringBuilder imgTag = new StringBuilder();
+        if (fileObject != null) {
+            String ext = fileObject.getExt().toLowerCase(Locale.ENGLISH);
+            if (exts.contains(ext)) {
+                int height = 0;
+                double width = 0;
+                Image image = new ImageIcon(fileObject.toURL()).getImage();
+                width = image.getWidth(null);
+                height = image.getHeight(null);
+                imgTag.append("<img src=\"file:").append(fileObject.getPath()).append("\""); // NOI18N
+                if (width > 500) {
+                    double resizeHeight = 0;
+                    double rate = width / 500;
+                    resizeHeight = height / rate;
+                    height = (int) resizeHeight;
+                    imgTag.append(" width=\"").append("500").append("\"") // NOI18N
+                            .append(" height=\"").append(height).append("\""); // NOI18N
+                }
+                imgTag.append(" />"); // NOI18N
             }
-        });
+        }
+        return imgTag.toString();
     }
 
-    public FileObject getFileObject() {
-        return target;
+    @Override
+    public URL getURL() {
+        return null;
+    }
+
+    @Override
+    public CompletionDocumentation resolveLink(String link) {
+        return null;
+    }
+
+    @Override
+    public Action getGotoSourceAction() {
+        return null;
     }
 }

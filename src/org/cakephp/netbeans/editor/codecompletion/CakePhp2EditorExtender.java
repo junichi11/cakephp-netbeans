@@ -39,71 +39,63 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
-import java.util.Arrays;
-import java.util.List;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.editor.CakePhpEditorExtender;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.spi.editor.completion.CompletionItem;
+import org.openide.filesystems.FileObject;
 
-/**
- *
- * @author junichi11
- */
-public abstract class Method {
+public class CakePhp2EditorExtender extends CakePhpEditorExtender {
 
-    protected static final String SLASH = "/"; // NOI18N
-    protected static final String DOT = "."; // NOI18N
-    private static final String ELEMENT = "element"; // NOI18N
-    private static final String FETCH = "fetch"; // NOI18N
-    private static final String CSS = "css"; // NOI18N
-    private static final String SCRIPT = "script"; // NOI18N
-    private static final String IMAGE = "image"; // NOI18N
-    protected PhpModule phpModule;
-    // fetch : CakePHP 2.1+
-    public static final List<String> METHODS = Arrays.asList(ELEMENT, FETCH, CSS, SCRIPT, IMAGE);
-    protected static final List<DIR_TYPE> PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
-
-    Method(PhpModule phpModule) {
-        this.phpModule = phpModule;
+    public CakePhp2EditorExtender(PhpModule phpModule) {
+        super(phpModule);
     }
 
-    public abstract List<String> getElements(int argCount, String filter);
-
-    /**
-     * Create CompletionItem.
-     *
-     * @param element
-     * @param startOffset
-     * @param removeLength
-     * @return CompletionItem
-     */
-    public CompletionItem createCompletionItem(String element, int startOffset, int removeLength) {
-        return new CakePhpCompletionItem(element, startOffset, removeLength);
+    @Override
+    public PhpClass getViewPhpClass() {
+        String extendsClassName = CakePhpModule.FILE_TYPE.VIEW.toString();
+        return new PhpClass(extendsClassName, extendsClassName);
     }
 
-    public static class Factory {
+    @Override
+    public PhpClass getControllerPhpClass() {
+        String extendsClassName = CakePhpModule.FILE_TYPE.CONTROLLER.toString();
+        return new PhpClass(extendsClassName, extendsClassName);
+    }
 
-        public static Method create(String method, PhpModule phpModule) {
-            if (method != null && !method.isEmpty()) {
-                if (method.equals(ELEMENT)) { //NOI18N
-                    return new Element(phpModule);
-                }
-                if (method.equals(FETCH)) { // NOI18N
-                    return new Fetch(phpModule);
-                }
-                if (method.equals(CSS)) {
-                    return new Css(phpModule);
-                }
-                if (method.equals(SCRIPT)) {
-                    return new Script(phpModule);
-                }
-                if (method.equals(IMAGE)) {
-                    return new Image(phpModule);
-                }
-            }
-            return null;
+    @Override
+    public PhpClass getComponentPhpClass() {
+        String extendsClassName = CakePhpModule.FILE_TYPE.COMPONENT.toString();
+        return new PhpClass(extendsClassName, extendsClassName);
+    }
+
+    @Override
+    public PhpClass getHelperPhpClass() {
+        String extendsClassName = "AppHelper"; // NOI18N
+        return new PhpClass(extendsClassName, extendsClassName);
+    }
+
+    @Override
+    public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
+        if (isView()) {
+            return;
         }
+        super.addDefaultHelpers(phpClass, fo);
+    }
+
+    @Override
+    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
+        if (isController()) {
+            return;
+        }
+        super.addDefaultComponents(phpClass, fo);
+    }
+
+    @Override
+    public String getFullyQualifiedClassName(FileObject target) {
+        return CakePhpUtils.getClassName(target);
     }
 }

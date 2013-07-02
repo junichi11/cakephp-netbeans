@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,69 +37,52 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2013 Sun Microsystems, Inc.
+ * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.preferences.CakePreferences;
+import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.netbeans.modules.php.api.editor.PhpClass;
+import org.netbeans.modules.parsing.api.Source;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.spi.editor.completion.CompletionProvider;
+import org.netbeans.spi.editor.completion.CompletionTask;
 import org.openide.filesystems.FileObject;
 
-public class CakePhp3EditorExtender extends CakePhpEditorExtender {
-
-    public CakePhp3EditorExtender(PhpModule phpModule) {
-        super(phpModule);
-    }
-
-    @Override
-    public PhpClass getViewPhpClass() {
-        String className = CakePhpModule.FILE_TYPE.VIEW.toString();
-        String fullyQualifiedName = "\\Cake\\View\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
+/**
+ *
+ * @author junichi11
+ */
+public abstract class CakePhpCompletionProvider implements CompletionProvider {
 
     @Override
-    public PhpClass getControllerPhpClass() {
-        String className = CakePhpModule.FILE_TYPE.CONTROLLER.toString();
-        String fullyQualifiedName = "\\Cake\\Controller\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
-
-    @Override
-    public PhpClass getComponentPhpClass() {
-        String className = CakePhpModule.FILE_TYPE.COMPONENT.toString();
-        String fullyQualifiedName = "\\Cake\\Controller\\Component\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
-
-    @Override
-    public PhpClass getHelperPhpClass() {
-        String className = "AppHelper"; // NOI18N
-        String fullyQualifiedName = "\\" + CakePreferences.getAppName(PhpModule.inferPhpModule()) + "\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
-
-    @Override
-    public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
-        if (isView()) {
-            return;
+    public CompletionTask createTask(int queryType, JTextComponent jtc) {
+        if (queryType != CompletionProvider.COMPLETION_QUERY_TYPE) {
+            return null;
         }
-        super.addDefaultHelpers(phpClass, fo);
-    }
-
-    @Override
-    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
-        if (isController()) {
-            return;
+        PhpModule phpModule = getPhpModule(jtc);
+        if (!CakePhpUtils.isCakePHP(phpModule)) {
+            return null;
         }
-        super.addDefaultComponents(phpClass, fo);
+        return createTask(queryType, jtc, phpModule);
     }
 
     @Override
-    public String getFullyQualifiedClassName(FileObject target) {
-        return CakePhpUtils.getFullyQualifiedClassName(target);
+    public int getAutoQueryTypes(JTextComponent jtc, String string) {
+        return 0;
+    }
+
+    public abstract CompletionTask createTask(int i, JTextComponent jtc, PhpModule phpModule);
+
+    /**
+     * Get PhpModule from JTextComponent
+     *
+     * @param jtc
+     * @return PhpModule
+     */
+    protected PhpModule getPhpModule(JTextComponent jtc) {
+        Source source = Source.create(jtc.getDocument());
+        FileObject fo = source.getFileObject();
+        return PhpModule.forFileObject(fo);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,52 +37,25 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion.methods;
 
-import javax.swing.text.JTextComponent;
-import org.cakephp.netbeans.util.CakePhpUtils;
-import org.netbeans.modules.parsing.api.Source;
+import java.util.Arrays;
+import java.util.List;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.spi.editor.completion.CompletionProvider;
-import org.netbeans.spi.editor.completion.CompletionTask;
-import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public abstract class CakePhpCompletionProvider implements CompletionProvider {
+public class Script extends Asset {
 
-    @Override
-    public CompletionTask createTask(int queryType, JTextComponent jtc) {
-        if (queryType != CompletionProvider.COMPLETION_QUERY_TYPE) {
-            return null;
-        }
-        PhpModule phpModule = getPhpModule(jtc);
-        if (!CakePhpUtils.isCakePHP(phpModule)) {
-            return null;
-        }
-        return createTask(queryType, jtc, phpModule);
-    }
+    private static final List<String> EXT_FILTER = Arrays.asList("js"); // NOI18N
 
-    @Override
-    public int getAutoQueryTypes(JTextComponent jtc, String string) {
-        return 0;
-    }
-
-    public abstract CompletionTask createTask(int i, JTextComponent jtc, PhpModule phpModule);
-
-    /**
-     * Get PhpModule from JTextComponent
-     *
-     * @param jtc
-     * @return PhpModule
-     */
-    protected PhpModule getPhpModule(JTextComponent jtc) {
-        Source source = Source.create(jtc.getDocument());
-        FileObject fo = source.getFileObject();
-        return PhpModule.forFileObject(fo);
+    public Script(PhpModule phpModule) {
+        super(phpModule);
+        type = ASSET_TYPE.SCRIPT;
+        extFilter = EXT_FILTER;
     }
 }

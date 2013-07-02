@@ -39,46 +39,27 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.util.CakePhpUtils;
-import org.netbeans.modules.php.api.editor.PhpClass;
+import org.cakephp.netbeans.editor.CakePhpEditorExtender;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.openide.filesystems.FileObject;
 
-public class CakePhp1EditorExtender extends CakePhpEditorExtender {
+/**
+ *
+ * @author junichi11
+ */
+public final class CakePhpEditorExtenderFactory {
 
-    public CakePhp1EditorExtender(PhpModule phpModule) {
-        super(phpModule);
-    }
-
-    @Override
-    public PhpClass getViewPhpClass() {
-        String extendsClassName = CakePhpModule.FILE_TYPE.VIEW.toString();
-        return new PhpClass(extendsClassName, extendsClassName);
-    }
-
-    @Override
-    public PhpClass getControllerPhpClass() {
-        String extendsClassName = CakePhpModule.FILE_TYPE.CONTROLLER.toString();
-        return new PhpClass(extendsClassName, extendsClassName);
-    }
-
-    @Override
-    public PhpClass getComponentPhpClass() {
-        String extendsClassName = "Object"; // NOI18N
-        return new PhpClass(extendsClassName, extendsClassName);
-    }
-
-    @Override
-    public PhpClass getHelperPhpClass() {
-        String extendsClassName = "AppHelper"; // NOI18N
-        return new PhpClass(extendsClassName, extendsClassName);
-    }
-
-    @Override
-    public String getFullyQualifiedClassName(FileObject target) {
-        return CakePhpUtils.getClassName(target);
+    public static CakePhpEditorExtender create(PhpModule phpModule) {
+        CakeVersion version = CakeVersion.getInstance(phpModule);
+        if (version.isCakePhp(1)) {
+            return new CakePhp1EditorExtender(phpModule);
+        } else if (version.isCakePhp(2)) {
+            return new CakePhp2EditorExtender(phpModule);
+        } else if (version.isCakePhp(3)) {
+            return new CakePhp3EditorExtender(phpModule);
+        }
+        return null;
     }
 }

@@ -48,7 +48,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import org.cakephp.netbeans.commands.CakePhpCommandSupport;
-import org.cakephp.netbeans.editor.CakePhpEditorExtenderFactory;
+import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.framework.BadgeIcon;

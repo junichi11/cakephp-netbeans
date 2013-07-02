@@ -39,23 +39,45 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
-import java.util.Arrays;
-import java.util.List;
-import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import javax.swing.text.Document;
+import org.netbeans.spi.editor.completion.CompletionResultSet;
+import org.netbeans.spi.editor.completion.CompletionTask;
+import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
+import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
+import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public class Script extends Asset {
+public class ImageCompletionItem extends CakePhpCompletionItem {
 
-    private static final List<String> EXT_FILTER = Arrays.asList("js"); // NOI18N
+    private final FileObject target;
 
-    public Script(PhpModule phpModule) {
-        super(phpModule);
-        type = ASSET_TYPE.SCRIPT;
-        extFilter = EXT_FILTER;
+    public ImageCompletionItem(String text, int startOffset, int removeLength) {
+        super(text, startOffset, removeLength);
+        this.target = null;
+    }
+
+    public ImageCompletionItem(String text, int startOffset, int removeLength, FileObject target) {
+        super(text, startOffset, removeLength);
+        this.target = target;
+    }
+
+    @Override
+    public CompletionTask createDocumentationTask() {
+        return new AsyncCompletionTask(new AsyncCompletionQuery() {
+            @Override
+            protected void query(CompletionResultSet completionResultSet, Document document, int i) {
+                completionResultSet.setDocumentation(new ImageCompletionDocumentation(ImageCompletionItem.this));
+                completionResultSet.finish();
+            }
+        });
+    }
+
+    public FileObject getFileObject() {
+        return target;
     }
 }

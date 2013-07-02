@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -68,7 +68,7 @@ public class CakePhpCompletionItem implements CompletionItem {
     private int startOffset;
     private int removeLength;
 
-    CakePhpCompletionItem(String text, int startOffset, int removeLength) {
+    public CakePhpCompletionItem(String text, int startOffset, int removeLength) {
         this.text = text;
         this.startOffset = startOffset;
         this.removeLength = removeLength;

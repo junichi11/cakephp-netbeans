@@ -39,26 +39,68 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.editor.CakePhpEditorExtender;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.openide.filesystems.FileObject;
 
-/**
- *
- * @author junichi11
- */
-public final class CakePhpEditorExtenderFactory {
+public class CakePhp3EditorExtender extends CakePhpEditorExtender {
 
-    public static CakePhpEditorExtender create(PhpModule phpModule) {
-        CakeVersion version = CakeVersion.getInstance(phpModule);
-        if (version.isCakePhp(1)) {
-            return new CakePhp1EditorExtender(phpModule);
-        } else if (version.isCakePhp(2)) {
-            return new CakePhp2EditorExtender(phpModule);
-        } else if (version.isCakePhp(3)) {
-            return new CakePhp3EditorExtender(phpModule);
+    public CakePhp3EditorExtender(PhpModule phpModule) {
+        super(phpModule);
+    }
+
+    @Override
+    public PhpClass getViewPhpClass() {
+        String className = CakePhpModule.FILE_TYPE.VIEW.toString();
+        String fullyQualifiedName = "\\Cake\\View\\" + className; // NOI18N
+        return new PhpClass(className, fullyQualifiedName);
+    }
+
+    @Override
+    public PhpClass getControllerPhpClass() {
+        String className = CakePhpModule.FILE_TYPE.CONTROLLER.toString();
+        String fullyQualifiedName = "\\Cake\\Controller\\" + className; // NOI18N
+        return new PhpClass(className, fullyQualifiedName);
+    }
+
+    @Override
+    public PhpClass getComponentPhpClass() {
+        String className = CakePhpModule.FILE_TYPE.COMPONENT.toString();
+        String fullyQualifiedName = "\\Cake\\Controller\\Component\\" + className; // NOI18N
+        return new PhpClass(className, fullyQualifiedName);
+    }
+
+    @Override
+    public PhpClass getHelperPhpClass() {
+        String className = "AppHelper"; // NOI18N
+        String fullyQualifiedName = "\\" + CakePreferences.getAppName(PhpModule.inferPhpModule()) + "\\" + className; // NOI18N
+        return new PhpClass(className, fullyQualifiedName);
+    }
+
+    @Override
+    public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
+        if (isView()) {
+            return;
         }
-        return null;
+        super.addDefaultHelpers(phpClass, fo);
+    }
+
+    @Override
+    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
+        if (isController()) {
+            return;
+        }
+        super.addDefaultComponents(phpClass, fo);
+    }
+
+    @Override
+    public String getFullyQualifiedClassName(FileObject target) {
+        return CakePhpUtils.getFullyQualifiedClassName(target);
     }
 }

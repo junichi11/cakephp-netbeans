@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.hyperlink;
 
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;

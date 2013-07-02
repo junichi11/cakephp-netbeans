@@ -39,17 +39,18 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion;
 
+import org.cakephp.netbeans.editor.CakePhpEditorExtender;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
-public class CakePhp2EditorExtender extends CakePhpEditorExtender {
+public class CakePhp1EditorExtender extends CakePhpEditorExtender {
 
-    public CakePhp2EditorExtender(PhpModule phpModule) {
+    public CakePhp1EditorExtender(PhpModule phpModule) {
         super(phpModule);
     }
 
@@ -67,7 +68,7 @@ public class CakePhp2EditorExtender extends CakePhpEditorExtender {
 
     @Override
     public PhpClass getComponentPhpClass() {
-        String extendsClassName = CakePhpModule.FILE_TYPE.COMPONENT.toString();
+        String extendsClassName = "Object"; // NOI18N
         return new PhpClass(extendsClassName, extendsClassName);
     }
 
@@ -75,22 +76,6 @@ public class CakePhp2EditorExtender extends CakePhpEditorExtender {
     public PhpClass getHelperPhpClass() {
         String extendsClassName = "AppHelper"; // NOI18N
         return new PhpClass(extendsClassName, extendsClassName);
-    }
-
-    @Override
-    public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
-        if (isView()) {
-            return;
-        }
-        super.addDefaultHelpers(phpClass, fo);
-    }
-
-    @Override
-    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
-        if (isController()) {
-            return;
-        }
-        super.addDefaultComponents(phpClass, fo);
     }
 
     @Override

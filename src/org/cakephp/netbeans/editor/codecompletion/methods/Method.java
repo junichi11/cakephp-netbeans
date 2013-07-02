@@ -39,70 +39,72 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor;
+package org.cakephp.netbeans.editor.codecompletion.methods;
 
-import java.awt.Image;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import org.netbeans.spi.editor.completion.CompletionDocumentation;
-import org.openide.filesystems.FileObject;
+import org.cakephp.netbeans.editor.codecompletion.CakePhpCompletionItem;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.spi.editor.completion.CompletionItem;
 
 /**
  *
  * @author junichi11
  */
-public class ImageCompletionDocumentation implements CompletionDocumentation {
+public abstract class Method {
 
-    private final ImageCompletionItem item;
-    private static final List<String> exts = Arrays.asList("jpg", "jpeg", "gif", "png", "bmp", "ico"); // NOI18N
+    protected static final String SLASH = "/"; // NOI18N
+    protected static final String DOT = "."; // NOI18N
+    private static final String ELEMENT = "element"; // NOI18N
+    private static final String FETCH = "fetch"; // NOI18N
+    private static final String CSS = "css"; // NOI18N
+    private static final String SCRIPT = "script"; // NOI18N
+    private static final String IMAGE = "image"; // NOI18N
+    protected PhpModule phpModule;
+    // fetch : CakePHP 2.1+
+    public static final List<String> METHODS = Arrays.asList(ELEMENT, FETCH, CSS, SCRIPT, IMAGE);
+    protected static final List<DIR_TYPE> PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
 
-    ImageCompletionDocumentation(ImageCompletionItem item) {
-        this.item = item;
+    Method(PhpModule phpModule) {
+        this.phpModule = phpModule;
     }
 
-    @Override
-    public String getText() {
-        FileObject fileObject = item.getFileObject();
-        StringBuilder imgTag = new StringBuilder();
-        if (fileObject != null) {
-            String ext = fileObject.getExt().toLowerCase(Locale.ENGLISH);
-            if (exts.contains(ext)) {
-                int height = 0;
-                double width = 0;
-                Image image = new ImageIcon(fileObject.toURL()).getImage();
-                width = image.getWidth(null);
-                height = image.getHeight(null);
-                imgTag.append("<img src=\"file:").append(fileObject.getPath()).append("\""); // NOI18N
-                if (width > 500) {
-                    double resizeHeight = 0;
-                    double rate = width / 500;
-                    resizeHeight = height / rate;
-                    height = (int) resizeHeight;
-                    imgTag.append(" width=\"").append("500").append("\"") // NOI18N
-                            .append(" height=\"").append(height).append("\""); // NOI18N
+    public abstract List<String> getElements(int argCount, String filter);
+
+    /**
+     * Create CompletionItem.
+     *
+     * @param element
+     * @param startOffset
+     * @param removeLength
+     * @return CompletionItem
+     */
+    public CompletionItem createCompletionItem(String element, int startOffset, int removeLength) {
+        return new CakePhpCompletionItem(element, startOffset, removeLength);
+    }
+
+    public static class Factory {
+
+        public static Method create(String method, PhpModule phpModule) {
+            if (method != null && !method.isEmpty()) {
+                if (method.equals(ELEMENT)) { //NOI18N
+                    return new Element(phpModule);
                 }
-                imgTag.append(" />"); // NOI18N
+                if (method.equals(FETCH)) { // NOI18N
+                    return new Fetch(phpModule);
+                }
+                if (method.equals(CSS)) {
+                    return new Css(phpModule);
+                }
+                if (method.equals(SCRIPT)) {
+                    return new Script(phpModule);
+                }
+                if (method.equals(IMAGE)) {
+                    return new Image(phpModule);
+                }
             }
+            return null;
         }
-        return imgTag.toString();
-    }
-
-    @Override
-    public URL getURL() {
-        return null;
-    }
-
-    @Override
-    public CompletionDocumentation resolveLink(String link) {
-        return null;
-    }
-
-    @Override
-    public Action getGotoSourceAction() {
-        return null;
     }
 }
