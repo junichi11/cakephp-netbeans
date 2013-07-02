@@ -49,11 +49,11 @@ import org.netbeans.modules.php.api.phpmodule.PhpModule;
  *
  * @author junichi11
  */
-public class Script extends Asset {
+public class ScriptMethod extends AssetMethod {
 
     private static final List<String> EXT_FILTER = Arrays.asList("js"); // NOI18N
 
-    public Script(PhpModule phpModule) {
+    public ScriptMethod(PhpModule phpModule) {
         super(phpModule);
         type = ASSET_TYPE.SCRIPT;
         extFilter = EXT_FILTER;

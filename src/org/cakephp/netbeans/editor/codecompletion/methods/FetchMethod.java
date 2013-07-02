@@ -42,6 +42,8 @@
 package org.cakephp.netbeans.editor.codecompletion.methods;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 
@@ -49,13 +51,25 @@ import org.netbeans.modules.php.api.phpmodule.PhpModule;
  *
  * @author junichi11
  */
-public class Css extends Asset {
+public class FetchMethod extends Method {
 
-    private static final List<String> EXT_FILTER = Arrays.asList("css"); // NOI18N
+    private final List<String> DEFAULT = Arrays.asList("content", "meta", "css", "script"); // NOI18N
 
-    public Css(PhpModule phpModule) {
+    public FetchMethod(PhpModule phpModule) {
         super(phpModule);
-        type = ASSET_TYPE.CSS;
-        extFilter = EXT_FILTER;
+    }
+
+    @Override
+    public List<String> getElements(int argCount, String filter) {
+        List<String> elements = new LinkedList<String>();
+        if (argCount == 1) {
+            for (String item : DEFAULT) {
+                if (item.startsWith(filter)) {
+                    elements.add(item);
+                }
+            }
+            return elements;
+        }
+        return Collections.emptyList();
     }
 }

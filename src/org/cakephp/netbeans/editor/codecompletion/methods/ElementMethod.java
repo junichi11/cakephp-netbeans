@@ -52,11 +52,11 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public class Element extends Asset {
+public class ElementMethod extends AssetMethod {
 
     private static final String ELEMENTS = "Elements"; // NOI18N
 
-    public Element(PhpModule phpModule) {
+    public ElementMethod(PhpModule phpModule) {
         super(phpModule);
     }
 

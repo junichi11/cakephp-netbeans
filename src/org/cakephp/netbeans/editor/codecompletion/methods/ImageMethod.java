@@ -57,13 +57,13 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public class Image extends Asset {
+public class ImageMethod extends AssetMethod {
 
     private static final List<String> EXT_FILTER = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "ico"); // NOI18N
     private static final String SPLIT_PLUGIN_REGEX_PATTERN = "^([A-Z].+?\\.|)(.+\\.[a-zA-Z]+)$";// NOI18N
     private CakePhpModule cakeModule;
 
-    Image(PhpModule phpModule) {
+    ImageMethod(PhpModule phpModule) {
         super(phpModule);
         type = ASSET_TYPE.IMAGE;
         extFilter = EXT_FILTER;

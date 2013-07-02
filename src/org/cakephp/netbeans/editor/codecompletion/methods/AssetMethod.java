@@ -57,7 +57,7 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public class Asset extends Method {
+public class AssetMethod extends Method {
 
     public enum ASSET_TYPE {
 
@@ -89,7 +89,7 @@ public class Asset extends Method {
     protected String subDirectoryPath = ""; // NOI18N
     protected final List<DIR_TYPE> dirTypes = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN, DIR_TYPE.APP);
 
-    public Asset(PhpModule phpModule) {
+    public AssetMethod(PhpModule phpModule) {
         super(phpModule);
     }
 

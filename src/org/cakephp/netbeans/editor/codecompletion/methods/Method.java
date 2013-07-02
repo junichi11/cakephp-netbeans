@@ -89,19 +89,19 @@ public abstract class Method {
         public static Method create(String method, PhpModule phpModule) {
             if (method != null && !method.isEmpty()) {
                 if (method.equals(ELEMENT)) { //NOI18N
-                    return new Element(phpModule);
+                    return new ElementMethod(phpModule);
                 }
                 if (method.equals(FETCH)) { // NOI18N
-                    return new Fetch(phpModule);
+                    return new FetchMethod(phpModule);
                 }
                 if (method.equals(CSS)) {
-                    return new Css(phpModule);
+                    return new CssMethod(phpModule);
                 }
                 if (method.equals(SCRIPT)) {
-                    return new Script(phpModule);
+                    return new ScriptMethod(phpModule);
                 }
                 if (method.equals(IMAGE)) {
-                    return new Image(phpModule);
+                    return new ImageMethod(phpModule);
                 }
             }
             return null;
