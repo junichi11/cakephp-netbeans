@@ -61,26 +61,26 @@ import org.openide.util.NbBundle;
  *
  * @author junichi11
  */
-public class CheckDefault extends BaseAction {
+public class CheckDefaultAction extends BaseAction {
 
-    private static final Logger LOGGER = Logger.getLogger(CheckDefault.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CheckDefaultAction.class.getName());
     private static final long serialVersionUID = 3438128008537517533L;
     private static final String CAKE_FAVICON_ICO = "org-cakephp-netbeans/favicon.ico";
-    private static final CheckDefault INSTANCE = new CheckDefault();
+    private static final CheckDefaultAction INSTANCE = new CheckDefaultAction();
     private static final String OK_NOT_FOUND = "OK:Not Found";
     private static final String OK_CHANGED = "OK:Changed";
     private JPanel panel;
 
-    private CheckDefault() {
+    private CheckDefaultAction() {
     }
 
-    public static CheckDefault getInstance() {
+    public static CheckDefaultAction getInstance() {
         return INSTANCE;
     }
 
     @Override
     protected String getFullName() {
-        return NbBundle.getMessage(CheckDefault.class, "LBL_CakePhpAction", getPureName());
+        return NbBundle.getMessage(CheckDefaultAction.class, "LBL_CakePhpAction", getPureName());
     }
 
     @NbBundle.Messages("LBL_VerifyCakePHP=Check Default")
