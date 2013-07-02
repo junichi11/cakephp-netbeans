@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,67 +37,28 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans;
+package org.cakephp.netbeans.editor;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.Action;
-import org.cakephp.netbeans.ui.actions.*;
-import org.cakephp.netbeans.ui.wizards.InstallPluginsWizardAction;
-import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.spi.framework.PhpModuleActionsExtender;
-import org.netbeans.modules.php.spi.framework.actions.GoToActionAction;
-import org.netbeans.modules.php.spi.framework.actions.GoToViewAction;
-import org.netbeans.modules.php.spi.framework.actions.RunCommandAction;
-import org.openide.filesystems.FileObject;
-import org.openide.util.NbBundle;
 
-public class CakePhpActionsExtender extends PhpModuleActionsExtender {
+/**
+ *
+ * @author junichi11
+ */
+public final class CakePhpEditorExtenderFactory {
 
-    @Override
-    public String getMenuName() {
-        return NbBundle.getMessage(CakePhpActionsExtender.class, "LBL_MenuName");
-    }
-
-    @Override
-    public List<? extends Action> getActions() {
-        List<Action> list = new ArrayList<Action>();
-        list.add(ClearCacheAction.getInstance());
-        list.add(InstallPluginsWizardAction.getInstance());
-        list.add(CheckDefault.getInstance());
-        PhpModule phpModule = PhpModule.inferPhpModule();
-        if (CakeVersion.getInstance(phpModule).getMajor() >= 2) {
-            list.add(PHPUnitInitAction.getInstance());
+    public static CakePhpEditorExtender create(PhpModule phpModule) {
+        CakeVersion version = CakeVersion.getInstance(phpModule);
+        if (version.isCakePhp(1)) {
+            return new CakePhp1EditorExtender(phpModule);
+        } else if (version.isCakePhp(2)) {
+            return new CakePhp2EditorExtender(phpModule);
+        } else if (version.isCakePhp(3)) {
+            return new CakePhp3EditorExtender(phpModule);
         }
-        return list;
-    }
-
-    @Override
-    public RunCommandAction getRunCommandAction() {
-        return CakePhpRunCommandAction.getInstance();
-    }
-
-    @Override
-    public boolean isViewWithAction(FileObject fo) {
-        return CakePhpUtils.isView(fo);
-    }
-
-    @Override
-    public boolean isActionWithView(FileObject fo) {
-        return CakePhpUtils.isController(fo);
-    }
-
-    @Override
-    public GoToActionAction getGoToActionAction(FileObject fo, int offset) {
-        return new CakePhpGoToActionAction(fo);
-    }
-
-    @Override
-    public GoToViewAction getGoToViewAction(FileObject fo, int offset) {
-        return new CakePhpGoToViewAction(fo, offset);
+        return null;
     }
 }

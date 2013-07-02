@@ -109,6 +109,10 @@ public class CakePhpModule {
         }
     }
 
+    public FileObject getConfigFile() {
+        return impl.getConfigFile();
+    }
+
     public FileObject getViewDirectory(DIR_TYPE type) {
         return impl.getViewDirectory(type);
     }

@@ -70,6 +70,14 @@ public abstract class CakePhpModuleImpl {
         return PHP_EXT;
     }
 
+    public FileObject getConfigFile() {
+        FileObject configDirectory = getConfigDirectory(DIR_TYPE.APP);
+        if (configDirectory != null) {
+            return configDirectory.getFileObject("core.php"); // NOI18N
+        }
+        return null;
+    }
+
     public FileObject getViewDirectory(DIR_TYPE type) {
         return getDirectory(type, FILE_TYPE.VIEW);
     }

@@ -86,6 +86,8 @@ public class CakePhpModuleFactory {
                 impl = new CakePhp1ModuleImpl(phpModule);
             } else if (version.isCakePhp(2)) {
                 impl = new CakePhp2ModuleImpl(phpModule);
+            } else if (version.isCakePhp(3)) {
+                impl = new CakePhp3ModuleImpl(phpModule);
             }
 
             // can't know version

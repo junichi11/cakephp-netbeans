@@ -99,8 +99,8 @@ public class RunBakeTestAction extends BaseAction {
             // called via shortcut
             return;
         }
-        // support only CakePHP2.x
-        if (!CakeVersion.getInstance(phpModule).isCakePhp(2)) {
+        // support only CakePHP2.x and 3.x
+        if (CakeVersion.getInstance(phpModule).getMajor() < 2) {
             return;
         }
 
@@ -179,6 +179,10 @@ public class RunBakeTestAction extends BaseAction {
         DIR_TYPE[] types = {DIR_TYPE.APP_PLUGIN, DIR_TYPE.APP_LIB, DIR_TYPE.APP_VENDOR, DIR_TYPE.CORE, DIR_TYPE.PLUGIN, DIR_TYPE.VENDOR};
         for (DIR_TYPE t : types) {
             FileObject fo = module.getDirectory(t);
+            // CakePHP 3.x has not vender and plugin directory
+            if (fo == null) {
+                continue;
+            }
             String path = fo.getPath();
             String targetPath = targetFile.getPath();
             if (targetPath.startsWith(path)) {

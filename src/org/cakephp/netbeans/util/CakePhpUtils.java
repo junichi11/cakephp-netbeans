@@ -43,6 +43,7 @@ package org.cakephp.netbeans.util;
 
 import java.io.*;
 import java.util.regex.Pattern;
+import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.netbeans.modules.php.api.editor.EditorSupport;
@@ -122,6 +123,20 @@ public final class CakePhpUtils {
         EditorSupport support = Lookup.getDefault().lookup(EditorSupport.class);
         for (PhpClass phpClass : support.getClasses(fo)) {
             return phpClass.getName();
+        }
+        return null;
+    }
+
+    /**
+     * Get fully qualified class name
+     *
+     * @param fo FileObject
+     * @return fully quqlified class name if class exists, otherwise null
+     */
+    public static String getFullyQualifiedClassName(FileObject fo) {
+        EditorSupport support = Lookup.getDefault().lookup(EditorSupport.class);
+        for (PhpClass phpClass : support.getClasses(fo)) {
+            return phpClass.getFullyQualifiedName();
         }
         return null;
     }
@@ -228,5 +243,22 @@ public final class CakePhpUtils {
 
     public static String toUnderscoreCase(String string) {
         return toUnderscore(string);
+    }
+
+    /**
+     * Check whether file ext is "ctp".
+     *
+     * @param fileObject
+     * @return true if file ext is ctp, othewise false.
+     */
+    public static boolean isCtpFile(FileObject fileObject) {
+        if (fileObject == null) {
+            return false;
+        }
+        if (fileObject.getExt().equals(CakePhp.CTP)) {
+            return true;
+        }
+
+        return false;
     }
 }

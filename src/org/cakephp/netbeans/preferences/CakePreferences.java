@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.preferences;
 
 import java.util.prefs.Preferences;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 
 /**
@@ -54,6 +55,7 @@ public class CakePreferences {
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String CAKE_PHP_DIR_PATH = "cake-php-dir-path"; // NOI18N
     private static final String DEFAULT_APP_NAME = "app"; // NOI18N
+    private static final String CAKE3_DEFAULT_APP_NAME = "App"; // NOI18N
     private static final String USE_PROJECT_DIRECTORY = "use-project-directory"; // NOI18N
     private static final String IGNORE_TMP_DIRECTORY = "ignore-tmp-directory"; // NOI18N
 
@@ -64,7 +66,13 @@ public class CakePreferences {
     public static String getAppName(PhpModule phpModule) {
         String appName = getPreferences(phpModule).get(APP_NAME, ""); // NOI18N
         if (appName.equals("")) { // NOI18N
-            appName = DEFAULT_APP_NAME;
+            CakeVersion version = CakeVersion.getInstance(phpModule);
+            if (version.isCakePhp(3)) {
+                appName = CAKE3_DEFAULT_APP_NAME;
+            } else {
+                appName = DEFAULT_APP_NAME;
+            }
+            setAppName(phpModule, appName);
         }
         return appName;
     }

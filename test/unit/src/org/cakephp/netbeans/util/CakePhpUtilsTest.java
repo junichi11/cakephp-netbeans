@@ -41,8 +41,13 @@
  */
 package org.cakephp.netbeans.util;
 
+import java.io.IOException;
 import org.junit.Test;
 import org.netbeans.junit.NbTestCase;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileSystem;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 
 public class CakePhpUtilsTest extends NbTestCase {
 
@@ -68,5 +73,22 @@ public class CakePhpUtilsTest extends NbTestCase {
 
         assertFalse(CakePhpUtils.isControllerName("Postscontroller"));
         assertFalse(CakePhpUtils.isControllerName("PostsHelper"));
+    }
+
+    @Test
+    public void testIsCtpFile() {
+        FileSystem fs = FileUtil.createMemoryFileSystem();
+        FileObject root = fs.getRoot();
+        try {
+            FileObject indexCtp = root.createData("index", "ctp");
+            FileObject indexPhp = root.createData("index", "php");
+            assertTrue(CakePhpUtils.isCtpFile(indexCtp));
+            assertFalse(CakePhpUtils.isCtpFile(indexPhp));
+            assertFalse(CakePhpUtils.isCtpFile(null));
+            indexCtp.delete();
+            indexPhp.delete();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 }
