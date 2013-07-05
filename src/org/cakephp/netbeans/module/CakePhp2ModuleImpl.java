@@ -305,6 +305,20 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     @Override
     public FileObject getController(FileObject view) {
         File parent = FileUtil.toFile(view).getParentFile();
+        File cakePhpDirectory = FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule));
+        // for sub directory view file
+        File grand = parent.getParentFile();
+        while (!grand.getName().equals("View")) { // NOI18N
+            parent = grand;
+            grand = parent.getParentFile();
+            if (grand == null || grand == cakePhpDirectory) {
+                return null;
+            }
+            if (grand.getName().equals("View")) { // NOI18N
+                break;
+            }
+        }
+
         File action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE, getControllerFileName(parent.getName())));
         // Theme view file
         if (!action.isFile()) {
