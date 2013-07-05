@@ -41,17 +41,43 @@
  */
 package org.cakephp.netbeans.ui;
 
+import org.cakephp.netbeans.CakePhp;
 import org.openide.filesystems.FileObject;
 
-/**
- *
- * @author junichi11
- */
-public interface GoToItem {
+public class GoToDefaultItem implements GoToItem {
 
-    public FileObject getFileObject();
+    private final FileObject fileObject;
+    private final int offset;
 
-    public int getOffset();
+    public GoToDefaultItem(FileObject fileObject, int offset) {
+        this.fileObject = fileObject;
+        this.offset = offset;
+    }
 
-    public String getIcon();
+    @Override
+    public FileObject getFileObject() {
+        return fileObject;
+    }
+
+    @Override
+    public int getOffset() {
+        return offset;
+    }
+
+    @Override
+    public String toString() {
+        FileObject parent = fileObject.getParent();
+        StringBuilder sb = new StringBuilder();
+        if (parent != null) {
+            sb.append(parent.getName());
+            sb.append("/"); // NOI18N
+        }
+        sb.append(fileObject.getNameExt());
+        return sb.toString();
+    }
+
+    @Override
+    public String getIcon() {
+        return CakePhp.CAKE_ICON_16;
+    }
 }
