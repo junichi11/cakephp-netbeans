@@ -76,6 +76,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_COMPONENT = "Component";
     private static final String DIR_HELPER = "Helper";
     private static final String DIR_BEHAVIOR = "Behavior";
+    private static final String DIR_FIXTURE = "Fixture";
 
     public CakePhp2ModuleImpl(PhpModule phpModule) {
         super(phpModule);
@@ -145,6 +146,10 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                         break;
                     case TEST:
                         sb.append("Test"); // NOI18
+                        break;
+                    case FIXTURE:
+                        sb.append("Test/"); // NOI18
+                        sb.append(DIR_FIXTURE);
                         break;
                     case CONFIG:
                         sb.append("Config"); // NOI18
@@ -226,6 +231,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                 case HELPER:
                 case CONTROLLER:
                 case COMPONENT:
+                case FIXTURE:
                     name += type.toString();
                     break;
                 case VIEW:
@@ -352,6 +358,34 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     @Override
     public boolean isHelper(FileObject fo) {
         return isSpecifiedFile(fo, DIR_HELPER);
+    }
+
+    @Override
+    public boolean isTest(FileObject fo) {
+        if (fo == null) {
+            return false;
+        }
+        String path = fo.getPath();
+        String fileName = fo.getName();
+        if (path.contains("/Test/Case/") || path.contains("/Cake/Test/") || fileName.endsWith("Test")) { // NOI18N
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String getTestCaseFullyQualifiedName(FileObject fo) {
+        return CakePhpUtils.getClassName(fo).concat("Test"); // NOI18N
+    }
+
+    @Override
+    public String toFullyQualifiedNameForClassFile(FileObject testCase) {
+        String className = testCase.getName();
+        int indexOfTest = className.lastIndexOf("Test"); // NOI18N
+        if (indexOfTest != -1) {
+            return className.substring(0, indexOfTest);
+        }
+        return ""; // NOI18N
     }
 
     @Override

@@ -206,6 +206,22 @@ public abstract class CakePhpModuleImpl {
         return getDirectory(type, FILE_TYPE.CONSOLE, pluginName);
     }
 
+    public FileObject getFixtureDirectory(DIR_TYPE type) {
+        return getDirectory(type, FILE_TYPE.FIXTURE);
+    }
+
+    public FileObject getFixtureDirectory(DIR_TYPE type, String pluginName) {
+        return getDirectory(type, FILE_TYPE.FIXTURE, pluginName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName) {
+        return getFile(type, FILE_TYPE.FIXTURE, fileName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName, String pluginName) {
+        return getFile(pluginName, type, FILE_TYPE.FIXTURE, fileName);
+    }
+
     protected FileObject getDirectory(DIR_TYPE type, FILE_TYPE fileType) {
         return getDirectory(type, fileType, null);
     }
@@ -231,6 +247,12 @@ public abstract class CakePhpModuleImpl {
     public abstract boolean isComponent(FileObject fo);
 
     public abstract boolean isHelper(FileObject fo);
+
+    public abstract boolean isTest(FileObject fo);
+
+    public abstract String getTestCaseFullyQualifiedName(FileObject fo);
+
+    public abstract String toFullyQualifiedNameForClassFile(FileObject testCase);
 
     public abstract String getViewFolderName(String controllerFileName);
 
@@ -302,6 +324,9 @@ public abstract class CakePhpModuleImpl {
                 break;
             case BEHAVIOR:
                 targetDirectory = getBehaviorDirectory(dirType, pluginName);
+                break;
+            case FIXTURE:
+                targetDirectory = getFixtureDirectory(dirType, pluginName);
                 break;
             // TODO add other files
             default:

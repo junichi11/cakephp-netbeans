@@ -62,6 +62,7 @@ import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.TEST;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.VIEW;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.WEBROOT;
 import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
@@ -83,6 +84,29 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
             return configDirectory.getFileObject("app.php"); // NOI18N
         }
         return null;
+    }
+
+    @Override
+    public String getTestCaseFullyQualifiedName(FileObject fo) {
+        String fullyQualifiedClassName = CakePhpUtils.getFullyQualifiedClassName(fo);
+        String appName = CakePreferences.getAppName(phpModule);
+        String testClassName = fullyQualifiedClassName.replace(appName, appName.concat("\\Test\\TestCase")); // NOI18N
+        return testClassName.concat("Test"); // NOI18N
+    }
+
+    @Override
+    public String toFullyQualifiedNameForClassFile(FileObject testCase) {
+        String namespace = getNamespace(testCase);
+        if (namespace.isEmpty()) {
+            return "";
+        }
+        String basenamespace = namespace.replace("\\Test\\TestCase", ""); // NOI18N
+        String className = testCase.getName();
+        int indexOfTest = className.lastIndexOf("Test"); // NOI18N
+        if (indexOfTest != -1) {
+            return String.format("\\%s\\%s", basenamespace, className.substring(0, indexOfTest));
+        }
+        return ""; // NOI18N
     }
 
     @Override
@@ -215,5 +239,45 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
         }
 
         return sourceDirectory.getFileObject(path);
+    }
+
+    /**
+     * Get namespace.
+     *
+     * @param target
+     * @return namespace
+     */
+    private String getNamespace(FileObject target) {
+        String namespace = ""; // NOI18N
+        if (target.isFolder()) {
+            return namespace;
+        }
+        FileObject parent = target.getParent();
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        FileObject appDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
+        FileObject coreDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.CORE);
+        if (appDirectory == null || coreDirectory == null || parent == null) {
+            return namespace;
+        }
+        String appPath = appDirectory.getPath();
+        String corePath = coreDirectory.getPath();
+        String parentPath = parent.getPath();
+        String path = ""; // NOI18N
+
+        // App
+        if (parentPath.startsWith(appPath)) {
+            path = parentPath.replace(appPath, ""); // NOI18N
+            path = path.replaceAll("/", "\\\\"); // NOI18N
+            path = "App" + path; // NOI18N
+        }
+
+        // Core
+        if (parentPath.startsWith(corePath)) {
+            path = parentPath.replace(corePath, ""); // NOI18N
+            path = path.replaceAll("/", "\\\\"); // NOI18N
+            path = "Cake" + path; // NOI18N
+        }
+
+        return path;
     }
 }

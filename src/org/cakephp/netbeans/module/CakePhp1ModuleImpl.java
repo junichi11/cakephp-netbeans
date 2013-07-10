@@ -76,6 +76,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_COMPONENTS = "components";
     private static final String DIR_HELPERS = "helpers";
     private static final String DIR_BEHAVIORS = "behaviors";
+    private static final String DIR_FIXTURES = "fixtures";
 
     public CakePhp1ModuleImpl(PhpModule phpModule) {
         super(phpModule);
@@ -159,6 +160,10 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                     case TEST:
                         sb.append("tests"); // NOI18N
                         break;
+                    case FIXTURE:
+                        sb.append("tests/"); // NOI18N
+                        sb.append(DIR_FIXTURES);
+                        break;
                     case CONFIG:
                         sb.append("config"); // NOI18N
                         break;
@@ -198,6 +203,10 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                         break;
                     case TEST:
                         sb.append("tests"); // NOI18
+                        break;
+                    case FIXTURE:
+                        sb.append("tests/"); // NOI18
+                        sb.append(DIR_FIXTURES);
                         break;
                     case CONFIG:
                         sb.append("config"); // NOI18
@@ -387,6 +396,68 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     @Override
     public boolean isHelper(FileObject fo) {
         return isSpecifiedFile(fo, DIR_HELPERS);
+    }
+
+    @Override
+    public boolean isTest(FileObject fo) {
+        if (fo == null) {
+            return false;
+        }
+        String path = fo.getPath();
+        String fileName = fo.getName();
+        if (path.contains("/tests/cases/") || fileName.endsWith("test")) { // NOI18N
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String getTestCaseFullyQualifiedName(FileObject fo) {
+        String className = CakePhpUtils.getClassName(fo);
+        if (className == null) {
+            return ""; // NOI18N
+        }
+        return className.concat("Test"); // NOI18N
+    }
+
+    @Override
+    public String toFullyQualifiedNameForClassFile(FileObject testCase) {
+        String className = testCase.getName();
+        int indexOfTest = className.lastIndexOf(".test"); // NOI18N
+        if (indexOfTest != -1) {
+            className = className.substring(0, indexOfTest);
+            className = CakePhpUtils.getCamelCaseName(className);
+            FileObject parent = testCase.getParent();
+
+            // get suffix
+            String suffix = ""; // NOI18N
+            if (parent != null && parent.isFolder()) {
+                suffix = getClassNameSuffixForTestDirectory(parent);
+            }
+
+            // create class name
+            if (!suffix.isEmpty() && !className.isEmpty()) {
+                return className.concat(suffix);
+            }
+        }
+        return ""; // NOI18N
+    }
+
+    private String getClassNameSuffixForTestDirectory(FileObject testDirectory) {
+        String suffix = "";
+        String parentFolderName = testDirectory.getName();
+        if ("controllers".equals(parentFolderName)) { // NOI18N
+            suffix = "Controller"; // NOI18N
+        } else if ("models".equals(parentFolderName)) { // NOI18N
+            suffix = ""; // NOI18N
+        } else if ("components".equals(parentFolderName)) { // NOI18N
+            suffix = "Component"; // NOI18N
+        } else if ("helpers".equals(parentFolderName)) { // NOI18N
+            suffix = "Helper"; // NOI18N
+        } else if ("behaviors".equals(parentFolderName)) { // NOI18N
+            suffix = "Behavior"; // NOI18N
+        }
+        return suffix;
     }
 
     @Override

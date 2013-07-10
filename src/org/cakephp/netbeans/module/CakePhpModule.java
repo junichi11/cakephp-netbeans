@@ -98,6 +98,7 @@ public class CakePhpModule {
         COMPONENT,
         WEBROOT,
         TEST,
+        FIXTURE,
         CONSOLE,
         CONFIG,;
 
@@ -225,6 +226,22 @@ public class CakePhpModule {
         return impl.getTestDirectory(type, pluginName);
     }
 
+    public FileObject getFixtureDirectory(DIR_TYPE type) {
+        return impl.getFixtureDirectory(type);
+    }
+
+    public FileObject getFixtureDirectory(DIR_TYPE type, String pluginName) {
+        return impl.getFixtureDirectory(type, pluginName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName) {
+        return impl.getFixtureFile(type, fileName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName, String pluginName) {
+        return impl.getFixtureFile(type, fileName, pluginName);
+    }
+
     public FileObject getWebrootDirectory(DIR_TYPE type) {
         return impl.getWebrootDirectory(type);
     }
@@ -317,6 +334,18 @@ public class CakePhpModule {
 
     public boolean isComponent(FileObject fo) {
         return impl.isComponent(fo);
+    }
+
+    public boolean isTest(FileObject fo) {
+        return impl.isTest(fo);
+    }
+
+    public String getTestCaseFullyQualifiedName(FileObject fo) {
+        return impl.getTestCaseFullyQualifiedName(fo);
+    }
+
+    public String toFullyQualifiedNameForClassFile(FileObject testCase) {
+        return impl.toFullyQualifiedNameForClassFile(testCase);
     }
 
     public String getViewFolderName(String controllerFileName) {
