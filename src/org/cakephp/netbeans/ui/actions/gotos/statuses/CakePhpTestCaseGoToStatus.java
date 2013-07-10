@@ -49,10 +49,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.editor.visitors.CakePhpTestCaseVisitor;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.ui.GoToBehaviorItem;
 import org.cakephp.netbeans.ui.GoToComponentItem;
 import org.cakephp.netbeans.ui.GoToControllerItem;
-import org.cakephp.netbeans.ui.GoToDefaultItem;
 import org.cakephp.netbeans.ui.GoToFixtureItem;
 import org.cakephp.netbeans.ui.GoToHelperItem;
 import org.cakephp.netbeans.ui.GoToItem;
@@ -77,11 +77,7 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
-    private boolean isContorller = false;
-    private boolean isModel = false;
-    private boolean isHelper = false;
-    private boolean isComponent = false;
-    private boolean isBehavior = false;
+    private FILE_TYPE fileType = FILE_TYPE.NONE;
     private final List<GoToItem> fixtures = new ArrayList<GoToItem>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpTestCaseGoToStatus.class.getName());
     private static CakePhpTestCaseGoToStatus INSTANCE = new CakePhpTestCaseGoToStatus();
@@ -96,15 +92,17 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
     private void reset(FileObject currentFile) {
         String className = CakePhpUtils.getClassName(currentFile);
         if (className.endsWith("ControllerTest")) { // NOI18N
-            isContorller = true;
+            fileType = FILE_TYPE.CONTROLLER;
         } else if (className.endsWith("HelperTest")) { // NOI18N
-            isHelper = true;
+            fileType = FILE_TYPE.HELPER;
         } else if (className.endsWith("ComponentTest")) { // NOI18N
-            isComponent = true;
+            fileType = FILE_TYPE.COMPONENT;
         } else if (className.endsWith("BehaviorTest")) { // NOI18N
-            isBehavior = true;
+            fileType = FILE_TYPE.BEHAVIOR;
+        } else if (className.endsWith("Test")) { // NOI18N
+            fileType = FILE_TYPE.MODEL;
         } else {
-            isModel = true;
+            fileType = FILE_TYPE.NONE;
         }
         fixtures.clear();
     }
@@ -130,7 +128,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     @Override
     public List<GoToItem> getControllers() {
-        if (isContorller) {
+        if (fileType == FILE_TYPE.CONTROLLER) {
             return getSmart();
         }
         return Collections.emptyList();
@@ -138,7 +136,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     @Override
     public List<GoToItem> getModels() {
-        if (isModel) {
+        if (fileType == FILE_TYPE.MODEL) {
             return getSmart();
         }
         return Collections.emptyList();
@@ -146,7 +144,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     @Override
     public List<GoToItem> getComponents() {
-        if (isComponent) {
+        if (fileType == FILE_TYPE.COMPONENT) {
             return getSmart();
         }
         return Collections.emptyList();
@@ -154,7 +152,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     @Override
     public List<GoToItem> getHelpers() {
-        if (isHelper) {
+        if (fileType == FILE_TYPE.HELPER) {
             return getSmart();
         }
         return Collections.emptyList();
@@ -162,7 +160,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     @Override
     public List<GoToItem> getBehaviors() {
-        if (isBehavior) {
+        if (fileType == FILE_TYPE.BEHAVIOR) {
             return getSmart();
         }
         return Collections.emptyList();
@@ -199,28 +197,35 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     private GoToItem createGoToItem(FileObject fileObject, int offset) {
         GoToItem item = null;
-        if (isContorller) {
-            if (CakePhpUtils.isController(fileObject)) {
-                item = new GoToControllerItem(fileObject, offset);
-            }
-        } else if (isModel) {
-            if (CakePhpUtils.isModel(fileObject)) {
-                item = new GoToModelItem(fileObject, offset);
-            }
-        } else if (isComponent) {
-            if (CakePhpUtils.isComponent(fileObject)) {
-                item = new GoToComponentItem(fileObject, offset);
-            }
-        } else if (isBehavior) {
-            if (CakePhpUtils.isBehavior(fileObject)) {
-                item = new GoToBehaviorItem(fileObject, offset);
-            }
-        } else if (isHelper) {
-            if (CakePhpUtils.isHelper(fileObject)) {
-                item = new GoToHelperItem(fileObject, offset);
-            }
-        } else {
-            item = new GoToDefaultItem(fileObject, offset);
+        switch (fileType) {
+            case CONTROLLER:
+                if (CakePhpUtils.isController(fileObject)) {
+                    item = new GoToControllerItem(fileObject, offset);
+                }
+                break;
+            case MODEL:
+                if (CakePhpUtils.isModel(fileObject)) {
+                    item = new GoToModelItem(fileObject, offset);
+                }
+                break;
+            case COMPONENT:
+                if (CakePhpUtils.isComponent(fileObject)) {
+                    item = new GoToComponentItem(fileObject, offset);
+                }
+                break;
+            case HELPER:
+                if (CakePhpUtils.isHelper(fileObject)) {
+                    item = new GoToHelperItem(fileObject, offset);
+                }
+                break;
+            case BEHAVIOR:
+                if (CakePhpUtils.isBehavior(fileObject)) {
+                    item = new GoToBehaviorItem(fileObject, offset);
+                }
+                break;
+            default:
+                // do nothing
+                break;
         }
         return item;
     }
