@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.GoToItem;
 import org.cakephp.netbeans.ui.GoToPopup;
 import org.cakephp.netbeans.ui.PopupUtil;
@@ -103,7 +104,7 @@ public abstract class CakePhpGoToAction extends BaseAction {
         }
 
         // if there are multiple items, show popup list
-        if (items.size() == 1) {
+        if (items.size() == 1 && !CakePreferences.isShowPopupForOneItem(phpModule)) {
             for (GoToItem item : items) {
                 UiUtils.open(item.getFileObject(), item.getOffset());
                 return;

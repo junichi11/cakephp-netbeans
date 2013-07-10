@@ -58,6 +58,7 @@ public class CakePreferences {
     private static final String CAKE3_DEFAULT_APP_NAME = "App"; // NOI18N
     private static final String USE_PROJECT_DIRECTORY = "use-project-directory"; // NOI18N
     private static final String IGNORE_TMP_DIRECTORY = "ignore-tmp-directory"; // NOI18N
+    private static final String SHOW_POPUP_FOR_ONE_ITEM = "show-popup-for-one-item"; // NOI18N
 
     public static void setAppName(PhpModule phpModule, String appName) {
         getPreferences(phpModule).put(APP_NAME, appName);
@@ -107,6 +108,14 @@ public class CakePreferences {
 
     public static boolean ignoreTmpDirectory(PhpModule phpModule) {
         return getPreferences(phpModule).getBoolean(IGNORE_TMP_DIRECTORY, true);
+    }
+
+    public static void setShowPopupForOneItem(PhpModule phpModule, boolean isEnabled) {
+        getPreferences(phpModule).putBoolean(SHOW_POPUP_FOR_ONE_ITEM, isEnabled);
+    }
+
+    public static boolean isShowPopupForOneItem(PhpModule phpModule) {
+        return getPreferences(phpModule).getBoolean(SHOW_POPUP_FOR_ONE_ITEM, true);
     }
 
     private static Preferences getPreferences(PhpModule phpModule) {
