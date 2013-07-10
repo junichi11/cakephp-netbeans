@@ -305,10 +305,13 @@ public abstract class CakePhpGoToStatus {
                         continue;
                     }
 
-                    String name = method.getName();
-                    String lowerCaseName = name.toLowerCase();
-                    if (lowerCaseName.contains(methodName)) {
-                        items.add(new GoToTestCaseItem(testClass, method.getOffset(), method.getName()));
+                    // add test method contains method name
+                    // e.g. In case of getSomething: testGetSomething, testGetSomethingMore,...
+                    String testMethodName = method.getName();
+                    String lowerCaseTestMethodName = testMethodName.toLowerCase();
+                    String lowerCaseMethodName = methodName.toLowerCase();
+                    if (lowerCaseTestMethodName.contains(lowerCaseMethodName)) {
+                        items.add(new GoToTestCaseItem(testClass, method.getOffset(), testMethodName));
                     }
                 }
             }
