@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.ui;
 
 import org.cakephp.netbeans.CakePhp;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -63,10 +64,10 @@ public class GoToViewItem extends GoToDefaultItem {
 
     @Override
     public String toString() {
-        if (themeName == null) {
+        if (StringUtils.isEmpty(themeName)) {
             return super.toString();
         }
-        return themeName + " " + super.toString(); // NOI18N
+        return super.toString() + " [" + themeName + "]"; // NOI18N
     }
 
     @Override

@@ -67,12 +67,15 @@ public class GoToDefaultItem implements GoToItem {
     @Override
     public String toString() {
         FileObject parent = fileObject.getParent();
+        String nameWithExt = fileObject.getNameExt();
         StringBuilder sb = new StringBuilder();
+        sb.append(nameWithExt.charAt(0));
+        sb.append(": "); // NOI18N
         if (parent != null) {
             sb.append(parent.getName());
             sb.append("/"); // NOI18N
         }
-        sb.append(fileObject.getNameExt());
+        sb.append(nameWithExt);
         return sb.toString();
     }
 
