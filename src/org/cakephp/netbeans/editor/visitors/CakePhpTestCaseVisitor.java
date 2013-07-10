@@ -50,18 +50,18 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+public final class CakePhpTestCaseVisitor extends CakePhpFieldsVisitor {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
+    public CakePhpTestCaseVisitor(FileObject targetFile, PhpClass phpClass) {
         super(targetFile, phpClass);
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
+    public CakePhpTestCaseVisitor(FileObject targetFile) {
         super(targetFile);
     }
 
     @Override
     public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+        return Collections.singleton(FIXTURES);
     }
 }

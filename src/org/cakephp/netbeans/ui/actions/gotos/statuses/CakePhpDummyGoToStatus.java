@@ -39,29 +39,37 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.visitors;
+package org.cakephp.netbeans.ui.actions.gotos.statuses;
 
 import java.util.Collections;
-import java.util.Set;
-import org.netbeans.modules.php.api.editor.PhpClass;
+import java.util.List;
+import org.cakephp.netbeans.ui.GoToItem;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
 /**
+ * Behavior for current unknown file of Go To Action.
  *
  * @author junichi11
  */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+public final class CakePhpDummyGoToStatus extends CakePhpGoToStatus {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-        super(targetFile, phpClass);
+    private static CakePhpDummyGoToStatus INSTANCE = new CakePhpDummyGoToStatus();
+
+    private CakePhpDummyGoToStatus() {
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
-        super(targetFile);
+    public static CakePhpDummyGoToStatus getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+    protected void scan(PhpModule phpModule, FileObject currentFile, int offset) {
+        // do nothing
+    }
+
+    @Override
+    public List<GoToItem> getSmart() {
+        return Collections.emptyList();
     }
 }

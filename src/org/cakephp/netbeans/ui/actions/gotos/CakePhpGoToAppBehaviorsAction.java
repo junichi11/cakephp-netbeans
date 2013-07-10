@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates.  rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -39,29 +39,51 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.visitors;
+package org.cakephp.netbeans.ui.actions.gotos;
 
-import java.util.Collections;
-import java.util.Set;
-import org.netbeans.modules.php.api.editor.PhpClass;
-import org.openide.filesystems.FileObject;
+import java.util.List;
+import org.cakephp.netbeans.ui.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.statuses.CakePhpGoToStatus;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 
-/**
- *
- * @author junichi11
- */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+@ActionID(
+        category = "PHP",
+        id = "org.cakephp.netbeans.ui.actions.CakePhpGoToAppBehaviorsAction")
+@ActionRegistration(
+        displayName = "#CakePhpGoToAppBehaviorsAction_Name")
+@ActionReferences({
+    @ActionReference(path = "Shortcuts", name = "DS-G D-B"),
+    @ActionReference(path = "Shortcuts", name = "D-J D-B")
+})
+@NbBundle.Messages("CakePhpGoToAppBehaviorsAction_Name=CakePHP Go To App Behavior")
+public class CakePhpGoToAppBehaviorsAction extends CakePhpGoToAction {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-        super(targetFile, phpClass);
+    private static final CakePhpGoToAppBehaviorsAction INSTANCE = new CakePhpGoToAppBehaviorsAction();
+    private static final long serialVersionUID = 7991958482130669260L;
+
+    private CakePhpGoToAppBehaviorsAction() {
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
-        super(targetFile);
+    public static CakePhpGoToAppBehaviorsAction getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+    protected List<GoToItem> getGoToItems(CakePhpGoToStatus status) {
+        return status.getAppBehaviors();
+    }
+
+    @Override
+    protected String getFullName() {
+        return getPureName();
+    }
+
+    @Override
+    protected String getPureName() {
+        return Bundle.CakePhpGoToAppBehaviorsAction_Name();
     }
 }

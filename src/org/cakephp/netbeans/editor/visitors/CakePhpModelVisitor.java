@@ -41,7 +41,7 @@
  */
 package org.cakephp.netbeans.editor.visitors;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.openide.filesystems.FileObject;
@@ -50,18 +50,21 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+public class CakePhpModelVisitor extends CakePhpFieldsVisitor {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
+    public CakePhpModelVisitor(FileObject targetFile, PhpClass phpClass) {
         super(targetFile, phpClass);
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
+    public CakePhpModelVisitor(FileObject targetFile) {
         super(targetFile);
     }
 
     @Override
     public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+        Set<String> names = new HashSet<String>();
+        names.add(USES);
+        names.add(ACTS_AS);
+        return names;
     }
 }

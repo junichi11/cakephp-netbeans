@@ -39,29 +39,45 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.visitors;
+package org.cakephp.netbeans.ui.actions.gotos.statuses;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
-import org.netbeans.modules.php.api.editor.PhpClass;
+import java.util.List;
+import java.util.logging.Logger;
+import org.cakephp.netbeans.ui.GoToItem;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+public class CakePhpBehaviorGoToStatus extends CakePhpGoToStatus {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-        super(targetFile, phpClass);
+    private final List<GoToItem> models = new ArrayList<GoToItem>();
+    private static final Logger LOGGER = Logger.getLogger(CakePhpBehaviorGoToStatus.class.getName());
+    private static CakePhpBehaviorGoToStatus INSTANCE = new CakePhpBehaviorGoToStatus();
+
+    private CakePhpBehaviorGoToStatus() {
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
-        super(targetFile);
+    public static CakePhpBehaviorGoToStatus getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+    protected void scan(PhpModule phpModule, FileObject currentFile, int offset) {
+    }
+
+    @Override
+    public List<GoToItem> getModels() {
+        // TODO
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<GoToItem> getSmart() {
+        return getTestCases();
     }
 }

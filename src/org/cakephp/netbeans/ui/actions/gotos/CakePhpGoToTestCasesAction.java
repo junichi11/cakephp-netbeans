@@ -39,29 +39,55 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.visitors;
+package org.cakephp.netbeans.ui.actions.gotos;
 
-import java.util.Collections;
-import java.util.Set;
-import org.netbeans.modules.php.api.editor.PhpClass;
-import org.openide.filesystems.FileObject;
+import java.util.List;
+import org.cakephp.netbeans.ui.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.statuses.CakePhpGoToStatus;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 
 /**
  *
  * @author junichi11
  */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+@ActionID(
+        category = "PHP",
+        id = "org.cakephp.netbeans.ui.actions.CakePhpGoToTestCasesAction")
+@ActionRegistration(
+        displayName = "#CakePhpGoToTestCasesAction_Name")
+@ActionReferences({
+    @ActionReference(path = "Shortcuts", name = "DS-G T"),
+    @ActionReference(path = "Shortcuts", name = "D-J T")
+})
+@NbBundle.Messages("CakePhpGoToTestCasesAction_Name=CakePHP Go To TestCase")
+public class CakePhpGoToTestCasesAction extends CakePhpGoToAction {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-        super(targetFile, phpClass);
+    private static final long serialVersionUID = -982309957060499527L;
+    private static final CakePhpGoToTestCasesAction INSTANCE = new CakePhpGoToTestCasesAction();
+
+    private CakePhpGoToTestCasesAction() {
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
-        super(targetFile);
+    public static CakePhpGoToTestCasesAction getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+    protected String getFullName() {
+        return getPureName();
+    }
+
+    @Override
+    protected String getPureName() {
+        return Bundle.CakePhpGoToTestCasesAction_Name();
+    }
+
+    @Override
+    protected List<GoToItem> getGoToItems(CakePhpGoToStatus status) {
+        return status.getTestCases();
     }
 }

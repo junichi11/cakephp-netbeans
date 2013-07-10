@@ -41,27 +41,41 @@
  */
 package org.cakephp.netbeans.editor.visitors;
 
-import java.util.Collections;
-import java.util.Set;
-import org.netbeans.modules.php.api.editor.PhpClass;
-import org.openide.filesystems.FileObject;
+import java.util.List;
+import org.cakephp.netbeans.util.CakePhpCodeUtils;
+import org.netbeans.modules.php.api.util.StringUtils;
+import org.netbeans.modules.php.editor.CodeUtils;
+import org.netbeans.modules.php.editor.parser.astnodes.Expression;
+import org.netbeans.modules.php.editor.parser.astnodes.FieldsDeclaration;
+import org.netbeans.modules.php.editor.parser.astnodes.SingleFieldDeclaration;
+import org.netbeans.modules.php.editor.parser.astnodes.visitors.DefaultVisitor;
 
 /**
  *
  * @author junichi11
  */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+public class CakePhpFixtureVisitor extends DefaultVisitor {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-        super(targetFile, phpClass);
-    }
+    private String table = ""; // NOI18N
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
-        super(targetFile);
+    public String getTable() {
+        return table;
     }
 
     @Override
-    public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+    public void visit(FieldsDeclaration node) {
+        super.visit(node);
+        // get fields
+        List<SingleFieldDeclaration> fields = node.getFields();
+        for (SingleFieldDeclaration field : fields) {
+            // check filed name
+            String fieldName = CodeUtils.extractVariableName(field.getName());
+            if (StringUtils.isEmpty(fieldName) || !"$table".equals(fieldName)) { // NOI18N
+                continue;
+            }
+            // get ArrayCreation
+            Expression value = field.getValue();
+            table = CakePhpCodeUtils.getStringValue(value);
+        }
     }
 }

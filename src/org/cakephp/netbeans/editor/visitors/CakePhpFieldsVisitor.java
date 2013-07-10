@@ -41,18 +41,21 @@
  */
 package org.cakephp.netbeans.editor.visitors;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.editor.CodeUtils;
 import org.netbeans.modules.php.editor.parser.astnodes.ArrayCreation;
 import org.netbeans.modules.php.editor.parser.astnodes.ArrayElement;
@@ -74,21 +77,34 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
     private final PhpClass phpClass;
     protected FileObject targetFile;
     protected PhpModule phpModule;
+    private List<FileObject> models = new ArrayList<FileObject>();
+    private List<FileObject> components = new ArrayList<FileObject>();
+    private List<FileObject> helpers = new ArrayList<FileObject>();
+    private List<FileObject> behaviors = new ArrayList<FileObject>();
+    private List<FileObject> fixtures = new ArrayList<FileObject>();
     public static final Map<String, FILE_TYPE> FILE_TYPES = new HashMap<String, CakePhpModule.FILE_TYPE>();
     public static final String USES = "$uses"; // NOI18N
     public static final String COMPONENTS = "$components"; // NOI18N
     public static final String HELPERS = "$helpers"; // NOI18N
     public static final String ACTS_AS = "$actsAs"; // NOI18N
+    public static final String FIXTURES = "$fixtures"; // NOI18N
 
     static {
         FILE_TYPES.put(USES, FILE_TYPE.MODEL);
         FILE_TYPES.put(COMPONENTS, FILE_TYPE.COMPONENT);
         FILE_TYPES.put(HELPERS, FILE_TYPE.HELPER);
         FILE_TYPES.put(ACTS_AS, FILE_TYPE.BEHAVIOR);
+        FILE_TYPES.put(FIXTURES, FILE_TYPE.FIXTURE);
     }
 
     public CakePhpFieldsVisitor(FileObject targetFile, PhpClass phpClass) {
         this.phpClass = phpClass;
+        this.targetFile = targetFile;
+        phpModule = PhpModule.forFileObject(targetFile);
+    }
+
+    public CakePhpFieldsVisitor(FileObject targetFile) {
+        this.phpClass = null;
         this.targetFile = targetFile;
         phpModule = PhpModule.forFileObject(targetFile);
     }
@@ -100,10 +116,34 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
      */
     public PhpClass getPhpClass() {
         PhpClass pc;
+        if (phpClass == null) {
+            return null;
+        }
+
         synchronized (phpClass) {
             pc = phpClass;
         }
         return pc;
+    }
+
+    public List<FileObject> getModels() {
+        return models;
+    }
+
+    public List<FileObject> getComponents() {
+        return components;
+    }
+
+    public List<FileObject> getHelpers() {
+        return helpers;
+    }
+
+    public List<FileObject> getBehaviors() {
+        return behaviors;
+    }
+
+    public List<FileObject> getFixtures() {
+        return fixtures;
     }
 
     /**
@@ -118,15 +158,13 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
         super.visit(node);
         // get class name
         String methodClassName = getClassName(node);
-        if (methodClassName == null || !methodClassName.equals("ClassRegistry")) {
-            // NOI18N
+        if (methodClassName == null || !methodClassName.equals("ClassRegistry")) {// NOI18N
             return;
         }
         // get method name
         FunctionInvocation method = node.getMethod();
         String methodName = CodeUtils.extractFunctionName(method);
-        if (!methodName.equals("init")) {
-            // NOI18N
+        if (!methodName.equals("init")) { // NOI18N
             return;
         }
         // add field to PhpClass
@@ -142,9 +180,6 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
     @Override
     public void visit(FieldsDeclaration node) {
         super.visit(node);
-        if (phpClass == null) {
-            return;
-        }
         // get fields
         List<SingleFieldDeclaration> fields = node.getFields();
         for (SingleFieldDeclaration field : fields) {
@@ -233,6 +268,15 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
     }
 
     private void addField(String entityName, String fieldName, CakePhpModule module, String aliasName) {
+        // in TestCase
+        if (CakePhpUtils.isTest(targetFile)) {
+            FileObject entityFile = getFixtureFile(entityName, fieldName);
+            if (entityFile != null) {
+                addFile(entityFile, FILE_TYPE.FIXTURE);
+            }
+            return;
+        }
+
         // check app or plugin
         boolean isPlugin = false;
         String pluginName = null;
@@ -248,8 +292,92 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
         if (entityFile == null) {
             return;
         }
+
+        // add file
+        addFile(entityFile, fileType);
+
         // add field
-        addField(entityName, aliasName, entityFile);
+        if (phpClass != null) {
+            addField(entityName, aliasName, entityFile);
+        }
+    }
+
+    private FileObject getFixtureFile(String entityName, String fieldName) {
+        if (!FIXTURES.equals(fieldName)) {
+            return null;
+        }
+        String fixtureName = ""; // NOI18N
+        String pluginName = null;
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return null;
+        }
+
+        DIR_TYPE dirType = null;
+        if (entityName.startsWith("app.")) { // NOI18N
+            // app
+            fixtureName = entityName.replace("app.", ""); // NOI18N
+            dirType = DIR_TYPE.APP;
+        } else if (entityName.startsWith("plugin.")) { // NOI18N
+            // plugin
+            fixtureName = entityName.replace("plugin.", ""); // NOI18N
+            int indexOfDot = fixtureName.indexOf("."); // NOI18N
+            if (indexOfDot != -1) {
+                pluginName = fixtureName.substring(0, indexOfDot);
+                fixtureName = fixtureName.substring(indexOfDot + 1);
+            } else {
+                return null;
+            }
+            pluginName = CakePhpUtils.getCamelCaseName(pluginName);
+            dirType = DIR_TYPE.APP_PLUGIN;
+        } else if (entityName.startsWith("core.")) { // NOI18N
+            // core
+            fixtureName = entityName.replace("core.", ""); // NOI18N
+            dirType = DIR_TYPE.CORE;
+        }
+
+        if (!StringUtils.isEmpty(fixtureName)) {
+            if (fixtureName.length() > 1) {
+                fixtureName = fixtureName.substring(0, 1).toUpperCase() + fixtureName.substring(1);
+            }
+        }
+
+        FileObject fixture = null;
+        if (!StringUtils.isEmpty(fieldName) && dirType != null) {
+            fixture = cakeModule.getFixtureFile(dirType, fixtureName, pluginName);
+        }
+
+        if (fixture == null && !StringUtils.isEmpty(pluginName)) {
+            fixture = cakeModule.getFixtureFile(DIR_TYPE.PLUGIN, fixtureName, pluginName);
+        }
+        return fixture;
+    }
+
+    public void addFile(FileObject file, FILE_TYPE fileType) {
+        if (file == null) {
+            return;
+        }
+
+        switch (fileType) {
+            case MODEL:
+                models.add(file);
+                break;
+            case HELPER:
+                helpers.add(file);
+                break;
+            case COMPONENT:
+                components.add(file);
+                break;
+            case BEHAVIOR:
+                behaviors.add(file);
+                break;
+            case FIXTURE:
+                fixtures.add(file);
+                break;
+            default:
+                // do nothing
+                break;
+        }
     }
 
     private void addField(String entityName, String aliasName, FileObject entityFile) {

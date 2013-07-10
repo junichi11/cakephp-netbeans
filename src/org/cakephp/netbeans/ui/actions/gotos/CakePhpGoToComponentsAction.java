@@ -39,29 +39,51 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.visitors;
+package org.cakephp.netbeans.ui.actions.gotos;
 
-import java.util.Collections;
-import java.util.Set;
-import org.netbeans.modules.php.api.editor.PhpClass;
-import org.openide.filesystems.FileObject;
+import java.util.List;
+import org.cakephp.netbeans.ui.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.statuses.CakePhpGoToStatus;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 
-/**
- *
- * @author junichi11
- */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+@ActionID(
+        category = "PHP",
+        id = "org.cakephp.netbeans.ui.actions.CakePhpGoToComponentsAction")
+@ActionRegistration(
+        displayName = "#CakePhpGoToComponentsAction_Name")
+@ActionReferences({
+    @ActionReference(path = "Shortcuts", name = "DS-G P"),
+    @ActionReference(path = "Shortcuts", name = "D-J P")
+})
+@NbBundle.Messages("CakePhpGoToComponentsAction_Name=CakePHP Go To Component")
+public class CakePhpGoToComponentsAction extends CakePhpGoToAction {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-        super(targetFile, phpClass);
+    private static final long serialVersionUID = 6915230620541158878L;
+    private static final CakePhpGoToComponentsAction INSTANCE = new CakePhpGoToComponentsAction();
+
+    private CakePhpGoToComponentsAction() {
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
-        super(targetFile);
+    public static CakePhpGoToComponentsAction getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+    protected List<GoToItem> getGoToItems(CakePhpGoToStatus status) {
+        return status.getComponents();
+    }
+
+    @Override
+    protected String getFullName() {
+        return getPureName();
+    }
+
+    @Override
+    protected String getPureName() {
+        return Bundle.CakePhpGoToComponentsAction_Name();
     }
 }

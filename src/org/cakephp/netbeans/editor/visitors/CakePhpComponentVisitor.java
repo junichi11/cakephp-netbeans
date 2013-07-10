@@ -56,6 +56,10 @@ public final class CakePhpComponentVisitor extends CakePhpFieldsVisitor {
         super(fo, phpClass);
     }
 
+    public CakePhpComponentVisitor(FileObject targetFile) {
+        super(targetFile);
+    }
+
     @Override
     public Set<String> getFieldNames() {
         return Collections.singleton(COMPONENTS);

@@ -39,29 +39,66 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.visitors;
+package org.cakephp.netbeans.ui.actions.gotos.statuses;
 
-import java.util.Collections;
-import java.util.Set;
-import org.netbeans.modules.php.api.editor.PhpClass;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
+public final class CakePhpGoToStatusFactory {
 
-    public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-        super(targetFile, phpClass);
+    private FileObject targetFile;
+    private int offset;
+    private CakePhpGoToStatus status;
+    private static final CakePhpGoToStatusFactory INSTANCE = new CakePhpGoToStatusFactory();
+
+    private CakePhpGoToStatusFactory() {
     }
 
-    public CakePhpHelperVisitor(FileObject targetFile) {
-        super(targetFile);
+    public static CakePhpGoToStatusFactory getInstance() {
+        return INSTANCE;
     }
 
-    @Override
-    public Set<String> getFieldNames() {
-        return Collections.singleton(HELPERS);
+    /**
+     * Create object for each file type.
+     *
+     * @param targetFile
+     * @param offset
+     * @return
+     */
+    public CakePhpGoToStatus create(FileObject targetFile, int offset) {
+        if (this.targetFile == targetFile && this.offset == offset) {
+            if (status != null) {
+                return status;
+            }
+        }
+        this.targetFile = targetFile;
+        this.offset = offset;
+        if (CakePhpUtils.isController(targetFile)) {
+            status = CakePhpControllerGoToStatus.getInstance();
+        } else if (CakePhpUtils.isModel(targetFile)) {
+            status = CakePhpModelGoToStatus.getInstance();
+        } else if (CakePhpUtils.isCtpFile(targetFile)) {
+            status = CakePhpViewGoToStatus.getInstance();
+        } else if (CakePhpUtils.isComponent(targetFile)) {
+            status = CakePhpComponentGoToStatus.getInstance();
+        } else if (CakePhpUtils.isBehavior(targetFile)) {
+            status = CakePhpBehaviorGoToStatus.getInstance();
+        } else if (CakePhpUtils.isHelper(targetFile)) {
+            status = CakePhpHelperGoToStatus.getInstance();
+        } else if (CakePhpUtils.isTest(targetFile)) {
+            status = CakePhpTestCaseGoToStatus.getInstance();
+        } else if (CakePhpUtils.isFixture(targetFile)) {
+            status = CakePhpFixtureGoToStatus.getInstance();
+        } else {
+            status = CakePhpDummyGoToStatus.getInstance();
+        }
+        status.setCurrentFile(targetFile);
+        status.setOffset(offset);
+        status.scan();
+        return status;
     }
 }

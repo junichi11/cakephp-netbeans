@@ -41,6 +41,15 @@
  */
 package org.cakephp.netbeans.ui.actions;
 
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToModelsAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToFixturesAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToSmartAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToBehaviorsAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToTestCasesAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToHelpersAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToViewsAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToComponentsAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToControllersAction;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,6 +96,15 @@ import org.openide.util.actions.Presenter;
 public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup, Presenter.Toolbar {
 
     private static final long serialVersionUID = 7615298169771540650L;
+    private final JMenuItem goToSmartActionMenu = new JMenuItem(CakePhpGoToSmartAction.getInstance());
+    private final JMenuItem goToControllersActionMenu = new JMenuItem(CakePhpGoToControllersAction.getInstance());
+    private final JMenuItem goToViewsActionMenu = new JMenuItem(CakePhpGoToViewsAction.getInstance());
+    private final JMenuItem goToModelsActionMenu = new JMenuItem(CakePhpGoToModelsAction.getInstance());
+    private final JMenuItem goToComponentsActionMenu = new JMenuItem(CakePhpGoToComponentsAction.getInstance());
+    private final JMenuItem goToHelpersActionMenu = new JMenuItem(CakePhpGoToHelpersAction.getInstance());
+    private final JMenuItem goToBehaviorsActionMenu = new JMenuItem(CakePhpGoToBehaviorsAction.getInstance());
+    private final JMenuItem goToFixturesActionMenu = new JMenuItem(CakePhpGoToFixturesAction.getInstance());
+    private final JMenuItem goToTestCasesActionMenu = new JMenuItem(CakePhpGoToTestCasesAction.getInstance());
 
     private CakePhpBaseMenuAction() {
     }
@@ -115,6 +133,19 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         JMenu menu = new JMenu(Bundle.LBL_CakePHP());
         if (CakePhpUtils.isCakePHP(PhpModule.inferPhpModule())) {
             boolean isAvaibable = isAvailableWithEditor();
+            // smart go to
+            if (isAvaibable) {
+                menu.add(goToSmartActionMenu);
+                menu.add(goToTestCasesActionMenu);
+                menu.add(goToControllersActionMenu);
+                menu.add(goToViewsActionMenu);
+                menu.add(goToModelsActionMenu);
+                menu.add(goToComponentsActionMenu);
+                menu.add(goToHelpersActionMenu);
+                menu.add(goToBehaviorsActionMenu);
+                menu.add(goToFixturesActionMenu);
+            }
+
             // format
             if (isAvaibable) {
                 JMenuItem format = new JMenuItem(FormatPlusAction.getInstance());
@@ -198,6 +229,17 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
             this.popup = new JPopupMenu();
 
             // add actions
+            // smart go to
+            popup.add(CakePhpGoToSmartAction.getInstance());
+            popup.add(CakePhpGoToTestCasesAction.getInstance());
+            popup.add(CakePhpGoToControllersAction.getInstance());
+            popup.add(CakePhpGoToViewsAction.getInstance());
+            popup.add(CakePhpGoToModelsAction.getInstance());
+            popup.add(CakePhpGoToComponentsAction.getInstance());
+            popup.add(CakePhpGoToHelpersAction.getInstance());
+            popup.add(CakePhpGoToBehaviorsAction.getInstance());
+            popup.add(CakePhpGoToFixturesAction.getInstance());
+
             // format
             popup.add(FormatPlusAction.getInstance());
 
