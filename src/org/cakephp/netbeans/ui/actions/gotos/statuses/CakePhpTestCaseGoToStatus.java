@@ -189,25 +189,40 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
         for (ClassElement classElement : classElements) {
             FileObject fileObject = classElement.getFileObject();
             int currentOffset = getCurrentOffset(fileObject);
-            items.add(createGoToItem(fileObject, currentOffset));
+            GoToItem goToItem = createGoToItem(fileObject, currentOffset);
+            if (goToItem != null) {
+                items.add(goToItem);
+            }
         }
         return items;
     }
 
     private GoToItem createGoToItem(FileObject fileObject, int offset) {
+        GoToItem item = null;
         if (isContorller) {
-            return new GoToControllerItem(fileObject, offset);
+            if (CakePhpUtils.isController(fileObject)) {
+                item = new GoToControllerItem(fileObject, offset);
+            }
         } else if (isModel) {
-            return new GoToModelItem(fileObject, offset);
+            if (CakePhpUtils.isModel(fileObject)) {
+                item = new GoToModelItem(fileObject, offset);
+            }
         } else if (isComponent) {
-            return new GoToComponentItem(fileObject, offset);
+            if (CakePhpUtils.isComponent(fileObject)) {
+                item = new GoToComponentItem(fileObject, offset);
+            }
         } else if (isBehavior) {
-            return new GoToBehaviorItem(fileObject, offset);
+            if (CakePhpUtils.isBehavior(fileObject)) {
+                item = new GoToBehaviorItem(fileObject, offset);
+            }
         } else if (isHelper) {
-            return new GoToHelperItem(fileObject, offset);
+            if (CakePhpUtils.isHelper(fileObject)) {
+                item = new GoToHelperItem(fileObject, offset);
+            }
         } else {
-            return new GoToDefaultItem(fileObject, offset);
+            item = new GoToDefaultItem(fileObject, offset);
         }
+        return item;
     }
 
     private void scanTestCase(CakePhpTestCaseVisitor visitor, FileObject testCase) throws ParseException {
