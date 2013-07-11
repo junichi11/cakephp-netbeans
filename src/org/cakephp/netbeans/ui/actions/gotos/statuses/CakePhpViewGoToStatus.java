@@ -276,12 +276,26 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
 
     @Override
     public List<GoToItem> getSmart() {
+        List<GoToItem> items = new ArrayList<GoToItem>();
+
+        // element
+        if (caretPositionElement != null) {
+            items.add(new GoToViewItem(caretPositionElement, getCurrentOffset(caretPositionElement)));
+        }
+
+        // extend
+        if (caretPositionExtend != null) {
+            items.add(new GoToViewItem(caretPositionExtend, getCurrentOffset(caretPositionElement)));
+        }
+
+        // controller
         controllerItems.addAll(getSmartControllers());
         if (controllerItems.isEmpty()) {
             return getControllers();
         }
+        items.addAll(controllerItems);
 
-        return controllerItems;
+        return items;
     }
 
     private FileObject getElementFile(CakePhpModule cakeModule, String elementPath) {
