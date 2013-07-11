@@ -191,8 +191,9 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
             FileObject fileObject = classElement.getFileObject();
             int currentOffset = getCurrentOffset(fileObject);
             GoToItem goToItem = createGoToItem(fileObject, currentOffset);
-            if (goToItem != null) {
+            if (goToItem != null && classElement.getName().equals(className)) {
                 items.add(goToItem);
+                break;
             }
         }
         return items;

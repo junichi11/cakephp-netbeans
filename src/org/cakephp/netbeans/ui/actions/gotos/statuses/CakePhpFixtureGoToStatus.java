@@ -120,7 +120,7 @@ public class CakePhpFixtureGoToStatus extends CakePhpGoToStatus {
             Set<ClassElement> classElements = getClassElements(phpModule.getSourceDirectory(), modelName);
 
             // set
-            setModels(classElements);
+            setModels(classElements, modelName);
         }
     }
 
@@ -175,10 +175,10 @@ public class CakePhpFixtureGoToStatus extends CakePhpGoToStatus {
         return className.replace(FIXTURE, ""); // NOI18N
     }
 
-    private void setModels(Set<ClassElement> classElements) {
+    private void setModels(Set<ClassElement> classElements, String modelName) {
         for (ClassElement classElement : classElements) {
             FileObject model = classElement.getFileObject();
-            if (CakePhpUtils.isModel(model)) {
+            if (classElement.getName().equals(modelName) && CakePhpUtils.isModel(model)) {
                 models.add(new GoToModelItem(model, getCurrentOffset(model)));
             }
         }
