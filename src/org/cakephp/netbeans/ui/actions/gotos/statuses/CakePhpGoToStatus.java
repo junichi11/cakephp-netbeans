@@ -71,7 +71,6 @@ import org.netbeans.modules.parsing.api.ResultIterator;
 import org.netbeans.modules.parsing.api.Source;
 import org.netbeans.modules.parsing.api.UserTask;
 import org.netbeans.modules.parsing.spi.ParseException;
-import org.netbeans.modules.parsing.spi.indexing.support.QuerySupport;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
@@ -263,7 +262,7 @@ public abstract class CakePhpGoToStatus {
      * @return test case items, empty list if there is no item.
      */
     public List<GoToItem> getTestCases() {
-        if (currentFile == null) {
+        if (currentFile == null || CakePhpUtils.isCtpFile(currentFile)) {
             return Collections.emptyList();
         }
 
@@ -325,6 +324,10 @@ public abstract class CakePhpGoToStatus {
      * @return test case clas elements, empty list if there is no item.
      */
     public Set<ClassElement> getTestCaseClassElements() {
+        if (CakePhpUtils.isCtpFile(currentFile)) {
+            return Collections.emptySet();
+        }
+
         String target = getTestCaseClassName(currentFile);
         if (!StringUtils.isEmpty(target) && !target.contains(" ")) { // NOI18N
             FileObject targetDirectory = phpModule.getTestDirectory();
@@ -346,27 +349,15 @@ public abstract class CakePhpGoToStatus {
      *
      * @param targetDirectory
      * @param targetName class name
-     * @param kind kind
-     * @return class elemnents
+     * @return class elements
      */
-    public Set<ClassElement> getClassElements(FileObject targetDirectory, String targetName, QuerySupport.Kind kind) {
-        if (targetDirectory == null || !targetDirectory.isFolder() || targetName == null) {
+    public Set<ClassElement> getClassElements(FileObject targetDirectory, String targetName) {
+        if (targetDirectory == null || !targetDirectory.isFolder() || StringUtils.isEmpty(targetName)) {
             return Collections.emptySet();
         }
 
         ElementQuery.Index indexQuery = ElementQueryFactory.createIndexQuery(QuerySupportFactory.get(targetDirectory));
-        return indexQuery.getClasses(NameKind.create(targetName, kind));
-    }
-
-    /**
-     * Get class elements.
-     *
-     * @param targetDirectory
-     * @param targetName class name
-     * @return class elements
-     */
-    public Set<ClassElement> getClassElements(FileObject targetDirectory, String targetName) {
-        return getClassElements(targetDirectory, targetName, QuerySupport.Kind.EXACT);
+        return indexQuery.getClasses(NameKind.prefix(targetName));
     }
 
     /**
@@ -510,7 +501,7 @@ public abstract class CakePhpGoToStatus {
     private String getTestCaseClassName(FileObject fo) {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
-            return cakeModule.getTestCaseFullyQualifiedName(fo);
+            return cakeModule.getTestCaseClassName(fo);
         }
         return ""; // NOI18N
     }

@@ -115,6 +115,9 @@ public final class CakePhpUtils {
     }
 
     public static boolean isController(FileObject fo) {
+        if (isTest(fo)) {
+            return false;
+        }
         PhpModule phpModule = PhpModule.forFileObject(fo);
         return CakePhpModule.forPhpModule(phpModule).isController(fo);
     }

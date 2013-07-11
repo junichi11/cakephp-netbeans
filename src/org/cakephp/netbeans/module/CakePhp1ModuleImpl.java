@@ -52,6 +52,7 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -405,29 +406,36 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         }
         String path = fo.getPath();
         String fileName = fo.getName();
-        if (path.contains("/tests/cases/") || fileName.endsWith("test")) { // NOI18N
+        if (fileName.endsWith(".test")) { // NOI18N
+            return true;
+        }
+        if (path.contains("/tests/cases/") || path.contains("/tests/test_app/")) { // NOI18N
             return true;
         }
         return false;
     }
 
     @Override
-    public String getTestCaseFullyQualifiedName(FileObject fo) {
+    public String getTestCaseClassName(FileObject fo) {
         String className = CakePhpUtils.getClassName(fo);
-        if (className == null) {
+        if (StringUtils.isEmpty(className)) {
             return ""; // NOI18N
         }
-        return className.concat("Test"); // NOI18N
+        return className.concat("TestCase"); // NOI18N
     }
 
     @Override
-    public String toFullyQualifiedNameForClassFile(FileObject testCase) {
+    public String getTestedClassName(FileObject testCase) {
         String className = testCase.getName();
         int indexOfTest = className.lastIndexOf(".test"); // NOI18N
         if (indexOfTest != -1) {
             className = className.substring(0, indexOfTest);
             className = CakePhpUtils.getCamelCaseName(className);
             FileObject parent = testCase.getParent();
+
+            if (className.endsWith("Controller")) { // NOI18N
+                return className;
+            }
 
             // get suffix
             String suffix = ""; // NOI18N
@@ -436,7 +444,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
             }
 
             // create class name
-            if (!suffix.isEmpty() && !className.isEmpty()) {
+            if (!className.isEmpty()) {
                 return className.concat(suffix);
             }
         }

@@ -250,9 +250,9 @@ public abstract class CakePhpModuleImpl {
 
     public abstract boolean isTest(FileObject fo);
 
-    public abstract String getTestCaseFullyQualifiedName(FileObject fo);
+    public abstract String getTestCaseClassName(FileObject fo);
 
-    public abstract String toFullyQualifiedNameForClassFile(FileObject testCase);
+    public abstract String getTestedClassName(FileObject testCase);
 
     public abstract String getViewFolderName(String controllerFileName);
 

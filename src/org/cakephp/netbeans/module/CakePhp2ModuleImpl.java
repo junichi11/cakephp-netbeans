@@ -52,6 +52,7 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -374,12 +375,16 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     }
 
     @Override
-    public String getTestCaseFullyQualifiedName(FileObject fo) {
-        return CakePhpUtils.getClassName(fo).concat("Test"); // NOI18N
+    public String getTestCaseClassName(FileObject fo) {
+        String className = CakePhpUtils.getClassName(fo);
+        if (StringUtils.isEmpty(className)) {
+            return ""; // NOI18N
+        }
+        return className.concat("Test"); // NOI18N
     }
 
     @Override
-    public String toFullyQualifiedNameForClassFile(FileObject testCase) {
+    public String getTestedClassName(FileObject testCase) {
         String className = testCase.getName();
         int indexOfTest = className.lastIndexOf("Test"); // NOI18N
         if (indexOfTest != -1) {

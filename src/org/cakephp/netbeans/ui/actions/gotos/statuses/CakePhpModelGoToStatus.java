@@ -184,7 +184,9 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         // add GoToItem
         List<GoToItem> controllerItems = new ArrayList<GoToItem>(controllers.size());
         for (FileObject controller : controllers) {
-            controllerItems.add(new GoToControllerItem(controller, getCurrentOffset(controller)));
+            if (CakePhpUtils.isController(controller)) {
+                controllerItems.add(new GoToControllerItem(controller, getCurrentOffset(controller)));
+            }
         }
         return controllerItems;
     }

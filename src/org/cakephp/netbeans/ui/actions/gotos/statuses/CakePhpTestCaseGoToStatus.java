@@ -59,9 +59,12 @@ import org.cakephp.netbeans.ui.GoToItem;
 import org.cakephp.netbeans.ui.GoToModelItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.parsing.spi.ParseException;
+import org.netbeans.modules.php.api.editor.EditorSupport;
+import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.editor.api.elements.ClassElement;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Lookup;
 
 /**
  * Behavior for current test file of Go To Action.
@@ -90,7 +93,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
     }
 
     private void reset(FileObject currentFile) {
-        String className = CakePhpUtils.getClassName(currentFile);
+        String className = getTestCaseClassName(currentFile);
         if (className.endsWith("ControllerTest")) { // NOI18N
             fileType = FILE_TYPE.CONTROLLER;
         } else if (className.endsWith("HelperTest")) { // NOI18N
@@ -181,7 +184,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
         }
 
         // get class name
-        String className = cakeModule.toFullyQualifiedNameForClassFile(testCase);
+        String className = cakeModule.getTestedClassName(testCase);
         List<GoToItem> items = new ArrayList<GoToItem>();
         Set<ClassElement> classElements = getClassElements(phpModule.getSourceDirectory(), className);
         for (ClassElement classElement : classElements) {
@@ -239,5 +242,35 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
             int defaultOffset = getCurrentOffset(fixture);
             fixtures.add(new GoToFixtureItem(fixture, defaultOffset));
         }
+    }
+
+    /**
+     * Get test case class name.
+     *
+     * @param fo FileObject
+     * @return class name if php class name exists, otherwise empty string.
+     */
+    public static String getTestCaseClassName(FileObject fo) {
+        String name = fo.getName();
+        if (name.contains(".test")) { // NOI18N
+            name = name.replace(".test", ""); // NOI18N
+        } else if (name.endsWith("Test")) { // NOI18N
+            return name;
+        }
+
+        // Cake 1.x
+        name = CakePhpUtils.getCamelCaseName(name);
+        EditorSupport support = Lookup.getDefault().lookup(EditorSupport.class);
+        for (PhpClass phpClass : support.getClasses(fo)) {
+            String className = phpClass.getName();
+            if (!className.endsWith("Test") && !className.endsWith("TestCase")) { // NOI18N
+                continue;
+            }
+
+            if (className.startsWith(name)) {
+                return className.replace("TestCase", "Test"); // NOI18N
+            }
+        }
+        return ""; // NOI18N
     }
 }

@@ -340,12 +340,12 @@ public class CakePhpModule {
         return impl.isTest(fo);
     }
 
-    public String getTestCaseFullyQualifiedName(FileObject fo) {
-        return impl.getTestCaseFullyQualifiedName(fo);
+    public String getTestCaseClassName(FileObject fo) {
+        return impl.getTestCaseClassName(fo);
     }
 
-    public String toFullyQualifiedNameForClassFile(FileObject testCase) {
-        return impl.toFullyQualifiedNameForClassFile(testCase);
+    public String getTestedClassName(FileObject testCase) {
+        return impl.getTestedClassName(testCase);
     }
 
     public String getViewFolderName(String controllerFileName) {
