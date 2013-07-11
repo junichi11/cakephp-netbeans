@@ -315,11 +315,17 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         File cakePhpDirectory = FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule));
         // for sub directory view file
         File grand = parent.getParentFile();
+        File child;
         while (!grand.getName().equals("View")) { // NOI18N
+            child = parent;
             parent = grand;
             grand = parent.getParentFile();
             if (grand == null || grand == cakePhpDirectory) {
                 return null;
+            }
+            if (grand.getName().equals("Themed")) { // NOI18N
+                parent = child;
+                break;
             }
             if (grand.getName().equals("View")) { // NOI18N
                 break;
