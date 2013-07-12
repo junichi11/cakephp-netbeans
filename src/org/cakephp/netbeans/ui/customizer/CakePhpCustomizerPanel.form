@@ -29,11 +29,17 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cakePhpDirTextField" max="32767" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="goToActionsLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="goToActionsSeparator" max="32767" attributes="0"/>
+                  </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="autoCreateViewCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="useProjectDirectoryCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="ignoreTmpCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="showPopupForOneItemCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
@@ -61,6 +67,13 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="ignoreTmpCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="goToActionsLabel" min="-2" max="-2" attributes="0"/>
+                  <Component id="goToActionsSeparator" min="-2" pref="10" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="showPopupForOneItemCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -116,6 +129,22 @@
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/cakephp/netbeans/ui/customizer/Bundle.properties" key="CakePhpCustomizerPanel.ignoreTmpCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="goToActionsLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/cakephp/netbeans/ui/customizer/Bundle.properties" key="CakePhpCustomizerPanel.goToActionsLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JSeparator" name="goToActionsSeparator">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="showPopupForOneItemCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/cakephp/netbeans/ui/customizer/Bundle.properties" key="CakePhpCustomizerPanel.showPopupForOneItemCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

@@ -52,6 +52,7 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -76,6 +77,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_COMPONENTS = "components";
     private static final String DIR_HELPERS = "helpers";
     private static final String DIR_BEHAVIORS = "behaviors";
+    private static final String DIR_FIXTURES = "fixtures";
 
     public CakePhp1ModuleImpl(PhpModule phpModule) {
         super(phpModule);
@@ -159,6 +161,10 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                     case TEST:
                         sb.append("tests"); // NOI18N
                         break;
+                    case FIXTURE:
+                        sb.append("tests/"); // NOI18N
+                        sb.append(DIR_FIXTURES);
+                        break;
                     case CONFIG:
                         sb.append("config"); // NOI18N
                         break;
@@ -198,6 +204,10 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                         break;
                     case TEST:
                         sb.append("tests"); // NOI18
+                        break;
+                    case FIXTURE:
+                        sb.append("tests/"); // NOI18
+                        sb.append(DIR_FIXTURES);
                         break;
                     case CONFIG:
                         sb.append("config"); // NOI18
@@ -340,6 +350,26 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     @Override
     public FileObject getController(FileObject view) {
         File parent = FileUtil.toFile(view).getParentFile();
+        File cakePhpDirectory = FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule));
+        // for sub directory view file
+        File grand = parent.getParentFile();
+        File child;
+        while (!grand.getName().equals("views")) { // NOI18N
+            child = parent;
+            parent = grand;
+            grand = parent.getParentFile();
+            if (grand == null || grand == cakePhpDirectory) {
+                return null;
+            }
+            if (grand.getName().equals("themed")) { // NOI18N
+                parent = child;
+                break;
+            }
+            if (grand.getName().equals("views")) { // NOI18N
+                break;
+            }
+        }
+
         File action = PropertyUtils.resolveFile(parent, String.format(FILE_CONTROLLER_RELATIVE, getControllerFileName(parent.getName())));
         // Theme view file
         if (!action.isFile()) {
@@ -373,6 +403,75 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     @Override
     public boolean isHelper(FileObject fo) {
         return isSpecifiedFile(fo, DIR_HELPERS);
+    }
+
+    @Override
+    public boolean isTest(FileObject fo) {
+        if (fo == null) {
+            return false;
+        }
+        String path = fo.getPath();
+        String fileName = fo.getName();
+        if (fileName.endsWith(".test")) { // NOI18N
+            return true;
+        }
+        if (path.contains("/tests/cases/") || path.contains("/tests/test_app/")) { // NOI18N
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String getTestCaseClassName(FileObject fo) {
+        String className = CakePhpUtils.getClassName(fo);
+        if (StringUtils.isEmpty(className)) {
+            return ""; // NOI18N
+        }
+        return className.concat("TestCase"); // NOI18N
+    }
+
+    @Override
+    public String getTestedClassName(FileObject testCase) {
+        String className = testCase.getName();
+        int indexOfTest = className.lastIndexOf(".test"); // NOI18N
+        if (indexOfTest != -1) {
+            className = className.substring(0, indexOfTest);
+            className = CakePhpUtils.getCamelCaseName(className);
+            FileObject parent = testCase.getParent();
+
+            if (className.endsWith("Controller")) { // NOI18N
+                return className;
+            }
+
+            // get suffix
+            String suffix = ""; // NOI18N
+            if (parent != null && parent.isFolder()) {
+                suffix = getClassNameSuffixForTestDirectory(parent);
+            }
+
+            // create class name
+            if (!className.isEmpty()) {
+                return className.concat(suffix);
+            }
+        }
+        return ""; // NOI18N
+    }
+
+    private String getClassNameSuffixForTestDirectory(FileObject testDirectory) {
+        String suffix = "";
+        String parentFolderName = testDirectory.getName();
+        if ("controllers".equals(parentFolderName)) { // NOI18N
+            suffix = "Controller"; // NOI18N
+        } else if ("models".equals(parentFolderName)) { // NOI18N
+            suffix = ""; // NOI18N
+        } else if ("components".equals(parentFolderName)) { // NOI18N
+            suffix = "Component"; // NOI18N
+        } else if ("helpers".equals(parentFolderName)) { // NOI18N
+            suffix = "Helper"; // NOI18N
+        } else if ("behaviors".equals(parentFolderName)) { // NOI18N
+            suffix = "Behavior"; // NOI18N
+        }
+        return suffix;
     }
 
     @Override

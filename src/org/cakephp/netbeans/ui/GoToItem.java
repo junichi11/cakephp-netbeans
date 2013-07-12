@@ -52,4 +52,6 @@ public interface GoToItem {
     public FileObject getFileObject();
 
     public int getOffset();
+
+    public String getIcon();
 }

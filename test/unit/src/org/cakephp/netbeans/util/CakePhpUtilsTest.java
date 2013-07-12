@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.util;
 
 import java.io.IOException;
+import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 import org.netbeans.junit.NbTestCase;
 import org.openide.filesystems.FileObject;
@@ -90,5 +91,27 @@ public class CakePhpUtilsTest extends NbTestCase {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    @Test
+    public void testIsAbsolutePath() {
+        assertTrue(CakePhpUtils.isAbsolutePath("/common"));
+        assertTrue(CakePhpUtils.isAbsolutePath("/Common/test"));
+
+        assertFalse(CakePhpUtils.isAbsolutePath("test"));
+        assertFalse(CakePhpUtils.isAbsolutePath("Common/test"));
+        assertFalse(CakePhpUtils.isAbsolutePath("//Common/test"));
+        assertFalse(CakePhpUtils.isAbsolutePath("///Common/test"));
+        assertFalse(CakePhpUtils.isAbsolutePath(null));
+        assertFalse(CakePhpUtils.isAbsolutePath(""));
+    }
+
+    @Test
+    public void testAppendCtpExt() {
+        assertEquals("/common.ctp", CakePhpUtils.appendCtpExt("/common"));
+        assertEquals("common.ctp", CakePhpUtils.appendCtpExt("common"));
+
+        assertEquals("", CakePhpUtils.appendCtpExt(""));
+        assertEquals("", CakePhpUtils.appendCtpExt(null));
     }
 }
