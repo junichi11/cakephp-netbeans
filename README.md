@@ -288,7 +288,7 @@ There are three ways.
 
 #### shortcuts
 
-Pattern : [Ctrl + Shift + G] [*] (or [Ctrl + J] [*])
+Pattern : [Ctrl + Shift + G] [*] \(or [Ctrl + J] [*]\)
 
 - **[Ctrl + Shift + G] [S]** : Smart Go To
 - **[Ctrl + Shift + G] [M]** : Go To Model
