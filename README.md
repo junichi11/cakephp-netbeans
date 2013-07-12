@@ -13,6 +13,11 @@ This plugin provides support for CakePHP.
 - NetBeans 7.3+
 - CakePHP 1.3.x
 - CakePHP 2.x
+- CakePHP 3.x (early support)
+
+## About CakePHP 3.x
+
+This plugin recognizes CakePHP3. But many features might not work yet.
 
 ## WHAT WORKS
 
