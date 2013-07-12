@@ -63,6 +63,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     private final String cakePhpDirPath;
     private final boolean isProjectDir;
     private final boolean originalIgnoreTmpDirectory;
+    private final boolean isShowPopupForOneItem;
 
     CakePhpModuleCustomizerExtender(PhpModule phpModule) {
         appName = CakePreferences.getAppName(phpModule);
@@ -70,6 +71,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         cakePhpDirPath = CakePreferences.getCakePhpDirPath(phpModule);
         isProjectDir = CakePreferences.useProjectDirectory(phpModule);
         originalIgnoreTmpDirectory = CakePreferences.ignoreTmpDirectory(phpModule);
+        isShowPopupForOneItem = CakePreferences.isShowPopupForOneItem(phpModule);
     }
 
     @Override
@@ -118,6 +120,9 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         if (isProjectDir != getPanel().isUseProjectDirectory()) {
             CakePreferences.setUseProjectDirectory(phpModule, !isProjectDir);
         }
+        if (isShowPopupForOneItem != getPanel().isShowPopupForOneItem()) {
+            CakePreferences.setShowPopupForOneItem(phpModule, !isShowPopupForOneItem);
+        }
         if (!cakePhpDirPath.equals(newCakePhpDirPath)) {
             CakePreferences.setCakePhpDirPath(phpModule, newCakePhpDirPath);
         }
@@ -141,6 +146,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             component.setCakePhpDirTextField(cakePhpDirPath);
             component.setUseProjectDirectory(isProjectDir);
             component.setIgnoreTmpDirectory(originalIgnoreTmpDirectory);
+            component.setShowPopupForOneItem(isShowPopupForOneItem);
         }
         return component;
     }

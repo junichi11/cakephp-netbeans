@@ -216,4 +216,44 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
 
         return sourceDirectory.getFileObject(path);
     }
+
+    /**
+     * Get namespace.
+     *
+     * @param target
+     * @return namespace
+     */
+    private String getNamespace(FileObject target) {
+        String namespace = ""; // NOI18N
+        if (target.isFolder()) {
+            return namespace;
+        }
+        FileObject parent = target.getParent();
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        FileObject appDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
+        FileObject coreDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.CORE);
+        if (appDirectory == null || coreDirectory == null || parent == null) {
+            return namespace;
+        }
+        String appPath = appDirectory.getPath();
+        String corePath = coreDirectory.getPath();
+        String parentPath = parent.getPath();
+        String path = ""; // NOI18N
+
+        // App
+        if (parentPath.startsWith(appPath)) {
+            path = parentPath.replace(appPath, ""); // NOI18N
+            path = path.replaceAll("/", "\\\\"); // NOI18N
+            path = "App" + path; // NOI18N
+        }
+
+        // Core
+        if (parentPath.startsWith(corePath)) {
+            path = parentPath.replace(corePath, ""); // NOI18N
+            path = path.replaceAll("/", "\\\\"); // NOI18N
+            path = "Cake" + path; // NOI18N
+        }
+
+        return path;
+    }
 }

@@ -42,6 +42,9 @@
 package org.cakephp.netbeans.util;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
@@ -50,6 +53,7 @@ import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 
@@ -57,6 +61,13 @@ public final class CakePhpUtils {
 
     private static final String CONTROLLER_CLASS_SUFFIX = "Controller"; // NOI18N
     private static final String UNDERSCORE = "_"; // NOI18N
+    private static final Comparator<FileObject> FILE_COMPARATOR = new Comparator<FileObject>() {
+        @Override
+        public int compare(FileObject o1, FileObject o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
+        }
+    };
+    public static final String CTP_EXT = ".ctp"; // NOI18N
 
     private CakePhpUtils() {
     }
@@ -81,7 +92,7 @@ public final class CakePhpUtils {
         return view;
     }
 
-    private static FileObject getView(FileObject controller, String viewName) {
+    public static FileObject getView(FileObject controller, String viewName) {
         PhpModule phpModule = PhpModule.forFileObject(controller);
         return CakePhpModule.forPhpModule(phpModule).getView(controller, viewName);
     }
@@ -94,7 +105,7 @@ public final class CakePhpUtils {
         return view;
     }
 
-    private static FileObject getView(FileObject controller, String viewName, FileObject theme) {
+    public static FileObject getView(FileObject controller, String viewName, FileObject theme) {
         PhpModule phpModule = PhpModule.forFileObject(controller);
         return CakePhpModule.forPhpModule(phpModule).getView(controller, viewName, theme);
     }
@@ -104,6 +115,9 @@ public final class CakePhpUtils {
     }
 
     public static boolean isController(FileObject fo) {
+        if (isTest(fo)) {
+            return false;
+        }
         PhpModule phpModule = PhpModule.forFileObject(fo);
         return CakePhpModule.forPhpModule(phpModule).isController(fo);
     }
@@ -117,14 +131,14 @@ public final class CakePhpUtils {
      * Get class name
      *
      * @param fo FileObject
-     * @return class name
+     * @return class name if php class name exists, otherwise empty string.
      */
     public static String getClassName(FileObject fo) {
         EditorSupport support = Lookup.getDefault().lookup(EditorSupport.class);
         for (PhpClass phpClass : support.getClasses(fo)) {
             return phpClass.getName();
         }
-        return null;
+        return ""; // NOI18N
     }
 
     /**
@@ -148,6 +162,9 @@ public final class CakePhpUtils {
      * @return component true, otherwise false
      */
     public static boolean isComponent(FileObject fo) {
+        if (isTest(fo)) {
+            return false;
+        }
         PhpModule phpModule = PhpModule.forFileObject(fo);
         return CakePhpModule.forPhpModule(phpModule).isComponent(fo);
     }
@@ -159,6 +176,9 @@ public final class CakePhpUtils {
      * @return component true, otherwise false
      */
     public static boolean isHelper(FileObject fo) {
+        if (isTest(fo)) {
+            return false;
+        }
         PhpModule phpModule = PhpModule.forFileObject(fo);
         return CakePhpModule.forPhpModule(phpModule).isHelper(fo);
     }
@@ -170,6 +190,9 @@ public final class CakePhpUtils {
      * @return model true, otherwise false
      */
     public static boolean isModel(FileObject fo) {
+        if (isTest(fo)) {
+            return false;
+        }
         PhpModule phpModule = PhpModule.forFileObject(fo);
         return CakePhpModule.forPhpModule(phpModule).isModel(fo);
     }
@@ -260,5 +283,86 @@ public final class CakePhpUtils {
         }
 
         return false;
+    }
+
+    public static int getActionMethodOffset(FileObject controller, FileObject view) {
+        String actionMethodName = CakePhpUtils.getActionName(view);
+        EditorSupport editorSupport = Lookup.getDefault().lookup(EditorSupport.class);
+        for (PhpClass phpClass : editorSupport.getClasses(controller)) {
+            if (CakePhpUtils.isControllerName(phpClass.getName())) {
+                if (actionMethodName != null) {
+                    for (PhpClass.Method method : phpClass.getMethods()) {
+                        if (actionMethodName.equals(method.getName())) {
+                            return method.getOffset();
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Check whether the file is test case.
+     *
+     * @param testFile
+     * @return true if file is test case, otherwise false.
+     */
+    public static boolean isTest(FileObject fo) {
+        PhpModule phpModule = PhpModule.forFileObject(fo);
+        return CakePhpModule.forPhpModule(phpModule).isTest(fo);
+    }
+
+    /**
+     * Check whether the file is fixture.
+     *
+     * @param fileObject
+     * @return true if file is fixture, otherwise false.
+     */
+    public static boolean isFixture(FileObject fileObject) {
+        String className = getClassName(fileObject);
+        if (!StringUtils.isEmpty(className) && className.endsWith("Fixture")) {  // NOI18N
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check whether the path starts with slash (/).
+     *
+     * @param path
+     * @return true starts with slash, otherwise false
+     */
+    public static boolean isAbsolutePath(String path) {
+        if (path == null || path.startsWith("//")) { // NOI18N
+            return false;
+        }
+        if (path.startsWith("/")) { // NOI18N
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Append ctp extension (.ctp).
+     *
+     * @param path
+     * @return path with ctp extension
+     */
+    public static String appendCtpExt(String path) {
+        if (path == null || path.equals("")) { // NOI18N
+            return ""; // NOI18N
+        }
+        return path.concat(CTP_EXT);
+
+    }
+
+    /**
+     * Sort FileObject.
+     *
+     * @param files
+     */
+    public static void sort(List<FileObject> files) {
+        Collections.sort(files, FILE_COMPARATOR);
     }
 }
