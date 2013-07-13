@@ -42,10 +42,13 @@
 package org.cakephp.netbeans.editor.codecompletion.methods;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -55,40 +58,52 @@ import org.openide.filesystems.FileObject;
 public class ElementMethod extends AssetMethod {
 
     private static final String ELEMENTS = "Elements"; // NOI18N
+    private final FileObject currentFile;
 
     public ElementMethod(PhpModule phpModule) {
         super(phpModule);
+        this.currentFile = null;
+    }
+
+    public ElementMethod(PhpModule phpModule, FileObject currentFile) {
+        super(phpModule);
+        this.currentFile = currentFile;
     }
 
     @Override
-    public List<String> getElements(int argCount, String filter) {
+    public List<String> getElements(int argCount, String inputValue) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null || !CakePhpUtils.isCtpFile(currentFile)) {
+            return Collections.emptyList();
+        }
+
         List<String> elements = new ArrayList<String>();
         int cakeVersion = CakeVersion.getInstance(phpModule).getMajor();
 
         if (argCount == 1) {
-            String[] split = filter.split("\\."); // NOI18N
-            int splitLength = split.length;
+            // get plugin name
             boolean isPlugin = false;
+            String pluginName = ""; // NOI18N
+            String basePath;
             if (cakeVersion >= 2) {
-                if (splitLength > 1) {
+                String[] pluginSplit = CakePhpUtils.pluginSplit(inputValue);
+                if (pluginSplit != null && pluginSplit.length == 2) {
+                    pluginName = pluginSplit[0];
+                    basePath = pluginSplit[1];
                     isPlugin = true;
-                    filter = split[1];
+                } else {
+                    basePath = inputValue;
                 }
-                if (splitLength == 1 && filter.endsWith(DOT)) {
-                    isPlugin = true;
-                    filter = ""; // NOI18N
-                }
+            } else {
+                basePath = inputValue;
             }
 
             // check subdirectory
-            filter = setSubDirectoryPath(filter);
+            String filter = setSubDirectoryPath(basePath);
 
-            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
             // plugin elements
             // for CakePHP 2.1+
             if (isPlugin && cakeVersion >= 2) {
-                String pluginName = split[0];
-
                 for (CakePhpModule.DIR_TYPE dirType : PLUGINS) {
                     FileObject viewDirectory = cakeModule.getViewDirectory(dirType, pluginName);
                     if (viewDirectory != null) {
@@ -104,10 +119,17 @@ public class ElementMethod extends AssetMethod {
                 return elements;
             }
 
-            // app elements
-            FileObject view = cakeModule.getViewDirectory(CakePhpModule.DIR_TYPE.APP);
-            if (view != null) {
-                FileObject elementDirectory = view.getFileObject(getRelativePath());
+            // get directory type
+            CakePhpModule.DIR_TYPE currentDirType = cakeModule.getCurrentDirectoryType(currentFile);
+            String currentPluginName = cakeModule.getCurrentPluginName(currentFile);
+            if (StringUtils.isEmpty(currentPluginName)) {
+                currentPluginName = null;
+            }
+
+            // get view directory
+            FileObject viewDirectory = cakeModule.getViewDirectory(currentDirType, currentPluginName);
+            if (viewDirectory != null) {
+                FileObject elementDirectory = viewDirectory.getFileObject(getRelativePath());
                 if (elementDirectory != null) {
                     for (FileObject child : elementDirectory.getChildren()) {
                         addElement(child, filter, elements);
@@ -122,13 +144,13 @@ public class ElementMethod extends AssetMethod {
             // plugin names
             // for CakePHP 2.1+
             if (cakeVersion >= 2) {
-                for (CakePhpModule.DIR_TYPE type : PLUGINS) {
-                    FileObject pluginDirectory = cakeModule.getDirectory(type);
+                for (CakePhpModule.DIR_TYPE dirType : PLUGINS) {
+                    FileObject pluginDirectory = cakeModule.getDirectory(dirType);
                     if (pluginDirectory != null) {
                         for (FileObject child : pluginDirectory.getChildren()) {
                             if (child.isFolder()) {
                                 String name = child.getNameExt();
-                                FileObject viewDirectory = cakeModule.getViewDirectory(type, name);
+                                viewDirectory = cakeModule.getViewDirectory(dirType, name);
                                 if (viewDirectory != null && viewDirectory.getFileObject(ELEMENTS) != null) {
                                     if (name.startsWith(filter)) {
                                         name = name + DOT;

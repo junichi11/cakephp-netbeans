@@ -98,7 +98,7 @@ public abstract class Method {
                     return new RenderMethod(phpModule, fo);
                 }
                 if (method.equals(ELEMENT)) { //NOI18N
-                    return new ElementMethod(phpModule);
+                    return new ElementMethod(phpModule, fo);
                 }
                 if (method.equals(FETCH)) { // NOI18N
                     return new FetchMethod(phpModule);
