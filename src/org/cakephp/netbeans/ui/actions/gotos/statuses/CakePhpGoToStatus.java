@@ -57,6 +57,7 @@ import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.ui.GoToBehaviorItem;
 import org.cakephp.netbeans.ui.GoToComponentItem;
 import org.cakephp.netbeans.ui.GoToControllerItem;
+import org.cakephp.netbeans.ui.GoToDefaultItem;
 import org.cakephp.netbeans.ui.GoToFixtureItem;
 import org.cakephp.netbeans.ui.GoToHelperItem;
 import org.cakephp.netbeans.ui.GoToItem;
@@ -381,6 +382,15 @@ public abstract class CakePhpGoToStatus {
     public abstract List<GoToItem> getSmart();
 
     /**
+     * Get important items. (config directory)
+     *
+     * @return important items, empty list if there is no item.
+     */
+    public List<GoToItem> getImportants() {
+        return createGoToItems(FILE_TYPE.CONFIG);
+    }
+
+    /**
      * Get current offset for opened file. If file ie opened, get current
      * offset. Otherwise return 0.
      *
@@ -484,6 +494,11 @@ public abstract class CakePhpGoToStatus {
                 case TEST:
                     if (CakePhpUtils.isTest(next)) {
                         items.add(new GoToTestCaseItem(next, getCurrentOffset(next)));
+                    }
+                    break;
+                case CONFIG:
+                    if (!next.isFolder()) {
+                        items.add(new GoToDefaultItem(next, getCurrentOffset(next)));
                     }
                     break;
                 default:
