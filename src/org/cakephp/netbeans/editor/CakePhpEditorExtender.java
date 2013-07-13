@@ -221,7 +221,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
             return getComponentPhpClass();
         } else if (CakePhpUtils.isController(fo)) {
             return getControllerPhpClass();
-        } else if (CakePhpUtils.isView(fo)) {
+        } else if (CakePhpUtils.isCtpFile(fo)) {
             return getViewPhpClass();
         } else if (CakePhpUtils.isHelper(fo)) {
             return getHelperPhpClass();
