@@ -41,9 +41,10 @@
  */
 package org.cakephp.netbeans.editor.codecompletion;
 
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.netbeans.modules.parsing.api.Source;
+import org.netbeans.modules.editor.NbEditorUtilities;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.editor.completion.CompletionProvider;
 import org.netbeans.spi.editor.completion.CompletionTask;
@@ -64,7 +65,12 @@ public abstract class CakePhpCompletionProvider implements CompletionProvider {
         if (!CakePhpUtils.isCakePHP(phpModule)) {
             return null;
         }
-        return createTask(queryType, jtc, phpModule);
+        Document document = jtc.getDocument();
+        if (document == null) {
+            return null;
+        }
+        FileObject fo = NbEditorUtilities.getFileObject(document);
+        return createTask(queryType, jtc, phpModule, fo);
     }
 
     @Override
@@ -72,7 +78,7 @@ public abstract class CakePhpCompletionProvider implements CompletionProvider {
         return 0;
     }
 
-    public abstract CompletionTask createTask(int i, JTextComponent jtc, PhpModule phpModule);
+    public abstract CompletionTask createTask(int i, JTextComponent jtc, PhpModule phpModule, FileObject fo);
 
     /**
      * Get PhpModule from JTextComponent
@@ -81,8 +87,7 @@ public abstract class CakePhpCompletionProvider implements CompletionProvider {
      * @return PhpModule
      */
     protected PhpModule getPhpModule(JTextComponent jtc) {
-        Source source = Source.create(jtc.getDocument());
-        FileObject fo = source.getFileObject();
+        FileObject fo = NbEditorUtilities.getFileObject(jtc.getDocument());
         return PhpModule.forFileObject(fo);
     }
 }

@@ -114,4 +114,29 @@ public class CakePhpUtilsTest extends NbTestCase {
         assertEquals("", CakePhpUtils.appendCtpExt(""));
         assertEquals("", CakePhpUtils.appendCtpExt(null));
     }
+
+    @Test
+    public void testPluginSplit() {
+        String[] pluginSplit = CakePhpUtils.pluginSplit("Some.common");
+        assertTrue(pluginSplit.length == 2);
+        assertEquals("Some", pluginSplit[0]);
+        assertEquals("common", pluginSplit[1]);
+
+        pluginSplit = CakePhpUtils.pluginSplit("MyPlgin.");
+        assertTrue(pluginSplit.length == 2);
+        assertEquals("MyPlgin", pluginSplit[0]);
+        assertEquals("", pluginSplit[1]);
+
+        pluginSplit = CakePhpUtils.pluginSplit("index");
+        assertTrue(pluginSplit.length == 1);
+        assertEquals("index", pluginSplit[0]);
+
+        pluginSplit = CakePhpUtils.pluginSplit("");
+        assertTrue(pluginSplit.length == 1);
+        assertEquals("", pluginSplit[0]);
+
+        pluginSplit = CakePhpUtils.pluginSplit(null);
+        assertEquals(null, pluginSplit);
+
+    }
 }

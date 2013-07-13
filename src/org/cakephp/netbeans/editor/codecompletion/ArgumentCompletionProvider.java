@@ -41,9 +41,9 @@
  */
 package org.cakephp.netbeans.editor.codecompletion;
 
-import org.cakephp.netbeans.editor.codecompletion.methods.Method;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import org.cakephp.netbeans.editor.codecompletion.methods.Method;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
@@ -55,6 +55,7 @@ import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.CompletionTask;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
+import org.openide.filesystems.FileObject;
 
 /**
  *
@@ -67,11 +68,11 @@ public class ArgumentCompletionProvider extends CakePhpCompletionProvider {
 
     @SuppressWarnings("unchecked")
     @Override
-    public CompletionTask createTask(int i, JTextComponent jtc, PhpModule phpModule) {
+    public CompletionTask createTask(int i, JTextComponent jtc, PhpModule phpModule, FileObject fo) {
         // get method name
         TokenSequence<PHPTokenId> ts = CakePhpDocUtils.getTokenSequence(jtc.getDocument(), jtc.getCaretPosition());
         final String methodName = getMethodName(ts);
-        Method method = Method.Factory.create(methodName, phpModule);
+        Method method = Method.Factory.create(methodName, phpModule, fo);
         if (method == null) {
             return null;
         }

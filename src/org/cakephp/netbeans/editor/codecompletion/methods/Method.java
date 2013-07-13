@@ -47,6 +47,7 @@ import org.cakephp.netbeans.editor.codecompletion.CakePhpCompletionItem;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.editor.completion.CompletionItem;
+import org.openide.filesystems.FileObject;
 
 /**
  *
@@ -61,9 +62,11 @@ public abstract class Method {
     private static final String CSS = "css"; // NOI18N
     private static final String SCRIPT = "script"; // NOI18N
     private static final String IMAGE = "image"; // NOI18N
+    private static final String RENDER = "render"; // NOI18N
+    private static final String EXTEND = "extend"; // NOI18N
     protected PhpModule phpModule;
     // fetch : CakePHP 2.1+
-    public static final List<String> METHODS = Arrays.asList(ELEMENT, FETCH, CSS, SCRIPT, IMAGE);
+    public static final List<String> METHODS = Arrays.asList(ELEMENT, FETCH, CSS, SCRIPT, IMAGE, RENDER, EXTEND);
     protected static final List<DIR_TYPE> PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
 
     Method(PhpModule phpModule) {
@@ -86,8 +89,14 @@ public abstract class Method {
 
     public static class Factory {
 
-        public static Method create(String method, PhpModule phpModule) {
+        public static Method create(String method, PhpModule phpModule, FileObject fo) {
             if (method != null && !method.isEmpty()) {
+                if (method.equals(EXTEND)) { //NOI18N
+                    return new ExtendMethod(phpModule, fo);
+                }
+                if (method.equals(RENDER)) { //NOI18N
+                    return new RenderMethod(phpModule, fo);
+                }
                 if (method.equals(ELEMENT)) { //NOI18N
                     return new ElementMethod(phpModule);
                 }

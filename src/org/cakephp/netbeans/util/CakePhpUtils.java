@@ -365,4 +365,22 @@ public final class CakePhpUtils {
     public static void sort(List<FileObject> files) {
         Collections.sort(files, FILE_COMPARATOR);
     }
+
+    /**
+     * Split to plugin name and file name with dot.
+     *
+     * @param name
+     * @return fist element is plugin name, second element is file name if
+     * plugin name exists, null if name is null, otherwise file name.
+     */
+    public static String[] pluginSplit(String name) {
+        if (name == null) {
+            return null;
+        }
+        int indexOfDot = name.indexOf("."); // NOI18N
+        if (indexOfDot != -1) {
+            return new String[]{name.substring(0, indexOfDot), name.substring(indexOfDot + 1)};
+        }
+        return new String[]{name};
+    }
 }

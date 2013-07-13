@@ -278,6 +278,30 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     }
 
     @Override
+    public boolean isElement(FileObject fo) {
+        if (fo == null) {
+            return false;
+        }
+        String path = fo.getPath();
+        if (path.contains("/View/Elements/")) { // NOI18N
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isLayout(FileObject fo) {
+        if (fo == null) {
+            return false;
+        }
+        String path = fo.getPath();
+        if (path.contains("/View/Layouts/")) { // NOI18N
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public FileObject getView(FileObject controller, String viewName) {
         File parent = FileUtil.toFile(controller).getParentFile();
         File view = PropertyUtils.resolveFile(parent, String.format(FILE_VIEW_RELATIVE, getViewFolderName(controller.getName()), viewName));

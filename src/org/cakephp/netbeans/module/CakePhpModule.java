@@ -78,6 +78,7 @@ public class CakePhpModule {
 
     public enum DIR_TYPE {
 
+        NONE,
         APP,
         CORE,
         PLUGIN,
@@ -254,6 +255,14 @@ public class CakePhpModule {
         return impl.getConsoleDirectory(type, pluginName);
     }
 
+    public FileObject getCurrentPluginDirectory(FileObject currentFile) {
+        return impl.getCurrentPluginDirectory(currentFile);
+    }
+
+    public String getCurrentPluginName(FileObject currentFile) {
+        return impl.getCurrentPluginName(currentFile);
+    }
+
     public static FileObject getCakePhpDirectory(PhpModule phpModule) {
         FileObject cakePhpDirectory = null;
         if (CakePreferences.useProjectDirectory(phpModule)) {
@@ -270,6 +279,10 @@ public class CakePhpModule {
 
     public FileObject getDirectory(DIR_TYPE dirType, FILE_TYPE fileType, String pluginName) {
         return impl.getDirectory(dirType, fileType, pluginName);
+    }
+
+    public DIR_TYPE getCurrentDirectoryType(FileObject currentFile) {
+        return impl.getCurrentDirectoryType(currentFile);
     }
 
     public FileObject getFile(DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String pluginName) {
@@ -318,6 +331,14 @@ public class CakePhpModule {
 
     public boolean isView(FileObject fo) {
         return impl.isView(fo);
+    }
+
+    public boolean isElement(FileObject fo) {
+        return impl.isElement(fo);
+    }
+
+    public boolean isLayout(FileObject fo) {
+        return impl.isLayout(fo);
     }
 
     public FileObject getView(FileObject controller, String viewName) {
