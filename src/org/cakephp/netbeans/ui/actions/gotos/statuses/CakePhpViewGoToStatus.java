@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.ui.actions.gotos.statuses;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -78,6 +79,7 @@ import org.openide.util.Lookup;
 public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
 
     private static final String ELEMENTS = "Elements"; // NOI18N
+    private static final String LAYOUTS = "Layouts"; // NOI18N
     private final Set<FileObject> views = new HashSet<FileObject>();
     private final List<GoToItem> viewItems = new ArrayList<GoToItem>();
     private final Set<GoToItem> elementItems = new HashSet<GoToItem>();
@@ -90,15 +92,29 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
     private String caretPositionElementPath = ""; // NOI18N
     private String caretPositionExtendPath = ""; // NOI18N
     private static CakePhpViewGoToStatus INSTANCE = new CakePhpViewGoToStatus();
+    private DIR_TYPE dirType;
+    private boolean isInElement;
+    private boolean isInLayout;
 
     private CakePhpViewGoToStatus() {
+        this.dirType = DIR_TYPE.APP;
     }
 
     public static CakePhpViewGoToStatus getInstance() {
         return INSTANCE;
     }
 
-    private void reset() {
+    private void reset(PhpModule phpModule, FileObject view) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null) {
+            dirType = cakeModule.getCurrentDirectoryType(view);
+            isInElement = cakeModule.isElement(view);
+            isInLayout = cakeModule.isLayout(view);
+        } else {
+            dirType = DIR_TYPE.NONE;
+            isInElement = false;
+            isInLayout = false;
+        }
         views.clear();
         viewItems.clear();
         elementItems.clear();
@@ -109,11 +125,12 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
         caretPositionExtend = null;
         caretPositionElementPath = ""; // NOI18N
         caretPositionExtendPath = ""; // NOI18N
+
     }
 
     @Override
     protected void scan(PhpModule phpModule, FileObject view, int offset) {
-        reset();
+        reset(phpModule, view);
         final FileObject controller = getController();
 
         // scan
@@ -299,36 +316,119 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
     }
 
     private FileObject getElementFile(CakePhpModule cakeModule, String elementPath) {
-        FileObject element = cakeModule.getViewFile(DIR_TYPE.APP, ELEMENTS, elementPath);
-        if (element == null) {
-            element = cakeModule.getViewFile(DIR_TYPE.CORE, ELEMENTS, elementPath);
+        // get plugin
+        String[] pluginSplit = CakePhpUtils.pluginSplit(elementPath);
+        String pluginName = null;
+        if (pluginSplit != null && pluginSplit.length == 2) {
+            pluginName = pluginSplit[0];
+            elementPath = pluginSplit[1];
+        }
+
+        // get DIR_TYPEs
+        List<DIR_TYPE> dirTypes = getDirTypes(pluginName);
+
+        FileObject element = null;
+        for (DIR_TYPE type : dirTypes) {
+            if (dirTypes.size() == 1) {
+                if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
+                    pluginName = cakeModule.getCurrentPluginName(getCurrentFile());
+                }
+            }
+
+            // get element
+            element = cakeModule.getViewFile(type, ELEMENTS, elementPath, pluginName);
+            if (element != null) {
+                break;
+            }
+
+            // search CORE
+            if (type == DIR_TYPE.APP) {
+                element = cakeModule.getViewFile(DIR_TYPE.CORE, ELEMENTS, elementPath);
+            }
         }
         return element;
     }
 
     private FileObject getExtendFile(CakePhpModule cakeModule, String extendPath) {
-        FileObject controller = getController();
-        if (controller == null) {
-            return null;
+        // get plugin
+        String[] pluginSplit = CakePhpUtils.pluginSplit(extendPath);
+        String pluginName = null;
+        if (pluginSplit != null && pluginSplit.length == 2) {
+            pluginName = pluginSplit[0];
+            extendPath = pluginSplit[1];
         }
 
-        FileObject extend = null;
-        // starts with "/" slash
-        if (CakePhpUtils.isAbsolutePath(extendPath)) {
-            FileObject viewDirectory = cakeModule.getViewDirectory(DIR_TYPE.APP);
-            if (viewDirectory != null) {
-                if (extendPath.length() > 1) {
-                    extend = viewDirectory.getFileObject(CakePhpUtils.appendCtpExt(extendPath.substring(1)));
-                }
+        // get DIR_TYPEs
+        List<DIR_TYPE> dirTypes = getDirTypes(pluginName);
+
+        // get controller
+        FileObject controller = getController();
+        if (controller == null) {
+            if (!isInElement && !isInLayout) {
+                return null;
             }
         }
 
-        if (extend == null) {
-            String viewFolderName = cakeModule.getViewFolderName(controller.getName());
-            extend = cakeModule.getViewFile(CakePhpModule.DIR_TYPE.APP, viewFolderName, extendPath);
-        }
+        FileObject extend = null;
+        for (DIR_TYPE type : dirTypes) {
+            String currentPluginName = null;
+            if (dirTypes.size() == 1) {
+                if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
+                    currentPluginName = cakeModule.getCurrentPluginName(getCurrentFile());
+                }
+            }
 
+            FileObject viewBaseDirectory;
+            // View directory
+            if (!StringUtils.isEmpty(pluginName)) {
+                // e.g. MyPlugin.Sub/parent
+                viewBaseDirectory = cakeModule.getViewDirectory(type, pluginName);
+            } else {
+                // e.g. parent
+                viewBaseDirectory = cakeModule.getViewDirectory(type, currentPluginName);
+            }
+            if (viewBaseDirectory == null) {
+                continue;
+            }
+
+            // View/(|Elements|Layouts|ControllerNames)
+            if (CakePhpUtils.isAbsolutePath(extendPath)) {
+                // do nothing
+            } else if (isInElement) {
+                viewBaseDirectory = viewBaseDirectory.getFileObject(ELEMENTS);
+            } else if (isInLayout) {
+                viewBaseDirectory = viewBaseDirectory.getFileObject(LAYOUTS);
+            } else {
+                if (StringUtils.isEmpty(pluginName)) {
+                    if (controller == null) {
+                        continue;
+                    }
+                    String viewFolderName = cakeModule.getViewFolderName(controller.getName());
+                    viewBaseDirectory = viewBaseDirectory.getFileObject(viewFolderName);
+                }
+            }
+            if (viewBaseDirectory == null) {
+                continue;
+            }
+
+            // get view file
+            extend = viewBaseDirectory.getFileObject(CakePhpUtils.appendCtpExt(extendPath));
+            if (extend != null) {
+                return extend;
+            }
+
+        }
         return extend;
+    }
+
+    private List<DIR_TYPE> getDirTypes(String pluginName) {
+        List<DIR_TYPE> dirTypes = new ArrayList<DIR_TYPE>();
+        if (!StringUtils.isEmpty(pluginName)) {
+            dirTypes.addAll(Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN));
+        } else {
+            dirTypes.add(dirType);
+        }
+        return dirTypes;
     }
 
     private FileObject getController() {
