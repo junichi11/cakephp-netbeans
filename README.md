@@ -44,6 +44,7 @@ This plugin recognizes CakePHP3. But many features might not work yet.
 - support for PHPUnit settings and create test case [v0.6.17]
 - code generation [v0.8.1]
 - run action action
+- fix namespace action (only CakePHP3.x)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -457,6 +458,16 @@ public function index() {
 Currently, this is available for the simple situation.
 
 Please also see the following: https://github.com/junichi11/cakephp-netbeans/issues/16
+
+### Fix Namespace Action (CakePHP 3.x)
+
+Add namespace to top of file if it doesn't exist.
+
+```php
+// e.g.
+<?php 
+namespace App\Controller;
+```
 
 ## HOW TO RUN
 
