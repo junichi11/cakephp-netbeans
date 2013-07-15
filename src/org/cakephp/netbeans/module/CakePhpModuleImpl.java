@@ -42,6 +42,10 @@
 package org.cakephp.netbeans.module;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
@@ -68,6 +72,14 @@ public abstract class CakePhpModuleImpl {
             return CTP_EXT;
         }
         return PHP_EXT;
+    }
+
+    public FileObject getConfigFile() {
+        FileObject configDirectory = getConfigDirectory(DIR_TYPE.APP);
+        if (configDirectory != null) {
+            return configDirectory.getFileObject("core.php"); // NOI18N
+        }
+        return null;
     }
 
     public FileObject getViewDirectory(DIR_TYPE type) {
@@ -198,6 +210,61 @@ public abstract class CakePhpModuleImpl {
         return getDirectory(type, FILE_TYPE.CONSOLE, pluginName);
     }
 
+    public FileObject getFixtureDirectory(DIR_TYPE type) {
+        return getDirectory(type, FILE_TYPE.FIXTURE);
+    }
+
+    public FileObject getFixtureDirectory(DIR_TYPE type, String pluginName) {
+        return getDirectory(type, FILE_TYPE.FIXTURE, pluginName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName) {
+        return getFile(type, FILE_TYPE.FIXTURE, fileName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName, String pluginName) {
+        return getFile(pluginName, type, FILE_TYPE.FIXTURE, fileName);
+    }
+
+    public FileObject getCurrentPluginDirectory(FileObject currentFile) {
+        DIR_TYPE dirType = getCurrentDirectoryType(currentFile);
+        FileObject pluginDirectory = getDirectory(dirType);
+        if (pluginDirectory == null) {
+            return null;
+        }
+        FileObject target = currentFile;
+        FileObject parent = currentFile.getParent();
+        while (parent != null) {
+            if (parent.getName().equals("plugins") || parent.getName().equals("Plugin")) { // NOI18N
+                return target;
+            }
+            target = parent;
+            parent = target.getParent();
+        }
+        return null;
+    }
+
+    /**
+     * Get current plugin name.
+     *
+     * @param currentFile current file
+     * @return plugin name if current file is in Plugin, otherwise empty string.
+     */
+    public String getCurrentPluginName(FileObject currentFile) {
+        if (currentFile == null) {
+            return ""; // NOI18N
+        }
+        String pluginName = "";
+        String currentPath = currentFile.getPath();
+        Pattern pattern = Pattern.compile("/(plugins|Plugin)/(.+?)/"); // NOI18N
+        Matcher matcher = pattern.matcher(currentPath);
+        if (matcher.find()) {
+            pluginName = matcher.group(2);
+        }
+
+        return pluginName;
+    }
+
     protected FileObject getDirectory(DIR_TYPE type, FILE_TYPE fileType) {
         return getDirectory(type, fileType, null);
     }
@@ -206,7 +273,35 @@ public abstract class CakePhpModuleImpl {
 
     public abstract FileObject getDirectory(DIR_TYPE type);
 
+    /**
+     * Get DIR_TYPE for current file.
+     *
+     * @param currentFile
+     * @return DIR_TYPE
+     */
+    public DIR_TYPE getCurrentDirectoryType(FileObject currentFile) {
+        String path = currentFile.getPath();
+        // don't change order
+        List<DIR_TYPE> allDirTypes = Arrays.asList(
+                DIR_TYPE.APP_LIB, DIR_TYPE.APP_PLUGIN, DIR_TYPE.APP_VENDOR, DIR_TYPE.APP,
+                DIR_TYPE.CORE, DIR_TYPE.PLUGIN, DIR_TYPE.VENDOR);
+        for (DIR_TYPE dirType : allDirTypes) {
+            FileObject directory = getDirectory(dirType);
+            if (directory == null) {
+                continue;
+            }
+            if (path.startsWith(directory.getPath())) {
+                return dirType;
+            }
+        }
+        return DIR_TYPE.NONE;
+    }
+
     public abstract boolean isView(FileObject fo);
+
+    public abstract boolean isElement(FileObject fo);
+
+    public abstract boolean isLayout(FileObject fo);
 
     public abstract FileObject getView(FileObject controller, String viewName);
 
@@ -223,6 +318,12 @@ public abstract class CakePhpModuleImpl {
     public abstract boolean isComponent(FileObject fo);
 
     public abstract boolean isHelper(FileObject fo);
+
+    public abstract boolean isTest(FileObject fo);
+
+    public abstract String getTestCaseClassName(FileObject fo);
+
+    public abstract String getTestedClassName(FileObject testCase);
 
     public abstract String getViewFolderName(String controllerFileName);
 
@@ -294,6 +395,9 @@ public abstract class CakePhpModuleImpl {
                 break;
             case BEHAVIOR:
                 targetDirectory = getBehaviorDirectory(dirType, pluginName);
+                break;
+            case FIXTURE:
+                targetDirectory = getFixtureDirectory(dirType, pluginName);
                 break;
             // TODO add other files
             default:

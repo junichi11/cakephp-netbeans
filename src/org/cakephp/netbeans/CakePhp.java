@@ -52,5 +52,15 @@ public class CakePhp {
     public static final String CAKE_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_icon_16.png";
     public static final String CAKE_SUCCESS_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png";
     public static final String CAKE_FAIL_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png";
+    public static final String PHP_ICON = "org/cakephp/netbeans/resources/php_icon.png";
+    public static final String CTP_ICON = "org/cakephp/netbeans/resources/ctp_icon.png";
+    public static final String GOTO_CONTROLLER_ICON = "org/cakephp/netbeans/ui/resources/goto_controller_icon.png";
+    public static final String GOTO_MODEL_ICON = "org/cakephp/netbeans/ui/resources/goto_model_icon.png";
+    public static final String GOTO_VIEW_ICON = "org/cakephp/netbeans/ui/resources/goto_view_icon.png";
+    public static final String GOTO_COMPONENT_ICON = "org/cakephp/netbeans/ui/resources/goto_component_icon.png";
+    public static final String GOTO_HELPER_ICON = "org/cakephp/netbeans/ui/resources/goto_helper_icon.png";
+    public static final String GOTO_BEHAVIOR_ICON = "org/cakephp/netbeans/ui/resources/goto_behavior_icon.png";
+    public static final String GOTO_TESTCASE_ICON = "org/cakephp/netbeans/ui/resources/goto_testcase_icon.png";
+    public static final String GOTO_FIXTURE_ICON = "org/cakephp/netbeans/ui/resources/goto_fixture_icon.png";
     public static final String CTP = "ctp";
 }

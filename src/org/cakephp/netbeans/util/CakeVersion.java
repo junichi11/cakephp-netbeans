@@ -68,23 +68,25 @@ public class CakeVersion {
     private CakeVersion(PhpModule pm) {
         String[] split = getCakePhpVersionSplit(pm);
         if (split != null) {
-            switch (split.length) {
-                case 4:
-                    notStable = split[3];
-                case 3:
-                    revision = Integer.parseInt(split[2]);
-                case 2:
-                    minor = Integer.parseInt(split[1]);
-                case 1:
-                    major = Integer.parseInt(split[0]);
-                    break;
-                case 0:
-                default:
-                    major = -1;
-                    minor = -1;
-                    revision = -1;
-                    notStable = ""; // NOI18N
-                    break;
+            int length = split.length;
+            if (length >= 4) {
+                notStable = split[3];
+            }
+            if (length >= 3) {
+                revision = Integer.parseInt(split[2]);
+            }
+            if (length >= 2) {
+                minor = Integer.parseInt(split[1]);
+            }
+            if (length >= 1) {
+                major = Integer.parseInt(split[0]);
+            }
+
+            if (length <= 0) {
+                major = -1;
+                minor = -1;
+                revision = -1;
+                notStable = ""; // NOI18N
             }
             CakeVersion.pm = pm;
         } else {
@@ -99,7 +101,12 @@ public class CakeVersion {
                 } else {
                     cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("lib/Cake"); // NOI18N
                     if (cake != null) {
-                        major = 2;
+                        FileObject app = CakePhpModule.getCakePhpDirectory(pm).getFileObject("App"); // NOI18N
+                        if (app != null) {
+                            major = 3;
+                        } else {
+                            major = 2;
+                        }
                         minor = -1;
                         revision = -1;
                         notStable = ""; // NOI18N

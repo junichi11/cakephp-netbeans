@@ -66,6 +66,7 @@ import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.editor.CodeUtils;
 import org.netbeans.modules.php.editor.parser.PHPParseResult;
 import org.netbeans.modules.php.editor.parser.api.Utils;
@@ -218,6 +219,9 @@ public class MBHCFieldInfo extends FieldInfo {
             list.addAll(getCommonNames(coreDir, editorSupport, null));
             for (DIR_TYPE dirType : Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN)) {
                 FileObject appPlugin = module.getDirectory(dirType);
+                if (appPlugin == null) {
+                    continue;
+                }
                 for (FileObject child : appPlugin.getChildren()) {
                     if (!child.isFolder()) {
                         continue;
@@ -278,7 +282,9 @@ public class MBHCFieldInfo extends FieldInfo {
                 if (plugin != null && !plugin.isEmpty()) {
                     name = plugin + "." + name; // NOI18N
                 }
-                list.add(name);
+                if (!StringUtils.isEmpty(name)) {
+                    list.add(name);
+                }
             }
         }
         Collections.sort(list);

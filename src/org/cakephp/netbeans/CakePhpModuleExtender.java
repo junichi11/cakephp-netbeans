@@ -60,7 +60,7 @@ import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
-import org.cakephp.netbeans.util.CakePhpSecurity;
+import org.cakephp.netbeans.util.CakePhpSecurityString;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.CakeZipEntryFilter;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -91,7 +91,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     private static final String PULL_COMMAND = "pull"; // NOI18N
     private static final String REFS_HEADS = "refs/heads/master"; // NOI18N
     private static final String REMOTE_COMMAND = "remote"; // NOI18N
+    private static final String UTF8 = "UTF-8"; // NOI18N
     private NewProjectConfigurationPanel panel = null;
+    // CakePHP 1.x, 2.x : app, CakePHP 3.x : App
+    private String appName;
 
     @Override
     public void addChangeListener(ChangeListener cl) {
@@ -166,8 +169,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             createProjectFromGitCommand(targetDirectory);
         }
 
+        setAppName(targetDirectory);
+
         // change tmp directory permission
-        FileObject tmp = targetDirectory.getFileObject("app/tmp"); // NOI18N
+        FileObject tmp = targetDirectory.getFileObject(appName + "/tmp"); // NOI18N
         if (tmp != null) {
             CakePhpFileUtils.chmodTmpDirectory(tmp);
         }
@@ -175,12 +180,16 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         setIgnoreTmpDirectory(phpModule);
 
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        FileObject config = module.getConfigDirectory(CakePhpModule.DIR_TYPE.APP).getFileObject("core.php"); // NOI18N
+        FileObject config = module.getConfigFile();
         // change security string
         changeSecurityString(config);
 
         // create database.php
-        createDatabaseFile(phpModule);
+        if (CakeVersion.getInstance(phpModule).isCakePhp(3)) {
+            createDatasourcesFile(phpModule);
+        } else {
+            createDatabaseFile(phpModule);
+        }
         Set<FileObject> files = getOpenedFiles(config, targetDirectory);
         return files;
     }
@@ -203,7 +212,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     }
 
     /**
-     * Create database.php file
+     * Create database.php file (CakePHP 1.x, 2.x)
      *
      * @param phpModule
      */
@@ -243,6 +252,71 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
+        }
+    }
+
+    /**
+     * Create datasources.php (CakePHP 3.x)
+     *
+     * @param phpModule
+     */
+    private void createDatasourcesFile(PhpModule phpModule) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+        if (configDirectory == null) {
+            return;
+        }
+        FileObject datasourcesDefault = configDirectory.getFileObject("datasources.default.php"); // NOI18N
+        if (datasourcesDefault == null) {
+            return;
+        }
+
+        // write file
+        try {
+            final OutputStream outputStream = configDirectory.createAndOpen("datasources.php"); // NOI18N
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, UTF8);
+            PrintWriter pw = new PrintWriter(outputStreamWriter);
+            NewProjectConfigurationPanel p = getPanel();
+            boolean defaultEndFlag = false;
+            try {
+                for (String line : datasourcesDefault.asLines(UTF8)) {
+                    if (defaultEndFlag == true) {
+                        pw.println(line);
+                        continue;
+                    }
+
+                    // Datasource.default
+                    if (line.contains("'datasources'")) { // NOI18N
+                        pw.println("\t'datasources' => 'Cake\\Database\\Driver\\" + p.getDatasourceTextField().getText() + "',");
+                    } else if (line.contains("'persistent'")) { // NOI18N
+                        pw.println("\t'persistent' => " + String.valueOf(p.getPersistentCheckBox().isSelected()) + ","); // NOI18N
+                    } else if (line.contains("'host'")) { // NOI18N
+                        pw.println("\t'host' => '" + p.getHostTextField().getText() + "',"); // NOI18N
+                    } else if (line.contains("'login'")) { // NOI18N
+                        pw.println("\t'login' => '" + p.getLoginTextField().getText() + "',"); // NOI18N
+                    } else if (line.contains("'password'")) { // NOI18N
+                        pw.println("\t'password' => '" + String.valueOf(p.getPasswordField().getPassword()) + "',"); // NOI18N
+                    } else if (line.contains("'database'")) { // NOI18N
+                        pw.println("\t'database' => '" + p.getDatabaseTextField().getText() + "',"); // NOI18N
+                    } else if (line.contains("'prefix'")) { // NOI18N
+                        pw.println("\t'prefix' => '" + p.getPrefixTextField().getText() + "',"); // NOI18N
+                    } else if (line.contains("'encoding'")) { // NOI18N
+                        defaultEndFlag = true;
+                        String encoding = p.getEncodingTextField().getText();
+                        if (!encoding.isEmpty()) {
+                            pw.println("\t'encoding' => '" + p.getEncodingTextField().getText() + "'"); // NOI18N
+                        } else {
+                            pw.println(line);
+                        }
+                    } else {
+                        pw.println(line);
+                    }
+                }
+            } finally {
+                pw.close();
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Fail: can't create datasources.php");
         }
     }
 
@@ -296,12 +370,12 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         if (config == null) {
             return;
         }
-        if (!config.getNameExt().equals("core.php")) { // NOI18N
-            LOGGER.log(Level.WARNING, "Not Found core.php");
+        if (!config.getNameExt().equals("core.php") && !config.getNameExt().equals("app.php")) { // NOI18N
+            LOGGER.log(Level.WARNING, "Not Found core.php or app.php");
             return;
         }
         try {
-            CakePhpSecurity.changeSecurityString(config);
+            CakePhpSecurityString.changeSecurityString(config);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } catch (NoSuchAlgorithmException nsaex) {
@@ -325,11 +399,9 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
 
         Set<FileObject> files = new HashSet<FileObject>();
-        if (config != null) {
-            files.add(config);
-        }
+        files.add(config);
         if (files.isEmpty()) {
-            FileObject index = targetDirectory.getFileObject("app/webroot/index.php"); // NOI18N
+            FileObject index = targetDirectory.getFileObject(appName + "/webroot/index.php"); // NOI18N
             if (index != null) {
                 files.add(index);
             }
@@ -354,6 +426,20 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         boolean isIgnore = CakePhpOptions.getInstance().isIgnoreTmpDirectory();
         if (!isIgnore) {
             CakePreferences.setIgnoreTmpDirectory(phpModule, isIgnore);
+        }
+    }
+
+    /**
+     * Set app name.
+     *
+     * @param targetDirectory
+     */
+    private void setAppName(FileObject targetDirectory) {
+        FileObject fileObject = targetDirectory.getFileObject("App"); // NOI18N
+        if (fileObject != null) {
+            appName = "App"; // NOI18N
+        } else {
+            appName = "app"; // NOI18N
         }
     }
 

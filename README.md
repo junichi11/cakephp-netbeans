@@ -6,15 +6,20 @@ This plugin provides support for CakePHP.
 
 - 2010/07/16
 - 2012/09/08 Support for NetBeans7.3
-- 2013/06/03 last update
+- 2013/07/12 last update
 
 ## ENVIRONMENT
 
 - NetBeans 7.3+
 - CakePHP 1.3.x
 - CakePHP 2.x
+- CakePHP 3.x (early support)
 
-## WHAT WORKS:
+## About CakePHP 3.x
+
+This plugin recognizes CakePHP3. But many features might not work yet.
+
+## WHAT WORKS
 
 - badge icon ![badge icon](https://raw.github.com/junichi11/cakephp-netbeans/cakephp2/src/org/cakephp/netbeans/ui/resources/cakephp_badge_8.png) (displayed on project folder)
 - configuration files (add app/config files to important files)
@@ -23,6 +28,7 @@ This plugin provides support for CakePHP.
 - ignored files (hide app/tmp directory)
 - cake commands support [*1]
 - go to view, go to action
+- smart go to [v0.9.0]
 - clear cache action [*1]
 - install plugins action (from zip file URL)[*1]
 - template files (ctp, helper, component, behavior, shell, task)
@@ -36,8 +42,9 @@ This plugin provides support for CakePHP.
 - check default action [v0.6.15]
 - image and element code completion [v0.6.16]
 - support for PHPUnit settings and create test case [v0.6.17]
-- code generate [v0.8.1]
+- code generation [v0.8.1]
 - run action action
+- fix namespace action (only CakePHP3.x)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -271,6 +278,49 @@ Similar to Go to view action.
 1. Right-click on the view file (in editor)
 2. Navigate > Go to action
 
+### Smart Go To [v0.9.0]
+
+You can go to specific files relate to a current file.
+e.g. In case of current file is Controller, you can go to existing view, model, component, helper and test.
+![go to navigations matrix](https://dl.dropboxusercontent.com/u/10953443/netbeans-cakephp-plugin/go-to-navigagions-matrix.png)
+
+#### how to run
+
+There are three ways.
+
+- Shortcuts
+- Editor Toolbar Menu
+- Context Menu
+
+#### shortcuts
+
+Pattern : [Ctrl + Shift + G] [*] \(or [Ctrl + J] [*]\)
+
+- **[Ctrl + Shift + G] [S]** : Smart Go To
+- **[Ctrl + Shift + G] [M]** : Go To Model
+- **[Ctrl + Shift + G] [V]** : Go To View
+- **[Ctrl + Shift + G] [C]** : Go To Controller
+- **[Ctrl + Shift + G] [B]** : Go To Behavior
+- **[Ctrl + Shift + G] [H]** : Go To Helper
+- **[Ctrl + Shift + G] [P]** : Go To Component
+- **[Ctrl + Shift + G] [T]** : Go To Test Case
+- **[Ctrl + Shift + G] [F]** : Go To Fixture
+
+Of course, if you don't like these shortcuts, you are able to change them in Options (KeyMap).
+
+#### settings
+
+project properties > Frameworks > CakePHP
+Please uncheck the following if you would like to go to it soon (without popup) when candidate file is only one.
+
+- Show the popup for one candidate item.
+
+#### notice
+
+- Core helpers, components and behaviors are not contained in popup items.
+- Go To View / Action Action is not changed yet.
+- Automatic creation option is not available in this feature.
+
 ### Format+ Action (Format for CakePHP)
 
 This action run the following.
@@ -341,7 +391,7 @@ If you run this action, you can test using fixture with NetBeans.
 
 https://gist.github.com/2055307 ([nojimage](https://github.com/nojimage))
 
-### Code Generate
+### Code Generation
 #### How to run
 `Alt` + `Insert` or Right-click on editor, select `Insert Code`.
 
@@ -409,12 +459,22 @@ Currently, this is available for the simple situation.
 
 Please also see the following: https://github.com/junichi11/cakephp-netbeans/issues/16
 
-## HOW TO RUN:
+### Fix Namespace Action (CakePHP 3.x)
+
+Add namespace to top of file if it doesn't exist.
+
+```php
+// e.g.
+<?php 
+namespace App\Controller;
+```
+
+## HOW TO RUN
 
 - download NBM file or manually create NBM file
 - manually install NBM file
 
-## HOW TO DEVELOP:
+## HOW TO DEVELOP
 
 - read this page [1] for the general overview but notice that current sources need to be used, then
 - checkout NB sources via Mercurial (preferred, easy updates)[2] or download archive with latest NB sources from NB download site [3]

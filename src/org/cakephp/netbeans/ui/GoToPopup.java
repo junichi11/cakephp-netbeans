@@ -57,7 +57,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
-import org.cakephp.netbeans.CakePhp;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.util.ImageUtilities;
@@ -192,15 +191,16 @@ public class GoToPopup extends JPanel implements FocusListener {
 
         @Override
         public Component getListCellRendererComponent(
-            JList list,
-            Object value,
-            int index,
-            boolean isSelected,
-            boolean cellHasFocus) {
+                JList list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
             if (value instanceof GoToItem) {
-                ImageIcon icon = ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true);
+                GoToItem item = (GoToItem) value;
+                ImageIcon icon = ImageUtilities.loadImageIcon(item.getIcon(), true);
                 setIcon(icon);
             }
 

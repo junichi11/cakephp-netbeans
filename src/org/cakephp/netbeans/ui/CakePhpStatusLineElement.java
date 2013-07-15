@@ -68,7 +68,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -139,7 +138,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                     public void valueChanged(ListSelectionEvent e) {
                         String debugLv = list.getSelectedValue().toString();
                         if (!debugLv.equals(level)) {
-                            writeCore(debugLv);
+                            writeConfig(debugLv);
                         }
                         popupFlg = false;
                         if (popup != null) {
@@ -194,15 +193,15 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     /**
      * Get debug level
      *
-     * @param core app/Config/core
+     * @param config app/Config/{core|app}
      * @return debug level
      */
-    public String getDebugLevel(FileObject core) {
+    public String getDebugLevel(FileObject config) {
         String debubLv = ""; // NOI18N
         Pattern pattern = Pattern.compile(DEBUG_REGEX);
 
         try {
-            List<String> lines = core.asLines();
+            List<String> lines = config.asLines("UTF-8"); // NOI18N
             for (String line : lines) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
@@ -236,23 +235,23 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private void clearLabel() {
         debugLabel.setText(""); //NOI18N
         cakeVersionLabel.setText(""); //NOI18N
-        cakeVersionLabel.setIcon(null); //NOI18N
+        cakeVersionLabel.setIcon(null);
     }
 
     /**
-     * Write core file. change debug level.
+     * Write config file. change debug level.
      *
      * @param debugLv
      */
-    private void writeCore(String debugLv) {
-        FileObject core = getCoreFile();
-        if (core == null) {
+    private void writeConfig(String debugLv) {
+        FileObject config = getConfigFile();
+        if (config == null) {
             return;
         }
         try {
-            List<String> lines = core.asLines();
+            List<String> lines = config.asLines("UTF-8"); // NOI18N
             Pattern pattern = Pattern.compile(DEBUG_REGEX);
-            PrintWriter pw = new PrintWriter(core.getOutputStream());
+            PrintWriter pw = new PrintWriter(config.getOutputStream());
             for (String line : lines) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
@@ -275,17 +274,16 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     }
 
     /**
-     * Get app/Config/core.php file
+     * Get app/Config/{core.php|app.php} file
      *
-     * @return core.php if it exists, otherwise null
+     * @return {core.php|app.php} if it exists, otherwise null
      */
-    public FileObject getCoreFile() {
+    public FileObject getConfigFile() {
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        FileObject config = module.getConfigDirectory(DIR_TYPE.APP);
-        if (config == null) {
+        if (module == null) {
             return null;
         }
-        return config.getFileObject("core.php"); // NOI18N
+        return module.getConfigFile();
     }
 
     //~ Inner classes
@@ -318,9 +316,9 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
             } else {
                 // phpModule is null at first time
                 if (phpModule != null) {
-                    FileObject core = getCoreFile();
-                    if (core != null && fileChangeListener != null) {
-                        core.removeFileChangeListener(fileChangeListener);
+                    FileObject config = getConfigFile();
+                    if (config != null && fileChangeListener != null) {
+                        config.removeFileChangeListener(fileChangeListener);
                     }
                 }
                 phpModule = currentPhpModule;
@@ -329,21 +327,21 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                 setCakePHPVersion(phpModule);
             }
 
-            // get core file
-            FileObject core = getCoreFile();
-            if (core == null) {
+            // get conifg file
+            FileObject config = getConfigFile();
+            if (config == null) {
                 return;
             }
 
-            // add FileChangeListener to core file
+            // add FileChangeListener to config file
             if (fileChangeListener == null) {
                 fileChangeListener = new FileChangeAdapterImpl();
             }
-            core.addFileChangeListener(fileChangeListener);
-            core.refresh();
+            config.addFileChangeListener(fileChangeListener);
+            config.refresh();
 
             // set debug level
-            String level = getDebugLevel(core);
+            String level = getDebugLevel(config);
             setLevel(level);
             setDebugLevelLabel(level);
             list.setSelectedValue(level, false);

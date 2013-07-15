@@ -48,7 +48,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import org.cakephp.netbeans.commands.CakePhpCommandSupport;
-import org.cakephp.netbeans.editor.CakePhpEditorExtender;
+import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.framework.BadgeIcon;
@@ -83,11 +83,11 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     private CakePhpFrameworkProvider() {
         super("cakephp", // NOI18N
-            NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"),
-            NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
+                NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"),
+                NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
         badgeIcon = new BadgeIcon(
-            ImageUtilities.loadImage(ICON_PATH),
-            CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
+                ImageUtilities.loadImage(ICON_PATH),
+                CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
     }
 
     @PhpFrameworkProvider.Registration(position = 500)
@@ -177,6 +177,6 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public EditorExtender getEditorExtender(PhpModule phpModule) {
-        return new CakePhpEditorExtender();
+        return CakePhpEditorExtenderFactory.create(phpModule);
     }
 }

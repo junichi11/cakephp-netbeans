@@ -42,23 +42,21 @@
 package org.cakephp.netbeans.editor;
 
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.CakePhp;
+import org.cakephp.netbeans.editor.visitors.CakePhpComponentVisitor;
+import org.cakephp.netbeans.editor.visitors.CakePhpControllerVisitor;
+import org.cakephp.netbeans.editor.visitors.CakePhpFieldsVisitor;
+import org.cakephp.netbeans.editor.visitors.CakePhpHelperVisitor;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.module.DefaultFileFilter;
-import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
@@ -69,22 +67,8 @@ import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.editor.PhpVariable;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.editor.CodeUtils;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.editor.parser.api.Utils;
-import org.netbeans.modules.php.editor.parser.astnodes.ArrayCreation;
-import org.netbeans.modules.php.editor.parser.astnodes.ArrayElement;
-import org.netbeans.modules.php.editor.parser.astnodes.ClassDeclaration;
-import org.netbeans.modules.php.editor.parser.astnodes.Expression;
-import org.netbeans.modules.php.editor.parser.astnodes.FieldsDeclaration;
-import org.netbeans.modules.php.editor.parser.astnodes.FunctionInvocation;
-import org.netbeans.modules.php.editor.parser.astnodes.MethodDeclaration;
-import org.netbeans.modules.php.editor.parser.astnodes.MethodInvocation;
-import org.netbeans.modules.php.editor.parser.astnodes.NamespaceName;
-import org.netbeans.modules.php.editor.parser.astnodes.Scalar;
-import org.netbeans.modules.php.editor.parser.astnodes.SingleFieldDeclaration;
-import org.netbeans.modules.php.editor.parser.astnodes.StaticMethodInvocation;
-import org.netbeans.modules.php.editor.parser.astnodes.Variable;
-import org.netbeans.modules.php.editor.parser.astnodes.visitors.DefaultVisitor;
 import org.netbeans.modules.php.spi.editor.EditorExtender;
 import org.openide.filesystems.FileObject;
 
@@ -92,29 +76,26 @@ import org.openide.filesystems.FileObject;
  *
  * @author igorf
  */
-public class CakePhpEditorExtender extends EditorExtender {
+public abstract class CakePhpEditorExtender extends EditorExtender {
 
     static final Logger LOGGER = Logger.getLogger(CakePhpEditorExtender.class.getName());
-    private static final Map<String, FILE_TYPE> FILE_TYPES = new HashMap<String, FILE_TYPE>();
-    private static final String USES = "$uses"; // NOI18N
-    private static final String COMPONENTS = "$components"; // NOI18N
-    private static final String HELPERS = "$helpers"; // NOI18N
-    private static final String ACTS_AS = "$actsAs"; // NOI18N
+    private boolean isView = false;
+    private boolean isController = false;
+    private boolean isComponent = false;
+    private boolean isHelper = false;
+    private PhpModule phpModule;
 
-    static {
-        FILE_TYPES.put(USES, FILE_TYPE.MODEL);
-        FILE_TYPES.put(COMPONENTS, FILE_TYPE.COMPONENT);
-        FILE_TYPES.put(HELPERS, FILE_TYPE.HELPER);
-        FILE_TYPES.put(ACTS_AS, FILE_TYPE.BEHAVIOR);
+    public CakePhpEditorExtender(PhpModule phpModule) {
+        this.phpModule = phpModule;
     }
 
     @Override
     public List<PhpBaseElement> getElementsForCodeCompletion(FileObject fo) {
-        boolean isView = CakePhpUtils.isView(fo);
-        boolean isController = CakePhpUtils.isController(fo);
-        boolean isComponent = CakePhpUtils.isComponent(fo);
-        boolean isHelper = CakePhpUtils.isHelper(fo);
-        if (fo.getExt().equals(CakePhp.CTP)) {
+        isView = CakePhpUtils.isView(fo);
+        isController = CakePhpUtils.isController(fo);
+        isComponent = CakePhpUtils.isComponent(fo);
+        isHelper = CakePhpUtils.isHelper(fo);
+        if (CakePhpUtils.isCtpFile(fo)) {
             isView = true;
         }
 
@@ -126,32 +107,10 @@ public class CakePhpEditorExtender extends EditorExtender {
         elements = new LinkedList<PhpBaseElement>();
 
         for (PhpClass phpClass : parseFields(fo)) {
-            PhpModule pm = PhpModule.forFileObject(fo);
-            CakePhpModule module = CakePhpModule.forPhpModule(pm);
             if (isView || isHelper) {
-                if (!(isView && CakeVersion.getInstance(pm).isCakePhp(2))) {
-                    FileObject helperDirectory = module.getHelperDirectory(DIR_TYPE.CORE);
-                    if (helperDirectory != null) {
-                        List<FileObject> helpers = module.getFiles(helperDirectory, new DefaultFileFilter());
-                        for (FileObject helper : helpers) {
-                            String className = CakePhpUtils.getClassName(helper);
-                            String name = className.replace(CakePhpModule.FILE_TYPE.HELPER.toString(), ""); // NOI18N
-                            phpClass.addField(name, new PhpClass(name, className), fo, 0);
-                        }
-                    }
-                }
+                addDefaultHelpers(phpClass, fo);
             } else {
-                if (!(isController && CakeVersion.getInstance(pm).isCakePhp(2))) {
-                    FileObject componentDirectory = module.getComponentDirectory(DIR_TYPE.CORE);
-                    if (componentDirectory != null) {
-                        List<FileObject> components = module.getFiles(componentDirectory, new DefaultFileFilter());
-                        for (FileObject component : components) {
-                            String className = CakePhpUtils.getClassName(component);
-                            String name = className.replace(CakePhpModule.FILE_TYPE.COMPONENT.toString(), ""); // NOI18N
-                            phpClass.addField(name, new PhpClass(name, className), fo, 0);
-                        }
-                    }
-                }
+                addDefaultComponents(phpClass, fo);
             }
             elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
         }
@@ -161,6 +120,26 @@ public class CakePhpEditorExtender extends EditorExtender {
         }
 
         return elements;
+    }
+
+    public boolean isView() {
+        return isView;
+    }
+
+    public boolean isController() {
+        return isController;
+    }
+
+    public boolean isComponent() {
+        return isComponent;
+    }
+
+    public boolean isHelper() {
+        return isHelper;
+    }
+
+    public PhpModule getPhpModule() {
+        return phpModule;
     }
 
     private Set<PhpVariable> parseAction(final FileObject view) {
@@ -191,7 +170,7 @@ public class CakePhpEditorExtender extends EditorExtender {
         if (CakePhpUtils.isView(fo) || fo.getExt().equals(CakePhp.CTP)) {
             tmp = CakePhpUtils.getController(fo);
             if (tmp == null) {
-                return Collections.singleton(new PhpClass("View", "View")); // NOI18N
+                return Collections.singleton(getViewPhpClass());
             }
         }
 
@@ -206,18 +185,20 @@ public class CakePhpEditorExtender extends EditorExtender {
                 @Override
                 public void run(ResultIterator resultIterator) throws Exception {
                     ParserResult parseResult = (ParserResult) resultIterator.getParserResult();
-                    if (CakePhpUtils.isView(fo) || CakePhpUtils.isController(fo)) {
-                        final CakePhpControllerVisitor controllerVisitor = new CakePhpControllerVisitor(fo, getPhpClass(fo));
-                        controllerVisitor.scan(Utils.getRoot(parseResult));
-                        phpClasses.addAll(Collections.singleton(controllerVisitor.getPhpClass()));
-                    } else if (CakePhpUtils.isComponent(fo)) {
-                        final CakePhpComponentVisitor componentVisitor = new CakePhpComponentVisitor(fo, getPhpClass(fo));
-                        componentVisitor.scan(Utils.getRoot(parseResult));
-                        phpClasses.addAll(Collections.singleton(componentVisitor.getPhpClass()));
-                    } else if (CakePhpUtils.isHelper(fo)) {
-                        final CakePhpHelperVisitor helperVisitor = new CakePhpHelperVisitor(fo);
-                        helperVisitor.scan(Utils.getRoot(parseResult));
-                        phpClasses.addAll(Collections.singleton(helperVisitor.getPhpClass()));
+                    final CakePhpFieldsVisitor visitor;
+                    if (isView || isController) {
+                        visitor = new CakePhpControllerVisitor(fo, getPhpClass(fo));
+                    } else if (isComponent) {
+                        visitor = new CakePhpComponentVisitor(fo, getPhpClass(fo));
+                    } else if (isHelper) {
+                        visitor = new CakePhpHelperVisitor(fo, getPhpClass(fo));
+                    } else {
+                        visitor = null;
+                    }
+
+                    if (visitor != null) {
+                        visitor.scan(Utils.getRoot(parseResult));
+                        phpClasses.addAll(Collections.singleton(visitor.getPhpClass()));
                     }
                 }
             });
@@ -236,344 +217,67 @@ public class CakePhpEditorExtender extends EditorExtender {
      * @return
      */
     private PhpClass getPhpClass(FileObject fo) {
-        PhpModule phpModule = PhpModule.forFileObject(fo);
-        CakeVersion version = CakeVersion.getInstance(phpModule);
-        String extendsClassName = null;
         if (CakePhpUtils.isComponent(fo)) {
-            if (version.isCakePhp(1)) {
-                extendsClassName = "Object"; // NOI18N
-            } else {
-                extendsClassName = FILE_TYPE.COMPONENT.toString();
-            }
+            return getComponentPhpClass();
         } else if (CakePhpUtils.isController(fo)) {
-            extendsClassName = FILE_TYPE.CONTROLLER.toString();
-        } else if (CakePhpUtils.isView(fo)) {
-            extendsClassName = FILE_TYPE.VIEW.toString();
+            return getControllerPhpClass();
+        } else if (CakePhpUtils.isCtpFile(fo)) {
+            return getViewPhpClass();
         } else if (CakePhpUtils.isHelper(fo)) {
-            extendsClassName = "AppHelper"; // NOI18N
+            return getHelperPhpClass();
         }
-        if (extendsClassName == null) {
-            return null;
-        }
-        return new PhpClass(extendsClassName, extendsClassName);
+        return null;
     }
 
-    //~ inner classes
-    private final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
+    public abstract PhpClass getViewPhpClass();
 
-        private final Set<PhpVariable> fields = new HashSet<PhpVariable>();
-        private String className = null;
-        private String methodName = null;
-        private String viewName = null;
+    public abstract PhpClass getControllerPhpClass();
 
-        public CakePhpControllerVisitor(FileObject fo, PhpClass phpClass) {
-            super(fo, phpClass);
-            if (CakePhpUtils.isView(fo)) {
-                viewName = CakePhpUtils.getActionName(fo);
-            }
+    public abstract PhpClass getComponentPhpClass();
+
+    public abstract PhpClass getHelperPhpClass();
+
+    public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return;
         }
 
-        @Override
-        public Set<String> getFieldNames() {
-            Set<String> fieldNames = new HashSet<String>();
-            if (CakePhpUtils.isController(targetFile)) {
-                fieldNames.add(USES);
-                fieldNames.add(COMPONENTS);
-            } else if (CakePhpUtils.isView(targetFile)) {
-                fieldNames.add(HELPERS);
-            }
-            return fieldNames;
-        }
-
-        public Set<PhpVariable> getPhpVariables() {
-            Set<PhpVariable> phpVariables = new HashSet<PhpVariable>();
-            synchronized (fields) {
-                phpVariables.addAll(fields);
-            }
-            return phpVariables;
-        }
-
-        @Override
-        public void visit(ClassDeclaration node) {
-            className = CodeUtils.extractClassName(node);
-            super.visit(node);
-        }
-
-        @Override
-        public void visit(MethodDeclaration node) {
-            methodName = CodeUtils.extractMethodName(node);
-            super.visit(node);
-        }
-
-        @Override
-        public void visit(MethodInvocation node) {
-            super.visit(node);
-
-            if (!(node.getDispatcher() instanceof Variable)
-                    || !"$this".equals(CodeUtils.extractVariableName((Variable) node.getDispatcher()))) { // NOI18N
-                return;
-            }
-
-            FunctionInvocation fi = node.getMethod();
-            String invokedMethodName = CodeUtils.extractFunctionName(fi);
-
-            List<Expression> params = fi.getParameters();
-            Expression e = null;
-
-            if (!params.isEmpty()) {
-                e = params.get(0);
-            }
-
-            String viewVarName = ""; // NOI18N
-            if (e instanceof Scalar) {
-                Scalar s = (Scalar) e;
-                if (s.getScalarType() == Scalar.Type.STRING) {
-                    viewVarName = prepareViewVar(s.getStringValue());
-                }
-            }
-
-            if (methodName.equals(viewName)
-                    && invokedMethodName.equals("set") // NOI18N
-                    && CakePhpUtils.isControllerName(className)
-                    && !viewVarName.isEmpty()) {
-                synchronized (fields) {
-                    fields.add(new PhpVariable("$" + viewVarName, new PhpClass("stdClass", "stdClass"), targetFile, 0)); // NOI18N
-                }
-            }
-        }
-
-        private String prepareViewVar(String viewVarName) {
-            if (!viewVarName.isEmpty()) {
-                viewVarName = viewVarName.substring(1, viewVarName.length() - 1).trim();
-                if (!viewVarName.matches("[A-Za-z_][A-Za-z0-9_]*")) { // NOI18N
-                    viewVarName = ""; // NOI18N
-                }
-            }
-            return viewVarName;
-        }
-    }
-
-    abstract class CakePhpFieldsVisitor extends DefaultVisitor {
-
-        private final PhpClass phpClass;
-        protected FileObject targetFile;
-        protected PhpModule phpModule;
-
-        public CakePhpFieldsVisitor(FileObject targetFile, PhpClass phpClass) {
-            this.phpClass = phpClass;
-            this.targetFile = targetFile;
-            phpModule = PhpModule.forFileObject(targetFile);
-        }
-
-        /**
-         * Get class fields for target.
-         *
-         * @return php class for target
-         */
-        public PhpClass getPhpClass() {
-            PhpClass pc;
-            synchronized (phpClass) {
-                pc = phpClass;
-            }
-            return pc;
-        }
-
-        /**
-         * Get filed name. (e.g. $helpers)
-         *
-         * @return
-         */
-        public abstract Set<String> getFieldNames();
-
-        @Override
-        public void visit(StaticMethodInvocation node) {
-            super.visit(node);
-            // get class name
-            String methodClassName = getClassName(node);
-            if (methodClassName == null || !methodClassName.equals("ClassRegistry")) { // NOI18N
-                return;
-            }
-
-            // get method name
-            FunctionInvocation method = node.getMethod();
-            String methodName = CodeUtils.extractFunctionName(method);
-            if (!methodName.equals("init")) { // NOI18N
-                return;
-            }
-
-            // add field to PhpClass
-            List<Expression> parameters = method.getParameters();
-            String entityName = ""; // NOI18N
-            CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-            for (Expression parameter : parameters) {
-                entityName = CakePhpCodeUtils.getStringValue(parameter);
-                addField(entityName, USES, module, null);
-                break;
-            }
-        }
-
-        @Override
-        public void visit(FieldsDeclaration node) {
-            super.visit(node);
-            if (phpClass == null) {
-                return;
-            }
-            // get fields
-            List<SingleFieldDeclaration> fields = node.getFields();
-            for (SingleFieldDeclaration field : fields) {
-                // check filed name
-                String fieldName = CodeUtils.extractVariableName(field.getName());
-                if (FILE_TYPES.get(fieldName) == null || !containsFieldNames(fieldName, getFieldNames())) {
+        FileObject helperDirectory = module.getHelperDirectory(DIR_TYPE.CORE);
+        if (helperDirectory != null) {
+            List<FileObject> helpers = module.getFiles(helperDirectory, new DefaultFileFilter());
+            for (FileObject helper : helpers) {
+                String fullyQualifiedName = getFullyQualifiedClassName(helper);
+                if (StringUtils.isEmpty(fullyQualifiedName)) {
                     continue;
                 }
+                String className = CakePhpUtils.getClassName(helper);
+                String name = className.replace(CakePhpModule.FILE_TYPE.HELPER.toString(), ""); // NOI18N
+                phpClass.addField(name, new PhpClass(name, fullyQualifiedName), fo, 0);
+            }
+        }
+    }
 
-                // get ArrayCreation
-                ArrayCreation arrayCreation = CakePhpCodeUtils.getArrayCreation(field);
-                if (arrayCreation == null) {
+    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return;
+        }
+
+        FileObject componentDirectory = module.getComponentDirectory(DIR_TYPE.CORE);
+        if (componentDirectory != null) {
+            List<FileObject> components = module.getFiles(componentDirectory, new DefaultFileFilter());
+            for (FileObject component : components) {
+                String fullyQualifiedName = getFullyQualifiedClassName(component);
+                if (StringUtils.isEmpty(fullyQualifiedName)) {
                     continue;
                 }
-
-                // set classes
-                setFieldClasses(arrayCreation, fieldName);
-            }
-        }
-
-        private String getClassName(StaticMethodInvocation node) {
-            Expression className = node.getClassName();
-            if (className instanceof NamespaceName) {
-                return CodeUtils.extractQualifiedName((NamespaceName) className);
-            }
-            return null;
-        }
-
-        /**
-         * Check whether field name is specified name.
-         *
-         * @param field
-         * @param name
-         * @return
-         */
-        private boolean containsFieldNames(String fieldName, Set<String> names) {
-            if (fieldName != null && names.contains(fieldName)) {
-                return true;
-            }
-            return false;
-        }
-
-        private Set<DIR_TYPE> getDirTypes(boolean isPlugin) {
-            Set<DIR_TYPE> dirTypes;
-            if (isPlugin) {
-                dirTypes = EnumSet.of(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
-            } else {
-                dirTypes = EnumSet.of(DIR_TYPE.APP);
-            }
-            return dirTypes;
-        }
-
-        private void setFieldClasses(ArrayCreation arrayCreation, String fieldName) {
-            CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-            List<ArrayElement> elements = arrayCreation.getElements();
-            for (ArrayElement element : elements) {
-                String aliasName = null;
-                Expression entity = null;
-                Expression value = element.getValue();
-                if (value == null) {
-                    continue;
-                }
-                if (value instanceof ArrayCreation) {
-                    ArrayCreation className = (ArrayCreation) value;
-                    entity = CakePhpCodeUtils.getEntity(className);
-                }
-                if (entity != null) {
-                    value = entity;
-                    aliasName = CakePhpCodeUtils.getStringValue(element.getKey());
-                }
-                // get entity name
-                String entityName = CakePhpCodeUtils.getStringValue(value);
-
-                // add field to PhpClass
-                addField(entityName, fieldName, module, aliasName);
-            }
-        }
-
-        private FileObject getEntityFile(boolean isPlugin, CakePhpModule module, FILE_TYPE fileType, String entityName, String pluginName) {
-            FileObject object = null;
-            Set<DIR_TYPE> dirTypes = getDirTypes(isPlugin);
-            for (DIR_TYPE dirType : dirTypes) {
-                object = module.getFile(dirType, fileType, entityName, pluginName);
-                if (object != null) {
-                    break;
-                }
-            }
-            return object;
-        }
-
-        private void addField(String entityName, String fieldName, CakePhpModule module, String aliasName) {
-            // check app or plugin
-            FileObject entityFile = null;
-            boolean isPlugin = false;
-            String pluginName = null;
-            int dotPosition = entityName.indexOf("."); // NOI18N
-            if (dotPosition > 0) {
-                isPlugin = true;
-                pluginName = entityName.substring(0, dotPosition);
-                entityName = entityName.substring(dotPosition + 1);
-            }
-
-            //get entity file
-            FILE_TYPE fileType = FILE_TYPES.get(fieldName);
-            entityFile = getEntityFile(isPlugin, module, fileType, entityName, pluginName);
-            if (entityFile == null) {
-                return;
-            }
-
-            // add field
-            addField(entityName, fileType, aliasName, entityFile);
-        }
-
-        private void addField(String entityName, FILE_TYPE fileType, String aliasName, FileObject entityFile) {
-            String classNameSuffix = ""; // NOI18N
-            if (fileType != FILE_TYPE.MODEL) {
-                classNameSuffix = fileType.toString();
-            }
-            String entityClassName = entityName + classNameSuffix;
-            synchronized (phpClass) {
-                if (aliasName == null) {
-                    phpClass.addField(entityName, new PhpClass(entityName, entityClassName), entityFile, 0);
-                } else {
-                    phpClass.addField(aliasName, new PhpClass(entityName, entityClassName), entityFile, 0);
-                }
+                String className = CakePhpUtils.getClassName(component);
+                String name = className.replace(CakePhpModule.FILE_TYPE.COMPONENT.toString(), ""); // NOI18N
+                phpClass.addField(name, new PhpClass(name, fullyQualifiedName), fo, 0);
             }
         }
     }
 
-    private final class CakePhpComponentVisitor extends CakePhpFieldsVisitor {
-
-        public CakePhpComponentVisitor(FileObject fo, PhpClass phpClass) {
-            super(fo, phpClass);
-        }
-
-        @Override
-        public Set<String> getFieldNames() {
-            return Collections.singleton(COMPONENTS);
-        }
-    }
-
-    private final class CakePhpHelperVisitor extends CakePhpFieldsVisitor {
-
-        private static final String APP_HELPER = "AppHelper"; // NOI8N
-
-        public CakePhpHelperVisitor(FileObject fo) {
-            super(fo, new PhpClass(APP_HELPER, APP_HELPER));
-        }
-
-        public CakePhpHelperVisitor(FileObject targetFile, PhpClass phpClass) {
-            super(targetFile, phpClass);
-        }
-
-        @Override
-        public Set<String> getFieldNames() {
-            return Collections.singleton(HELPERS);
-        }
-    }
+    public abstract String getFullyQualifiedClassName(FileObject target);
 }

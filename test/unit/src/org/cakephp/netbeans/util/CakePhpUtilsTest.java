@@ -41,8 +41,14 @@
  */
 package org.cakephp.netbeans.util;
 
+import java.io.IOException;
+import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 import org.netbeans.junit.NbTestCase;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileSystem;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 
 public class CakePhpUtilsTest extends NbTestCase {
 
@@ -68,5 +74,69 @@ public class CakePhpUtilsTest extends NbTestCase {
 
         assertFalse(CakePhpUtils.isControllerName("Postscontroller"));
         assertFalse(CakePhpUtils.isControllerName("PostsHelper"));
+    }
+
+    @Test
+    public void testIsCtpFile() {
+        FileSystem fs = FileUtil.createMemoryFileSystem();
+        FileObject root = fs.getRoot();
+        try {
+            FileObject indexCtp = root.createData("index", "ctp");
+            FileObject indexPhp = root.createData("index", "php");
+            assertTrue(CakePhpUtils.isCtpFile(indexCtp));
+            assertFalse(CakePhpUtils.isCtpFile(indexPhp));
+            assertFalse(CakePhpUtils.isCtpFile(null));
+            indexCtp.delete();
+            indexPhp.delete();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    @Test
+    public void testIsAbsolutePath() {
+        assertTrue(CakePhpUtils.isAbsolutePath("/common"));
+        assertTrue(CakePhpUtils.isAbsolutePath("/Common/test"));
+
+        assertFalse(CakePhpUtils.isAbsolutePath("test"));
+        assertFalse(CakePhpUtils.isAbsolutePath("Common/test"));
+        assertFalse(CakePhpUtils.isAbsolutePath("//Common/test"));
+        assertFalse(CakePhpUtils.isAbsolutePath("///Common/test"));
+        assertFalse(CakePhpUtils.isAbsolutePath(null));
+        assertFalse(CakePhpUtils.isAbsolutePath(""));
+    }
+
+    @Test
+    public void testAppendCtpExt() {
+        assertEquals("/common.ctp", CakePhpUtils.appendCtpExt("/common"));
+        assertEquals("common.ctp", CakePhpUtils.appendCtpExt("common"));
+
+        assertEquals("", CakePhpUtils.appendCtpExt(""));
+        assertEquals("", CakePhpUtils.appendCtpExt(null));
+    }
+
+    @Test
+    public void testPluginSplit() {
+        String[] pluginSplit = CakePhpUtils.pluginSplit("Some.common");
+        assertTrue(pluginSplit.length == 2);
+        assertEquals("Some", pluginSplit[0]);
+        assertEquals("common", pluginSplit[1]);
+
+        pluginSplit = CakePhpUtils.pluginSplit("MyPlgin.");
+        assertTrue(pluginSplit.length == 2);
+        assertEquals("MyPlgin", pluginSplit[0]);
+        assertEquals("", pluginSplit[1]);
+
+        pluginSplit = CakePhpUtils.pluginSplit("index");
+        assertTrue(pluginSplit.length == 1);
+        assertEquals("index", pluginSplit[0]);
+
+        pluginSplit = CakePhpUtils.pluginSplit("");
+        assertTrue(pluginSplit.length == 1);
+        assertEquals("", pluginSplit[0]);
+
+        pluginSplit = CakePhpUtils.pluginSplit(null);
+        assertEquals(null, pluginSplit);
+
     }
 }

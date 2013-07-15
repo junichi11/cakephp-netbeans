@@ -78,6 +78,7 @@ public class CakePhpModule {
 
     public enum DIR_TYPE {
 
+        NONE,
         APP,
         CORE,
         PLUGIN,
@@ -98,6 +99,7 @@ public class CakePhpModule {
         COMPONENT,
         WEBROOT,
         TEST,
+        FIXTURE,
         CONSOLE,
         CONFIG,;
 
@@ -107,6 +109,10 @@ public class CakePhpModule {
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
             return name;
         }
+    }
+
+    public FileObject getConfigFile() {
+        return impl.getConfigFile();
     }
 
     public FileObject getViewDirectory(DIR_TYPE type) {
@@ -221,6 +227,22 @@ public class CakePhpModule {
         return impl.getTestDirectory(type, pluginName);
     }
 
+    public FileObject getFixtureDirectory(DIR_TYPE type) {
+        return impl.getFixtureDirectory(type);
+    }
+
+    public FileObject getFixtureDirectory(DIR_TYPE type, String pluginName) {
+        return impl.getFixtureDirectory(type, pluginName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName) {
+        return impl.getFixtureFile(type, fileName);
+    }
+
+    public FileObject getFixtureFile(DIR_TYPE type, String fileName, String pluginName) {
+        return impl.getFixtureFile(type, fileName, pluginName);
+    }
+
     public FileObject getWebrootDirectory(DIR_TYPE type) {
         return impl.getWebrootDirectory(type);
     }
@@ -231,6 +253,14 @@ public class CakePhpModule {
 
     public FileObject getConsoleDirectory(DIR_TYPE type, String pluginName) {
         return impl.getConsoleDirectory(type, pluginName);
+    }
+
+    public FileObject getCurrentPluginDirectory(FileObject currentFile) {
+        return impl.getCurrentPluginDirectory(currentFile);
+    }
+
+    public String getCurrentPluginName(FileObject currentFile) {
+        return impl.getCurrentPluginName(currentFile);
     }
 
     public static FileObject getCakePhpDirectory(PhpModule phpModule) {
@@ -249,6 +279,10 @@ public class CakePhpModule {
 
     public FileObject getDirectory(DIR_TYPE dirType, FILE_TYPE fileType, String pluginName) {
         return impl.getDirectory(dirType, fileType, pluginName);
+    }
+
+    public DIR_TYPE getCurrentDirectoryType(FileObject currentFile) {
+        return impl.getCurrentDirectoryType(currentFile);
     }
 
     public FileObject getFile(DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String pluginName) {
@@ -299,6 +333,14 @@ public class CakePhpModule {
         return impl.isView(fo);
     }
 
+    public boolean isElement(FileObject fo) {
+        return impl.isElement(fo);
+    }
+
+    public boolean isLayout(FileObject fo) {
+        return impl.isLayout(fo);
+    }
+
     public FileObject getView(FileObject controller, String viewName) {
         return impl.getView(controller, viewName);
     }
@@ -313,6 +355,18 @@ public class CakePhpModule {
 
     public boolean isComponent(FileObject fo) {
         return impl.isComponent(fo);
+    }
+
+    public boolean isTest(FileObject fo) {
+        return impl.isTest(fo);
+    }
+
+    public String getTestCaseClassName(FileObject fo) {
+        return impl.getTestCaseClassName(fo);
+    }
+
+    public String getTestedClassName(FileObject testCase) {
+        return impl.getTestedClassName(testCase);
     }
 
     public String getViewFolderName(String controllerFileName) {
