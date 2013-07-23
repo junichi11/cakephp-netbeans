@@ -88,6 +88,9 @@ public abstract class CakePhpCompletionProvider implements CompletionProvider {
      */
     protected PhpModule getPhpModule(JTextComponent jtc) {
         FileObject fo = NbEditorUtilities.getFileObject(jtc.getDocument());
+        if (fo == null) {
+            return null;
+        }
         return PhpModule.forFileObject(fo);
     }
 }
