@@ -50,7 +50,6 @@ import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
@@ -349,11 +348,11 @@ public abstract class CakePhpModuleImpl {
         return CakePhpModule.getCakePhpDirectory(phpModule);
     }
 
-    protected boolean isSpecifiedFile(FileObject fo, String directoryName) {
-        return fo != null
-                && fo.isData()
-                && fo.getParent().getNameExt().equals(directoryName)
-                && FileUtils.isPhpFile(fo);
+    protected boolean isSpecifiedFile(FileObject fo, FILE_TYPE fileType) {
+        if (fo == null) {
+            return false;
+        }
+        return fileType == getFileType(fo);
     }
 
     protected FileObject getFile(String pluginName, DIR_TYPE dirType, FILE_TYPE fileType, String fileName) {

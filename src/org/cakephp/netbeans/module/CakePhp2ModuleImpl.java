@@ -52,6 +52,7 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
@@ -66,7 +67,6 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     private static final Logger LOGGER = Logger.getLogger(CakePhp2ModuleImpl.class.getName());
     private static final String CONTROLLER_FILE_SUFIX = "Controller"; // NOI18N
     private static final String DIR_CONTROLLER = "Controller"; // NOI18N
-    private static final String DIR_MODEL = "Model";
     private static final String DIR_VIEW = "View"; // NOI18N
     private static final String FILE_VIEW_EXT = "ctp"; // NOI18N
     private static final String DIR_THEMED = "Themed"; // NOI18N
@@ -269,47 +269,19 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public boolean isView(FileObject fo) {
-        if (fo == null || !fo.isData() || !fo.getExt().equals(FILE_VIEW_EXT)) {
-            return false;
-        }
-        // Theme view file  View/Themed/ThemeName/Controller/View.ctp
-        if (DIR_VIEW.equals(fo.getFileObject("../../../../").getName())) { // NOI18N
-            return true;
-        }
-        File file = FileUtil.toFile(fo);
-        File parent = file.getParentFile(); // controller
-        if (parent == null) {
-            return false;
-        }
-        parent = parent.getParentFile(); // scripts
-        if (parent == null) {
-            return false;
-        }
-        return DIR_VIEW.equals(parent.getName());
+        return isSpecifiedFile(fo, FILE_TYPE.VIEW)
+                || isElement(fo)
+                || isLayout(fo);
     }
 
     @Override
     public boolean isElement(FileObject fo) {
-        if (fo == null) {
-            return false;
-        }
-        String path = fo.getPath();
-        if (path.contains("/View/Elements/")) { // NOI18N
-            return true;
-        }
-        return false;
+        return isSpecifiedFile(fo, FILE_TYPE.ELEMENT);
     }
 
     @Override
     public boolean isLayout(FileObject fo) {
-        if (fo == null) {
-            return false;
-        }
-        String path = fo.getPath();
-        if (path.contains("/View/Layouts/")) { // NOI18N
-            return true;
-        }
-        return false;
+        return isSpecifiedFile(fo, FILE_TYPE.LAYOUT);
     }
 
     @Override
@@ -332,16 +304,9 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         return null;
     }
 
-    private boolean isControllerFileName(String filename) {
-        return filename.endsWith(CONTROLLER_FILE_SUFIX);
-    }
-
     @Override
     public boolean isController(FileObject fo) {
-        return fo != null
-                && fo.isData()
-                && isControllerFileName(fo.getName())
-                && fo.getParent().getNameExt().equals(DIR_CONTROLLER);
+        return isSpecifiedFile(fo, FILE_TYPE.CONTROLLER);
     }
 
     @Override
@@ -384,22 +349,22 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public boolean isModel(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_MODEL);
+        return isSpecifiedFile(fo, FILE_TYPE.MODEL);
     }
 
     @Override
     public boolean isBehavior(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_BEHAVIOR);
+        return isSpecifiedFile(fo, FILE_TYPE.BEHAVIOR);
     }
 
     @Override
     public boolean isComponent(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_COMPONENT);
+        return isSpecifiedFile(fo, FILE_TYPE.COMPONENT);
     }
 
     @Override
     public boolean isHelper(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_HELPER);
+        return isSpecifiedFile(fo, FILE_TYPE.HELPER);
     }
 
     @Override
@@ -463,29 +428,50 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             return FILE_TYPE.NONE;
         }
         String path = currentFile.getPath();
+        String fileName = currentFile.getName();
 
         if (path.contains("/Test/Fixture/")) {
-            return FILE_TYPE.FIXTURE;
+            if (fileName.endsWith("Fixture")) {
+                return FILE_TYPE.FIXTURE;
+            }
         } else if (path.contains("/Test/Case/")) {
-            return FILE_TYPE.TESTCASE;
+            if (fileName.endsWith("Test")) {
+                return FILE_TYPE.TESTCASE;
+            }
         } else if (path.contains("/Test/")) {
             return FILE_TYPE.TEST;
         } else if (path.contains("/Controller/Component/")) {
-            return FILE_TYPE.COMPONENT;
+            if (fileName.endsWith("Component")) {
+                return FILE_TYPE.COMPONENT;
+            }
         } else if (path.contains("/Controller/")) {
-            return FILE_TYPE.CONTROLLER;
+            if (fileName.endsWith("Controller")) {
+                return FILE_TYPE.CONTROLLER;
+            }
         } else if (path.contains("/View/Helper/")) {
-            return FILE_TYPE.HELPER;
+            if (fileName.endsWith("Helper")) {
+                return FILE_TYPE.HELPER;
+            }
         } else if (path.contains("/View/Element/")) {
-            return FILE_TYPE.ELEMENT;
+            if (CakePhpUtils.isCtpFile(currentFile)) {
+                return FILE_TYPE.ELEMENT;
+            }
         } else if (path.contains("/View/Layout/")) {
-            return FILE_TYPE.LAYOUT;
+            if (CakePhpUtils.isCtpFile(currentFile)) {
+                return FILE_TYPE.LAYOUT;
+            }
         } else if (path.contains("/View/")) {
-            return FILE_TYPE.VIEW;
+            if (CakePhpUtils.isCtpFile(currentFile)) {
+                return FILE_TYPE.VIEW;
+            }
         } else if (path.contains("/Model/Behavior/")) {
-            return FILE_TYPE.BEHAVIOR;
+            if (fileName.endsWith("Behavior")) {
+                return FILE_TYPE.BEHAVIOR;
+            }
         } else if (path.contains("/Model/")) {
-            return FILE_TYPE.MODEL;
+            if (FileUtils.isPhpFile(currentFile)) {
+                return FILE_TYPE.MODEL;
+            }
         } else if (path.contains("/Config/")) {
             return FILE_TYPE.CONFIG;
         } else if (path.contains("/webroot/")) {
