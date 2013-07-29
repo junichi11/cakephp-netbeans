@@ -51,6 +51,7 @@ import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.FileUtils;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -68,7 +69,9 @@ public abstract class CakePhpModuleImpl {
     }
 
     public static String getExt(FILE_TYPE type) {
-        if (type == FILE_TYPE.VIEW) {
+        if (type == FILE_TYPE.VIEW
+                || type == FILE_TYPE.ELEMENT
+                || type == FILE_TYPE.LAYOUT) {
             return CTP_EXT;
         }
         return PHP_EXT;
@@ -297,6 +300,8 @@ public abstract class CakePhpModuleImpl {
         return DIR_TYPE.NONE;
     }
 
+    public abstract FILE_TYPE getFileType(FileObject fileObject);
+
     public abstract boolean isView(FileObject fo);
 
     public abstract boolean isElement(FileObject fo);
@@ -375,36 +380,8 @@ public abstract class CakePhpModuleImpl {
      * @return
      */
     protected FileObject getFile(String pluginName, DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String directoryName) {
-        FileObject targetDirectory = null;
-        FileObject targetFile = null;
-        switch (fileType) {
-            case VIEW:
-                targetDirectory = getViewDirectory(dirType, pluginName);
-                break;
-            case CONTROLLER:
-                targetDirectory = getControllerDirectory(dirType, pluginName);
-                break;
-            case MODEL:
-                targetDirectory = getModelDirectory(dirType, pluginName);
-                break;
-            case HELPER:
-                targetDirectory = getHelperDirectory(dirType, pluginName);
-                break;
-            case COMPONENT:
-                targetDirectory = getComponentDirectory(dirType, pluginName);
-                break;
-            case BEHAVIOR:
-                targetDirectory = getBehaviorDirectory(dirType, pluginName);
-                break;
-            case FIXTURE:
-                targetDirectory = getFixtureDirectory(dirType, pluginName);
-                break;
-            // TODO add other files
-            default:
-                throw new AssertionError();
-        }
-
-        if (targetDirectory == null || fileName == null || fileName.isEmpty()) {
+        FileObject targetDirectory = getDirectory(dirType, fileType, pluginName);
+        if (targetDirectory == null || StringUtils.isEmpty(fileName)) {
             return null;
         }
 
@@ -413,7 +390,6 @@ public abstract class CakePhpModuleImpl {
             targetPath = toViewDirectoryName(directoryName) + "/"; // NOI18N
         }
         targetPath = targetPath + getFileNameWithExt(fileType, fileName);
-        targetFile = targetDirectory.getFileObject(targetPath);
-        return targetFile;
+        return targetDirectory.getFileObject(targetPath);
     }
 }
