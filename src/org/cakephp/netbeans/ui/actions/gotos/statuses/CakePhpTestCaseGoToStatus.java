@@ -189,8 +189,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
         Set<ClassElement> classElements = getClassElements(phpModule.getSourceDirectory(), className);
         for (ClassElement classElement : classElements) {
             FileObject fileObject = classElement.getFileObject();
-            int currentOffset = getCurrentOffset(fileObject);
-            GoToItem goToItem = createGoToItem(fileObject, currentOffset);
+            GoToItem goToItem = createGoToItem(fileObject, DEFAULT_OFFSET);
             if (goToItem != null && classElement.getName().equals(className)) {
                 items.add(goToItem);
                 break;
@@ -240,8 +239,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     private void setFixtures(final List<FileObject> fixtureFiles) {
         for (FileObject fixture : fixtureFiles) {
-            int defaultOffset = getCurrentOffset(fixture);
-            fixtures.add(new GoToFixtureItem(fixture, defaultOffset));
+            fixtures.add(new GoToFixtureItem(fixture, DEFAULT_OFFSET));
         }
     }
 

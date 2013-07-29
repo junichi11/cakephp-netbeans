@@ -214,7 +214,7 @@ public class CakePhpControllerGoToStatus extends CakePhpGoToStatus {
                             if (view == null) {
                                 continue;
                             }
-                            views.add(new GoToViewItem(view, getCurrentOffset(view), themeDirectory.getName()));
+                            views.add(new GoToViewItem(view, DEFAULT_OFFSET, themeDirectory.getName()));
                         }
                     }
                 } else {
@@ -223,7 +223,7 @@ public class CakePhpControllerGoToStatus extends CakePhpGoToStatus {
                         if (themeDirectory != null) {
                             FileObject view = CakePhpUtils.getView(controller, viewName, themeDirectory);
                             if (view != null) {
-                                views.add(new GoToViewItem(view, getCurrentOffset(view), themeDirectory.getName()));
+                                views.add(new GoToViewItem(view, DEFAULT_OFFSET, themeDirectory.getName()));
                             }
                         }
                     }
@@ -235,7 +235,7 @@ public class CakePhpControllerGoToStatus extends CakePhpGoToStatus {
             if (view == null) {
                 continue;
             }
-            views.add(new GoToViewItem(view, getCurrentOffset(view)));
+            views.add(new GoToViewItem(view, DEFAULT_OFFSET));
         }
     }
 
@@ -245,19 +245,19 @@ public class CakePhpControllerGoToStatus extends CakePhpGoToStatus {
 
     private void setModels(final List<FileObject> modelFiles) {
         for (FileObject model : modelFiles) {
-            models.add(new GoToModelItem(model, getCurrentOffset(model)));
+            models.add(new GoToModelItem(model, DEFAULT_OFFSET));
         }
     }
 
     private void setComponents(final List<FileObject> componentFiles) {
         for (FileObject component : componentFiles) {
-            components.add(new GoToComponentItem(component, getCurrentOffset(component)));
+            components.add(new GoToComponentItem(component, DEFAULT_OFFSET));
         }
     }
 
     private void setHelpers(final List<FileObject> helperFiles) {
         for (FileObject helper : helperFiles) {
-            helpers.add(new GoToHelperItem(helper, getCurrentOffset(helper)));
+            helpers.add(new GoToHelperItem(helper, DEFAULT_OFFSET));
         }
     }
 

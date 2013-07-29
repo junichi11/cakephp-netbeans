@@ -115,8 +115,7 @@ public class CakePhpComponentGoToStatus extends CakePhpGoToStatus {
 
     private void setComponents(final List<FileObject> componentFiles) {
         for (FileObject component : componentFiles) {
-            int defaultOffset = getCurrentOffset(component);
-            components.add(new GoToComponentItem(component, defaultOffset));
+            components.add(new GoToComponentItem(component, DEFAULT_OFFSET));
         }
     }
 }

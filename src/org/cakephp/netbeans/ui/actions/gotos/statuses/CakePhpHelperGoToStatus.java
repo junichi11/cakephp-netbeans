@@ -118,8 +118,7 @@ public class CakePhpHelperGoToStatus extends CakePhpGoToStatus {
 
     private void setHelpers(final List<FileObject> helperFiles) {
         for (FileObject helper : helperFiles) {
-            int defaultOffset = getCurrentOffset(helper);
-            helpers.add(new GoToComponentItem(helper, defaultOffset));
+            helpers.add(new GoToComponentItem(helper, DEFAULT_OFFSET));
         }
     }
 }

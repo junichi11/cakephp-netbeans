@@ -43,7 +43,6 @@
  */
 package org.cakephp.netbeans.ui;
 
-import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Toolkit;
@@ -58,8 +57,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.netbeans.modules.csl.api.UiUtils;
+import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -167,8 +171,19 @@ public class GoToPopup extends JPanel implements FocusListener {
     private void openSelected() {
         GoToItem item = (GoToItem) jList1.getSelectedValue();
         FileObject fileObject = item.getFileObject();
-        if (fileObject != null) {
-            UiUtils.open(fileObject, item.getOffset());
+        int offset = item.getOffset();
+        if (fileObject != null && offset >= 0) {
+            if (offset == 0) {
+                try {
+                    DataObject dataObject = DataObject.find(fileObject);
+                    EditorCookie ec = dataObject.getLookup().lookup(EditorCookie.class);
+                    ec.open();
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            } else {
+                UiUtils.open(fileObject, offset);
+            }
         } else {
             Toolkit.getDefaultToolkit().beep();
         }

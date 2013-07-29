@@ -155,7 +155,7 @@ public class CakePhpFixtureGoToStatus extends CakePhpGoToStatus {
                 List<FileObject> fixtures = visitor.getFixtures();
                 for (FileObject fixture : fixtures) {
                     if (fixture == getCurrentFile()) {
-                        testCases.add(new GoToTestCaseItem(child, getCurrentOffset(child)));
+                        testCases.add(new GoToTestCaseItem(child, DEFAULT_OFFSET));
                         break;
                     }
                 }
@@ -179,7 +179,7 @@ public class CakePhpFixtureGoToStatus extends CakePhpGoToStatus {
         for (ClassElement classElement : classElements) {
             FileObject model = classElement.getFileObject();
             if (classElement.getName().equals(modelName) && CakePhpUtils.isModel(model)) {
-                models.add(new GoToModelItem(model, getCurrentOffset(model)));
+                models.add(new GoToModelItem(model, DEFAULT_OFFSET));
             }
         }
     }
