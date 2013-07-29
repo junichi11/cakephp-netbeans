@@ -288,6 +288,10 @@ public class CakePhpModule {
         return impl.getDirectoryType(currentFile);
     }
 
+    public FILE_TYPE getFileType(FileObject currentFile) {
+        return impl.getFileType(currentFile);
+    }
+
     public FileObject getFile(DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String pluginName) {
         return impl.getFile(pluginName, dirType, fileType, fileName);
     }
