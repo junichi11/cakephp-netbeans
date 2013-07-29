@@ -464,7 +464,13 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         }
         String path = currentFile.getPath();
 
-        if (path.contains("/Controller/Component/")) {
+        if (path.contains("/Test/Fixture/")) {
+            return FILE_TYPE.FIXTURE;
+        } else if (path.contains("/Test/Case/")) {
+            return FILE_TYPE.TESTCASE;
+        } else if (path.contains("/Test/")) {
+            return FILE_TYPE.TEST;
+        } else if (path.contains("/Controller/Component/")) {
             return FILE_TYPE.COMPONENT;
         } else if (path.contains("/Controller/")) {
             return FILE_TYPE.CONTROLLER;
@@ -484,12 +490,6 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             return FILE_TYPE.CONFIG;
         } else if (path.contains("/webroot/")) {
             return FILE_TYPE.WEBROOT;
-        } else if (path.contains("/Test/Fixture/")) {
-            return FILE_TYPE.FIXTURE;
-        } else if (path.contains("/Test/Case/")) {
-            return FILE_TYPE.TESTCASE;
-        } else if (path.contains("/Test/")) {
-            return FILE_TYPE.TEST;
         } else if (path.contains("/Console/")) {
             return FILE_TYPE.CONSOLE;
         }
