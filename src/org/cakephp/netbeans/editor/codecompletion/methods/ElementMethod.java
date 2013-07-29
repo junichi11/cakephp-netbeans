@@ -120,7 +120,7 @@ public class ElementMethod extends AssetMethod {
             }
 
             // get directory type
-            CakePhpModule.DIR_TYPE currentDirType = cakeModule.getCurrentDirectoryType(currentFile);
+            CakePhpModule.DIR_TYPE currentDirType = cakeModule.getDirectoryType(currentFile);
             String currentPluginName = cakeModule.getCurrentPluginName(currentFile);
             if (StringUtils.isEmpty(currentPluginName)) {
                 currentPluginName = null;

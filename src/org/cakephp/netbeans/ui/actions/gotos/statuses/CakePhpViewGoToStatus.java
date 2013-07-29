@@ -107,7 +107,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
     private void reset(PhpModule phpModule, FileObject view) {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
-            dirType = cakeModule.getCurrentDirectoryType(view);
+            dirType = cakeModule.getDirectoryType(view);
             isInElement = cakeModule.isElement(view);
             isInLayout = cakeModule.isLayout(view);
         } else {

@@ -230,7 +230,7 @@ public abstract class CakePhpModuleImpl {
     }
 
     public FileObject getCurrentPluginDirectory(FileObject currentFile) {
-        DIR_TYPE dirType = getCurrentDirectoryType(currentFile);
+        DIR_TYPE dirType = getDirectoryType(currentFile);
         FileObject pluginDirectory = getDirectory(dirType);
         if (pluginDirectory == null) {
             return null;
@@ -282,7 +282,7 @@ public abstract class CakePhpModuleImpl {
      * @param currentFile
      * @return DIR_TYPE
      */
-    public DIR_TYPE getCurrentDirectoryType(FileObject currentFile) {
+    public DIR_TYPE getDirectoryType(FileObject currentFile) {
         String path = currentFile.getPath();
         // don't change order
         List<DIR_TYPE> allDirTypes = Arrays.asList(

@@ -90,7 +90,7 @@ public class RenderMethod extends AssetMethod {
         List<String> elements = new ArrayList<String>();
 
         if (argCount == 1) {
-            CakePhpModule.DIR_TYPE dirType = cakeModule.getCurrentDirectoryType(currentFile);
+            CakePhpModule.DIR_TYPE dirType = cakeModule.getDirectoryType(currentFile);
 
             // add sub directory path
             if (!StringUtils.isEmpty(subDirectoryPath)) {
