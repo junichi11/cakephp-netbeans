@@ -49,7 +49,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.preferences.CakePreferences;
-import org.cakephp.netbeans.ui.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.cakephp.netbeans.ui.GoToPopup;
 import org.cakephp.netbeans.ui.PopupUtil;
 import org.cakephp.netbeans.ui.actions.gotos.statuses.CakePhpGoToStatus;

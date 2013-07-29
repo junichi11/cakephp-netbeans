@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.ui;
+package org.cakephp.netbeans.ui.actions.gotos.items;
 
 import org.cakephp.netbeans.CakePhp;
 import org.openide.filesystems.FileObject;

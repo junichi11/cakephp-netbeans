@@ -39,19 +39,39 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.ui;
+package org.cakephp.netbeans.ui.actions.gotos.items;
 
 import org.cakephp.netbeans.CakePhp;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
-public class GoToModelItem extends GoToDefaultItem {
+/**
+ *
+ * @author junichi11
+ */
+public class GoToViewItem extends GoToDefaultItem {
 
-    public GoToModelItem(FileObject fileObject, int offset) {
+    private String themeName;
+
+    public GoToViewItem(FileObject fileObject, int offset) {
         super(fileObject, offset);
+    }
+
+    public GoToViewItem(FileObject fileObject, int offset, String themeName) {
+        super(fileObject, offset);
+        this.themeName = themeName;
+    }
+
+    @Override
+    public String toString() {
+        if (StringUtils.isEmpty(themeName)) {
+            return super.toString();
+        }
+        return super.toString() + " [" + themeName + "]"; // NOI18N
     }
 
     @Override
     public String getIcon() {
-        return CakePhp.GOTO_MODEL_ICON;
+        return CakePhp.GOTO_VIEW_ICON;
     }
 }

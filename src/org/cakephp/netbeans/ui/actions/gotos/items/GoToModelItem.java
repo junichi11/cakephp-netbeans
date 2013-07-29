@@ -39,48 +39,19 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.ui;
+package org.cakephp.netbeans.ui.actions.gotos.items;
 
 import org.cakephp.netbeans.CakePhp;
 import org.openide.filesystems.FileObject;
 
-public class GoToDefaultItem implements GoToItem {
+public class GoToModelItem extends GoToDefaultItem {
 
-    private final FileObject fileObject;
-    private final int offset;
-
-    public GoToDefaultItem(FileObject fileObject, int offset) {
-        this.fileObject = fileObject;
-        this.offset = offset;
-    }
-
-    @Override
-    public FileObject getFileObject() {
-        return fileObject;
-    }
-
-    @Override
-    public int getOffset() {
-        return offset;
-    }
-
-    @Override
-    public String toString() {
-        FileObject parent = fileObject.getParent();
-        String nameWithExt = fileObject.getNameExt();
-        StringBuilder sb = new StringBuilder();
-        sb.append(nameWithExt.charAt(0));
-        sb.append(": "); // NOI18N
-        if (parent != null) {
-            sb.append(parent.getName());
-            sb.append("/"); // NOI18N
-        }
-        sb.append(nameWithExt);
-        return sb.toString();
+    public GoToModelItem(FileObject fileObject, int offset) {
+        super(fileObject, offset);
     }
 
     @Override
     public String getIcon() {
-        return CakePhp.CAKE_ICON_16;
+        return CakePhp.GOTO_MODEL_ICON;
     }
 }

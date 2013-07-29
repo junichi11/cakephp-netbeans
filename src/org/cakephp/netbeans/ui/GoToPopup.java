@@ -43,6 +43,7 @@
  */
 package org.cakephp.netbeans.ui;
 
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Toolkit;

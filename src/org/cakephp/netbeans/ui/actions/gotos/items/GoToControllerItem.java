@@ -39,19 +39,37 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.ui;
+package org.cakephp.netbeans.ui.actions.gotos.items;
 
 import org.cakephp.netbeans.CakePhp;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
-public class GoToHelperItem extends GoToDefaultItem {
+public class GoToControllerItem extends GoToDefaultItem {
 
-    public GoToHelperItem(FileObject fileObject, int offset) {
+    private final String methodName;
+
+    public GoToControllerItem(FileObject fileObject, int offset) {
         super(fileObject, offset);
+        methodName = "";
+    }
+
+    public GoToControllerItem(FileObject controller, int offset, String methodName) {
+        super(controller, offset);
+        this.methodName = methodName;
     }
 
     @Override
     public String getIcon() {
-        return CakePhp.GOTO_HELPER_ICON;
+        return CakePhp.GOTO_CONTROLLER_ICON;
+    }
+
+    @Override
+    public String toString() {
+        if (!StringUtils.isEmpty(methodName)) {
+            return super.toString() + " [" + methodName + "]"; // NOI18N
+        } else {
+            return super.toString();
+        }
     }
 }
