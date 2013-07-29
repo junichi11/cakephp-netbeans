@@ -141,12 +141,21 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                         sb.append("View/"); // NOI18
                         sb.append(DIR_HELPER);
                         break;
+                    case ELEMENT:
+                        sb.append("View/Element"); // NOI18
+                        break;
+                    case LAYOUT:
+                        sb.append("View/Layout"); // NOI18
+                        break;
                     case BEHAVIOR:
                         sb.append("Model/"); // NOI18
                         sb.append(DIR_BEHAVIOR);
                         break;
                     case TEST:
                         sb.append("Test"); // NOI18
+                        break;
+                    case TESTCASE:
+                        sb.append("Test/Case"); // NOI18
                         break;
                     case FIXTURE:
                         sb.append("Test/"); // NOI18
@@ -236,6 +245,8 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                     name += type.toString();
                     break;
                 case VIEW:
+                case ELEMENT:
+                case LAYOUT:
                     // change only file name if name is file path
                     int lastIndexOfSlash = name.lastIndexOf("/");
                     if (lastIndexOfSlash != -1) {
@@ -444,5 +455,45 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             }
         }
         return fo;
+    }
+
+    @Override
+    public FILE_TYPE getFileType(FileObject currentFile) {
+        if (currentFile == null) {
+            return FILE_TYPE.NONE;
+        }
+        String path = currentFile.getPath();
+
+        if (path.contains("/Controller/Component/")) {
+            return FILE_TYPE.COMPONENT;
+        } else if (path.contains("/Controller/")) {
+            return FILE_TYPE.CONTROLLER;
+        } else if (path.contains("/View/Helper/")) {
+            return FILE_TYPE.HELPER;
+        } else if (path.contains("/View/Element/")) {
+            return FILE_TYPE.ELEMENT;
+        } else if (path.contains("/View/Layout/")) {
+            return FILE_TYPE.LAYOUT;
+        } else if (path.contains("/View/")) {
+            return FILE_TYPE.VIEW;
+        } else if (path.contains("/Model/Behavior/")) {
+            return FILE_TYPE.BEHAVIOR;
+        } else if (path.contains("/Model/")) {
+            return FILE_TYPE.MODEL;
+        } else if (path.contains("/Config/")) {
+            return FILE_TYPE.CONFIG;
+        } else if (path.contains("/webroot/")) {
+            return FILE_TYPE.WEBROOT;
+        } else if (path.contains("/Test/Fixture/")) {
+            return FILE_TYPE.FIXTURE;
+        } else if (path.contains("/Test/Case/")) {
+            return FILE_TYPE.TESTCASE;
+        } else if (path.contains("/Test/")) {
+            return FILE_TYPE.TEST;
+        } else if (path.contains("/Console/")) {
+            return FILE_TYPE.CONSOLE;
+        }
+
+        return FILE_TYPE.NONE;
     }
 }

@@ -161,6 +161,9 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                     case TEST:
                         sb.append("tests"); // NOI18N
                         break;
+                    case TESTCASE:
+                        sb.append("tests/cases"); // NOI18N
+                        break;
                     case FIXTURE:
                         sb.append("tests/"); // NOI18N
                         sb.append(DIR_FIXTURES);
@@ -170,6 +173,12 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                         break;
                     case CONSOLE:
                         sb.append("console"); // NOI18N
+                        break;
+                    case ELEMENT:
+                        sb.append("views/elements"); // NOI18N
+                        break;
+                    case LAYOUT:
+                        sb.append("views/layouts"); // NOI18N
                         break;
                     case WEBROOT:
                         return null;
@@ -205,6 +214,9 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                     case TEST:
                         sb.append("tests"); // NOI18
                         break;
+                    case TESTCASE:
+                        sb.append("tests/cases"); // NOI18
+                        break;
                     case FIXTURE:
                         sb.append("tests/"); // NOI18
                         sb.append(DIR_FIXTURES);
@@ -216,6 +228,12 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                         return null;
                     case WEBROOT:
                         sb.append("webroot"); // NOI18
+                        break;
+                    case ELEMENT:
+                        sb.append("views/elements"); // NOI18N
+                        break;
+                    case LAYOUT:
+                        sb.append("views/layouts"); // NOI18N
                         break;
                     case NONE:
                         if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
@@ -519,5 +537,45 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
             }
         }
         return fo;
+    }
+
+    @Override
+    public FILE_TYPE getFileType(FileObject currentFile) {
+        if (currentFile == null) {
+            return FILE_TYPE.NONE;
+        }
+        String path = currentFile.getPath();
+
+        if (path.contains("/controllers/components/")) {
+            return FILE_TYPE.COMPONENT;
+        } else if (path.contains("/controllers/")) {
+            return FILE_TYPE.CONTROLLER;
+        } else if (path.contains("/views/helpers/")) {
+            return FILE_TYPE.HELPER;
+        } else if (path.contains("/views/elements/")) {
+            return FILE_TYPE.ELEMENT;
+        } else if (path.contains("/views/layouts/")) {
+            return FILE_TYPE.LAYOUT;
+        } else if (path.contains("/views/")) {
+            return FILE_TYPE.VIEW;
+        } else if (path.contains("/models/behaviors/")) {
+            return FILE_TYPE.BEHAVIOR;
+        } else if (path.contains("/models/")) {
+            return FILE_TYPE.MODEL;
+        } else if (path.contains("/config/")) {
+            return FILE_TYPE.CONFIG;
+        } else if (path.contains("/webroot/")) {
+            return FILE_TYPE.WEBROOT;
+        } else if (path.contains("/tests/fixtures/")) {
+            return FILE_TYPE.FIXTURE;
+        } else if (path.contains("/tests/cases/")) {
+            return FILE_TYPE.TESTCASE;
+        } else if (path.contains("/tests/")) {
+            return FILE_TYPE.TEST;
+        } else if (path.contains("")) {
+            return FILE_TYPE.CONSOLE;
+        }
+
+        return FILE_TYPE.NONE;
     }
 }
