@@ -312,9 +312,6 @@ public final class CakeScript {
             CakeCommandItem main = mainCommandsItem.get(0);
             String mainCommand = main.getCommand();
             String provider = item.getDescription();
-            if (!provider.equals("CORE") && !provider.matches("^[a-z0-9-_]+")) { // NOI18N
-                mainCommand = provider + "." + mainCommand;
-            }
             commands.add(new CakePhpCommand(phpModule,
                     mainCommand, "[" + provider + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
 
