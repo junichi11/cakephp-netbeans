@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -105,16 +106,9 @@ public class ElementMethod extends AssetMethod {
             // for CakePHP 2.1+
             if (isPlugin && cakeVersion >= 2) {
                 for (CakePhpModule.DIR_TYPE dirType : PLUGINS) {
-                    FileObject viewDirectory = cakeModule.getViewDirectory(dirType, pluginName);
-                    if (viewDirectory != null) {
-                        FileObject elementsDirectory = viewDirectory.getFileObject(getRelativePath());
-                        if (elementsDirectory != null) {
-                            for (FileObject element : elementsDirectory.getChildren()) {
-                                addElement(element, filter, elements, pluginName);
-                            }
-                        }
-                        break;
-                    }
+                    FileObject elementsDirectory = cakeModule.getDirectory(dirType, FILE_TYPE.ELEMENT, pluginName);
+                    addElements(elementsDirectory, filter, elements, pluginName);
+                    break;
                 }
                 return elements;
             }
@@ -126,16 +120,9 @@ public class ElementMethod extends AssetMethod {
                 currentPluginName = null;
             }
 
-            // get view directory
-            FileObject viewDirectory = cakeModule.getViewDirectory(currentDirType, currentPluginName);
-            if (viewDirectory != null) {
-                FileObject elementDirectory = viewDirectory.getFileObject(getRelativePath());
-                if (elementDirectory != null) {
-                    for (FileObject child : elementDirectory.getChildren()) {
-                        addElement(child, filter, elements);
-                    }
-                }
-            }
+            // get element directory
+            FileObject elementsDirectory = cakeModule.getDirectory(currentDirType, FILE_TYPE.ELEMENT, currentPluginName);
+            addElements(elementsDirectory, filter, elements);
 
             if (!subDirectoryPath.isEmpty()) {
                 return elements;
@@ -150,7 +137,7 @@ public class ElementMethod extends AssetMethod {
                         for (FileObject child : pluginDirectory.getChildren()) {
                             if (child.isFolder()) {
                                 String name = child.getNameExt();
-                                viewDirectory = cakeModule.getViewDirectory(dirType, name);
+                                FileObject viewDirectory = cakeModule.getViewDirectory(dirType, name);
                                 if (viewDirectory != null && viewDirectory.getFileObject(ELEMENTS) != null) {
                                     if (name.startsWith(filter)) {
                                         name = name + DOT;
@@ -167,22 +154,35 @@ public class ElementMethod extends AssetMethod {
     }
 
     /**
-     * Add element starting with filter value to list.
+     * Add elements starting with filter value to list.
      *
-     * @param fo FileObject for adding
+     * @param elementsDirectory FileObject for adding
      * @param filter filtering with this value
      * @param elements List for adding (add to this)
-     * @return true if add, otherwise false
+     * @param pluginName plugin name
      */
-    private boolean addElement(FileObject fo, String filter, List<String> elements) {
-        return addElement(fo, filter, elements, null);
+    private void addElements(FileObject elementsDirectory, String filter, List<String> elements, String pluginName) {
+        if (elementsDirectory != null) {
+            if (!subDirectoryPath.isEmpty()) {
+                elementsDirectory = elementsDirectory.getFileObject(subDirectoryPath);
+            }
+
+            if (elementsDirectory != null) {
+                for (FileObject child : elementsDirectory.getChildren()) {
+                    addElement(child, filter, elements, pluginName);
+                }
+            }
+        }
     }
 
-    private String getRelativePath() {
-        String subPath = ELEMENTS;
-        if (!subDirectoryPath.isEmpty()) {
-            subPath = subPath + SLASH + subDirectoryPath;
-        }
-        return subPath;
+    /**
+     * Add elements starting with filter value to list.
+     *
+     * @param elementsDirectory FileObject for adding
+     * @param filter filtering with this value
+     * @param elements List for adding (add to this)
+     */
+    private void addElements(FileObject elementsDirectory, String filter, List<String> elements) {
+        addElements(elementsDirectory, filter, elements, null);
     }
 }
