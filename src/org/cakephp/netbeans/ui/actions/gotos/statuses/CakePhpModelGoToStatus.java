@@ -54,11 +54,11 @@ import org.cakephp.netbeans.editor.visitors.CakePhpFixtureVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpModelVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpTestCaseVisitor;
 import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.ui.GoToBehaviorItem;
-import org.cakephp.netbeans.ui.GoToControllerItem;
-import org.cakephp.netbeans.ui.GoToFixtureItem;
-import org.cakephp.netbeans.ui.GoToItem;
-import org.cakephp.netbeans.ui.GoToModelItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToBehaviorItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToControllerItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToFixtureItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToModelItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.Inflector;
 import org.netbeans.modules.csl.spi.ParserResult;
@@ -185,7 +185,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         List<GoToItem> controllerItems = new ArrayList<GoToItem>(controllers.size());
         for (FileObject controller : controllers) {
             if (CakePhpUtils.isController(controller)) {
-                controllerItems.add(new GoToControllerItem(controller, getCurrentOffset(controller)));
+                controllerItems.add(new GoToControllerItem(controller, DEFAULT_OFFSET));
             }
         }
         return controllerItems;
@@ -236,19 +236,19 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
 
     private void setFixtures(final Set<FileObject> fixtureFiles) {
         for (FileObject fixture : fixtureFiles) {
-            fixtures.add(new GoToFixtureItem(fixture, getCurrentOffset(fixture)));
+            fixtures.add(new GoToFixtureItem(fixture, DEFAULT_OFFSET));
         }
     }
 
     private void setBehaviors(final List<FileObject> behaviorFiles) {
         for (FileObject behavior : behaviorFiles) {
-            behaviors.add(new GoToBehaviorItem(behavior, getCurrentOffset(behavior)));
+            behaviors.add(new GoToBehaviorItem(behavior, DEFAULT_OFFSET));
         }
     }
 
     private void setModels(final List<FileObject> modelFiles) {
         for (FileObject model : modelFiles) {
-            models.add(new GoToModelItem(model, getCurrentOffset(model)));
+            models.add(new GoToModelItem(model, DEFAULT_OFFSET));
         }
     }
 
@@ -263,7 +263,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         for (ClassElement classElement : classElements) {
             FileObject controller = classElement.getFileObject();
             if (CakePhpUtils.isController(controller)) {
-                items.add(new GoToControllerItem(controller, getCurrentOffset(controller)));
+                items.add(new GoToControllerItem(controller, DEFAULT_OFFSET));
             }
         }
         return items;

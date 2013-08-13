@@ -39,35 +39,19 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.ui;
+package org.cakephp.netbeans.ui.actions.gotos.items;
 
 import org.cakephp.netbeans.CakePhp;
 import org.openide.filesystems.FileObject;
 
-public class GoToTestCaseItem extends GoToDefaultItem {
+public class GoToBehaviorItem extends GoToDefaultItem {
 
-    private final String methodName;
-
-    public GoToTestCaseItem(FileObject fileObject, int offset) {
+    public GoToBehaviorItem(FileObject fileObject, int offset) {
         super(fileObject, offset);
-        methodName = ""; // NOI18N
-    }
-
-    public GoToTestCaseItem(FileObject testClass, int offset, String methodName) {
-        super(testClass, offset);
-        this.methodName = methodName;
     }
 
     @Override
     public String getIcon() {
-        return CakePhp.GOTO_TESTCASE_ICON;
-    }
-
-    @Override
-    public String toString() {
-        if (methodName.isEmpty()) {
-            return super.toString();
-        }
-        return super.toString() + " [" + methodName + "]"; // NOI18N
+        return CakePhp.GOTO_BEHAVIOR_ICON;
     }
 }

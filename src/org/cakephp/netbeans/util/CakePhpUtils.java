@@ -46,9 +46,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.netbeans.api.editor.EditorRegistry;
+import org.netbeans.modules.editor.NbEditorUtilities;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
@@ -382,5 +386,16 @@ public final class CakePhpUtils {
             return new String[]{name.substring(0, indexOfDot), name.substring(indexOfDot + 1)};
         }
         return new String[]{name};
+    }
+
+    public static FileObject getCurrentFileObject() {
+        JTextComponent editor = EditorRegistry.lastFocusedComponent();
+        if (editor != null) {
+            Document document = editor.getDocument();
+            if (document != null) {
+                return NbEditorUtilities.getFileObject(document);
+            }
+        }
+        return null;
     }
 }

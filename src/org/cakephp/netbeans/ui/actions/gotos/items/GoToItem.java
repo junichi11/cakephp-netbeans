@@ -39,19 +39,19 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.ui;
+package org.cakephp.netbeans.ui.actions.gotos.items;
 
-import org.cakephp.netbeans.CakePhp;
 import org.openide.filesystems.FileObject;
 
-public class GoToBehaviorItem extends GoToDefaultItem {
+/**
+ *
+ * @author junichi11
+ */
+public interface GoToItem {
 
-    public GoToBehaviorItem(FileObject fileObject, int offset) {
-        super(fileObject, offset);
-    }
+    public FileObject getFileObject();
 
-    @Override
-    public String getIcon() {
-        return CakePhp.GOTO_BEHAVIOR_ICON;
-    }
+    public int getOffset();
+
+    public String getIcon();
 }

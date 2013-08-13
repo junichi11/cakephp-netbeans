@@ -121,8 +121,8 @@ public final class CakeScript {
         }
         if (warn) {
             NotifyDescriptor.Message message = new NotifyDescriptor.Message(
-                Bundle.CakeScript_script_invalid(error),
-                NotifyDescriptor.WARNING_MESSAGE);
+                    Bundle.CakeScript_script_invalid(error),
+                    NotifyDescriptor.WARNING_MESSAGE);
             DialogDisplayer.getDefault().notify(message);
         }
         throw new InvalidPhpExecutableException(error);
@@ -154,9 +154,9 @@ public final class CakeScript {
             appParams.add(app.getPath());
         }
         createPhpExecutable(phpModule)
-            .displayName(getDisplayName(phpModule, parameters.get(0)))
-            .additionalParameters(getAllParams(parameters))
-            .run(getDescriptor(postExecution));
+                .displayName(getDisplayName(phpModule, parameters.get(0)))
+                .additionalParameters(getAllParams(parameters))
+                .run(getDescriptor(postExecution));
     }
 
     public String getHelp(PhpModule phpModule, String[] params) {
@@ -168,9 +168,9 @@ public final class CakeScript {
 
         HelpLineProcessor lineProcessor = new HelpLineProcessor();
         Future<Integer> result = createPhpExecutable(phpModule)
-            .displayName(getDisplayName(phpModule, allParams.get(0)))
-            .additionalParameters(getAllParams(allParams))
-            .run(getSilentDescriptor(), getOutProcessorFactory(lineProcessor));
+                .displayName(getDisplayName(phpModule, allParams.get(0)))
+                .additionalParameters(getAllParams(allParams))
+                .run(getSilentDescriptor(), getOutProcessorFactory(lineProcessor));
         try {
             if (result != null) {
                 result.get();
@@ -220,7 +220,7 @@ public final class CakeScript {
 
     private PhpExecutable createPhpExecutable(PhpModule phpModule) {
         return new PhpExecutable(cakePath)
-            .workDir(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)));
+                .workDir(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)));
     }
 
     private List<String> getAllParams(List<String> params) {
@@ -242,7 +242,7 @@ public final class CakeScript {
 
     private ExecutionDescriptor getDescriptor(Runnable postExecution) {
         ExecutionDescriptor executionDescriptor = PhpExecutable.DEFAULT_EXECUTION_DESCRIPTOR
-            .optionsPath(OPTIONS_SUB_PATH);
+                .optionsPath(OPTIONS_SUB_PATH);
         if (postExecution != null) {
             executionDescriptor = executionDescriptor.postExecution(postExecution);
         }
@@ -260,7 +260,7 @@ public final class CakeScript {
 
     private ExecutionDescriptor getSilentDescriptor() {
         return new ExecutionDescriptor()
-            .inputOutput(InputOutput.NULL);
+                .inputOutput(InputOutput.NULL);
     }
 
     private List<FrameworkCommand> getFrameworkCommandsInternalXml(PhpModule phpModule) {
@@ -292,7 +292,7 @@ public final class CakeScript {
         for (CakeCommandItem item : commandsItem) {
             if (!redirectToFile(phpModule, tmpFile, Arrays.asList(item.getCommand(), HELP_COMMAND, "xml"))) { // NOI18N
                 commands.add(new CakePhpCommand(phpModule,
-                    item.getCommand(), item.getDescription(), item.getDisplayName()));
+                        item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
             }
             List<CakeCommandItem> mainCommandsItem = new ArrayList<CakeCommandItem>();
@@ -301,7 +301,7 @@ public final class CakeScript {
             } catch (SAXException ex) {
                 LOGGER.log(Level.WARNING, "Xml file Error:{0}", ex.getMessage());
                 commands.add(new CakePhpCommand(phpModule,
-                    item.getCommand(), item.getDescription(), item.getDisplayName()));
+                        item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
             }
             if (mainCommandsItem.isEmpty()) {
@@ -312,11 +312,8 @@ public final class CakeScript {
             CakeCommandItem main = mainCommandsItem.get(0);
             String mainCommand = main.getCommand();
             String provider = item.getDescription();
-            if (!provider.equals("CORE") && !provider.matches("^[a-z0-9-_]+")) { // NOI18N
-                mainCommand = provider + "." + mainCommand;
-            }
             commands.add(new CakePhpCommand(phpModule,
-                mainCommand, "[" + provider + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
+                    mainCommand, "[" + provider + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
 
             // add subcommands
             List<CakeCommandItem> subcommands = main.getSubcommands();
@@ -326,7 +323,7 @@ public final class CakeScript {
             for (CakeCommandItem subcommand : subcommands) {
                 String[] command = {mainCommand, subcommand.getCommand()};
                 commands.add(new CakePhpCommand(phpModule,
-                    command, "[" + provider + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName())); // NOI18N
+                        command, "[" + provider + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName())); // NOI18N
             }
         }
         tmpFile.delete();
@@ -335,10 +332,10 @@ public final class CakeScript {
 
     private boolean redirectToFile(PhpModule phpModule, File file, List<String> commands) {
         Future<Integer> result = createPhpExecutable(phpModule)
-            .fileOutput(file, true)
-            .warnUser(false)
-            .additionalParameters(commands)
-            .run(getSilentDescriptor());
+                .fileOutput(file, true)
+                .warnUser(false)
+                .additionalParameters(commands)
+                .run(getSilentDescriptor());
         try {
             if (result == null || result.get() != 0) {
                 // error

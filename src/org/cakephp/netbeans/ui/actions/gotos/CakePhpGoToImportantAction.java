@@ -42,7 +42,7 @@
 package org.cakephp.netbeans.ui.actions.gotos;
 
 import java.util.List;
-import org.cakephp.netbeans.ui.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.cakephp.netbeans.ui.actions.gotos.statuses.CakePhpGoToStatus;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;

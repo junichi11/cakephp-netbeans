@@ -50,13 +50,13 @@ import java.util.logging.Logger;
 import org.cakephp.netbeans.editor.visitors.CakePhpTestCaseVisitor;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
-import org.cakephp.netbeans.ui.GoToBehaviorItem;
-import org.cakephp.netbeans.ui.GoToComponentItem;
-import org.cakephp.netbeans.ui.GoToControllerItem;
-import org.cakephp.netbeans.ui.GoToFixtureItem;
-import org.cakephp.netbeans.ui.GoToHelperItem;
-import org.cakephp.netbeans.ui.GoToItem;
-import org.cakephp.netbeans.ui.GoToModelItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToBehaviorItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToComponentItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToControllerItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToFixtureItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToHelperItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToModelItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.php.api.editor.EditorSupport;
@@ -189,8 +189,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
         Set<ClassElement> classElements = getClassElements(phpModule.getSourceDirectory(), className);
         for (ClassElement classElement : classElements) {
             FileObject fileObject = classElement.getFileObject();
-            int currentOffset = getCurrentOffset(fileObject);
-            GoToItem goToItem = createGoToItem(fileObject, currentOffset);
+            GoToItem goToItem = createGoToItem(fileObject, DEFAULT_OFFSET);
             if (goToItem != null && classElement.getName().equals(className)) {
                 items.add(goToItem);
                 break;
@@ -240,8 +239,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     private void setFixtures(final List<FileObject> fixtureFiles) {
         for (FileObject fixture : fixtureFiles) {
-            int defaultOffset = getCurrentOffset(fixture);
-            fixtures.add(new GoToFixtureItem(fixture, defaultOffset));
+            fixtures.add(new GoToFixtureItem(fixture, DEFAULT_OFFSET));
         }
     }
 

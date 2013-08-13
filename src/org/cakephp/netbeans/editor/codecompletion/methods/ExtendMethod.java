@@ -130,7 +130,7 @@ public class ExtendMethod extends AssetMethod {
             }
 
             // get DIR_TYPE
-            CakePhpModule.DIR_TYPE dirType = cakeModule.getCurrentDirectoryType(currentFile);
+            CakePhpModule.DIR_TYPE dirType = cakeModule.getDirectoryType(currentFile);
             FileObject viewBaseDirectory;
 
             // is plugin?

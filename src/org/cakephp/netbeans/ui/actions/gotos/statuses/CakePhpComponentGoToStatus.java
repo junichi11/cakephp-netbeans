@@ -46,8 +46,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.editor.visitors.CakePhpComponentVisitor;
-import org.cakephp.netbeans.ui.GoToComponentItem;
-import org.cakephp.netbeans.ui.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToComponentItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.editor.parser.astnodes.visitors.DefaultVisitor;
@@ -115,8 +115,7 @@ public class CakePhpComponentGoToStatus extends CakePhpGoToStatus {
 
     private void setComponents(final List<FileObject> componentFiles) {
         for (FileObject component : componentFiles) {
-            int defaultOffset = getCurrentOffset(component);
-            components.add(new GoToComponentItem(component, defaultOffset));
+            components.add(new GoToComponentItem(component, DEFAULT_OFFSET));
         }
     }
 }

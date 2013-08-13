@@ -93,12 +93,15 @@ public class CakePhpModule {
         NONE,
         MODEL,
         VIEW,
+        ELEMENT,
+        LAYOUT,
         CONTROLLER,
         BEHAVIOR,
         HELPER,
         COMPONENT,
         WEBROOT,
         TEST,
+        TESTCASE,
         FIXTURE,
         CONSOLE,
         CONFIG,;
@@ -281,8 +284,12 @@ public class CakePhpModule {
         return impl.getDirectory(dirType, fileType, pluginName);
     }
 
-    public DIR_TYPE getCurrentDirectoryType(FileObject currentFile) {
-        return impl.getCurrentDirectoryType(currentFile);
+    public DIR_TYPE getDirectoryType(FileObject currentFile) {
+        return impl.getDirectoryType(currentFile);
+    }
+
+    public FILE_TYPE getFileType(FileObject currentFile) {
+        return impl.getFileType(currentFile);
     }
 
     public FileObject getFile(DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String pluginName) {

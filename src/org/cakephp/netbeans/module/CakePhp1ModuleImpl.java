@@ -66,7 +66,6 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final Logger LOGGER = Logger.getLogger(CakePhp1ModuleImpl.class.getName());
     private static final String CONTROLLER_FILE_SUFIX = "_controller"; // NOI18N
     private static final String DIR_CONTROLLERS = "controllers"; // NOI18N
-    private static final String DIR_MODELS = "models";
     private static final String DIR_VIEWS = "views"; // NOI18N
     private static final String FILE_VIEW_EXT = "ctp"; // NOI18N
     private static final String DIR_THEMED = "themed"; // NOI18N
@@ -161,6 +160,9 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                     case TEST:
                         sb.append("tests"); // NOI18N
                         break;
+                    case TESTCASE:
+                        sb.append("tests/cases"); // NOI18N
+                        break;
                     case FIXTURE:
                         sb.append("tests/"); // NOI18N
                         sb.append(DIR_FIXTURES);
@@ -170,6 +172,12 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                         break;
                     case CONSOLE:
                         sb.append("console"); // NOI18N
+                        break;
+                    case ELEMENT:
+                        sb.append("views/elements"); // NOI18N
+                        break;
+                    case LAYOUT:
+                        sb.append("views/layouts"); // NOI18N
                         break;
                     case WEBROOT:
                         return null;
@@ -205,6 +213,9 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                     case TEST:
                         sb.append("tests"); // NOI18
                         break;
+                    case TESTCASE:
+                        sb.append("tests/cases"); // NOI18
+                        break;
                     case FIXTURE:
                         sb.append("tests/"); // NOI18
                         sb.append(DIR_FIXTURES);
@@ -216,6 +227,12 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                         return null;
                     case WEBROOT:
                         sb.append("webroot"); // NOI18
+                        break;
+                    case ELEMENT:
+                        sb.append("views/elements"); // NOI18N
+                        break;
+                    case LAYOUT:
+                        sb.append("views/layouts"); // NOI18N
                         break;
                     case NONE:
                         if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
@@ -296,47 +313,19 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public boolean isView(FileObject fo) {
-        if (fo == null || !fo.isData() || !fo.getExt().equals(FILE_VIEW_EXT)) {
-            return false;
-        }
-        // Theme view file  View/Themed/ThemeName/Controller/View.ctp
-        if (DIR_VIEWS.equals(fo.getFileObject("../../../../").getName())) { // NOI18N
-            return true;
-        }
-        File file = FileUtil.toFile(fo);
-        File parent = file.getParentFile(); // controller
-        if (parent == null) {
-            return false;
-        }
-        parent = parent.getParentFile(); // scripts
-        if (parent == null) {
-            return false;
-        }
-        return DIR_VIEWS.equals(parent.getName());
+        return isSpecifiedFile(fo, FILE_TYPE.VIEW)
+                || isElement(fo)
+                || isLayout(fo);
     }
 
     @Override
     public boolean isElement(FileObject fo) {
-        if (fo == null) {
-            return false;
-        }
-        String path = fo.getPath();
-        if (path.contains("/views/elements/")) { // NOI18N
-            return true;
-        }
-        return false;
+        return isSpecifiedFile(fo, FILE_TYPE.ELEMENT);
     }
 
     @Override
     public boolean isLayout(FileObject fo) {
-        if (fo == null) {
-            return false;
-        }
-        String path = fo.getPath();
-        if (path.contains("/views/layouts/")) { // NOI18N
-            return true;
-        }
-        return false;
+        return isSpecifiedFile(fo, FILE_TYPE.LAYOUT);
     }
 
     @Override
@@ -359,16 +348,9 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         return null;
     }
 
-    private boolean isControllerFileName(String filename) {
-        return filename.endsWith(CONTROLLER_FILE_SUFIX);
-    }
-
     @Override
     public boolean isController(FileObject fo) {
-        return fo != null
-                && fo.isData()
-                && isControllerFileName(fo.getName())
-                && fo.getParent().getNameExt().equals(DIR_CONTROLLERS);
+        return isSpecifiedFile(fo, FILE_TYPE.CONTROLLER);
     }
 
     @Override
@@ -411,22 +393,22 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public boolean isModel(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_MODELS);
+        return isSpecifiedFile(fo, FILE_TYPE.MODEL);
     }
 
     @Override
     public boolean isBehavior(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_BEHAVIORS);
+        return isSpecifiedFile(fo, FILE_TYPE.BEHAVIOR);
     }
 
     @Override
     public boolean isComponent(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_COMPONENTS);
+        return isSpecifiedFile(fo, FILE_TYPE.COMPONENT);
     }
 
     @Override
     public boolean isHelper(FileObject fo) {
-        return isSpecifiedFile(fo, DIR_HELPERS);
+        return isSpecifiedFile(fo, FILE_TYPE.HELPER);
     }
 
     @Override
@@ -519,5 +501,58 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
             }
         }
         return fo;
+    }
+
+    @Override
+    public FILE_TYPE getFileType(FileObject currentFile) {
+        if (currentFile == null) {
+            return FILE_TYPE.NONE;
+        }
+        String path = currentFile.getPath();
+        String fileName = currentFile.getName();
+
+        if (path.contains("/tests/fixtures/")) {
+            if (fileName.endsWith("fixture")) {
+                return FILE_TYPE.FIXTURE;
+            }
+        } else if (path.contains("/tests/cases/")) {
+            if (fileName.endsWith("test")) {
+                return FILE_TYPE.TESTCASE;
+            }
+        } else if (path.contains("/tests/")) {
+            return FILE_TYPE.TEST;
+        } else if (path.contains("/controllers/components/")) {
+            return FILE_TYPE.COMPONENT;
+        } else if (path.contains("/controllers/")) {
+            if (fileName.endsWith(CONTROLLER_FILE_SUFIX)) {
+                return FILE_TYPE.CONTROLLER;
+            }
+        } else if (path.contains("/views/helpers/")) {
+            return FILE_TYPE.HELPER;
+        } else if (path.contains("/views/elements/")) {
+            if (CakePhpUtils.isCtpFile(currentFile)) {
+                return FILE_TYPE.ELEMENT;
+            }
+        } else if (path.contains("/views/layouts/")) {
+            if (CakePhpUtils.isCtpFile(currentFile)) {
+                return FILE_TYPE.LAYOUT;
+            }
+        } else if (path.contains("/views/")) {
+            if (CakePhpUtils.isCtpFile(currentFile)) {
+                return FILE_TYPE.VIEW;
+            }
+        } else if (path.contains("/models/behaviors/")) {
+            return FILE_TYPE.BEHAVIOR;
+        } else if (path.contains("/models/")) {
+            return FILE_TYPE.MODEL;
+        } else if (path.contains("/config/")) {
+            return FILE_TYPE.CONFIG;
+        } else if (path.contains("/webroot/")) {
+            return FILE_TYPE.WEBROOT;
+        } else if (path.contains("")) {
+            return FILE_TYPE.CONSOLE;
+        }
+
+        return FILE_TYPE.NONE;
     }
 }

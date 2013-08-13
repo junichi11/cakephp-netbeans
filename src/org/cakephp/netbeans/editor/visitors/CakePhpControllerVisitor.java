@@ -202,6 +202,17 @@ public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
     @Override
     public Set<String> getFieldNames() {
         Set<String> fieldNames = new HashSet<String>();
+
+        // get AppController fields info.
+        String name = CakePhpUtils.toUnderscoreCase(targetFile.getName());
+        if ("app_controller".equals(name)) { // NOI18N
+            FileObject currentFileObject = CakePhpUtils.getCurrentFileObject();
+            if (currentFileObject != null && CakePhpUtils.isView(currentFileObject)) {
+                fieldNames.add(HELPERS);
+                return fieldNames;
+            }
+        }
+
         if (isController) {
             fieldNames.add(USES);
             fieldNames.add(COMPONENTS);

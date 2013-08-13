@@ -53,10 +53,10 @@ import org.cakephp.netbeans.editor.visitors.CakePhpControllerVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpViewVisitor;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.ui.GoToControllerItem;
-import org.cakephp.netbeans.ui.GoToHelperItem;
-import org.cakephp.netbeans.ui.GoToItem;
-import org.cakephp.netbeans.ui.GoToViewItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToControllerItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToHelperItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToViewItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.php.api.editor.EditorSupport;
@@ -107,7 +107,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
     private void reset(PhpModule phpModule, FileObject view) {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
-            dirType = cakeModule.getCurrentDirectoryType(view);
+            dirType = cakeModule.getDirectoryType(view);
             isInElement = cakeModule.isElement(view);
             isInLayout = cakeModule.isLayout(view);
         } else {
@@ -180,7 +180,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
             for (String elementPath : elementPaths) {
                 FileObject element = getElementFile(cakeModule, elementPath);
                 if (element != null) {
-                    elementItems.add(new GoToViewItem(element, getCurrentOffset(element)));
+                    elementItems.add(new GoToViewItem(element, DEFAULT_OFFSET));
                 }
             }
         }
@@ -198,7 +198,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
             for (String extendPath : extendPaths) {
                 FileObject extend = getExtendFile(cakeModule, extendPath);
                 if (extend != null) {
-                    extendItems.add(new GoToViewItem(extend, getCurrentOffset(extend)));
+                    extendItems.add(new GoToViewItem(extend, DEFAULT_OFFSET));
                 }
             }
         }
@@ -213,7 +213,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
 
     private void setHelpers(final List<FileObject> helperFiles) {
         for (FileObject helper : helperFiles) {
-            helperItems.add(new GoToHelperItem(helper, getCurrentOffset(helper)));
+            helperItems.add(new GoToHelperItem(helper, DEFAULT_OFFSET));
         }
     }
 
@@ -227,7 +227,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
         List<GoToItem> items = new ArrayList<GoToItem>();
         EditorSupport editorSupport = Lookup.getDefault().lookup(EditorSupport.class);
         for (PhpClass phpClass : editorSupport.getClasses(controller)) {
-            items.add(new GoToControllerItem(controller, getCurrentOffset(controller)));
+            items.add(new GoToControllerItem(controller, DEFAULT_OFFSET));
             if (CakePhpUtils.isControllerName(phpClass.getName())) {
                 for (PhpClass.Method method : phpClass.getMethods()) {
                     items.add(new GoToControllerItem(controller, method.getOffset(), method.getName()));
@@ -249,7 +249,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
         List<GoToItem> items = new ArrayList<GoToItem>();
         int actionMethodOffset = CakePhpUtils.getActionMethodOffset(controller, view);
         if (actionMethodOffset > 0) {
-            items.add(new GoToControllerItem(controller, getCurrentOffset(controller)));
+            items.add(new GoToControllerItem(controller, DEFAULT_OFFSET));
             items.add(new GoToControllerItem(controller, actionMethodOffset, view.getName()));
             return items;
         }
@@ -259,10 +259,10 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
     @Override
     public List<GoToItem> getViews() {
         if (caretPositionElement != null) {
-            return Collections.singletonList((GoToItem) new GoToViewItem(caretPositionElement, getCurrentOffset(caretPositionElement)));
+            return Collections.singletonList((GoToItem) new GoToViewItem(caretPositionElement, DEFAULT_OFFSET));
         }
         if (caretPositionExtend != null) {
-            return Collections.singletonList((GoToItem) new GoToViewItem(caretPositionExtend, getCurrentOffset(caretPositionElement)));
+            return Collections.singletonList((GoToItem) new GoToViewItem(caretPositionExtend, DEFAULT_OFFSET));
         }
 
         if (!viewItems.isEmpty()) {
@@ -297,12 +297,12 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
 
         // element
         if (caretPositionElement != null) {
-            items.add(new GoToViewItem(caretPositionElement, getCurrentOffset(caretPositionElement)));
+            items.add(new GoToViewItem(caretPositionElement, DEFAULT_OFFSET));
         }
 
         // extend
         if (caretPositionExtend != null) {
-            items.add(new GoToViewItem(caretPositionExtend, getCurrentOffset(caretPositionElement)));
+            items.add(new GoToViewItem(caretPositionExtend, DEFAULT_OFFSET));
         }
 
         // controller

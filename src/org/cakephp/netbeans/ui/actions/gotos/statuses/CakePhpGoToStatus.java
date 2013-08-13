@@ -49,24 +49,20 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
-import org.cakephp.netbeans.ui.GoToBehaviorItem;
-import org.cakephp.netbeans.ui.GoToComponentItem;
-import org.cakephp.netbeans.ui.GoToControllerItem;
-import org.cakephp.netbeans.ui.GoToDefaultItem;
-import org.cakephp.netbeans.ui.GoToFixtureItem;
-import org.cakephp.netbeans.ui.GoToHelperItem;
-import org.cakephp.netbeans.ui.GoToItem;
-import org.cakephp.netbeans.ui.GoToModelItem;
-import org.cakephp.netbeans.ui.GoToTestCaseItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToBehaviorItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToComponentItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToControllerItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToDefaultItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToFixtureItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToHelperItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToModelItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToTestCaseItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.modules.csl.spi.ParserResult;
-import org.netbeans.modules.editor.NbEditorUtilities;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
 import org.netbeans.modules.parsing.api.Source;
@@ -94,6 +90,7 @@ import org.openide.util.Lookup;
  */
 public abstract class CakePhpGoToStatus {
 
+    protected static int DEFAULT_OFFSET = 0;
     private FileObject currentFile;
     private int offset;
     private PhpModule phpModule;
@@ -295,8 +292,7 @@ public abstract class CakePhpGoToStatus {
         List<GoToItem> items = new ArrayList<GoToItem>();
         for (ClassElement classElement : classElements) {
             FileObject testClass = classElement.getFileObject();
-            int defaultOffset = getCurrentOffset(testClass);
-            items.add(new GoToTestCaseItem(testClass, defaultOffset));
+            items.add(new GoToTestCaseItem(testClass, DEFAULT_OFFSET));
             for (PhpClass phpClass : editorSupport.getClasses(testClass)) {
                 for (PhpClass.Method method : phpClass.getMethods()) {
                     if (methodName.isEmpty()) {
@@ -390,30 +386,6 @@ public abstract class CakePhpGoToStatus {
         return createGoToItems(FILE_TYPE.CONFIG);
     }
 
-    /**
-     * Get current offset for opened file. If file ie opened, get current
-     * offset. Otherwise return 0.
-     *
-     * @param target FileObject
-     * @return current offset if the file is opened, otherwise 0.
-     */
-    public int getCurrentOffset(FileObject target) {
-        List<? extends JTextComponent> componentList = EditorRegistry.componentList();
-        int currentOffset = 0;
-        for (JTextComponent editor : componentList) {
-            Document document = editor.getDocument();
-            if (document != null) {
-                // TODO confirm whether there is isOpened method.
-                FileObject fileObject = NbEditorUtilities.getFileObject(document);
-                if (fileObject == target) {
-                    currentOffset = editor.getCaretPosition();
-                    break;
-                }
-            }
-        }
-        return currentOffset;
-    }
-
     private int getAllSize() {
         return getAllSize(getControllers(),
                 getModels(),
@@ -463,42 +435,42 @@ public abstract class CakePhpGoToStatus {
             switch (fileType) {
                 case CONTROLLER:
                     if (CakePhpUtils.isController(next)) {
-                        items.add(new GoToControllerItem(next, getCurrentOffset(next)));
+                        items.add(new GoToControllerItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 case MODEL:
                     if (CakePhpUtils.isModel(next)) {
-                        items.add(new GoToModelItem(next, getCurrentOffset(next)));
+                        items.add(new GoToModelItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 case COMPONENT:
                     if (CakePhpUtils.isComponent(next)) {
-                        items.add(new GoToComponentItem(next, getCurrentOffset(next)));
+                        items.add(new GoToComponentItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 case HELPER:
                     if (CakePhpUtils.isHelper(next)) {
-                        items.add(new GoToHelperItem(next, getCurrentOffset(next)));
+                        items.add(new GoToHelperItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 case BEHAVIOR:
                     if (CakePhpUtils.isBehavior(next)) {
-                        items.add(new GoToBehaviorItem(next, getCurrentOffset(next)));
+                        items.add(new GoToBehaviorItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 case FIXTURE:
                     if (CakePhpUtils.isFixture(next)) {
-                        items.add(new GoToFixtureItem(next, getCurrentOffset(next)));
+                        items.add(new GoToFixtureItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 case TEST:
                     if (CakePhpUtils.isTest(next)) {
-                        items.add(new GoToTestCaseItem(next, getCurrentOffset(next)));
+                        items.add(new GoToTestCaseItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 case CONFIG:
                     if (!next.isFolder()) {
-                        items.add(new GoToDefaultItem(next, getCurrentOffset(next)));
+                        items.add(new GoToDefaultItem(next, DEFAULT_OFFSET));
                     }
                     break;
                 default:

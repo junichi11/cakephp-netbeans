@@ -50,9 +50,9 @@ import java.util.logging.Logger;
 import org.cakephp.netbeans.editor.visitors.CakePhpFixtureVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpTestCaseVisitor;
 import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.ui.GoToItem;
-import org.cakephp.netbeans.ui.GoToModelItem;
-import org.cakephp.netbeans.ui.GoToTestCaseItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToModelItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToTestCaseItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.Inflector;
 import org.netbeans.modules.parsing.spi.ParseException;
@@ -155,7 +155,7 @@ public class CakePhpFixtureGoToStatus extends CakePhpGoToStatus {
                 List<FileObject> fixtures = visitor.getFixtures();
                 for (FileObject fixture : fixtures) {
                     if (fixture == getCurrentFile()) {
-                        testCases.add(new GoToTestCaseItem(child, getCurrentOffset(child)));
+                        testCases.add(new GoToTestCaseItem(child, DEFAULT_OFFSET));
                         break;
                     }
                 }
@@ -179,7 +179,7 @@ public class CakePhpFixtureGoToStatus extends CakePhpGoToStatus {
         for (ClassElement classElement : classElements) {
             FileObject model = classElement.getFileObject();
             if (classElement.getName().equals(modelName) && CakePhpUtils.isModel(model)) {
-                models.add(new GoToModelItem(model, getCurrentOffset(model)));
+                models.add(new GoToModelItem(model, DEFAULT_OFFSET));
             }
         }
     }
