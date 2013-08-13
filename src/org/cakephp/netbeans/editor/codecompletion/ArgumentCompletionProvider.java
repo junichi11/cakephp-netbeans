@@ -101,7 +101,6 @@ public class ArgumentCompletionProvider extends CakePhpCompletionProvider {
         return null;
     }
 
-    //~ inner class
     static class AsyncCompletionQueryImpl extends AsyncCompletionQuery {
 
         Method method;
