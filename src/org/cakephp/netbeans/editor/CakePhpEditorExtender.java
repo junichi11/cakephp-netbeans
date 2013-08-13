@@ -106,6 +106,15 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         List<PhpBaseElement> elements;
         elements = new LinkedList<PhpBaseElement>();
 
+        // get AppController
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        FileObject appController = cakeModule.getFile(DIR_TYPE.APP, CakePhpModule.FILE_TYPE.CONTROLLER, "App", null);
+        if (appController != null) {
+            for (PhpClass phpClass : parseFields(appController)) {
+                elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
+            }
+        }
+
         for (PhpClass phpClass : parseFields(fo)) {
             if (isView || isHelper) {
                 addDefaultHelpers(phpClass, fo);
@@ -220,6 +229,15 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         if (CakePhpUtils.isComponent(fo)) {
             return getComponentPhpClass();
         } else if (CakePhpUtils.isController(fo)) {
+            // get AppController fields info.
+            String name = fo.getName();
+            name = CakePhpUtils.toUnderscoreCase(name);
+            if ("app_controller".equals(name)) { // NOI18N
+                FileObject currentFileObject = CakePhpUtils.getCurrentFileObject();
+                if (currentFileObject != null && CakePhpUtils.isView(currentFileObject)) {
+                    return getViewPhpClass();
+                }
+            }
             return getControllerPhpClass();
         } else if (CakePhpUtils.isCtpFile(fo)) {
             return getViewPhpClass();
