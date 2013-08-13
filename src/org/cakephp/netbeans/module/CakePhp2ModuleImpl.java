@@ -142,10 +142,10 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                         sb.append(DIR_HELPER);
                         break;
                     case ELEMENT:
-                        sb.append("View/Element"); // NOI18
+                        sb.append("View/Elements"); // NOI18
                         break;
                     case LAYOUT:
-                        sb.append("View/Layout"); // NOI18
+                        sb.append("View/Layouts"); // NOI18
                         break;
                     case BEHAVIOR:
                         sb.append("Model/"); // NOI18
