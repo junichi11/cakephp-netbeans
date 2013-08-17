@@ -177,7 +177,9 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             CakePhpFileUtils.chmodTmpDirectory(tmp);
         }
 
+        // set default configurations
         setIgnoreTmpDirectory(phpModule);
+        setAutoCreateViewFile(phpModule);
 
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
         FileObject config = module.getConfigFile();
@@ -426,6 +428,13 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         boolean isIgnore = CakePhpOptions.getInstance().isIgnoreTmpDirectory();
         if (!isIgnore) {
             CakePreferences.setIgnoreTmpDirectory(phpModule, isIgnore);
+        }
+    }
+
+    private void setAutoCreateViewFile(PhpModule phpModule) {
+        boolean isAutoCreate = CakePhpOptions.getInstance().isAutoCreateView();
+        if (isAutoCreate) {
+            CakePreferences.setAutoCreateView(phpModule, isAutoCreate);
         }
     }
 
