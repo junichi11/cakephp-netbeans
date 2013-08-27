@@ -60,6 +60,7 @@ public class CakePhpOptions {
     private static final String NEW_PROJECT = "new-project"; // NOI18N
     private static final String LOCAL_ZIP_FILE_PATH = "local-zip-file-path"; // NOI18N
     private static final String IGNORE_TMP = "ignore-tmp"; // NOI18N
+    private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static CakePhpOptions INSTANCE = new CakePhpOptions();
 
     private CakePhpOptions() {
@@ -120,6 +121,14 @@ public class CakePhpOptions {
 
     public void setIgnoreTmpDirectory(boolean isIgnore) {
         getPreferences().putBoolean(IGNORE_TMP, isIgnore);
+    }
+
+    public boolean isAutoCreateView() {
+        return getPreferences().getBoolean(AUTO_CREATE_VIEW, false);
+    }
+
+    public void setAutoCreateView(boolean isAuto) {
+        getPreferences().putBoolean(AUTO_CREATE_VIEW, isAuto);
     }
 
     public Preferences getPreferences() {
