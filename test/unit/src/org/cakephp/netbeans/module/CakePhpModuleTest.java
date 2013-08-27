@@ -487,7 +487,6 @@ public class CakePhpModuleTest extends NbTestCase {
         result = module.getControllerFile(DIR_TYPE.APP, "NotExist");
         assertEquals(expResult, result);
 
-
         // cake2
         //=================================================
         cakeVersion = "cake2.2";
@@ -734,7 +733,6 @@ public class CakePhpModuleTest extends NbTestCase {
         assertEquals(expResult, result);
         result = module.getModelFile(DIR_TYPE.CORE, "NotExist");
         assertEquals(expResult, result);
-
 
         // cake2
         //=================================================
@@ -983,7 +981,6 @@ public class CakePhpModuleTest extends NbTestCase {
         result = module.getComponentFile(DIR_TYPE.APP, "NotExist");
         assertEquals(expResult, result);
 
-
         // cake2
         //=================================================
         cakeVersion = "cake2.2";
@@ -1231,7 +1228,6 @@ public class CakePhpModuleTest extends NbTestCase {
         result = module.getHelperFile(DIR_TYPE.CORE, "NotExist");
         assertEquals(expResult, result);
 
-
         // cake2
         //=================================================
         cakeVersion = "cake2.2";
@@ -1478,7 +1474,6 @@ public class CakePhpModuleTest extends NbTestCase {
         assertEquals(expResult, result);
         result = module.getBehaviorFile(DIR_TYPE.APP, "NotExist");
         assertEquals(expResult, result);
-
 
         // cake2
         //=================================================
@@ -2421,6 +2416,14 @@ public class CakePhpModuleTest extends NbTestCase {
 
         @Override
         public void propertyChanged(PropertyChangeEvent pce) {
+        }
+
+        @Override
+        public void openCustomizer(String string) {
+        }
+
+        @Override
+        public void notifyPropertyChanged(PropertyChangeEvent pce) {
         }
     }
 }
