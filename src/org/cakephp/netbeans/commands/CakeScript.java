@@ -332,7 +332,7 @@ public final class CakeScript {
 
     private boolean redirectToFile(PhpModule phpModule, File file, List<String> commands) {
         Future<Integer> result = createPhpExecutable(phpModule)
-                .fileOutput(file, true)
+                .fileOutput(file, "UTF-8", true) // NOI18N
                 .warnUser(false)
                 .additionalParameters(commands)
                 .run(getSilentDescriptor());
