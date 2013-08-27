@@ -50,7 +50,7 @@ import javax.swing.text.Document;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.editor.indent.api.Reformat;
-import org.netbeans.modules.editor.lib2.search.EditorFindSupport;
+import org.netbeans.modules.editor.search.EditorFindSupport;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.awt.ActionID;
