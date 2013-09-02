@@ -57,13 +57,14 @@ import org.openide.util.NbBundle;
  */
 public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender {
 
-    private final String appName;
-    private final boolean originalAutoCreateState;
     private CakePhpCustomizerPanel component;
+    private final String appDirectoryPath;
+    private final String appName;
     private final String cakePhpDirPath;
     private final boolean isProjectDir;
-    private final boolean originalIgnoreTmpDirectory;
     private final boolean isShowPopupForOneItem;
+    private final boolean originalAutoCreateState;
+    private final boolean originalIgnoreTmpDirectory;
 
     CakePhpModuleCustomizerExtender(PhpModule phpModule) {
         appName = CakePreferences.getAppName(phpModule);
@@ -72,6 +73,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         isProjectDir = CakePreferences.useProjectDirectory(phpModule);
         originalIgnoreTmpDirectory = CakePreferences.ignoreTmpDirectory(phpModule);
         isShowPopupForOneItem = CakePreferences.isShowPopupForOneItem(phpModule);
+        appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
     }
 
     @Override
@@ -114,6 +116,8 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         boolean newAutoCreateState = getPanel().isAutoCreateView();
         String newCakePhpDirPath = getPanel().getCakePhpDirTextField();
         boolean newIgnoreTmpDirectory = getPanel().ignoreTmpDirectory();
+        String newAppDirectoryPath = getPanel().getAppDirectoryPath();
+
         if (newAutoCreateState != originalAutoCreateState) {
             CakePreferences.setAutoCreateView(phpModule, newAutoCreateState);
         }
@@ -133,6 +137,9 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         if (!newAppName.equals(appName) && !newAppName.equals("")) { // NOI18N
             CakePreferences.setAppName(phpModule, newAppName);
         }
+        if (!newAppDirectoryPath.equals(appDirectoryPath) && !newAppDirectoryPath.isEmpty()) {
+            CakePreferences.setAppDirectoryPath(phpModule, newAppDirectoryPath);
+        }
         return enumset;
     }
 
@@ -147,6 +154,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             component.setUseProjectDirectory(isProjectDir);
             component.setIgnoreTmpDirectory(originalIgnoreTmpDirectory);
             component.setShowPopupForOneItem(isShowPopupForOneItem);
+            component.setAppDirectoryPath(appDirectoryPath);
         }
         return component;
     }
