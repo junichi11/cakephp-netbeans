@@ -137,6 +137,14 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         showPopupForOneItemCheckBox.setSelected(isEnabled);
     }
 
+    public String getAppDirectoryPath() {
+        return appDirectoryTextField.getText();
+    }
+
+    public void setAppDirectoryPath(String path) {
+        appDirectoryTextField.setText(path);
+    }
+
     public void addChangeListener(ChangeListener changeListener) {
         changeSupport.addChangeListener(changeListener);
     }
@@ -173,6 +181,10 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         goToActionsLabel = new javax.swing.JLabel();
         goToActionsSeparator = new javax.swing.JSeparator();
         showPopupForOneItemCheckBox = new javax.swing.JCheckBox();
+        customDirectoryPathLabel = new javax.swing.JLabel();
+        customDirectoryPathSeparator = new javax.swing.JSeparator();
+        appDirectoryLabel = new javax.swing.JLabel();
+        appDirectoryTextField = new javax.swing.JTextField();
 
         appNameLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.appNameLabel.text")); // NOI18N
 
@@ -202,6 +214,12 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
 
         showPopupForOneItemCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.showPopupForOneItemCheckBox.text")); // NOI18N
 
+        customDirectoryPathLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.customDirectoryPathLabel.text")); // NOI18N
+
+        appDirectoryLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.appDirectoryLabel.text")); // NOI18N
+
+        appDirectoryTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.appDirectoryTextField.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -217,19 +235,28 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                         .addComponent(goToActionsLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(goToActionsSeparator))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(12, 12, 12)
-                            .addComponent(cakePhpDirLabel)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(cakePhpDirTextField))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(autoCreateViewCheckBox)
-                                .addComponent(useProjectDirectoryCheckBox)
-                                .addComponent(ignoreTmpCheckBox)
-                                .addComponent(showPopupForOneItemCheckBox))
-                            .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(customDirectoryPathLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customDirectoryPathSeparator))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(autoCreateViewCheckBox)
+                            .addComponent(useProjectDirectoryCheckBox)
+                            .addComponent(ignoreTmpCheckBox)
+                            .addComponent(showPopupForOneItemCheckBox))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(appDirectoryLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(appDirectoryTextField))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cakePhpDirLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cakePhpDirTextField)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -255,6 +282,14 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                     .addComponent(goToActionsSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(showPopupForOneItemCheckBox)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(customDirectoryPathLabel)
+                    .addComponent(customDirectoryPathSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(appDirectoryLabel)
+                    .addComponent(appDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -267,11 +302,15 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         setEnabledCakePhpDirectory();
     }//GEN-LAST:event_useProjectDirectoryCheckBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel appDirectoryLabel;
+    private javax.swing.JTextField appDirectoryTextField;
     private javax.swing.JTextField appNameField;
     private javax.swing.JLabel appNameLabel;
     private javax.swing.JCheckBox autoCreateViewCheckBox;
     private javax.swing.JLabel cakePhpDirLabel;
     private javax.swing.JTextField cakePhpDirTextField;
+    private javax.swing.JLabel customDirectoryPathLabel;
+    private javax.swing.JSeparator customDirectoryPathSeparator;
     private javax.swing.JLabel goToActionsLabel;
     private javax.swing.JSeparator goToActionsSeparator;
     private javax.swing.JCheckBox ignoreTmpCheckBox;
