@@ -110,6 +110,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
 
     public void setUseProjectDirectory(boolean isCheck) {
         useProjectDirectoryCheckBox.setSelected(isCheck);
+        setEnabledCakePhpDirectory();
     }
 
     public String getCakePhpDirTextField() {
@@ -148,6 +149,11 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         changeSupport.fireChange();
     }
 
+    public void setEnabledCakePhpDirectory() {
+        boolean selected = useProjectDirectoryCheckBox.isSelected();
+        cakePhpDirTextField.setEnabled(selected);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -180,6 +186,11 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         autoCreateViewCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.autoCreateViewCheckBox.text")); // NOI18N
 
         useProjectDirectoryCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.useProjectDirectoryCheckBox.text")); // NOI18N
+        useProjectDirectoryCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                useProjectDirectoryCheckBoxActionPerformed(evt);
+            }
+        });
 
         cakePhpDirLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.cakePhpDirLabel.text")); // NOI18N
 
@@ -203,20 +214,22 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(appNameField))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(cakePhpDirLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cakePhpDirTextField))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(goToActionsLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(goToActionsSeparator))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(autoCreateViewCheckBox)
-                            .addComponent(useProjectDirectoryCheckBox)
-                            .addComponent(ignoreTmpCheckBox)
-                            .addComponent(showPopupForOneItemCheckBox))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(12, 12, 12)
+                            .addComponent(cakePhpDirLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cakePhpDirTextField))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(autoCreateViewCheckBox)
+                                .addComponent(useProjectDirectoryCheckBox)
+                                .addComponent(ignoreTmpCheckBox)
+                                .addComponent(showPopupForOneItemCheckBox))
+                            .addGap(0, 0, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -249,6 +262,10 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
 	private void appNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appNameFieldActionPerformed
         // TODO add your handling code here:
 	}//GEN-LAST:event_appNameFieldActionPerformed
+
+    private void useProjectDirectoryCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useProjectDirectoryCheckBoxActionPerformed
+        setEnabledCakePhpDirectory();
+    }//GEN-LAST:event_useProjectDirectoryCheckBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField appNameField;
     private javax.swing.JLabel appNameLabel;
