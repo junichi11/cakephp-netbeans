@@ -152,6 +152,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         customDirectoryPathSeparator = new javax.swing.JSeparator();
         appDirectoryLabel = new javax.swing.JLabel();
         appDirectoryTextField = new javax.swing.JTextField();
+        generalLabel = new javax.swing.JLabel();
+        generalSeparator = new javax.swing.JSeparator();
 
         autoCreateViewCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.autoCreateViewCheckBox.text")); // NOI18N
 
@@ -178,6 +180,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
 
         appDirectoryTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.appDirectoryTextField.text")); // NOI18N
 
+        generalLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.generalLabel.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -187,7 +191,9 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(showPopupForOneItemCheckBox)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(autoCreateViewCheckBox)
+                            .addComponent(showPopupForOneItemCheckBox))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -200,35 +206,32 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(customDirectoryPathSeparator))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(autoCreateViewCheckBox)
-                                    .addComponent(useProjectDirectoryCheckBox)
-                                    .addComponent(ignoreTmpCheckBox))
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(generalLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(generalSeparator))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(12, 12, 12)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(useProjectDirectoryCheckBox)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(12, 12, 12)
+                                        .addComponent(cakePhpDirLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cakePhpDirTextField))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(appDirectoryLabel)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(appDirectoryTextField))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cakePhpDirLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cakePhpDirTextField)))))
+                                    .addComponent(ignoreTmpCheckBox))))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(autoCreateViewCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(useProjectDirectoryCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cakePhpDirLabel)
-                    .addComponent(cakePhpDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(generalLabel)
+                    .addComponent(generalSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ignoreTmpCheckBox)
                 .addGap(18, 18, 18)
@@ -237,6 +240,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                     .addComponent(goToActionsSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(showPopupForOneItemCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(autoCreateViewCheckBox)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(customDirectoryPathLabel)
@@ -245,6 +250,12 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(appDirectoryLabel)
                     .addComponent(appDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(useProjectDirectoryCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cakePhpDirLabel)
+                    .addComponent(cakePhpDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -260,6 +271,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
     private javax.swing.JTextField cakePhpDirTextField;
     private javax.swing.JLabel customDirectoryPathLabel;
     private javax.swing.JSeparator customDirectoryPathSeparator;
+    private javax.swing.JLabel generalLabel;
+    private javax.swing.JSeparator generalSeparator;
     private javax.swing.JLabel goToActionsLabel;
     private javax.swing.JSeparator goToActionsSeparator;
     private javax.swing.JCheckBox ignoreTmpCheckBox;
