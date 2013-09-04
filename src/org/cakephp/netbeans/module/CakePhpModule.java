@@ -410,6 +410,9 @@ public class CakePhpModule implements ChangeListener {
     }
 
     public static CakePhpModule forPhpModule(PhpModule phpModule) {
+        if (phpModule == null) {
+            phpModule = PhpModule.inferPhpModule();
+        }
         CakePhpModuleFactory factory = CakePhpModuleFactory.getInstance();
         return factory.create(phpModule);
     }
