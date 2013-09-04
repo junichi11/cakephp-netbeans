@@ -120,7 +120,8 @@ public class CakePreferences {
     }
 
     public static String getAppDirectoryPath(PhpModule phpModule) {
-        return getPreferences(phpModule).get(APP_DIRECTORY_PATH, "");
+        String appName = getAppName(phpModule);
+        return getPreferences(phpModule).get(APP_DIRECTORY_PATH, appName);
     }
 
     public static void setAppDirectoryPath(PhpModule phpModule, String path) {

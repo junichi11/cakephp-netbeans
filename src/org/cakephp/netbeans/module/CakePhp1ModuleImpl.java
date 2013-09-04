@@ -46,8 +46,11 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP;
+import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_LIB;
+import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_PLUGIN;
+import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_VENDOR;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
@@ -77,6 +80,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_HELPERS = "helpers";
     private static final String DIR_BEHAVIORS = "behaviors";
     private static final String DIR_FIXTURES = "fixtures";
+    private FileObject appDirectory;
 
     public CakePhp1ModuleImpl(PhpModule phpModule) {
         super(phpModule);
@@ -264,20 +268,12 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
             return null;
         }
         String path = ""; // NOI18N
-        String app = CakePreferences.getAppName(phpModule);
         switch (type) {
             case APP:
-                path = app;
-                break;
             case APP_LIB:
-                path = app + "/libs"; // NOI18N
-                break;
             case APP_PLUGIN:
-                path = app + "/plugins"; // NOI18N
-                break;
             case APP_VENDOR:
-                path = app + "/vendors"; // NOI18N
-                break;
+                return getAppDirectory(type);
             case CORE:
                 path = "cake"; // NOI18N
                 break;
@@ -292,6 +288,26 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         }
 
         return cakePhpDirectory.getFileObject(path);
+    }
+
+    private FileObject getAppDirectory(DIR_TYPE dirType) {
+        FileObject appDir = getAppDirectory();
+        if (appDir == null) {
+            return null;
+        }
+
+        switch (dirType) {
+            case APP:
+                return appDir;
+            case APP_LIB:
+                return appDir.getFileObject("libs"); // NOI18N
+            case APP_PLUGIN:
+                return appDir.getFileObject("plugins"); // NOI18N
+            case APP_VENDOR:
+                return appDir.getFileObject("vendors"); // NOI18N
+            default:
+                throw new AssertionError();
+        }
     }
 
     @Override
@@ -554,5 +570,9 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         }
 
         return FILE_TYPE.NONE;
+    }
+
+    @Override
+    public void refresh() {
     }
 }

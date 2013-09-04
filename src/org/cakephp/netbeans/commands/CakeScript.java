@@ -55,7 +55,6 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.input.InputProcessor;
@@ -148,7 +147,8 @@ public final class CakeScript {
     }
 
     public void runCommand(PhpModule phpModule, List<String> parameters, Runnable postExecution) {
-        if (!CakePreferences.getAppName(phpModule).equals("app")) { // NOI18N
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (!"app".equals(cakeModule.getAppName())) { // NOI18N
             FileObject app = CakePhpModule.forPhpModule(phpModule).getDirectory(CakePhpModule.DIR_TYPE.APP);
             appParams.add("-app"); // NOI18N
             appParams.add(app.getPath());
@@ -358,7 +358,11 @@ public final class CakeScript {
         // cakephp1.3+
         List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
         List<FileObject> shellDirs = new ArrayList<FileObject>();
-        String[] shells = {CORE_SHELLS_DIRECTORY, VENDORS_SHELLS_DIRECTORY, CakePreferences.getAppName(phpModule) + "/" + VENDORS_SHELLS_DIRECTORY};
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return commands;
+        }
+        String[] shells = {CORE_SHELLS_DIRECTORY, VENDORS_SHELLS_DIRECTORY, cakeModule.getAppName() + "/" + VENDORS_SHELLS_DIRECTORY};
 
         for (String shell : shells) {
             FileObject shellFileObject = CakePhpModule.getCakePhpDirectory(phpModule).getFileObject(shell);
@@ -388,7 +392,8 @@ public final class CakeScript {
 
     private String getShellsPlace(PhpModule phpModule, FileObject shellDir) {
         String place = ""; // NOI18N
-        String app = CakePreferences.getAppName(phpModule);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        String app = cakeModule.getAppName();
         FileObject source = CakePhpModule.getCakePhpDirectory(phpModule);
         if (source.getFileObject(CORE_SHELLS_DIRECTORY) == shellDir) {
             place = "CORE"; // NOI18N

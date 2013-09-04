@@ -44,10 +44,12 @@ package org.cakephp.netbeans;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.customizer.CakePhpCustomizerPanel;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.PhpModuleCustomizerExtender;
+import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 
@@ -65,6 +67,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     private final boolean isShowPopupForOneItem;
     private final boolean originalAutoCreateState;
     private final boolean originalIgnoreTmpDirectory;
+    private ChangeSupport changeSupport = new ChangeSupport(this);
 
     CakePhpModuleCustomizerExtender(PhpModule phpModule) {
         appName = CakePreferences.getAppName(phpModule);
@@ -83,10 +86,12 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 
     @Override
     public void addChangeListener(ChangeListener listener) {
+        changeSupport.addChangeListener(listener);
     }
 
     @Override
     public void removeChangeListener(ChangeListener listener) {
+        changeSupport.removeChangeListener(listener);
     }
 
     @Override
@@ -107,6 +112,10 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     @Override
     public String getErrorMessage() {
         return null;
+    }
+
+    public void fireChange() {
+        changeSupport.fireChange();
     }
 
     @Override
@@ -139,6 +148,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         }
         if (!newAppDirectoryPath.equals(appDirectoryPath) && !newAppDirectoryPath.isEmpty()) {
             CakePreferences.setAppDirectoryPath(phpModule, newAppDirectoryPath);
+            fireChange();
         }
         return enumset;
     }
