@@ -47,7 +47,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
@@ -81,6 +80,11 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
     public CakePhp2ModuleImpl(PhpModule phpModule) {
         super(phpModule);
+    }
+
+    @Override
+    public void refresh() {
+        setAppDirectory();
     }
 
     @Override
@@ -203,20 +207,12 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             return null;
         }
         String path = ""; // NOI18N
-        String app = CakePreferences.getAppName(phpModule);
         switch (type) {
             case APP:
-                path = app;
-                break;
             case APP_LIB:
-                path = app + "/Lib"; // NOI18N
-                break;
             case APP_PLUGIN:
-                path = app + "/Plugin"; // NOI18N
-                break;
             case APP_VENDOR:
-                path = app + "/Vendor"; // NOI18N
-                break;
+                return getAppDirectory(type);
             case CORE:
                 path = "lib/Cake"; // NOI18N
                 break;
@@ -231,6 +227,26 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         }
 
         return sourceDirectory.getFileObject(path);
+    }
+
+    private FileObject getAppDirectory(DIR_TYPE dirType) {
+        FileObject appDir = getAppDirectory();
+        if (appDir == null) {
+            return null;
+        }
+
+        switch (dirType) {
+            case APP:
+                return appDir;
+            case APP_LIB:
+                return appDir.getFileObject("Lib"); // NOI18N
+            case APP_PLUGIN:
+                return appDir.getFileObject("Plugin"); // NOI18N
+            case APP_VENDOR:
+                return appDir.getFileObject("Vendor"); // NOI18N
+            default:
+                throw new AssertionError();
+        }
     }
 
     @Override

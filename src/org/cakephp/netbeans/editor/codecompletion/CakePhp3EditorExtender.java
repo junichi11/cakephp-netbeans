@@ -43,7 +43,6 @@ package org.cakephp.netbeans.editor.codecompletion;
 
 import org.cakephp.netbeans.editor.CakePhpEditorExtender;
 import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -79,7 +78,9 @@ public class CakePhp3EditorExtender extends CakePhpEditorExtender {
     @Override
     public PhpClass getHelperPhpClass() {
         String className = "AppHelper"; // NOI18N
-        String fullyQualifiedName = "\\" + CakePreferences.getAppName(PhpModule.inferPhpModule()) + "\\" + className; // NOI18N
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(PhpModule.inferPhpModule());
+        String appName = cakeModule == null ? "" : cakeModule.getAppName();
+        String fullyQualifiedName = "\\" + appName + "\\" + className; // NOI18N
         return new PhpClass(className, fullyQualifiedName);
     }
 

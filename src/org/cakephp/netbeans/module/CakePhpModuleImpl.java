@@ -48,6 +48,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
@@ -57,11 +58,12 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public abstract class CakePhpModuleImpl {
+public abstract class CakePhpModuleImpl{
 
     protected PhpModule phpModule;
     protected static String PHP_EXT = "php";
     protected static String CTP_EXT = "ctp";
+    private FileObject appDirectory;
 
     public CakePhpModuleImpl(PhpModule phpModule) {
         this.phpModule = phpModule;
@@ -275,6 +277,25 @@ public abstract class CakePhpModuleImpl {
 
     public abstract FileObject getDirectory(DIR_TYPE type);
 
+    protected FileObject getAppDirectory() {
+        if (appDirectory != null) {
+            return appDirectory;
+        }
+        setAppDirectory();
+
+        return appDirectory;
+    }
+
+    protected void setAppDirectory() {
+        // custom
+        String appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
+        if (!StringUtils.isEmpty(appDirectoryPath)) {
+            appDirectory = phpModule.getProjectDirectory().getFileObject(appDirectoryPath);
+            return;
+        }
+        appDirectory = null;
+    }
+
     /**
      * Get DIR_TYPE for current file.
      *
@@ -391,4 +412,6 @@ public abstract class CakePhpModuleImpl {
         targetPath = targetPath + getFileNameWithExt(fileType, fileName);
         return targetDirectory.getFileObject(targetPath);
     }
+
+    public abstract void refresh();
 }

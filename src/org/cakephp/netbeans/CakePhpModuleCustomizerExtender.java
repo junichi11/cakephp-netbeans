@@ -48,6 +48,7 @@ import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.customizer.CakePhpCustomizerPanel;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.PhpModuleCustomizerExtender;
+import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 
@@ -57,21 +58,22 @@ import org.openide.util.NbBundle;
  */
 public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender {
 
-    private final String appName;
-    private final boolean originalAutoCreateState;
     private CakePhpCustomizerPanel component;
+    private final String appDirectoryPath;
     private final String cakePhpDirPath;
     private final boolean isProjectDir;
-    private final boolean originalIgnoreTmpDirectory;
     private final boolean isShowPopupForOneItem;
+    private final boolean originalAutoCreateState;
+    private final boolean originalIgnoreTmpDirectory;
+    private ChangeSupport changeSupport = new ChangeSupport(this);
 
     CakePhpModuleCustomizerExtender(PhpModule phpModule) {
-        appName = CakePreferences.getAppName(phpModule);
         originalAutoCreateState = CakePreferences.getAutoCreateView(phpModule);
         cakePhpDirPath = CakePreferences.getCakePhpDirPath(phpModule);
         isProjectDir = CakePreferences.useProjectDirectory(phpModule);
         originalIgnoreTmpDirectory = CakePreferences.ignoreTmpDirectory(phpModule);
         isShowPopupForOneItem = CakePreferences.isShowPopupForOneItem(phpModule);
+        appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
     }
 
     @Override
@@ -81,10 +83,12 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 
     @Override
     public void addChangeListener(ChangeListener listener) {
+        changeSupport.addChangeListener(listener);
     }
 
     @Override
     public void removeChangeListener(ChangeListener listener) {
+        changeSupport.removeChangeListener(listener);
     }
 
     @Override
@@ -107,13 +111,18 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         return null;
     }
 
+    public void fireChange() {
+        changeSupport.fireChange();
+    }
+
     @Override
     public EnumSet<Change> save(PhpModule phpModule) {
         EnumSet<Change> enumset = EnumSet.of(Change.FRAMEWORK_CHANGE);
-        String newAppName = getPanel().getAppNameField().getText();
         boolean newAutoCreateState = getPanel().isAutoCreateView();
         String newCakePhpDirPath = getPanel().getCakePhpDirTextField();
         boolean newIgnoreTmpDirectory = getPanel().ignoreTmpDirectory();
+        String newAppDirectoryPath = getPanel().getAppDirectoryPath();
+
         if (newAutoCreateState != originalAutoCreateState) {
             CakePreferences.setAutoCreateView(phpModule, newAutoCreateState);
         }
@@ -130,8 +139,9 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             CakePreferences.setIgnoreTmpDirectory(phpModule, newIgnoreTmpDirectory);
             enumset.add(Change.IGNORED_FILES_CHANGE);
         }
-        if (!newAppName.equals(appName) && !newAppName.equals("")) { // NOI18N
-            CakePreferences.setAppName(phpModule, newAppName);
+        if (!newAppDirectoryPath.equals(appDirectoryPath) && !newAppDirectoryPath.isEmpty()) {
+            CakePreferences.setAppDirectoryPath(phpModule, newAppDirectoryPath);
+            fireChange();
         }
         return enumset;
     }
@@ -140,13 +150,11 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         if (component == null) {
             component = new CakePhpCustomizerPanel();
             component.setAutoCreateView(originalAutoCreateState);
-            if (!appName.equals("")) {
-                component.setAppNameField(appName);
-            }
             component.setCakePhpDirTextField(cakePhpDirPath);
             component.setUseProjectDirectory(isProjectDir);
             component.setIgnoreTmpDirectory(originalIgnoreTmpDirectory);
             component.setShowPopupForOneItem(isShowPopupForOneItem);
+            component.setAppDirectoryPath(appDirectoryPath);
         }
         return component;
     }
