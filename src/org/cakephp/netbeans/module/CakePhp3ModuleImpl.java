@@ -61,7 +61,6 @@ import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.NONE;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.TEST;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.VIEW;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.WEBROOT;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
@@ -190,20 +189,12 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
             return null;
         }
         String path = ""; // NOI18N
-        String app = CakePreferences.getAppName(phpModule);
         switch (type) {
             case APP:
-                path = app;
-                break;
             case APP_LIB:
-                path = app + "/Lib"; // NOI18N
-                break;
             case APP_PLUGIN:
-                path = app + "/Plugin"; // NOI18N
-                break;
             case APP_VENDOR:
-                path = app + "/vendor"; // NOI18N
-                break;
+                return getAppDirectory(type);
             case CORE:
                 path = "lib/Cake"; // NOI18N
                 break;
@@ -215,6 +206,26 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
         }
 
         return sourceDirectory.getFileObject(path);
+    }
+
+    private FileObject getAppDirectory(CakePhpModule.DIR_TYPE dirType) {
+        FileObject appDir = getAppDirectory();
+        if (appDir == null) {
+            return null;
+        }
+
+        switch (dirType) {
+            case APP:
+                return appDir;
+            case APP_LIB:
+                return appDir.getFileObject("Lib"); // NOI18N
+            case APP_PLUGIN:
+                return appDir.getFileObject("Plugin"); // NOI18N
+            case APP_VENDOR:
+                return appDir.getFileObject("vendor"); // NOI18N
+            default:
+                throw new AssertionError();
+        }
     }
 
     /**
