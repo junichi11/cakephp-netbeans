@@ -106,12 +106,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         if (module == null) {
             return false;
         }
-        FileObject app = module.getDirectory(DIR_TYPE.APP);
-        if (app == null) {
-            return false;
-        }
-        FileObject cake = module.getDirectory(DIR_TYPE.CORE);
-        return cake != null && cake.isFolder();
+        return module.isInCakePhp();
     }
 
     @Override
@@ -142,7 +137,12 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public PhpModuleCustomizerExtender createPhpModuleCustomizerExtender(PhpModule phpModule) {
-        return new CakePhpModuleCustomizerExtender(phpModule);
+        CakePhpModuleCustomizerExtender customizer = new CakePhpModuleCustomizerExtender(phpModule);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null) {
+            customizer.addChangeListener(cakeModule);
+        }
+        return customizer;
     }
 
     @Override

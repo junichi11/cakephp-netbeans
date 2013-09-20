@@ -45,6 +45,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Set;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
@@ -58,7 +59,12 @@ public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {
     public CakePhpIgnoredFilesExtender(PhpModule phpModule) {
         assert phpModule != null;
         if (CakePreferences.ignoreTmpDirectory(phpModule)) {
-            appTmp = new File(FileUtil.toFile(CakePhpModule.getCakePhpDirectory(phpModule)), CakePreferences.getAppName(phpModule) + "/tmp"); // NOI18N
+            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+            if (cakeModule == null) {
+                appTmp = null;
+            } else {
+                appTmp = new File(FileUtil.toFile(cakeModule.getDirectory(DIR_TYPE.APP)), "tmp"); // NOI18N
+            }
         } else {
             appTmp = null;
         }
