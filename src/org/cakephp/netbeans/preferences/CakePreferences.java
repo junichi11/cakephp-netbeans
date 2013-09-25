@@ -74,7 +74,6 @@ public class CakePreferences {
             } else {
                 appName = DEFAULT_APP_NAME;
             }
-            setAppName(phpModule, appName);
         }
         return appName;
     }
