@@ -44,10 +44,9 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="generalSeparator" max="32767" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="useProjectDirectoryCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
                                       <Component id="cakePhpDirLabel" min="-2" max="-2" attributes="0"/>
@@ -59,7 +58,14 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="appDirectoryTextField" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="ignoreTmpCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="enabledCheckBox" min="-2" max="-2" attributes="0"/>
+                                          <Component id="useProjectDirectoryCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ignoreTmpCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                       </Group>
@@ -77,7 +83,9 @@
                   <Component id="generalLabel" min="-2" max="-2" attributes="0"/>
                   <Component id="generalSeparator" min="-2" pref="10" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="enabledCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="ignoreTmpCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
@@ -196,6 +204,13 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JSeparator" name="generalSeparator">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="enabledCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/cakephp/netbeans/ui/customizer/Bundle.properties" key="CakePhpCustomizerPanel.enabledCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

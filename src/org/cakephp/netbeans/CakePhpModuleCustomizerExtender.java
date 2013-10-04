@@ -65,6 +65,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     private final boolean isShowPopupForOneItem;
     private final boolean originalAutoCreateState;
     private final boolean originalIgnoreTmpDirectory;
+    private final boolean isEnabled;
     private ChangeSupport changeSupport = new ChangeSupport(this);
 
     CakePhpModuleCustomizerExtender(PhpModule phpModule) {
@@ -74,6 +75,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         originalIgnoreTmpDirectory = CakePreferences.ignoreTmpDirectory(phpModule);
         isShowPopupForOneItem = CakePreferences.isShowPopupForOneItem(phpModule);
         appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
+        isEnabled = CakePreferences.isEnabled(phpModule);
     }
 
     @Override
@@ -126,6 +128,9 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         if (newAutoCreateState != originalAutoCreateState) {
             CakePreferences.setAutoCreateView(phpModule, newAutoCreateState);
         }
+        if (isEnabled != getPanel().isEnabledCakePhp()) {
+            CakePreferences.setEnabled(phpModule, !isEnabled);
+        }
         if (isProjectDir != getPanel().isUseProjectDirectory()) {
             CakePreferences.setUseProjectDirectory(phpModule, !isProjectDir);
         }
@@ -155,6 +160,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             component.setIgnoreTmpDirectory(originalIgnoreTmpDirectory);
             component.setShowPopupForOneItem(isShowPopupForOneItem);
             component.setAppDirectoryPath(appDirectoryPath);
+            component.setEnabledCakePhp(isEnabled);
         }
         return component;
     }

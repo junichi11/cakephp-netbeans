@@ -65,6 +65,14 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    public boolean isEnabledCakePhp() {
+        return enabledCheckBox.isSelected();
+    }
+
+    public void setEnabledCakePhp(boolean isEnabled) {
+        enabledCheckBox.setSelected(isEnabled);
+    }
+
     public boolean isAutoCreateView() {
         return autoCreateViewCheckBox.isSelected();
     }
@@ -154,6 +162,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         appDirectoryTextField = new javax.swing.JTextField();
         generalLabel = new javax.swing.JLabel();
         generalSeparator = new javax.swing.JSeparator();
+        enabledCheckBox = new javax.swing.JCheckBox();
 
         autoCreateViewCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.autoCreateViewCheckBox.text")); // NOI18N
 
@@ -181,6 +190,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         appDirectoryTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.appDirectoryTextField.text")); // NOI18N
 
         generalLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.generalLabel.text")); // NOI18N
+
+        enabledCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.enabledCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -212,7 +223,6 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(12, 12, 12)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(useProjectDirectoryCheckBox)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(12, 12, 12)
                                         .addComponent(cakePhpDirLabel)
@@ -222,7 +232,12 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                                         .addComponent(appDirectoryLabel)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(appDirectoryTextField))
-                                    .addComponent(ignoreTmpCheckBox))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(enabledCheckBox)
+                                            .addComponent(useProjectDirectoryCheckBox)
+                                            .addComponent(ignoreTmpCheckBox))
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -232,6 +247,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(generalLabel)
                     .addComponent(generalSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(enabledCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ignoreTmpCheckBox)
                 .addGap(18, 18, 18)
@@ -271,6 +288,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
     private javax.swing.JTextField cakePhpDirTextField;
     private javax.swing.JLabel customDirectoryPathLabel;
     private javax.swing.JSeparator customDirectoryPathSeparator;
+    private javax.swing.JCheckBox enabledCheckBox;
     private javax.swing.JLabel generalLabel;
     private javax.swing.JSeparator generalSeparator;
     private javax.swing.JLabel goToActionsLabel;
