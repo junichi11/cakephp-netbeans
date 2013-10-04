@@ -400,13 +400,7 @@ public class CakePhpModule implements ChangeListener {
     }
 
     public boolean isInCakePhp() {
-        FileObject console = getDirectory(DIR_TYPE.APP, FILE_TYPE.CONSOLE, null);
-        if (console == null) {
-            return false;
-        }
-
-        FileObject cake = getDirectory(DIR_TYPE.CORE);
-        return cake != null && cake.isFolder();
+        return impl.isInCakePhp();
     }
 
     public static CakePhpModule forPhpModule(PhpModule phpModule) {

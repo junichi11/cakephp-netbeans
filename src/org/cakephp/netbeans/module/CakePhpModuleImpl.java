@@ -58,7 +58,7 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public abstract class CakePhpModuleImpl{
+public abstract class CakePhpModuleImpl {
 
     protected PhpModule phpModule;
     protected static String PHP_EXT = "php";
@@ -287,7 +287,6 @@ public abstract class CakePhpModuleImpl{
     }
 
     protected void setAppDirectory() {
-        // custom
         String appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
         if (!StringUtils.isEmpty(appDirectoryPath)) {
             appDirectory = phpModule.getProjectDirectory().getFileObject(appDirectoryPath);
@@ -319,6 +318,8 @@ public abstract class CakePhpModuleImpl{
         }
         return DIR_TYPE.NONE;
     }
+
+    public abstract boolean isInCakePhp();
 
     public abstract FILE_TYPE getFileType(FileObject fileObject);
 
