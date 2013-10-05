@@ -192,6 +192,9 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         } else {
             createDatabaseFile(phpModule);
         }
+
+        // set enabled
+        CakePreferences.setEnabled(phpModule, Boolean.TRUE);
         Set<FileObject> files = getOpenedFiles(config, targetDirectory);
         return files;
     }

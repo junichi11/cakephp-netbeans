@@ -44,10 +44,14 @@ package org.cakephp.netbeans;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.customizer.CakePhpCustomizerPanel;
+import org.cakephp.netbeans.validator.CakePhpCustomizerValidator;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.validation.ValidationResult;
 import org.netbeans.modules.php.spi.framework.PhpModuleCustomizerExtender;
+import org.openide.filesystems.FileObject;
 import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
@@ -61,21 +65,24 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     private CakePhpCustomizerPanel component;
     private final String appDirectoryPath;
     private final String cakePhpDirPath;
-    private final boolean isProjectDir;
     private final boolean isShowPopupForOneItem;
     private final boolean originalAutoCreateState;
     private final boolean originalIgnoreTmpDirectory;
     private final boolean isEnabled;
     private ChangeSupport changeSupport = new ChangeSupport(this);
+    private String errorMessage;
+    private boolean isValid;
+    private final PhpModule phpModule;
 
     CakePhpModuleCustomizerExtender(PhpModule phpModule) {
+        this.phpModule = phpModule;
         originalAutoCreateState = CakePreferences.getAutoCreateView(phpModule);
         cakePhpDirPath = CakePreferences.getCakePhpDirPath(phpModule);
-        isProjectDir = CakePreferences.useProjectDirectory(phpModule);
         originalIgnoreTmpDirectory = CakePreferences.ignoreTmpDirectory(phpModule);
         isShowPopupForOneItem = CakePreferences.isShowPopupForOneItem(phpModule);
         appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
-        isEnabled = CakePreferences.isEnabled(phpModule);
+        Boolean enabled = CakePreferences.isEnabled(phpModule);
+        isEnabled = enabled == null ? false : enabled;
     }
 
     @Override
@@ -85,12 +92,18 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 
     @Override
     public void addChangeListener(ChangeListener listener) {
-        changeSupport.addChangeListener(listener);
+        if (listener instanceof CakePhpModule) {
+            changeSupport.addChangeListener(listener);
+        }
+        getPanel().addChangeListener(listener);
     }
 
     @Override
     public void removeChangeListener(ChangeListener listener) {
-        changeSupport.removeChangeListener(listener);
+        if (listener instanceof CakePhpModule) {
+            changeSupport.removeChangeListener(listener);
+        }
+        getPanel().removeChangeListener(listener);
     }
 
     @Override
@@ -105,15 +118,17 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
 
     @Override
     public boolean isValid() {
-        return true;
+        validate();
+        return isValid;
     }
 
     @Override
     public String getErrorMessage() {
-        return null;
+        validate();
+        return errorMessage;
     }
 
-    public void fireChange() {
+    void fireChange() {
         changeSupport.fireChange();
     }
 
@@ -121,7 +136,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     public EnumSet<Change> save(PhpModule phpModule) {
         EnumSet<Change> enumset = EnumSet.of(Change.FRAMEWORK_CHANGE);
         boolean newAutoCreateState = getPanel().isAutoCreateView();
-        String newCakePhpDirPath = getPanel().getCakePhpDirTextField();
+        String newCakePhpDirPath = getPanel().getCakePhpDirPath();
         boolean newIgnoreTmpDirectory = getPanel().ignoreTmpDirectory();
         String newAppDirectoryPath = getPanel().getAppDirectoryPath();
 
@@ -130,9 +145,6 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         }
         if (isEnabled != getPanel().isEnabledCakePhp()) {
             CakePreferences.setEnabled(phpModule, !isEnabled);
-        }
-        if (isProjectDir != getPanel().isUseProjectDirectory()) {
-            CakePreferences.setUseProjectDirectory(phpModule, !isProjectDir);
         }
         if (isShowPopupForOneItem != getPanel().isShowPopupForOneItem()) {
             CakePreferences.setShowPopupForOneItem(phpModule, !isShowPopupForOneItem);
@@ -155,13 +167,45 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         if (component == null) {
             component = new CakePhpCustomizerPanel();
             component.setAutoCreateView(originalAutoCreateState);
-            component.setCakePhpDirTextField(cakePhpDirPath);
-            component.setUseProjectDirectory(isProjectDir);
+            component.setCakePhpDirPath(cakePhpDirPath);
             component.setIgnoreTmpDirectory(originalIgnoreTmpDirectory);
             component.setShowPopupForOneItem(isShowPopupForOneItem);
             component.setAppDirectoryPath(appDirectoryPath);
             component.setEnabledCakePhp(isEnabled);
         }
         return component;
+    }
+
+    @NbBundle.Messages("CakePhpModuleCustomizerExtender.error.source.invalid=Can't find source directory. Project might be broken.")
+    void validate() {
+        CakePhpCustomizerPanel panel = getPanel();
+        if (!panel.isEnabledCakePhp()) {
+            isValid = true;
+            errorMessage = null;
+            return;
+        }
+
+        // get source directory
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory == null) {
+            // broken project
+            isValid = false;
+            errorMessage = Bundle.CakePhpModuleCustomizerExtender_error_source_invalid();
+            return;
+        }
+
+        // validate
+        CakePhpCustomizerValidator validator = new CakePhpCustomizerValidator()
+                .validateCakePhpPath(sourceDirectory, panel.getCakePhpDirPath())
+                .validateAppPath(sourceDirectory, panel.getAppDirectoryPath());
+        ValidationResult result = validator.getResult();
+        if (result.hasWarnings()) {
+            isValid = false;
+            errorMessage = result.getWarnings().get(0).getMessage();
+            return;
+        }
+        // no problem
+        isValid = true;
+        errorMessage = null;
     }
 }
