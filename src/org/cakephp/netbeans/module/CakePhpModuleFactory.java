@@ -94,15 +94,18 @@ public class CakePhpModuleFactory {
             if (impl == null) {
                 return null;
             }
+
+            // check app directory
             String appPath = CakePreferences.getAppDirectoryPath(phpModule);
-            FileObject projectDirectory = phpModule.getProjectDirectory();
-            if (projectDirectory == null) {
+            FileObject sourceDirectory = phpModule.getSourceDirectory();
+            if (sourceDirectory == null) {
                 return null;
             }
-            FileObject app = projectDirectory.getFileObject(appPath);
+            FileObject app = sourceDirectory.getFileObject(appPath);
             if (app == null) {
                 return null;
             }
+
             // create module class
             module = new CakePhpModule(phpModule, impl);
             modules.put(phpModule, module);
