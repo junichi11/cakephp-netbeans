@@ -51,6 +51,7 @@ import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.framework.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
@@ -102,11 +103,14 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public boolean isInPhpModule(PhpModule phpModule) {
-        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        if (module == null) {
-            return false;
+        Boolean enabled = CakePreferences.isEnabled(phpModule);
+        if (enabled != null) {
+            // manually
+            return enabled;
         }
-        return module.isInCakePhp();
+        // automatically
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isInCakePhp();
     }
 
     @Override
@@ -115,7 +119,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         List<File> configFiles = new LinkedList<File>();
         FileObject config = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(DIR_TYPE.APP);
         assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
-        if (config != null && config.isFolder()) {
+        if (config.isFolder()) {
             Enumeration<? extends FileObject> children = config.getChildren(true);
             while (children.hasMoreElements()) {
                 FileObject child = children.nextElement();

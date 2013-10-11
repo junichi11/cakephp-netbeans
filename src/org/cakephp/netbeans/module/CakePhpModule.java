@@ -50,6 +50,7 @@ import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileRenameEvent;
@@ -282,9 +283,15 @@ public class CakePhpModule implements ChangeListener {
     }
 
     public static FileObject getCakePhpDirectory(PhpModule phpModule) {
-        FileObject cakePhpDirectory = null;
-        if (CakePreferences.useProjectDirectory(phpModule)) {
-            cakePhpDirectory = phpModule.getProjectDirectory().getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory == null) {
+            return null;
+        }
+
+        String cakePhpDirRelativePath = CakePreferences.getCakePhpDirPath(phpModule);
+        FileObject cakePhpDirectory;
+        if (!StringUtils.isEmpty(cakePhpDirRelativePath)) {
+            cakePhpDirectory = sourceDirectory.getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
         } else {
             cakePhpDirectory = phpModule.getSourceDirectory();
         }
@@ -400,13 +407,7 @@ public class CakePhpModule implements ChangeListener {
     }
 
     public boolean isInCakePhp() {
-        FileObject console = getDirectory(DIR_TYPE.APP, FILE_TYPE.CONSOLE, null);
-        if (console == null) {
-            return false;
-        }
-
-        FileObject cake = getDirectory(DIR_TYPE.CORE);
-        return cake != null && cake.isFolder();
+        return impl.isInCakePhp();
     }
 
     public static CakePhpModule forPhpModule(PhpModule phpModule) {

@@ -17,7 +17,7 @@ This plugin provides support for CakePHP.
 
 ## About CakePHP 3.x
 
-This plugin recognizes CakePHP3. But many features might not work yet.
+Currently, This plugin doesn't recognize CakePHP3.
 
 ## WHAT WORKS
 
@@ -82,16 +82,10 @@ CakePHP 2.x
 NewProject (Ctrl + Shift + N) > PHP > PHP Application with Existing Source
 Please select your cakephp dir(e.g. /home/NetBeansProjects/myproject)
 
-### App Directory Name
+### App Directory Path
 
-Multiple app directory names support.
-
-#### Change app directory name
-
-Please set the following if you would like to different app directory name.
-
-1. Project properties > Framework > CakePHP
-2. `app Folder name` : please set your new app folder name
+You can set app directory path from source directory.  
+Project properties > Framework > CakePHP > Custom directory path > app
 
 #### Use multiple app directories
 
@@ -146,8 +140,8 @@ myproject(e.g. myapp)
 ```
 
 1. Project properties > Framework > CakePHP
-2. Check `Use the relative path to the CakePHP directory from the project directory.`
-3. `CakePHP Directory` : "../"
+2. `app` : "" (empty or ".")
+3. `CakePHP Root` : "../"
 
 Please notice that Code Completion is not available. You have to add the cakephp core path to include path.
 

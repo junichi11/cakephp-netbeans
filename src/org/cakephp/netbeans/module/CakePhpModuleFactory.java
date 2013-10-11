@@ -43,8 +43,7 @@ package org.cakephp.netbeans.module;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
@@ -95,10 +94,18 @@ public class CakePhpModuleFactory {
             if (impl == null) {
                 return null;
             }
-            FileObject console = impl.getDirectory(DIR_TYPE.APP, FILE_TYPE.CONSOLE);
-            if (console == null) {
+
+            // check app directory
+            String appPath = CakePreferences.getAppDirectoryPath(phpModule);
+            FileObject sourceDirectory = phpModule.getSourceDirectory();
+            if (sourceDirectory == null) {
                 return null;
             }
+            FileObject app = sourceDirectory.getFileObject(appPath);
+            if (app == null) {
+                return null;
+            }
+
             // create module class
             module = new CakePhpModule(phpModule, impl);
             modules.put(phpModule, module);

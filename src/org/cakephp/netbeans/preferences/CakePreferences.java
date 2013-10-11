@@ -51,6 +51,7 @@ import org.netbeans.modules.php.api.phpmodule.PhpModule;
  */
 public class CakePreferences {
 
+    private static final String ENABLED = "enabled"; // NOI18N
     private static final String APP_NAME = "app-name"; // NOI18N
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String CAKE_PHP_DIR_PATH = "cake-php-dir-path"; // NOI18N
@@ -60,6 +61,18 @@ public class CakePreferences {
     private static final String IGNORE_TMP_DIRECTORY = "ignore-tmp-directory"; // NOI18N
     private static final String SHOW_POPUP_FOR_ONE_ITEM = "show-popup-for-one-item"; // NOI18N
     private static final String APP_DIRECTORY_PATH = "app-directory-path"; // NOI18N
+
+    public static void setEnabled(PhpModule phpModule, Boolean isEnabled) {
+        getPreferences(phpModule).putBoolean(ENABLED, isEnabled);
+    }
+
+    public static Boolean isEnabled(PhpModule phpModule) {
+        String enabled = getPreferences(phpModule).get(ENABLED, null);
+        if (enabled == null) {
+            return null;
+        }
+        return Boolean.valueOf(enabled);
+    }
 
     public static void setAppName(PhpModule phpModule, String appName) {
         getPreferences(phpModule).put(APP_NAME, appName);

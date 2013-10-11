@@ -71,6 +71,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
+import org.openide.util.NbBundle;
 
 /**
  * @author juncihi11
@@ -129,45 +130,24 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         return null;
     }
 
+    @NbBundle.Messages({
+        "# {0} - name",
+        "CakePhpModuleExtender.extending.exception=This project might be broken: {0}"
+    })
     @Override
     public Set<FileObject> extend(PhpModule phpModule) throws ExtendingException {
         FileObject targetDirectory = phpModule.getSourceDirectory();
         if (targetDirectory == null) {
-            return Collections.emptySet();
+            // broken project
+            throw new ExtendingException(Bundle.CakePhpModuleExtender_extending_exception(phpModule.getName()));
         }
-        // get panel
-        NewProjectConfigurationPanel p = getPanel();
 
         // disabled components
-        Container parent = p.getParent().getParent();
-        enabledComponents(parent, false);
+        Container parent = getPanel().getParent().getParent();
+        setComponentsEnabled(parent, false);
 
-        // create cakephp files
-        if (p.getUnzipRadioButton().isSelected()) {
-            // unzip
-            Map<String, String> tagsMap = p.getTagsMap();
-            String url = tagsMap.get(p.getVersionList().getSelectedValue().toString());
-            File target = FileUtil.toFile(targetDirectory);
-            boolean deleteEmpty = false;
-            try {
-                CakePhpFileUtils.unzip(url, target, new CakeZipEntryFilter(deleteEmpty, p.getUnzipFileNameTextField()));
-            } catch (MalformedURLException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        } else if (p.useLocalFile()) {
-            // local zip file
-            String path = CakePhpOptions.getInstance().getLocalZipFilePath();
-            try {
-                FileUtils.unzip(path, FileUtil.toFile(targetDirectory), new ZipEntryFilterImpl());
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        } else {
-            // Linux Mac ... run git command
-            createProjectFromGitCommand(targetDirectory);
-        }
+        // create
+        createCakePHP(targetDirectory);
 
         setAppName(targetDirectory);
 
@@ -181,19 +161,19 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         setIgnoreTmpDirectory(phpModule);
         setAutoCreateViewFile(phpModule);
 
+        // set enabled
+        CakePreferences.setEnabled(phpModule, Boolean.TRUE);
+
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
         FileObject config = module.getConfigFile();
+
         // change security string
         changeSecurityString(config);
 
-        // create database.php
-        if (CakeVersion.getInstance(phpModule).isCakePhp(3)) {
-            createDatasourcesFile(phpModule);
-        } else {
-            createDatabaseFile(phpModule);
-        }
-        Set<FileObject> files = getOpenedFiles(config, targetDirectory);
-        return files;
+        // create database file
+        createDBFile(phpModule);
+
+        return getInitialFiles(config, targetDirectory);
     }
 
     /**
@@ -202,11 +182,11 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
      * @param parent root container
      * @param enabled enabled true, disable false
      */
-    private void enabledComponents(Container parent, boolean enabled) {
+    private void setComponentsEnabled(Container parent, boolean enabled) {
         parent.setEnabled(enabled);
         for (Component component : parent.getComponents()) {
             if (component instanceof Container) {
-                enabledComponents((Container) component, enabled);
+                setComponentsEnabled((Container) component, enabled);
             } else {
                 component.setEnabled(false);
             }
@@ -395,7 +375,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
      * @return file set if plugin can find app/Config/core.php or
      * app/webroot/index.php, otherwize return empty set.
      */
-    private Set<FileObject> getOpenedFiles(FileObject config, FileObject targetDirectory) {
+    private Set<FileObject> getInitialFiles(FileObject config, FileObject targetDirectory) {
         if (config == null) {
             return Collections.emptySet();
         }
@@ -452,6 +432,54 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
     }
 
+    private void createCakePHP(FileObject targetDirectory) {
+        // create cakephp files
+        NewProjectConfigurationPanel p = getPanel();
+        if (p.getUnzipRadioButton().isSelected()) {
+            unzipFromGitHub(p, targetDirectory);
+        } else if (p.useLocalFile()) {
+            unzipFromLocalZip(targetDirectory);
+        } else {
+            // Linux Mac ... run git command
+            createProjectFromGitCommand(targetDirectory);
+        }
+    }
+
+    private void unzipFromGitHub(NewProjectConfigurationPanel p, FileObject targetDirectory) {
+        // unzip
+        Map<String, String> tagsMap = p.getTagsMap();
+        String url = tagsMap.get(p.getVersionList().getSelectedValue().toString());
+        File target = FileUtil.toFile(targetDirectory);
+        boolean deleteEmpty = false;
+        try {
+            CakePhpFileUtils.unzip(url, target, new CakeZipEntryFilter(deleteEmpty, p.getUnzipFileNameTextField()));
+        } catch (MalformedURLException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private void unzipFromLocalZip(FileObject targetDirectory) {
+        // local zip file
+        String path = CakePhpOptions.getInstance().getLocalZipFilePath();
+        try {
+            FileUtils.unzip(path, FileUtil.toFile(targetDirectory), new ZipEntryFilterImpl());
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private void createDBFile(PhpModule phpModule) {
+        // create database.php
+        if (CakeVersion.getInstance(phpModule).isCakePhp(3)) {
+            createDatasourcesFile(phpModule);
+        } else {
+            createDatabaseFile(phpModule);
+        }
+    }
+
+    //~ Inner class
     private class ZipEntryFilterImpl implements FileUtils.ZipEntryFilter {
 
         private static final String CAKEPHP = "cakephp"; // NOI18N
