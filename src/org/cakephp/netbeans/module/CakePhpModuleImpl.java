@@ -51,6 +51,7 @@ import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
@@ -58,7 +59,7 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public abstract class CakePhpModuleImpl{
+public abstract class CakePhpModuleImpl {
 
     protected PhpModule phpModule;
     protected static String PHP_EXT = "php";
@@ -199,7 +200,12 @@ public abstract class CakePhpModuleImpl{
     }
 
     public FileObject getWebrootDirectory(DIR_TYPE type) {
-        return getDirectory(type, FILE_TYPE.WEBROOT);
+        PhpModuleProperties properties = phpModule.getProperties();
+        FileObject webroot = properties.getWebRoot();
+        if (webroot == phpModule.getSourceDirectory()) {
+            return getDirectory(type, FILE_TYPE.WEBROOT);
+        }
+        return webroot != null ? webroot : getDirectory(type, FILE_TYPE.WEBROOT);
     }
 
     public FileObject getWebrootDirectory(DIR_TYPE type, String pluginName) {
@@ -287,10 +293,10 @@ public abstract class CakePhpModuleImpl{
     }
 
     protected void setAppDirectory() {
-        // custom
         String appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
-        if (!StringUtils.isEmpty(appDirectoryPath)) {
-            appDirectory = phpModule.getProjectDirectory().getFileObject(appDirectoryPath);
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory != null && !StringUtils.isEmpty(appDirectoryPath)) {
+            appDirectory = sourceDirectory.getFileObject(appDirectoryPath);
             return;
         }
         appDirectory = null;
@@ -319,6 +325,8 @@ public abstract class CakePhpModuleImpl{
         }
         return DIR_TYPE.NONE;
     }
+
+    public abstract boolean isInCakePhp();
 
     public abstract FILE_TYPE getFileType(FileObject fileObject);
 

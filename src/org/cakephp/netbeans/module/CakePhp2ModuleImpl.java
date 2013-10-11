@@ -83,6 +83,17 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     }
 
     @Override
+    public boolean isInCakePhp() {
+        FileObject console = getDirectory(DIR_TYPE.APP, FILE_TYPE.CONSOLE, null);
+        if (console == null) {
+            return false;
+        }
+
+        FileObject cake = getDirectory(DIR_TYPE.CORE);
+        return cake != null && cake.isFolder();
+    }
+
+    @Override
     public void refresh() {
         setAppDirectory();
     }

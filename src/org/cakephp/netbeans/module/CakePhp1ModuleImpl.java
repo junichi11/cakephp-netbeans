@@ -80,10 +80,20 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_HELPERS = "helpers";
     private static final String DIR_BEHAVIORS = "behaviors";
     private static final String DIR_FIXTURES = "fixtures";
-    private FileObject appDirectory;
 
     public CakePhp1ModuleImpl(PhpModule phpModule) {
         super(phpModule);
+    }
+
+    @Override
+    public boolean isInCakePhp() {
+        FileObject console = getDirectory(DIR_TYPE.CORE, FILE_TYPE.CONSOLE, null);
+        if (console == null) {
+            return false;
+        }
+
+        FileObject cake = console.getFileObject("cake.php"); // NOI18N
+        return cake != null && !cake.isFolder();
     }
 
     @Override
@@ -574,5 +584,6 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public void refresh() {
+        setAppDirectory();
     }
 }
