@@ -51,6 +51,7 @@ import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
@@ -199,7 +200,12 @@ public abstract class CakePhpModuleImpl {
     }
 
     public FileObject getWebrootDirectory(DIR_TYPE type) {
-        return getDirectory(type, FILE_TYPE.WEBROOT);
+        PhpModuleProperties properties = phpModule.getProperties();
+        FileObject webroot = properties.getWebRoot();
+        if (webroot == phpModule.getSourceDirectory()) {
+            return getDirectory(type, FILE_TYPE.WEBROOT);
+        }
+        return webroot != null ? webroot : getDirectory(type, FILE_TYPE.WEBROOT);
     }
 
     public FileObject getWebrootDirectory(DIR_TYPE type, String pluginName) {
