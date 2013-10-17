@@ -99,7 +99,14 @@ public class CakeVersion {
                     revision = -1;
                     notStable = ""; // NOI18N
                 } else {
-                    cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("lib/Cake"); // NOI18N
+                    FileObject cakePhpDirectory = CakePhpModule.getCakePhpDirectory(pm);
+                    cake = cakePhpDirectory.getFileObject("lib/Cake"); // NOI18N
+
+                    // installing with Composer
+                    if (cake == null) {
+                        cake = cakePhpDirectory.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake"); // NOI18N
+                    }
+
                     if (cake != null) {
                         FileObject app = CakePhpModule.getCakePhpDirectory(pm).getFileObject("App"); // NOI18N
                         if (app != null) {
@@ -184,11 +191,15 @@ public class CakeVersion {
         } else {
             version = root.getFileObject("lib/Cake/VERSION.txt"); // NOI18N
         }
+        // installing with Composer
+        if (version == null) {
+            version = root.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake/VERSION.txt"); // NOI18N
+        }
         if (version == null) {
             return null;
         }
         try {
-            versionNumber = "";
+            versionNumber = ""; // NOI18N
             for (String line : version.asLines("UTF-8")) { // NOI18N
                 if (!line.contains("//") && !line.equals("")) { // NOI18N
                     line = line.trim();

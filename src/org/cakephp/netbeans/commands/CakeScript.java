@@ -148,11 +148,9 @@ public final class CakeScript {
 
     public void runCommand(PhpModule phpModule, List<String> parameters, Runnable postExecution) {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        if (!"app".equals(cakeModule.getAppName())) { // NOI18N
-            FileObject app = CakePhpModule.forPhpModule(phpModule).getDirectory(CakePhpModule.DIR_TYPE.APP);
-            appParams.add("-app"); // NOI18N
-            appParams.add(app.getPath());
-        }
+        FileObject app = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
+        appParams.add("-app"); // NOI18N
+        appParams.add(app.getPath());
         createPhpExecutable(phpModule)
                 .displayName(getDisplayName(phpModule, parameters.get(0)))
                 .additionalParameters(getAllParams(parameters))

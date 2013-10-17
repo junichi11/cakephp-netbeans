@@ -74,6 +74,13 @@ public final class CakePhpCustomizerValidator {
         } else {
             script = targetDirectory.getFileObject("lib/Cake/Console/cake.php"); // NOI18N
         }
+
+        // installing with Composer
+        // cake.php Vendor/bin/cake.php | Vendor/pear-pear.cakephp.org/CakePHP/bin/cake.php
+        if (script == null) {
+            script = targetDirectory.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/bin/cake.php");
+        }
+
         if (script == null) {
             result.addWarning(new ValidationResult.Message("cake.script", Bundle.CakePhpCustomizerValidator_error_cake_script_invalid())); // NOI18N
         }
