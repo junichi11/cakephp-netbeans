@@ -225,8 +225,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             case APP_VENDOR:
                 return getAppDirectory(type);
             case CORE:
-                path = "lib/Cake"; // NOI18N
-                break;
+                return getCoreDirectory();
             case PLUGIN:
                 path = "plugins"; // NOI18N
                 break;
@@ -258,6 +257,17 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             default:
                 throw new AssertionError();
         }
+    }
+
+    private FileObject getCoreDirectory() {
+        FileObject cakePhpDirectory = getCakePhpDirectory();
+        FileObject core = cakePhpDirectory.getFileObject("lib/Cake"); // NOI18N
+        if (core != null) {
+            return core;
+        }
+
+        // installing with Composer
+        return cakePhpDirectory.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake"); // NOI18N
     }
 
     @Override
