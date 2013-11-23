@@ -56,6 +56,7 @@ import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Utilities;
 
 /**
  *
@@ -77,6 +78,9 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_HELPER = "Helper";
     private static final String DIR_BEHAVIOR = "Behavior";
     private static final String DIR_FIXTURE = "Fixture";
+
+    // XXX #66 (problem for Mac)
+    private final boolean isMac = Utilities.isMac();
 
     public CakePhp2ModuleImpl(PhpModule phpModule) {
         super(phpModule);
@@ -177,10 +181,20 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                         sb.append(DIR_FIXTURE);
                         break;
                     case CONFIG:
-                        sb.append("Config"); // NOI18
+                        // XXX #66 (Nb74 problem for Mac)
+                        if (isMac) {
+                            return getDirectoryForMac(getDirectory(type), sb.toString(), "Config"); // NOI18N
+                        } else {
+                            sb.append("Config"); // NOI18
+                        }
                         break;
                     case CONSOLE:
-                        sb.append("Console"); // NOI18
+                        // XXX #66 (Nb74 problem for Mac)
+                        if (isMac) {
+                            return getDirectoryForMac(getDirectory(type), sb.toString(), "Console"); // NOI18N
+                        } else {
+                            sb.append("Console"); // NOI18
+                        }
                         break;
                     case WEBROOT:
                         if (type == DIR_TYPE.CORE) {
@@ -268,6 +282,29 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
         // installing with Composer
         return cakePhpDirectory.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake"); // NOI18N
+    }
+
+    // XXX #66 (Nb74 problem for Mac)
+    private FileObject getDirectoryForMac(FileObject root, String subpath, String directoryName) {
+        if (root == null) {
+            return null;
+        }
+        FileObject subDirectory;
+        if (!StringUtils.isEmpty(subpath)) {
+            subDirectory = root.getFileObject(subpath);
+            if (subDirectory == null) {
+                return null;
+            }
+        } else {
+            subDirectory = root;
+        }
+
+        FileObject result = subDirectory.getFileObject(directoryName);
+        if (result == null) {
+            result = subDirectory.getFileObject(directoryName.toLowerCase());
+        }
+
+        return result;
     }
 
     @Override
