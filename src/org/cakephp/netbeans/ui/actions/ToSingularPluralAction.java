@@ -39,69 +39,77 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.codecompletion;
+package org.cakephp.netbeans.ui.actions;
 
-import org.cakephp.netbeans.editor.CakePhpEditorExtender;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.util.CakePhpUtils;
-import org.netbeans.modules.php.api.editor.PhpClass;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import org.cakephp.netbeans.util.Inflector;
+import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.openide.filesystems.FileObject;
+import org.netbeans.modules.php.api.util.StringUtils;
+import org.netbeans.modules.php.spi.framework.actions.BaseAction;
+import org.openide.util.Exceptions;
 
-public class CakePhp3EditorExtender extends CakePhpEditorExtender {
+/**
+ *
+ * @author junichi11
+ */
+public abstract class ToSingularPluralAction extends BaseAction {
 
-    public CakePhp3EditorExtender(PhpModule phpModule) {
-        super(phpModule);
-    }
+    private static final long serialVersionUID = 5109846082422483171L;
 
-    @Override
-    public PhpClass getViewPhpClass() {
-        String className = CakePhpModule.FILE_TYPE.VIEW.toString();
-        String fullyQualifiedName = "\\Cake\\View\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
-
-    @Override
-    public PhpClass getControllerPhpClass() {
-        String className = CakePhpModule.FILE_TYPE.CONTROLLER.toString();
-        String fullyQualifiedName = "\\Cake\\Controller\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
+    public abstract boolean isSingular();
 
     @Override
-    public PhpClass getComponentPhpClass() {
-        String className = CakePhpModule.FILE_TYPE.COMPONENT.toString();
-        String fullyQualifiedName = "\\Cake\\Controller\\Component\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
-
-    @Override
-    public PhpClass getHelperPhpClass() {
-        String className = "AppHelper"; // NOI18N
-        CakePhpModule cakeModule = CakePhpModule.forPhpModule(PhpModule.inferPhpModule());
-        String appName = cakeModule == null ? "" : cakeModule.getAppName();
-        String fullyQualifiedName = "\\" + appName + "\\" + className; // NOI18N
-        return new PhpClass(className, fullyQualifiedName);
-    }
-
-    @Override
-    public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
-        if (isView()) {
+    public void actionPerformed(PhpModule phpModule) {
+        JTextComponent editor = EditorRegistry.lastFocusedComponent();
+        if (editor == null) {
             return;
         }
-        super.addDefaultHelpers(phpClass, fo);
-    }
 
-    @Override
-    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
-        if (isController()) {
+        // get selected text
+        String selectedText = editor.getSelectedText();
+        if (StringUtils.isEmpty(selectedText)) {
             return;
         }
-        super.addDefaultComponents(phpClass, fo);
+
+        // get start and end position
+        int selectionStart = editor.getSelectionStart();
+        int selectionEnd = editor.getSelectionEnd();
+        if (selectionEnd == 0) {
+            return;
+        }
+
+        // singularize or pluralize
+        Inflector inflector = Inflector.getInstance();
+        String changedText;
+        if (isSingular()) {
+            changedText = inflector.singularize(selectedText);
+        } else {
+            changedText = inflector.pluralize(selectedText);
+        }
+        if (selectedText.equals(changedText)) {
+            return;
+        }
+
+        Document document = editor.getDocument();
+        if (document == null) {
+            return;
+        }
+        // remove and insert
+        int removeLength = selectionEnd - selectionStart;
+        try {
+            document.remove(selectionStart, removeLength);
+            document.insertString(selectionStart, changedText, null);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     @Override
-    public String getFullyQualifiedClassName(FileObject target) {
-        return CakePhpUtils.getFullyQualifiedClassName(target);
-    }
+    protected abstract String getFullName();
+
+    @Override
+    protected abstract String getPureName();
 }

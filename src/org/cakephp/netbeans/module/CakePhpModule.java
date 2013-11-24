@@ -45,9 +45,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileRenameEvent;
@@ -56,7 +59,7 @@ import org.openide.filesystems.FileRenameEvent;
  *
  * @author junichi11
  */
-public class CakePhpModule {
+public class CakePhpModule implements ChangeListener {
 
     private PhpModule phpModule;
     private CakePhpModuleImpl impl;
@@ -74,6 +77,19 @@ public class CakePhpModule {
                 CakePreferences.setAppName(pm, changeName);
             }
         });
+    }
+
+    public String getAppName() {
+        FileObject appName = getDirectory(DIR_TYPE.APP);
+        if (appName != null) {
+            return appName.getName();
+        }
+        return null;
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        impl.refresh();
     }
 
     public enum DIR_TYPE {
@@ -267,9 +283,15 @@ public class CakePhpModule {
     }
 
     public static FileObject getCakePhpDirectory(PhpModule phpModule) {
-        FileObject cakePhpDirectory = null;
-        if (CakePreferences.useProjectDirectory(phpModule)) {
-            cakePhpDirectory = phpModule.getProjectDirectory().getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory == null) {
+            return null;
+        }
+
+        String cakePhpDirRelativePath = CakePreferences.getCakePhpDirPath(phpModule);
+        FileObject cakePhpDirectory;
+        if (!StringUtils.isEmpty(cakePhpDirRelativePath)) {
+            cakePhpDirectory = sourceDirectory.getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
         } else {
             cakePhpDirectory = phpModule.getSourceDirectory();
         }
@@ -384,7 +406,14 @@ public class CakePhpModule {
         return impl.createView(controller, phpElement);
     }
 
+    public boolean isInCakePhp() {
+        return impl.isInCakePhp();
+    }
+
     public static CakePhpModule forPhpModule(PhpModule phpModule) {
+        if (phpModule == null) {
+            phpModule = PhpModule.inferPhpModule();
+        }
         CakePhpModuleFactory factory = CakePhpModuleFactory.getInstance();
         return factory.create(phpModule);
     }

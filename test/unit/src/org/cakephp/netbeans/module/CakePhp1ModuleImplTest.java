@@ -1035,6 +1035,14 @@ public class CakePhp1ModuleImplTest extends NbTestCase {
             @Override
             public void propertyChanged(PropertyChangeEvent pce) {
             }
+
+            @Override
+            public void openCustomizer(String string) {
+            }
+
+            @Override
+            public void notifyPropertyChanged(PropertyChangeEvent pce) {
+            }
         };
         module = new CakePhp1ModuleImpl(phpModule);
     }

@@ -51,6 +51,7 @@ import org.netbeans.modules.php.api.phpmodule.PhpModule;
  */
 public class CakePreferences {
 
+    private static final String ENABLED = "enabled"; // NOI18N
     private static final String APP_NAME = "app-name"; // NOI18N
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String CAKE_PHP_DIR_PATH = "cake-php-dir-path"; // NOI18N
@@ -59,6 +60,19 @@ public class CakePreferences {
     private static final String USE_PROJECT_DIRECTORY = "use-project-directory"; // NOI18N
     private static final String IGNORE_TMP_DIRECTORY = "ignore-tmp-directory"; // NOI18N
     private static final String SHOW_POPUP_FOR_ONE_ITEM = "show-popup-for-one-item"; // NOI18N
+    private static final String APP_DIRECTORY_PATH = "app-directory-path"; // NOI18N
+
+    public static void setEnabled(PhpModule phpModule, Boolean isEnabled) {
+        getPreferences(phpModule).putBoolean(ENABLED, isEnabled);
+    }
+
+    public static Boolean isEnabled(PhpModule phpModule) {
+        String enabled = getPreferences(phpModule).get(ENABLED, null);
+        if (enabled == null) {
+            return null;
+        }
+        return Boolean.valueOf(enabled);
+    }
 
     public static void setAppName(PhpModule phpModule, String appName) {
         getPreferences(phpModule).put(APP_NAME, appName);
@@ -73,7 +87,6 @@ public class CakePreferences {
             } else {
                 appName = DEFAULT_APP_NAME;
             }
-            setAppName(phpModule, appName);
         }
         return appName;
     }
@@ -116,6 +129,15 @@ public class CakePreferences {
 
     public static boolean isShowPopupForOneItem(PhpModule phpModule) {
         return getPreferences(phpModule).getBoolean(SHOW_POPUP_FOR_ONE_ITEM, true);
+    }
+
+    public static String getAppDirectoryPath(PhpModule phpModule) {
+        String appName = getAppName(phpModule);
+        return getPreferences(phpModule).get(APP_DIRECTORY_PATH, appName);
+    }
+
+    public static void setAppDirectoryPath(PhpModule phpModule, String path) {
+        getPreferences(phpModule).put(APP_DIRECTORY_PATH, path);
     }
 
     private static Preferences getPreferences(PhpModule phpModule) {

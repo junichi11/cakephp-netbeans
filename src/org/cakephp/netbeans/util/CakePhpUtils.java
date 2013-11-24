@@ -41,7 +41,7 @@
  */
 package org.cakephp.netbeans.util;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -398,4 +398,27 @@ public final class CakePhpUtils {
         }
         return null;
     }
+
+    /**
+     * Get nbproject directory
+     *
+     * @param phpModule
+     * @return
+     */
+    public static FileObject getNbproject(PhpModule phpModule) {
+        FileObject projectDirectory = phpModule.getProjectDirectory();
+        return projectDirectory.getFileObject("nbproject"); // NOI18N
+    }
+
+    /**
+     * Get project.properties.
+     *
+     * @param phpModule
+     * @return project.properties if file exists, false otherwise
+     */
+    public static FileObject getProjectProperties(PhpModule phpModule) {
+        FileObject nbproject = getNbproject(phpModule);
+        return nbproject == null ? null : nbproject.getFileObject("project.properties"); // NOI18N
+    }
+
 }

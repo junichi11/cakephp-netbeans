@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,45 +37,45 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans;
+package org.cakephp.netbeans.ui.actions;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Set;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.preferences.CakePreferences;
-import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
-import org.openide.filesystems.FileUtil;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 
-public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {
-    // TODO: hide also another directories than "app/tmp"?
+@ActionID(
+        category = "PHP",
+        id = "org.cakephp.netbeans.ui.actions.ToPluralAction")
+@ActionRegistration(displayName = "#ToPluralAction_Name")
+@ActionReference(path = "Shortcuts", name = "D-AT P")
+@NbBundle.Messages("ToPluralAction_Name=To Plural")
+public final class ToPluralAction extends ToSingularPluralAction {
 
-    private final File appTmp;
+    private static final long serialVersionUID = 588751827401955561L;
+    private static final ToPluralAction INSTANCE = new ToPluralAction();
 
-    public CakePhpIgnoredFilesExtender(PhpModule phpModule) {
-        assert phpModule != null;
-        if (CakePreferences.ignoreTmpDirectory(phpModule)) {
-            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-            if (cakeModule == null) {
-                appTmp = null;
-            } else {
-                appTmp = new File(FileUtil.toFile(cakeModule.getDirectory(DIR_TYPE.APP)), "tmp"); // NOI18N
-            }
-        } else {
-            appTmp = null;
-        }
+    private ToPluralAction() {
+    }
 
+    public static ToPluralAction getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public Set<File> getIgnoredFiles() {
-        if (appTmp == null) {
-            return Collections.emptySet();
-        }
-        return Collections.singleton(appTmp);
+    public boolean isSingular() {
+        return false;
+    }
+
+    @Override
+    protected String getFullName() {
+        return getPureName();
+    }
+
+    @Override
+    protected String getPureName() {
+        return Bundle.ToPluralAction_Name();
     }
 }

@@ -165,7 +165,6 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
         result = module.getDirectory(DIR_TYPE.APP, null, "");
         assertNull(result);
 
-
         // APP_PLUGIN
         //=================================================
         String appPlugin = app + "/Plugin/NbtestAppPlugin";
@@ -232,7 +231,6 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
         assertNull(result);
         result = module.getDirectory(DIR_TYPE.APP_PLUGIN, FILE_TYPE.CONSOLE, null);
         assertNull(result);
-
 
         // PLUGIN
         //=================================================
@@ -362,7 +360,6 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
 
         // APP_LIB
         //=================================================
-
         result = module.getDirectory(DIR_TYPE.APP_LIB, null, null);
         path = app + "/Lib";
         fullPath = result.getPath();
@@ -1024,6 +1021,14 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
 
             @Override
             public void propertyChanged(PropertyChangeEvent pce) {
+            }
+
+            @Override
+            public void openCustomizer(String string) {
+            }
+
+            @Override
+            public void notifyPropertyChanged(PropertyChangeEvent pce) {
             }
         };
         module = new CakePhp2ModuleImpl(phpModule);

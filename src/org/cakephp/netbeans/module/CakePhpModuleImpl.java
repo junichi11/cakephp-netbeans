@@ -48,8 +48,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
@@ -62,6 +64,7 @@ public abstract class CakePhpModuleImpl {
     protected PhpModule phpModule;
     protected static String PHP_EXT = "php";
     protected static String CTP_EXT = "ctp";
+    private FileObject appDirectory;
 
     public CakePhpModuleImpl(PhpModule phpModule) {
         this.phpModule = phpModule;
@@ -197,7 +200,12 @@ public abstract class CakePhpModuleImpl {
     }
 
     public FileObject getWebrootDirectory(DIR_TYPE type) {
-        return getDirectory(type, FILE_TYPE.WEBROOT);
+        PhpModuleProperties properties = phpModule.getProperties();
+        FileObject webroot = properties.getWebRoot();
+        if (webroot == phpModule.getSourceDirectory()) {
+            return getDirectory(type, FILE_TYPE.WEBROOT);
+        }
+        return webroot != null ? webroot : getDirectory(type, FILE_TYPE.WEBROOT);
     }
 
     public FileObject getWebrootDirectory(DIR_TYPE type, String pluginName) {
@@ -275,6 +283,25 @@ public abstract class CakePhpModuleImpl {
 
     public abstract FileObject getDirectory(DIR_TYPE type);
 
+    protected FileObject getAppDirectory() {
+        if (appDirectory != null) {
+            return appDirectory;
+        }
+        setAppDirectory();
+
+        return appDirectory;
+    }
+
+    protected void setAppDirectory() {
+        String appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory != null && !StringUtils.isEmpty(appDirectoryPath)) {
+            appDirectory = sourceDirectory.getFileObject(appDirectoryPath);
+            return;
+        }
+        appDirectory = null;
+    }
+
     /**
      * Get DIR_TYPE for current file.
      *
@@ -298,6 +325,8 @@ public abstract class CakePhpModuleImpl {
         }
         return DIR_TYPE.NONE;
     }
+
+    public abstract boolean isInCakePhp();
 
     public abstract FILE_TYPE getFileType(FileObject fileObject);
 
@@ -391,4 +420,6 @@ public abstract class CakePhpModuleImpl {
         targetPath = targetPath + getFileNameWithExt(fileType, fileName);
         return targetDirectory.getFileObject(targetPath);
     }
+
+    public abstract void refresh();
 }

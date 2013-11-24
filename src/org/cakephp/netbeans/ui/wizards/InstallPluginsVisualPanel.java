@@ -49,9 +49,9 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.options.CakePhpPlugin;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.util.NbBundle;
@@ -67,7 +67,11 @@ public final class InstallPluginsVisualPanel extends JPanel {
     public InstallPluginsVisualPanel(PhpModule pm) {
         model.setPlugins(CakePhpOptions.getInstance().getPlugins());
         initComponents();
-        String appName = CakePreferences.getAppName(pm);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(pm);
+        String appName = ""; // NOI18N
+        if (cakeModule != null) {
+            appName = cakeModule.getAppName() == null ? "" : cakeModule.getAppName();
+        }
         if (CakeVersion.getInstance(pm).getMajor() >= 2) {
             installPathTextField.setText(appName + "/Plugin"); // NOI18N
         } else {

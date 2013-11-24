@@ -167,7 +167,7 @@ public class PHPUnitInitAction extends BaseAction {
      * @param phpModule
      */
     private void createNetBeansSuite(PhpModule phpModule) {
-        FileObject nbproject = getNbproject(phpModule);
+        FileObject nbproject = CakePhpUtils.getNbproject(phpModule);
         if (nbproject == null) {
             return;
         }
@@ -194,7 +194,7 @@ public class PHPUnitInitAction extends BaseAction {
      * @param phpModule
      */
     private void createScript(PhpModule phpModule) {
-        FileObject nbproject = getNbproject(phpModule);
+        FileObject nbproject = CakePhpUtils.getNbproject(phpModule);
 
         // get phpunit path
         String phpUnit = getPHPUnitPath();
@@ -207,7 +207,7 @@ public class PHPUnitInitAction extends BaseAction {
         if (nbproject.getFileObject(scriptFileName) == null) {
             FileObject script = FileUtil.getConfigFile(CONFIG_PATH + scriptFileName);
             try {
-                String format = ""; // NOI18N
+                String format;
                 if (Utilities.isWindows()) {
                     String path = nbproject.getPath().replace("/", "\\"); // NOI18N
                     format = script.asText("UTF-8");
@@ -229,19 +229,8 @@ public class PHPUnitInitAction extends BaseAction {
     }
 
     private String getPHPUnitPath() {
-        Preferences preference = NbPreferences.root().node("/org/netbeans/modules/php/project/general"); // NOI18N
-        return preference.get("phpUnit", null); // NOI18N
-    }
-
-    /**
-     * Get nbproject directory
-     *
-     * @param phpModule
-     * @return
-     */
-    private FileObject getNbproject(PhpModule phpModule) {
-        FileObject projectDirectory = phpModule.getProjectDirectory();
-        return projectDirectory.getFileObject("nbproject"); // NOI18N
+        Preferences preference = NbPreferences.root().node("/org/netbeans/modules/php/phpunit/phpunit"); // NOI18N
+        return preference.get("phpUnit.path", null); // NOI18N
     }
 
     /**
@@ -253,7 +242,7 @@ public class PHPUnitInitAction extends BaseAction {
         Project project = ProjectPropertiesSupport.getProject(webroot);
         if (project != null) {
             String bootstrapPath = webroot.getPath() + "/" + BOOTSTRAP_PHPUNIT_PHP; // NOI18N
-            String scriptPath = getNbproject(phpModule).getPath() + "/" + getScriptFileName(); // NOI18N
+            String scriptPath = CakePhpUtils.getNbproject(phpModule).getPath() + "/" + getScriptFileName(); // NOI18N
             ProjectPropertiesSupport.setPHPUnit(phpModule, bootstrapPath, scriptPath);
         }
     }

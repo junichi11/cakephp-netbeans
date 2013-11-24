@@ -47,7 +47,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
@@ -57,6 +56,7 @@ import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Utilities;
 
 /**
  *
@@ -79,8 +79,27 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_BEHAVIOR = "Behavior";
     private static final String DIR_FIXTURE = "Fixture";
 
+    // XXX #66 (problem for Mac)
+    private final boolean isMac = Utilities.isMac();
+
     public CakePhp2ModuleImpl(PhpModule phpModule) {
         super(phpModule);
+    }
+
+    @Override
+    public boolean isInCakePhp() {
+        FileObject console = getDirectory(DIR_TYPE.APP, FILE_TYPE.CONSOLE, null);
+        if (console == null) {
+            return false;
+        }
+
+        FileObject cake = getDirectory(DIR_TYPE.CORE);
+        return cake != null && cake.isFolder();
+    }
+
+    @Override
+    public void refresh() {
+        setAppDirectory();
     }
 
     @Override
@@ -162,10 +181,20 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                         sb.append(DIR_FIXTURE);
                         break;
                     case CONFIG:
-                        sb.append("Config"); // NOI18
+                        // XXX #66 (Nb74 problem for Mac)
+                        if (isMac) {
+                            return getDirectoryForMac(getDirectory(type), sb.toString(), "Config"); // NOI18N
+                        } else {
+                            sb.append("Config"); // NOI18
+                        }
                         break;
                     case CONSOLE:
-                        sb.append("Console"); // NOI18
+                        // XXX #66 (Nb74 problem for Mac)
+                        if (isMac) {
+                            return getDirectoryForMac(getDirectory(type), sb.toString(), "Console"); // NOI18N
+                        } else {
+                            sb.append("Console"); // NOI18
+                        }
                         break;
                     case WEBROOT:
                         if (type == DIR_TYPE.CORE) {
@@ -203,23 +232,14 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             return null;
         }
         String path = ""; // NOI18N
-        String app = CakePreferences.getAppName(phpModule);
         switch (type) {
             case APP:
-                path = app;
-                break;
             case APP_LIB:
-                path = app + "/Lib"; // NOI18N
-                break;
             case APP_PLUGIN:
-                path = app + "/Plugin"; // NOI18N
-                break;
             case APP_VENDOR:
-                path = app + "/Vendor"; // NOI18N
-                break;
+                return getAppDirectory(type);
             case CORE:
-                path = "lib/Cake"; // NOI18N
-                break;
+                return getCoreDirectory();
             case PLUGIN:
                 path = "plugins"; // NOI18N
                 break;
@@ -231,6 +251,60 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         }
 
         return sourceDirectory.getFileObject(path);
+    }
+
+    private FileObject getAppDirectory(DIR_TYPE dirType) {
+        FileObject appDir = getAppDirectory();
+        if (appDir == null) {
+            return null;
+        }
+
+        switch (dirType) {
+            case APP:
+                return appDir;
+            case APP_LIB:
+                return appDir.getFileObject("Lib"); // NOI18N
+            case APP_PLUGIN:
+                return appDir.getFileObject("Plugin"); // NOI18N
+            case APP_VENDOR:
+                return appDir.getFileObject("Vendor"); // NOI18N
+            default:
+                throw new AssertionError();
+        }
+    }
+
+    private FileObject getCoreDirectory() {
+        FileObject cakePhpDirectory = getCakePhpDirectory();
+        FileObject core = cakePhpDirectory.getFileObject("lib/Cake"); // NOI18N
+        if (core != null) {
+            return core;
+        }
+
+        // installing with Composer
+        return cakePhpDirectory.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake"); // NOI18N
+    }
+
+    // XXX #66 (Nb74 problem for Mac)
+    private FileObject getDirectoryForMac(FileObject root, String subpath, String directoryName) {
+        if (root == null) {
+            return null;
+        }
+        FileObject subDirectory;
+        if (!StringUtils.isEmpty(subpath)) {
+            subDirectory = root.getFileObject(subpath);
+            if (subDirectory == null) {
+                return null;
+            }
+        } else {
+            subDirectory = root;
+        }
+
+        FileObject result = subDirectory.getFileObject(directoryName);
+        if (result == null) {
+            result = subDirectory.getFileObject(directoryName.toLowerCase());
+        }
+
+        return result;
     }
 
     @Override

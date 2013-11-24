@@ -42,6 +42,12 @@
 package org.cakephp.netbeans.util;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
@@ -63,6 +69,13 @@ public class ProjectPropertiesSupport {
     public static final String PHP_UNIT_BOOTSTRAP = "phpunit.bootstrap"; // NOI18N
     public static final String PHP_UNIT_BOOTSTRAP_FOR_CREATE_TESTS = "phpunit.bootstrap.create.tests"; // NOI18N
     public static final String PHP_UNIT_SCRIPT = "phpunit.script"; // NOI18N
+    public static final String TESTING_PROVIDERS = "testing.providers"; // NOI18N
+    private static final String PHPUNIT_BOOTSTRAP_SCRIPT_PATH = "auxiliary.org-netbeans-modules-php-phpunit.phpUnit_2e_path="; // NOI18N
+    private static final String PHPUNIT_BOOTSTRAP_SCRIPT_ENABLED = "auxiliary.org-netbeans-modules-php-phpunit.phpUnit_2e_enabled="; // NOI18N
+    private static final String PHPUNIT_BOOTSTRAP_PATH = "auxiliary.org-netbeans-modules-php-phpunit.bootstrap_2e_path="; // NOI18N
+    private static final String PHPUNIT_BOOTSTRAP_ENABLED = "auxiliary.org-netbeans-modules-php-phpunit.bootstrap_2e_enabled="; // NOI18N
+    private static final String PHPUNIT_BOOTSTRAP_CREATE_TESTS = "auxiliary.org-netbeans-modules-php-phpunit.bootstrap_2e_create_2e_tests="; // NOI18N
+    private static final String UTF8 = "UTF-8"; // NOI18N
 
     /**
      * Set PHPUnit bootstap.php, script.
@@ -82,23 +95,8 @@ public class ProjectPropertiesSupport {
                     }
                     EditableProperties properties = helper.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
                     if (properties != null) {
-                        boolean isChanged = false;;
-                        // set bootstrap
-                        if (!StringUtils.isEmpty(bootstrapPath)) {
-                            properties.setProperty(PHP_UNIT_BOOTSTRAP, bootstrapPath);
-                            properties.setProperty(PHP_UNIT_BOOTSTRAP_FOR_CREATE_TESTS, "true"); // NOI18N
-                            isChanged = true;
-                        }
-
-                        // set script
-                        if (!StringUtils.isEmpty(scriptPath)) {
-                            properties.setProperty(PHP_UNIT_SCRIPT, scriptPath);
-                            isChanged = true;
-                        }
-
-                        if (isChanged) {
-                            helper.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, properties);
-                        }
+                        properties.setProperty(TESTING_PROVIDERS, "PhpUnit"); // NOI18N
+                        helper.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, properties);
                     }
 
                     ProjectManager.getDefault().saveProject(project);
@@ -107,6 +105,61 @@ public class ProjectPropertiesSupport {
             });
         } catch (MutexException e) {
             Exceptions.printStackTrace((IOException) e.getException());
+        }
+        // PhpUnit module is changed since NB7.4
+        // set project properties for PHPUnit
+        setPhpUnitProperties(phpModule, bootstrapPath, scriptPath);
+    }
+
+    private static void setPhpUnitProperties(PhpModule phpModule, String bootstrapPath, String scriptPath) {
+        HashMap<String, String> propertiesMap = new HashMap<String, String>();
+        if (!StringUtils.isEmpty(bootstrapPath)) {
+            propertiesMap.put(PHPUNIT_BOOTSTRAP_CREATE_TESTS, "true"); // NOI18N
+            propertiesMap.put(PHPUNIT_BOOTSTRAP_ENABLED, "true"); // NOI18N
+            propertiesMap.put(PHPUNIT_BOOTSTRAP_PATH, bootstrapPath);
+        }
+
+        if (!StringUtils.isEmpty(scriptPath)) {
+            propertiesMap.put(PHPUNIT_BOOTSTRAP_SCRIPT_ENABLED, "true"); // NOI18N
+            propertiesMap.put(PHPUNIT_BOOTSTRAP_SCRIPT_PATH, scriptPath);
+        }
+
+        // get project.properties
+        FileObject properties = CakePhpUtils.getProjectProperties(phpModule);
+        if (properties == null) {
+            return;
+        }
+        try {
+            List<String> lines = properties.asLines(UTF8);
+            PrintWriter pw = new PrintWriter(new OutputStreamWriter(properties.getOutputStream(), UTF8));
+            try {
+                // write phpunit properties
+                for (Map.Entry<String, String> entry : propertiesMap.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    pw.println(key + value);
+                }
+
+                // write other properties
+                Set<String> keySet = propertiesMap.keySet();
+                for (String line : lines) {
+                    boolean isPhpUnitProperty = false;
+                    for (String key : keySet) {
+                        if (line.startsWith(key)) {
+                            isPhpUnitProperty = true;
+                            break;
+                        }
+                    }
+                    if (isPhpUnitProperty) {
+                        continue;
+                    }
+                    pw.println(line);
+                }
+            } finally {
+                pw.close();
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 
@@ -118,9 +171,6 @@ public class ProjectPropertiesSupport {
      */
     public static Project getProject(PhpModule phpModule) {
         FileObject projectDirectory = phpModule.getProjectDirectory();
-        if (projectDirectory == null) {
-            return null;
-        }
         return getProject(projectDirectory);
 
     }

@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,39 +37,45 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
 package org.cakephp.netbeans.ui.actions;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import org.cakephp.netbeans.ui.ViewPathPanel;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
-import org.openide.util.NbBundle.Messages;
-import org.openide.util.actions.Presenter;
+import org.openide.util.NbBundle;
 
-@ActionID(category = "View",
-id = "org.cakephp.netbeans.ui.actions.ViewPathAction")
-@ActionRegistration(displayName = "#CTL_ViewPathAction")
-@ActionReferences({
-    @ActionReference(path = "Toolbars/View", position = 0)
-})
-@Messages("CTL_ViewPathAction=View Path")
-public final class ViewPathAction extends AbstractAction implements Presenter.Toolbar {
+@ActionID(
+        category = "PHP",
+        id = "org.cakephp.netbeans.ui.actions.ToSingularAction")
+@ActionRegistration(displayName = "#ToSingularAction_Name")
+@ActionReference(path = "Shortcuts", name = "D-AT S")
+@NbBundle.Messages("ToSingularAction_Name=To Singular")
+public final class ToSingularAction extends ToSingularPluralAction {
 
-    private static final long serialVersionUID = -8271031482726036137L;
+    private static final ToSingularAction INSTANCE = new ToSingularAction();
+    private static final long serialVersionUID = -4605260636718462058L;
 
-    @Override
-    public Component getToolbarPresenter() {
-        return new ViewPathPanel();
+    private ToSingularAction() {
+    }
+
+    public static ToSingularAction getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        // TODO implement action body
+    public boolean isSingular() {
+        return true;
+    }
+
+    @Override
+    protected String getFullName() {
+        return getPureName();
+    }
+
+    @Override
+    protected String getPureName() {
+        return Bundle.ToSingularAction_Name();
     }
 }
