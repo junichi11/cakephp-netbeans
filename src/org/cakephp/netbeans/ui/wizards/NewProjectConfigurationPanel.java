@@ -46,22 +46,18 @@
  */
 package org.cakephp.netbeans.ui.wizards;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
+import org.cakephp.netbeans.github.CakePhpGithubTags;
 import org.cakephp.netbeans.options.CakePhpOptions;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
@@ -72,9 +68,7 @@ import org.openide.util.NbBundle;
  */
 public class NewProjectConfigurationPanel extends javax.swing.JPanel {
 
-    private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
     private static final long serialVersionUID = 7874450246517944114L;
-    private Map<String, String> tagsMap = new HashMap<String, String>();
     private String errorMessage;
     private boolean isNetworkError = false;
     private static final Logger LOGGER = Logger.getLogger(NewProjectConfigurationPanel.class.getName());
@@ -88,130 +82,71 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     })
     public NewProjectConfigurationPanel() {
         initComponents();
-        unzipRadioButton.setSelected(true);
-        unzipFileNameTextField.setText(""); // NOI18N
-        setLocalPathLabel();
-
-        try {
-            // Get JSON
-            URL tagsJson = new URL(GITHUB_API_REPOS_TAGS);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8")); // NOI18N
-            StringBuilder contents = new StringBuilder();
-            String str;
-            while ((str = reader.readLine()) != null) {
-                contents.append(str);
-            }
-
-            JSONArray json = new JSONArray(contents.toString());
-            String[] tagsArray = new String[json.length()];
-            for (int i = 0; i < json.length(); i++) {
-                JSONObject jObject = (JSONObject) json.get(i);
-                tagsArray[i] = jObject.getString("name"); // NOI18N
-                tagsMap.put(jObject.getString("name"), jObject.getString("zipball_url")); // NOI18N
-            }
-            Arrays.sort(tagsArray, new ComparatorImpl());
-            versionList.setListData(tagsArray);
-            versionList.setSelectedIndex(0);
-        } catch (JSONException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (IOException ex) {
-            isNetworkError = true;
+        // github
+        progressTextField.setText(""); // NOI18N
+        progressTextField.setEnabled(false);
+        progressTextField.setVisible(false);
+        if (isNetworkError()) {
             LOGGER.log(Level.WARNING, Bundle.LBL_ConnectErrorMessage());
+            return;
+        } else {
+            initUnzipping();
+        }
+
+        // local
+        initLocalUnzipping();
+    }
+
+    private void initUnzipping() {
+        unzipRadioButton.setSelected(true);
+
+        CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
+        String[] names = githubTags.getNames();
+        Arrays.sort(names, new ComparatorImpl());
+        versionComboBox.setEnabled(true);
+        versionComboBox.setModel(new DefaultComboBoxModel(names));
+    }
+
+    private void initLocalUnzipping() {
+        // local file
+        CakePhpOptions options = CakePhpOptions.getInstance();
+        String localFilePath = options.getLocalZipFilePath();
+        if (StringUtils.isEmpty(localFilePath)) {
+            unzipLocalFileRadioButton.setEnabled(false);
+            unzipLocalFileRadioButton.setVisible(false);
+        } else {
+            unzipLocalFileRadioButton.setToolTipText(localFilePath);
         }
     }
 
-    public Map<String, String> getTagsMap() {
-        return tagsMap;
+    public boolean isDatabasePhp() {
+        return databaseCheckBox.isSelected();
     }
 
-    public JList getVersionList() {
-        return versionList;
+    public String getSelectedUrl() {
+        String selectedVersion = (String) versionComboBox.getSelectedItem();
+        CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
+        return githubTags.getZipUrl(selectedVersion);
     }
 
     public String getErrorMessage() {
         return errorMessage;
     }
 
-    public JRadioButton getUnzipRadioButton() {
-        return unzipRadioButton;
+    public boolean isUnzip() {
+        return unzipRadioButton.isSelected();
     }
 
-    public void setGitCommandLabel(String command) {
-        gitCommandLabel.setText(command);
-    }
-
-    public JCheckBox getDatabaseCheckBox() {
-        return databaseCheckBox;
-    }
-
-    public JTextField getDatabaseTextField() {
-        return databaseTextField;
-    }
-
-    public JTextField getDatasourceTextField() {
-        return datasourceTextField;
-    }
-
-    public JTextField getEncodingTextField() {
-        return encodingTextField;
-    }
-
-    public JTextField getHostTextField() {
-        return hostTextField;
-    }
-
-    public JTextField getUnzipFileNameTextField() {
-        return unzipFileNameTextField;
-    }
-
-    public JTextField getLoginTextField() {
-        return loginTextField;
-    }
-
-    public JPasswordField getPasswordField() {
-        return passwordField;
-    }
-
-    public JCheckBox getPersistentCheckBox() {
-        return persistentCheckBox;
-    }
-
-    public JTextField getPrefixTextField() {
-        return prefixTextField;
-    }
-
-    public boolean useLocalFile() {
+    public boolean isLocalFile() {
         return unzipLocalFileRadioButton.isSelected();
     }
 
-    /**
-     * Set local path label.
-     */
-    private void setLocalPathLabel() {
-        // get Option
-        CakePhpOptions options = CakePhpOptions.getInstance();
-
-        // set local path
-        String localFilePath = options.getLocalZipFilePath();
-        if (StringUtils.isEmpty(localFilePath)) {
-            localPathLabel.setText("");
-            localPathLabel.setEnabled(false);
-        } else {
-            File file = new File(localFilePath);
-            localPathLabel.setText(file.getName());
-        }
+    public boolean isGit() {
+        return gitCloneRadioButton.isSelected();
     }
 
-    private boolean isEnabledGit() {
-        try {
-            Process process = Runtime.getRuntime().exec("git"); // NOI18N
-            process.waitFor();
-        } catch (InterruptedException ex) {
-            return false;
-        } catch (IOException ex) {
-            return false;
-        }
-        return true;
+    public JTextField getProgressTextField() {
+        return progressTextField;
     }
 
     private boolean isEnabledLocalPath() {
@@ -219,7 +154,17 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         return !StringUtils.isEmpty(localZipFilePath);
     }
 
-    public boolean isNetworkError() {
+    private boolean isNetworkError() {
+        isNetworkError = false;
+        try {
+            URL url = new URL("http://google.com");
+            URLConnection openConnection = url.openConnection();
+            openConnection.getInputStream();
+        } catch (MalformedURLException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            isNetworkError = true;
+        }
         return isNetworkError;
     }
 
@@ -230,6 +175,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
             } else {
                 errorMessage = null;
                 unzipRadioButton.setEnabled(false);
+                versionComboBox.setEnabled(false);
                 gitCloneRadioButton.setEnabled(false);
                 unzipLocalFileRadioButton.setEnabled(true);
             }
@@ -246,39 +192,15 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        versionList = new javax.swing.JList();
-        versionLabel = new javax.swing.JLabel();
         unzipRadioButton = new javax.swing.JRadioButton();
         gitCloneRadioButton = new javax.swing.JRadioButton();
-        gitCommandLabel = new javax.swing.JLabel();
-        databaseCheckBox = new javax.swing.JCheckBox();
-        datasourceLabel = new javax.swing.JLabel();
-        datasourceTextField = new javax.swing.JTextField();
-        persistentCheckBox = new javax.swing.JCheckBox();
-        hostLabel = new javax.swing.JLabel();
-        loginLabel = new javax.swing.JLabel();
-        passwordLabel = new javax.swing.JLabel();
-        databaseLabel = new javax.swing.JLabel();
-        prefixLabel = new javax.swing.JLabel();
-        encodingLabel = new javax.swing.JLabel();
-        hostTextField = new javax.swing.JTextField();
-        loginTextField = new javax.swing.JTextField();
-        databaseTextField = new javax.swing.JTextField();
-        passwordField = new javax.swing.JPasswordField();
-        prefixTextField = new javax.swing.JTextField();
-        encodingTextField = new javax.swing.JTextField();
-        unzipFileNameTextField = new javax.swing.JTextField();
+        progressTextField = new javax.swing.JTextField();
         unzipLocalFileRadioButton = new javax.swing.JRadioButton();
-        localPathLabel = new javax.swing.JLabel();
+        versionComboBox = new javax.swing.JComboBox();
+        databaseCheckBox = new javax.swing.JCheckBox();
+        dbDetailButton = new javax.swing.JButton();
 
         setAutoscrolls(true);
-
-        versionList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        versionList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jScrollPane1.setViewportView(versionList);
-
-        versionLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.versionLabel.text")); // NOI18N
 
         buttonGroup.add(unzipRadioButton);
         unzipRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipRadioButton.text")); // NOI18N
@@ -291,157 +213,57 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
             }
         });
 
-        gitCommandLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.gitCommandLabel.text")); // NOI18N
+        progressTextField.setEditable(false);
+        progressTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.progressTextField.text")); // NOI18N
+        progressTextField.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        buttonGroup.add(unzipLocalFileRadioButton);
+        unzipLocalFileRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipLocalFileRadioButton.text")); // NOI18N
 
         databaseCheckBox.setSelected(true);
         databaseCheckBox.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.databaseCheckBox.text")); // NOI18N
 
-        datasourceLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.datasourceLabel.text")); // NOI18N
-
-        datasourceTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.datasourceTextField.text")); // NOI18N
-
-        persistentCheckBox.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.persistentCheckBox.text")); // NOI18N
-
-        hostLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.hostLabel.text")); // NOI18N
-
-        loginLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.loginLabel.text")); // NOI18N
-
-        passwordLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.passwordLabel.text")); // NOI18N
-
-        databaseLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.databaseLabel.text")); // NOI18N
-
-        prefixLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.prefixLabel.text")); // NOI18N
-
-        encodingLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.encodingLabel.text")); // NOI18N
-
-        hostTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.hostTextField.text")); // NOI18N
-
-        loginTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.loginTextField.text")); // NOI18N
-
-        databaseTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.databaseTextField.text")); // NOI18N
-
-        passwordField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.passwordField.text")); // NOI18N
-
-        prefixTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.prefixTextField.text")); // NOI18N
-
-        encodingTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.encodingTextField.text")); // NOI18N
-
-        unzipFileNameTextField.setEditable(false);
-        unzipFileNameTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipFileNameTextField.text")); // NOI18N
-        unzipFileNameTextField.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        buttonGroup.add(unzipLocalFileRadioButton);
-        unzipLocalFileRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipLocalFileRadioButton.text")); // NOI18N
-        unzipLocalFileRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        dbDetailButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.dbDetailButton.text")); // NOI18N
+        dbDetailButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                unzipLocalFileRadioButtonActionPerformed(evt);
+                dbDetailButtonActionPerformed(evt);
             }
         });
-
-        localPathLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.localPathLabel.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(unzipLocalFileRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(localPathLabel))
+                    .addComponent(unzipLocalFileRadioButton)
                     .addComponent(gitCloneRadioButton)
-                    .addComponent(gitCommandLabel)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(versionLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addComponent(unzipRadioButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(unzipFileNameTextField))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)))
-                .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(datasourceLabel)
-                            .addComponent(passwordLabel)
-                            .addComponent(databaseLabel)
-                            .addComponent(encodingLabel)
-                            .addComponent(prefixLabel)
-                            .addComponent(hostLabel)
-                            .addComponent(persistentCheckBox)
-                            .addComponent(loginLabel))
-                        .addGap(2, 2, 2)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(loginTextField)
-                            .addComponent(prefixTextField)
-                            .addComponent(hostTextField)
-                            .addComponent(datasourceTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(passwordField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(databaseTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
-                            .addComponent(encodingTextField, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(15, 15, 15))
-                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(unzipRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(versionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(57, 57, 57)
                         .addComponent(databaseCheckBox)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dbDetailButton)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(progressTextField)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(datasourceLabel)
-                            .addComponent(datasourceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(persistentCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(hostTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(hostLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(loginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(loginLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(unzipRadioButton)
-                            .addComponent(unzipFileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(databaseCheckBox))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(versionLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(unzipLocalFileRadioButton)
-                            .addComponent(localPathLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(gitCloneRadioButton)
-                            .addComponent(passwordLabel))))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(databaseTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(databaseLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(prefixTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(prefixLabel)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(gitCommandLabel)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(encodingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(encodingLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(unzipRadioButton)
+                    .addComponent(versionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(databaseCheckBox)
+                    .addComponent(dbDetailButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(unzipLocalFileRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(gitCloneRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(progressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -459,41 +281,20 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_gitCloneRadioButtonActionPerformed
 
-    private void unzipLocalFileRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unzipLocalFileRadioButtonActionPerformed
-        // TODO add your handling code here:
-        if (localPathLabel.getText().isEmpty()) {
-            unzipLocalFileRadioButton.setSelected(false);
-            unzipRadioButton.setSelected(true);
-            unzipLocalFileRadioButton.setEnabled(false);
-        }
-    }//GEN-LAST:event_unzipLocalFileRadioButtonActionPerformed
+    private void dbDetailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dbDetailButtonActionPerformed
+        NewProjectConfigurationDetailPanel detailPanel = NewProjectConfigurationDetailPanel.getDefault();
+        detailPanel.showDialog();
+    }//GEN-LAST:event_dbDetailButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JCheckBox databaseCheckBox;
-    private javax.swing.JLabel databaseLabel;
-    private javax.swing.JTextField databaseTextField;
-    private javax.swing.JLabel datasourceLabel;
-    private javax.swing.JTextField datasourceTextField;
-    private javax.swing.JLabel encodingLabel;
-    private javax.swing.JTextField encodingTextField;
+    private javax.swing.JButton dbDetailButton;
     private javax.swing.JRadioButton gitCloneRadioButton;
-    private javax.swing.JLabel gitCommandLabel;
-    private javax.swing.JLabel hostLabel;
-    private javax.swing.JTextField hostTextField;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel localPathLabel;
-    private javax.swing.JLabel loginLabel;
-    private javax.swing.JTextField loginTextField;
-    private javax.swing.JPasswordField passwordField;
-    private javax.swing.JLabel passwordLabel;
-    private javax.swing.JCheckBox persistentCheckBox;
-    private javax.swing.JLabel prefixLabel;
-    private javax.swing.JTextField prefixTextField;
-    private javax.swing.JTextField unzipFileNameTextField;
+    private javax.swing.JTextField progressTextField;
     private javax.swing.JRadioButton unzipLocalFileRadioButton;
     private javax.swing.JRadioButton unzipRadioButton;
-    private javax.swing.JLabel versionLabel;
-    private javax.swing.JList versionList;
+    private javax.swing.JComboBox versionComboBox;
     // End of variables declaration//GEN-END:variables
 
     //~ inner class
