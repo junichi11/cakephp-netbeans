@@ -133,7 +133,7 @@ public class CakePhpOptions {
     }
 
     public boolean isNotifyNewVersion() {
-        return getPreferences().getBoolean(NOTIFY_NEW_VERSION, true);
+        return getPreferences().getBoolean(NOTIFY_NEW_VERSION, false);
     }
 
     public void setNotifyNewVersion(boolean isNotify) {

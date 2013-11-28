@@ -202,9 +202,6 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     })
     private void notificationNewVersion(PhpModule phpModule) {
         CakeVersion version = CakeVersion.getInstance(phpModule);
-        if (version == null) {
-            return;
-        }
         if (version.hasUpdate()) {
             // Notification
             NotificationDisplayer notification = NotificationDisplayer.getDefault();

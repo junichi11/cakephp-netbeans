@@ -166,6 +166,9 @@ public class CakeVersion {
     }
 
     public boolean hasUpdate() {
+        if (versionNumber == null) {
+            return false;
+        }
         CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
         latestStableVersion = githubTags.getLatestStableVersion();
         if (latestStableVersion == null) {
