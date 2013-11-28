@@ -44,9 +44,11 @@ package org.cakephp.netbeans.util;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cakephp.netbeans.github.CakePhpGithubTags;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 
@@ -61,6 +63,7 @@ public class CakeVersion {
     private int revision;
     private String notStable;
     private String versionNumber;
+    private String latestStableVersion;
     private static CakeVersion INSTANCE = null;
     private static PhpModule pm;
     private static final Logger LOGGER = Logger.getLogger(CakeVersion.class.getName());
@@ -156,6 +159,25 @@ public class CakeVersion {
 
     public String getVersion() {
         return versionNumber;
+    }
+
+    public String getLatestStableVersion() {
+        return latestStableVersion;
+    }
+
+    public boolean hasUpdate() {
+        CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
+        latestStableVersion = githubTags.getLatestStableVersion();
+        if (latestStableVersion == null) {
+            return false;
+        }
+
+        // TODO not stable
+        if (!StringUtils.isEmpty(notStable)) {
+            return false;
+        }
+
+        return !versionNumber.equals(latestStableVersion);
     }
 
     /**

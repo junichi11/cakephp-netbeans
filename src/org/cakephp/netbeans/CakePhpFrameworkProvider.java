@@ -51,7 +51,9 @@ import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.framework.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
@@ -63,6 +65,7 @@ import org.netbeans.modules.php.spi.framework.PhpModuleCustomizerExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
 import org.netbeans.modules.php.spi.framework.commands.FrameworkCommandSupport;
+import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
@@ -183,4 +186,35 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     public EditorExtender getEditorExtender(PhpModule phpModule) {
         return CakePhpEditorExtenderFactory.create(phpModule);
     }
+
+    @Override
+    public void phpModuleOpened(PhpModule phpModule) {
+        // check available new version
+        if (CakePhpOptions.getInstance().isNotifyNewVersion()) {
+            notificationNewVersion(phpModule);
+        }
+    }
+
+    @NbBundle.Messages({
+        "# {0} - project name",
+        "# {1} - new version",
+        "CakePhpFrameworkProvider.new.version.notification.title={0} : New version({1}) is available"
+    })
+    private void notificationNewVersion(PhpModule phpModule) {
+        CakeVersion version = CakeVersion.getInstance(phpModule);
+        if (version == null) {
+            return;
+        }
+        if (version.hasUpdate()) {
+            // Notification
+            NotificationDisplayer notification = NotificationDisplayer.getDefault();
+            String latestStableVersion = version.getLatestStableVersion();
+            notification.notify(
+                    Bundle.CakePhpFrameworkProvider_new_version_notification_title(phpModule.getDisplayName(), latestStableVersion),
+                    ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, false),
+                    Bundle.CakePhpFrameworkProvider_new_version_notification_title(phpModule.getDisplayName(), latestStableVersion),
+                    null);
+        }
+    }
+
 }

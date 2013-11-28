@@ -61,7 +61,8 @@ public class CakePhpOptions {
     private static final String LOCAL_ZIP_FILE_PATH = "local-zip-file-path"; // NOI18N
     private static final String IGNORE_TMP = "ignore-tmp"; // NOI18N
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
-    private static CakePhpOptions INSTANCE = new CakePhpOptions();
+    private static final String NOTIFY_NEW_VERSION = "notify-new-version"; // NOI18N
+    private static final CakePhpOptions INSTANCE = new CakePhpOptions();
 
     private CakePhpOptions() {
     }
@@ -129,6 +130,15 @@ public class CakePhpOptions {
 
     public void setAutoCreateView(boolean isAuto) {
         getPreferences().putBoolean(AUTO_CREATE_VIEW, isAuto);
+    }
+
+    public boolean isNotifyNewVersion() {
+        return getPreferences().getBoolean(NOTIFY_NEW_VERSION, true);
+    }
+
+    public void setNotifyNewVersion(boolean isNotify) {
+        getPreferences().putBoolean(NOTIFY_NEW_VERSION, isNotify);
+
     }
 
     public Preferences getPreferences() {
