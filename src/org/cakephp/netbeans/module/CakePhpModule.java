@@ -410,6 +410,10 @@ public class CakePhpModule implements ChangeListener {
         return impl.isInCakePhp();
     }
 
+    public List<String> getAllPluginNames() {
+        return impl.getAllPluginNames();
+    }
+
     public static CakePhpModule forPhpModule(PhpModule phpModule) {
         if (phpModule == null) {
             phpModule = PhpModule.inferPhpModule();

@@ -137,6 +137,23 @@ public class CakePhpUtilsTest extends NbTestCase {
 
         pluginSplit = CakePhpUtils.pluginSplit(null);
         assertEquals(null, pluginSplit);
+    }
 
+    @Test
+    public void testDetachQuotes() {
+        assertEquals("", CakePhpUtils.detachQuotes("")); // NOI18N
+        assertEquals("", CakePhpUtils.detachQuotes("\"\"")); // NOI18N
+        assertEquals("", CakePhpUtils.detachQuotes("''")); // NOI18N
+        assertEquals("test", CakePhpUtils.detachQuotes("\"test\"")); // NOI18N
+        assertEquals("test", CakePhpUtils.detachQuotes("test")); // NOI18N
+        assertEquals("message", CakePhpUtils.detachQuotes("'message'")); // NOI18N
+        assertEquals("\"test", CakePhpUtils.detachQuotes("\"test")); // NOI18N
+        assertEquals("test\"", CakePhpUtils.detachQuotes("test\"")); // NOI18N
+        assertEquals("'test", CakePhpUtils.detachQuotes("'test")); // NOI18N
+        assertEquals("test'", CakePhpUtils.detachQuotes("test'")); // NOI18N
+        assertEquals("'test'", CakePhpUtils.detachQuotes("\"'test'\"")); // NOI18N
+        assertEquals("\"test\"test", CakePhpUtils.detachQuotes("\"test\"test")); // NOI18N
+
+        assertEquals(null, CakePhpUtils.detachQuotes(null)); // NOI18N
     }
 }

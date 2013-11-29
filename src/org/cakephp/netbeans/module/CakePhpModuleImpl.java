@@ -422,4 +422,6 @@ public abstract class CakePhpModuleImpl {
     }
 
     public abstract void refresh();
+
+    public abstract List<String> getAllPluginNames();
 }

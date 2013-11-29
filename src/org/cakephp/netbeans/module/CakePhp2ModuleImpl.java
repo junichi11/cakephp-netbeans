@@ -43,6 +43,9 @@ package org.cakephp.netbeans.module;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
@@ -555,5 +558,25 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         }
 
         return FILE_TYPE.NONE;
+    }
+
+    @Override
+    public List<String> getAllPluginNames() {
+        ArrayList<String> allPlugins = new ArrayList<String>();
+        for (DIR_TYPE dirType : Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN)) {
+            FileObject directory = getDirectory(dirType);
+            if (directory == null) {
+                continue;
+            }
+
+            for (FileObject child : directory.getChildren()) {
+                if (!child.isFolder()) {
+                    continue;
+                }
+                allPlugins.add(child.getName());
+            }
+        }
+
+        return allPlugins;
     }
 }

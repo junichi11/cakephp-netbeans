@@ -272,6 +272,16 @@ public final class CakePhpUtils {
         return toUnderscore(string);
     }
 
+    public static String detachQuotes(String text) {
+        if (text == null) {
+            return null;
+        }
+        if (text.matches("\".*\"") || text.matches("'.*'")) { // NOI18N
+            return text.substring(1, text.length() - 1);
+        }
+        return text;
+    }
+
     /**
      * Check whether file ext is "ctp".
      *
