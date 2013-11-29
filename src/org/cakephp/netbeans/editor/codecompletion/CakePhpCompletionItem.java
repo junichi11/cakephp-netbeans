@@ -46,9 +46,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
+import org.cakephp.netbeans.CakePhp;
 import org.netbeans.api.editor.completion.Completion;
 import org.netbeans.spi.editor.completion.CompletionItem;
 import org.netbeans.spi.editor.completion.CompletionTask;
@@ -62,11 +64,11 @@ import org.openide.util.ImageUtilities;
  */
 public class CakePhpCompletionItem implements CompletionItem {
 
-    private String text;
-    private static ImageIcon fieldIcon = new ImageIcon(ImageUtilities.loadImage("org/cakephp/netbeans/ui/resources/cakephp_icon_16.png")); // NOI18N
-    private static Color fieldColor = Color.decode("0x0000B2"); // NOI18N
-    private int startOffset;
-    private int removeLength;
+    private final String text;
+    private static final ImageIcon fieldIcon = new ImageIcon(ImageUtilities.loadImage(CakePhp.CAKE_ICON_16));
+    private static final Color fieldColor = UIManager.getColor("List.foreground"); // NOI18N
+    private final int startOffset;
+    private final int removeLength;
 
     public CakePhpCompletionItem(String text, int startOffset, int removeLength) {
         this.text = text;
