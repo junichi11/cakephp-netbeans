@@ -79,10 +79,10 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final String FILE_THEME_CONTROLLER_RELATIVE = "../../../../" + DIR_CONTROLLERS + "/%s.php"; // NOI18N
     private static final String FILE_VIEW_RELATIVE = "../" + DIR_VIEWS + "/%s/%s." + FILE_VIEW_EXT; // NOI18N
     private static final String FILE_THEME_VIEW_RELATIVE = "../" + DIR_VIEWS + "/" + DIR_THEMED + "/%s/%s/%s." + FILE_VIEW_EXT; // NOI18N
-    private static final String DIR_COMPONENTS = "components";
-    private static final String DIR_HELPERS = "helpers";
-    private static final String DIR_BEHAVIORS = "behaviors";
-    private static final String DIR_FIXTURES = "fixtures";
+    private static final String DIR_COMPONENTS = "components"; // NOI18N
+    private static final String DIR_HELPERS = "helpers"; // NOI18N
+    private static final String DIR_BEHAVIORS = "behaviors"; // NOI18N
+    private static final String DIR_FIXTURES = "fixtures"; // NOI18N
 
     public CakePhp1ModuleImpl(PhpModule phpModule) {
         super(phpModule);
@@ -134,7 +134,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
             case APP_PLUGIN: // no break;
             case PLUGIN:
                 if (pluginName != null && !pluginName.isEmpty()) {
-                    plugin = CakePhpUtils.toUnderscoreCase(pluginName) + "/";
+                    plugin = CakePhpUtils.toUnderscoreCase(pluginName) + "/"; // NOI18N
                     if (fileType == null) {
                         return getDirectory(type).getFileObject(plugin);
                     }
@@ -518,7 +518,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     public FileObject createView(FileObject controller, PhpBaseElement phpElement) throws IOException {
         FileObject fo = null;
         if (phpElement instanceof PhpClass.Method) {
-            FileObject view = controller.getFileObject("../../" + DIR_VIEWS);
+            FileObject view = controller.getFileObject("../../" + DIR_VIEWS); // NOI18N
             if (view != null) {
                 fo = view.getFileObject(getViewFolderName(controller.getName()));
                 if (fo == null) {
@@ -526,7 +526,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                 }
             }
             if (fo != null) {
-                fo = fo.createData(phpElement.getName() + "." + FILE_VIEW_EXT);
+                fo = fo.createData(phpElement.getName() + "." + FILE_VIEW_EXT); // NOI18N
             }
         }
         return fo;
@@ -540,45 +540,45 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         String path = currentFile.getPath();
         String fileName = currentFile.getName();
 
-        if (path.contains("/tests/fixtures/")) {
-            if (fileName.endsWith("fixture")) {
+        if (path.contains("/tests/fixtures/")) { // NOI18N
+            if (fileName.endsWith("fixture")) { // NOI18N
                 return FILE_TYPE.FIXTURE;
             }
-        } else if (path.contains("/tests/cases/")) {
-            if (fileName.endsWith("test")) {
+        } else if (path.contains("/tests/cases/")) { // NOI18N
+            if (fileName.endsWith("test")) { // NOI18N
                 return FILE_TYPE.TESTCASE;
             }
-        } else if (path.contains("/tests/")) {
+        } else if (path.contains("/tests/")) { // NOI18N
             return FILE_TYPE.TEST;
-        } else if (path.contains("/controllers/components/")) {
+        } else if (path.contains("/controllers/components/")) { // NOI18N
             return FILE_TYPE.COMPONENT;
-        } else if (path.contains("/controllers/")) {
+        } else if (path.contains("/controllers/")) { // NOI18N
             if (fileName.endsWith(CONTROLLER_FILE_SUFIX)) {
                 return FILE_TYPE.CONTROLLER;
             }
-        } else if (path.contains("/views/helpers/")) {
+        } else if (path.contains("/views/helpers/")) { // NOI18N
             return FILE_TYPE.HELPER;
-        } else if (path.contains("/views/elements/")) {
+        } else if (path.contains("/views/elements/")) { // NOI18N
             if (CakePhpUtils.isCtpFile(currentFile)) {
                 return FILE_TYPE.ELEMENT;
             }
-        } else if (path.contains("/views/layouts/")) {
+        } else if (path.contains("/views/layouts/")) { // NOI18N
             if (CakePhpUtils.isCtpFile(currentFile)) {
                 return FILE_TYPE.LAYOUT;
             }
-        } else if (path.contains("/views/")) {
+        } else if (path.contains("/views/")) { // NOI18N
             if (CakePhpUtils.isCtpFile(currentFile)) {
                 return FILE_TYPE.VIEW;
             }
-        } else if (path.contains("/models/behaviors/")) {
+        } else if (path.contains("/models/behaviors/")) { // NOI18N
             return FILE_TYPE.BEHAVIOR;
-        } else if (path.contains("/models/")) {
+        } else if (path.contains("/models/")) { // NOI18N
             return FILE_TYPE.MODEL;
-        } else if (path.contains("/config/")) {
+        } else if (path.contains("/config/")) { // NOI18N
             return FILE_TYPE.CONFIG;
-        } else if (path.contains("/webroot/")) {
+        } else if (path.contains("/webroot/")) { // NOI18N
             return FILE_TYPE.WEBROOT;
-        } else if (path.contains("")) {
+        } else if (path.contains("")) { // NOI18N
             return FILE_TYPE.CONSOLE;
         }
 

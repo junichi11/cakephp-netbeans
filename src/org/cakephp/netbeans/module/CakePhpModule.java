@@ -61,9 +61,9 @@ import org.openide.filesystems.FileRenameEvent;
  */
 public class CakePhpModule implements ChangeListener {
 
-    private PhpModule phpModule;
-    private CakePhpModuleImpl impl;
-    private FileObject app;
+    private final PhpModule phpModule;
+    private final CakePhpModuleImpl impl;
+    private final FileObject app;
 
     public CakePhpModule(PhpModule phpModule, CakePhpModuleImpl impl) {
         this.phpModule = phpModule;
