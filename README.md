@@ -1,4 +1,4 @@
-# About
+# NetBeans CakePHP Plugin
 
 This plugin provides support for CakePHP.
 
@@ -6,7 +6,7 @@ This plugin provides support for CakePHP.
 
 - 2010/07/16
 - 2012/09/08 Support for NetBeans7.3
-- 2013/07/12 last update
+- 2013/11/29 last update
 
 ## ENVIRONMENT
 
@@ -37,7 +37,7 @@ Currently, This plugin doesn't recognize CakePHP3.
 - format for CakePHP action [v0.6.8]
 - go to element file from view file [v0.6.9]
 - display and change debug level [v0.6.10]
-- display CakePHP version number on status bar 
+- display CakePHP version number on status bar
 - multiple app directories support [v0.6.14]
 - check default action [v0.6.15]
 - image and element code completion [v0.6.16]
@@ -174,7 +174,7 @@ Run Action: see [*1]
 
 Select `Unzip` or `Unzip local file` or `git command`.  
 If you select `Unzip`, also select CakePHP version.  
-If you want to unzip the local file, please set the option   
+If you want to unzip the local file, please set the option
 (`Tools > Options > PHP > CakePHP > New Project > Local file path`)  
 If you want to create a database.php file, please, check the Create database.php.
 
@@ -202,7 +202,7 @@ public $helpers('Session', 'Html' => array('className' => 'MyHtml'));
 // $this->Html-> [Ctrl + Space] => display MyHtmlHelper class methods and fields
 ```
 
-image file completion
+#### image file completion
 
 ```php
 $this->Html->image('[Ctrl + Space]');
@@ -230,13 +230,29 @@ $this->Html->css('/mydir/[Ctrl + Space]');
 $this->Html->script('PluginName.[Ctrl + Space]');
 ```
 
-element file completion
+#### element file completion
 
 ```php
 $this->element('[Ctrl + Space]');
 // popup file names in the appdir/View/Elements/
 $this->element('MyPlugin.[Ctrl + Space]');
 // support for Plugin elements (CakePHP 2.x)
+```
+
+#### fields completion
+
+This is available in the following fields. This can also complete the plugin name.
+Please run code completion again(i.e. [Ctrl + Space]) after "PluginName.".
+
+- $components
+- $helpers
+- $uses
+- $actsAs
+
+```php
+// e.g.
+public $components = array('[Ctrl + Space]');
+public $components = array('DebugKit.[Ctrl + Space]');
 ```
 
 ### Go To View Action
@@ -459,7 +475,7 @@ Add namespace to top of file if it doesn't exist.
 
 ```php
 // e.g.
-<?php 
+<?php
 namespace App\Controller;
 ```
 
