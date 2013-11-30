@@ -1,12 +1,12 @@
-#!/bin/bash
-NETBEANSSUITE=""
-while [ "$1" != "" ]
-do
-    case "$1" in
-        *NetBeansSuite.php ) NETBEANSSUITE="$NETBEANSSUITE %s";;
-        *run ) NETBEANSSUITE="$NETBEANSSUITE $1=$2" shift;;
-        * ) NETBEANSSUITE="$NETBEANSSUITE $1";;
-    esac
-shift
-done
-%s $NETBEANSSUITE
+#!/usr/bin/env php
+<?php
+array_shift($argv);
+foreach ($argv as $idx => $arg) {
+	if (preg_match('/NetBeansSuite.php$/', $arg)) {
+		$argv[$idx] = __DIR__ . DIRECTORY_SEPARATOR . 'NetBeansSuite.php' ;
+	}
+}
+$command = '%s';
+$args = join(' ', $argv);
+
+passthru($command . ' ' . $args);
