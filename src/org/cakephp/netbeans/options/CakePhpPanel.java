@@ -96,6 +96,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
         defaultLabel = new javax.swing.JLabel();
         ignoreTempDirectoryCheckBox = new javax.swing.JCheckBox();
         autoCreateViewCheckBox = new javax.swing.JCheckBox();
+        notifyNewVersionCheckBox = new javax.swing.JCheckBox();
         newProjectPanel = new javax.swing.JPanel();
         localFilePathLabel = new javax.swing.JLabel();
         localFilePathTextField = new javax.swing.JTextField();
@@ -126,6 +127,8 @@ final class CakePhpPanel extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(notifyNewVersionCheckBox, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.notifyNewVersionCheckBox.text")); // NOI18N
+
         javax.swing.GroupLayout generalPanelLayout = new javax.swing.GroupLayout(generalPanel);
         generalPanel.setLayout(generalPanelLayout);
         generalPanelLayout.setHorizontalGroup(
@@ -143,7 +146,10 @@ final class CakePhpPanel extends javax.swing.JPanel {
                         .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(autoCreateViewCheckBox)
                             .addComponent(ignoreTempDirectoryCheckBox))
-                        .addContainerGap(295, Short.MAX_VALUE))))
+                        .addContainerGap(295, Short.MAX_VALUE))
+                    .addGroup(generalPanelLayout.createSequentialGroup()
+                        .addComponent(notifyNewVersionCheckBox)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         generalPanelLayout.setVerticalGroup(
             generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,7 +162,9 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addComponent(ignoreTempDirectoryCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(autoCreateViewCheckBox)
-                .addContainerGap(324, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(notifyNewVersionCheckBox)
+                .addContainerGap(282, Short.MAX_VALUE))
         );
 
         optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.generalPanel.TabConstraints.tabTitle"), generalPanel); // NOI18N
@@ -400,6 +408,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
         localFilePathTextField.setText(options.getLocalZipFilePath());
         ignoreTempDirectoryCheckBox.setSelected(options.isIgnoreTmpDirectory());
         autoCreateViewCheckBox.setSelected(options.isAutoCreateView());
+        notifyNewVersionCheckBox.setSelected(options.isNotifyNewVersion());
     }
 
     void store() {
@@ -409,6 +418,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
             options.setLocalZipFilePath(localFilePathTextField.getText());
             options.setIgnoreTmpDirectory(ignoreTempDirectoryCheckBox.isSelected());
             options.setAutoCreateView(autoCreateViewCheckBox.isSelected());
+            options.setNotifyNewVersion(notifyNewVersionCheckBox.isSelected());
         }
     }
 
@@ -497,6 +507,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
     private javax.swing.JTextField localFilePathTextField;
     private javax.swing.JLabel messageLabel;
     private javax.swing.JPanel newProjectPanel;
+    private javax.swing.JCheckBox notifyNewVersionCheckBox;
     private javax.swing.JTabbedPane optionsTabbedPane;
     private javax.swing.JLabel pluginListLabel;
     private javax.swing.JTable pluginTable;
