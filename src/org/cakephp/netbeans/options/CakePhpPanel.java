@@ -128,6 +128,11 @@ final class CakePhpPanel extends javax.swing.JPanel {
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(notifyNewVersionCheckBox, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.notifyNewVersionCheckBox.text")); // NOI18N
+        notifyNewVersionCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                notifyNewVersionCheckBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout generalPanelLayout = new javax.swing.GroupLayout(generalPanel);
         generalPanel.setLayout(generalPanelLayout);
@@ -380,6 +385,10 @@ final class CakePhpPanel extends javax.swing.JPanel {
     private void autoCreateViewCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoCreateViewCheckBoxActionPerformed
         controller.changed();
     }//GEN-LAST:event_autoCreateViewCheckBoxActionPerformed
+
+    private void notifyNewVersionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notifyNewVersionCheckBoxActionPerformed
+        controller.changed();
+    }//GEN-LAST:event_notifyNewVersionCheckBoxActionPerformed
 
     private void setLocalPath(String path) {
         localFilePathTextField.setText(path);
