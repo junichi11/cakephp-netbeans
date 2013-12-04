@@ -79,8 +79,8 @@ public class CakePreferences {
     }
 
     public static String getAppName(PhpModule phpModule) {
-        String appName = getPreferences(phpModule).get(APP_NAME, ""); // NOI18N
-        if (appName.equals("")) { // NOI18N
+        String appName = getPreferences(phpModule).get(APP_NAME, null); // NOI18N
+        if (appName == null) {
             CakeVersion version = CakeVersion.getInstance(phpModule);
             if (version.isCakePhp(3)) {
                 appName = CAKE3_DEFAULT_APP_NAME;

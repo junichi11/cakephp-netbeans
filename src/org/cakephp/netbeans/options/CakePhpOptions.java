@@ -41,10 +41,16 @@
  */
 package org.cakephp.netbeans.options;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
 
@@ -62,6 +68,7 @@ public class CakePhpOptions {
     private static final String IGNORE_TMP = "ignore-tmp"; // NOI18N
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String NOTIFY_NEW_VERSION = "notify-new-version"; // NOI18N
+    private static final String COMPOSER_JSON = "composer-json"; // NOI18N
     private static final CakePhpOptions INSTANCE = new CakePhpOptions();
 
     private CakePhpOptions() {
@@ -139,6 +146,41 @@ public class CakePhpOptions {
     public void setNotifyNewVersion(boolean isNotify) {
         getPreferences().putBoolean(NOTIFY_NEW_VERSION, isNotify);
 
+    }
+
+    public String getComposerJson() {
+        String composerJson = getPreferences().get(COMPOSER_JSON, null);
+        if (composerJson == null) {
+            composerJson = getDefaultComposerJson();
+        }
+        return composerJson;
+    }
+
+    private String getDefaultComposerJson() {
+        StringBuilder sb = new StringBuilder();
+        InputStream inputStream = CakePhpOptions.class.getResourceAsStream("/org/cakephp/netbeans/resources/composer.json"); // NOI18N
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // NOI18N
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n"); // NOI18N
+            }
+        } catch (UnsupportedEncodingException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return sb.toString();
+    }
+
+    public void setComposerJson(String text) {
+        getPreferences().put(COMPOSER_JSON, text);
     }
 
     public Preferences getPreferences() {

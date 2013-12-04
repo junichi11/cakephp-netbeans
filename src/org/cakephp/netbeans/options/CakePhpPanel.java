@@ -102,6 +102,9 @@ final class CakePhpPanel extends javax.swing.JPanel {
         localFilePathTextField = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
+        installingComposerLabel = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        composerJsonEditorPane = new javax.swing.JEditorPane();
         pluginsPanel = new javax.swing.JPanel();
         pluginListLabel = new javax.swing.JLabel();
         messageLabel = new javax.swing.JLabel();
@@ -192,19 +195,30 @@ final class CakePhpPanel extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(installingComposerLabel, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.installingComposerLabel.text")); // NOI18N
+
+        composerJsonEditorPane.setContentType("text/x-json"); // NOI18N
+        jScrollPane3.setViewportView(composerJsonEditorPane);
+
         javax.swing.GroupLayout newProjectPanelLayout = new javax.swing.GroupLayout(newProjectPanel);
         newProjectPanel.setLayout(newProjectPanelLayout);
         newProjectPanelLayout.setHorizontalGroup(
             newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(newProjectPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(localFilePathLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(localFilePathTextField)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(browseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(resetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(newProjectPanelLayout.createSequentialGroup()
+                        .addComponent(localFilePathLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(localFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(browseButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(resetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3)
+                    .addGroup(newProjectPanelLayout.createSequentialGroup()
+                        .addComponent(installingComposerLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         newProjectPanelLayout.setVerticalGroup(
@@ -214,10 +228,13 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addGroup(newProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(localFilePathLabel)
                     .addComponent(localFilePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(browseButton))
+                    .addComponent(browseButton)
+                    .addComponent(resetButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(installingComposerLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(resetButton)
-                .addContainerGap(337, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
 
         optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.newProjectPanel.TabConstraints.tabTitle"), newProjectPanel); // NOI18N
@@ -418,17 +435,19 @@ final class CakePhpPanel extends javax.swing.JPanel {
         ignoreTempDirectoryCheckBox.setSelected(options.isIgnoreTmpDirectory());
         autoCreateViewCheckBox.setSelected(options.isAutoCreateView());
         notifyNewVersionCheckBox.setSelected(options.isNotifyNewVersion());
+        composerJsonEditorPane.setText(options.getComposerJson());
     }
 
     void store() {
+        CakePhpOptions options = CakePhpOptions.getInstance();
         if (controller.isChanged()) {
-            CakePhpOptions options = CakePhpOptions.getInstance();
             options.setPlugins(model.getPlugins());
             options.setLocalZipFilePath(localFilePathTextField.getText());
             options.setIgnoreTmpDirectory(ignoreTempDirectoryCheckBox.isSelected());
             options.setAutoCreateView(autoCreateViewCheckBox.isSelected());
             options.setNotifyNewVersion(notifyNewVersionCheckBox.isSelected());
         }
+        options.setComposerJson(composerJsonEditorPane.getText());
     }
 
     boolean valid() {
@@ -505,13 +524,16 @@ final class CakePhpPanel extends javax.swing.JPanel {
     private javax.swing.JButton addButton;
     private javax.swing.JCheckBox autoCreateViewCheckBox;
     private javax.swing.JButton browseButton;
+    private javax.swing.JEditorPane composerJsonEditorPane;
     private javax.swing.JLabel defaultLabel;
     private javax.swing.JSeparator defaultSeparator;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
     private javax.swing.JPanel generalPanel;
     private javax.swing.JCheckBox ignoreTempDirectoryCheckBox;
+    private javax.swing.JLabel installingComposerLabel;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel localFilePathLabel;
     private javax.swing.JTextField localFilePathTextField;
     private javax.swing.JLabel messageLabel;

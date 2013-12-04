@@ -41,8 +41,13 @@
  */
 package org.cakephp.netbeans.commands;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,8 +75,12 @@ import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
+import org.openide.util.Utilities;
+import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
+import org.openide.windows.OutputWriter;
 import org.xml.sax.SAXException;
 
 public final class CakeScript {
@@ -80,16 +89,22 @@ public final class CakeScript {
     public static final String OPTIONS_SUB_PATH = "CakePhp"; // NOI18N
     public static final String SCRIPT_NAME = "cake"; // NOI18N
     public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + ".php"; // NOI18N
-    private static final String HELP_COMMAND = "--help"; // NOI18N
+    // commands
     private static final String BAKE_COMMAND = "bake"; // NOI18N
     private static final String LIST_COMMAND = "command_list"; // NOI18N
-    private static final List<String> LIST_XML_COMMAND = Arrays.asList(LIST_COMMAND, "--xml"); // NOI18N
+    private static final String PROJECT_COMMAND = "project"; // NOI18N
+    // params
+    private static final String HELP_PARAM = "--help"; // NOI18N
+    private static final String EMPTY_PARAM = "--empty"; // NOI18N
+    private static final String XML_PARAM = "--xml"; // NOI18N
+
+    private static final List<String> LIST_XML_COMMAND = Arrays.asList(LIST_COMMAND, XML_PARAM);
     // XXX any default params?
     private static final List<String> DEFAULT_PARAMS = Collections.emptyList();
     private static final String CORE_SHELLS_DIRECTORY = "cake/console/libs"; // NOI18N
     private static final String VENDORS_SHELLS_DIRECTORY = "vendors/shells"; // NOI18N
     private final String cakePath;
-    private List<String> appParams = new ArrayList<String>();
+    private final List<String> appParams = new ArrayList<String>();
 
     private CakeScript(String cakePath) {
         this.cakePath = cakePath;
@@ -123,6 +138,31 @@ public final class CakeScript {
                     Bundle.CakeScript_script_invalid(error),
                     NotifyDescriptor.WARNING_MESSAGE);
             DialogDisplayer.getDefault().notify(message);
+        }
+        throw new InvalidPhpExecutableException(error);
+    }
+
+    /**
+     * Get cake script for installing with composer.
+     *
+     * @param phpModule
+     * @return cake script
+     * @throws InvalidPhpExecutableException
+     */
+    public static CakeScript forComposer(PhpModule phpModule) throws InvalidPhpExecutableException {
+        String console = null;
+        String scriptPath = "Vendor/bin/cake.php"; // NOI18N
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        String error = null;
+        if (sourceDirectory != null) {
+            FileObject cake = sourceDirectory.getFileObject(scriptPath);
+            if (cake != null) {
+                console = FileUtil.toFile(cake).getAbsolutePath();
+            }
+            error = validate(console);
+            if (error == null) {
+                return new CakeScript(console);
+            }
         }
         throw new InvalidPhpExecutableException(error);
     }
@@ -162,7 +202,7 @@ public final class CakeScript {
 
         List<String> allParams = new ArrayList<String>();
         allParams.addAll(Arrays.asList(params));
-        allParams.add(HELP_COMMAND);
+        allParams.add(HELP_PARAM);
 
         HelpLineProcessor lineProcessor = new HelpLineProcessor();
         Future<Integer> result = createPhpExecutable(phpModule)
@@ -214,6 +254,53 @@ public final class CakeScript {
         params.add(fileType.toString().toLowerCase(Locale.ENGLISH));
         params.add(className);
         runCommand(phpModule, params, null);
+    }
+
+    /**
+     * Bake project for installing with composer. If app name is empty, app
+     * directory is source directory.
+     *
+     * @param phpModule
+     * @param name app name
+     * @param isEmpty --empty option
+     * @param postExecution
+     * @return
+     */
+    public Future<Integer> bakeProject(PhpModule phpModule, String name, boolean isEmpty, Runnable postExecution) {
+        try {
+            Reader reader = getReaderForBakeProject();
+            FileObject sourceDirectory = phpModule.getSourceDirectory();
+            File root = FileUtil.toFile(sourceDirectory);
+            File app = new File(root, name);
+            String appPath = (Utilities.isWindows() ? "/" : "") + app.getAbsolutePath(); // NOI18N
+            ArrayList<String> parameters = new ArrayList<String>();
+            parameters.add(BAKE_COMMAND);
+            parameters.add(PROJECT_COMMAND);
+            if (isEmpty) {
+                parameters.add(EMPTY_PARAM);
+            }
+            parameters.add(appPath);
+            return new PhpExecutable(cakePath)
+                    .workDir(root)
+                    .displayName(getDisplayName(phpModule, "bake project")) // NOI18N
+                    .additionalParameters(getAllParams(parameters))
+                    .run(getDescriptor(postExecution).inputOutput(new CakePhpInputOutput(reader)));
+        } catch (UnsupportedEncodingException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+
+    /**
+     * Get reader as standard input. This is used only for bake project.
+     *
+     * @return reader
+     * @throws UnsupportedEncodingException
+     */
+    private Reader getReaderForBakeProject() throws UnsupportedEncodingException {
+        String yes = "y\n"; // NOI18N
+        InputStream in = new ByteArrayInputStream(yes.getBytes());
+        return new InputStreamReader(in, "UTF-8"); // NOI18N
     }
 
     private PhpExecutable createPhpExecutable(PhpModule phpModule) {
@@ -288,7 +375,7 @@ public final class CakeScript {
         // parse each command
         List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
         for (CakeCommandItem item : commandsItem) {
-            if (!redirectToFile(phpModule, tmpFile, Arrays.asList(item.getCommand(), HELP_COMMAND, "xml"))) { // NOI18N
+            if (!redirectToFile(phpModule, tmpFile, Arrays.asList(item.getCommand(), HELP_PARAM, "xml"))) { // NOI18N
                 commands.add(new CakePhpCommand(phpModule,
                         item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
@@ -406,7 +493,7 @@ public final class CakeScript {
     //~ Inner classes
     private static class HelpLineProcessor implements LineProcessor {
 
-        private StringBuilder sb = new StringBuilder();
+        private final StringBuilder sb = new StringBuilder();
 
         @Override
         public void processLine(String line) {
@@ -424,6 +511,94 @@ public final class CakeScript {
 
         public String getHelp() {
             return sb.toString();
+        }
+    }
+
+    private static final class CakePhpInputOutput implements InputOutput {
+
+        private final InputOutput io;
+        private Reader in;
+
+        public CakePhpInputOutput(Reader in) {
+            io = IOProvider.getDefault().getIO("cakephp", false); // NOI18N
+            this.in = in;
+        }
+
+        @Override
+        public OutputWriter getOut() {
+            return io.getOut();
+        }
+
+        @Override
+        public Reader getIn() {
+            if (in == null) {
+                return io.getIn();
+            }
+            return in;
+        }
+
+        @Override
+        public OutputWriter getErr() {
+            return io.getErr();
+        }
+
+        @Override
+        public void closeInputOutput() {
+            io.closeInputOutput();
+        }
+
+        @Override
+        public boolean isClosed() {
+            return io.isClosed();
+        }
+
+        @Override
+        public void setOutputVisible(boolean value) {
+            io.setOutputVisible(value);
+        }
+
+        @Override
+        public void setErrVisible(boolean value) {
+            io.setErrVisible(value);
+        }
+
+        @Override
+        public void setInputVisible(boolean value) {
+            io.setInputVisible(value);
+        }
+
+        @Override
+        public void select() {
+            io.select();
+        }
+
+        @Override
+        public boolean isErrSeparated() {
+            return io.isErrSeparated();
+        }
+
+        @Override
+        public void setErrSeparated(boolean value) {
+            io.setErrSeparated(value);
+        }
+
+        @Override
+        public boolean isFocusTaken() {
+            return io.isFocusTaken();
+        }
+
+        @Override
+        public void setFocusTaken(boolean value) {
+            io.setFocusTaken(value);
+        }
+
+        @Override
+        public Reader flushReader() {
+            return getIn();
+        }
+
+        public void setIn(Reader in) {
+            this.in = in;
         }
     }
 }

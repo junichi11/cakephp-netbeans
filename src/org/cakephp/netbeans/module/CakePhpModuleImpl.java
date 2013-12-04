@@ -295,7 +295,7 @@ public abstract class CakePhpModuleImpl {
     protected void setAppDirectory() {
         String appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
         FileObject sourceDirectory = phpModule.getSourceDirectory();
-        if (sourceDirectory != null && !StringUtils.isEmpty(appDirectoryPath)) {
+        if (sourceDirectory != null && appDirectoryPath != null) {
             appDirectory = sourceDirectory.getFileObject(appDirectoryPath);
             return;
         }

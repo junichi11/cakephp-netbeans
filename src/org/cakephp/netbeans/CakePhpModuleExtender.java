@@ -45,19 +45,28 @@ import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
+import org.cakephp.netbeans.commands.CakeScript;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.wizards.DBConfigPanel;
@@ -67,12 +76,19 @@ import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.cakephp.netbeans.util.CakePhpSecurityString;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.CakeZipEntryFilter;
+import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.FileUtils;
+import org.netbeans.modules.php.api.util.StringUtils;
+import org.netbeans.modules.php.composer.api.Composer;
 import org.netbeans.modules.php.spi.framework.PhpModuleExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleExtender.ExtendingException;
+import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
@@ -99,7 +115,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     private static final String UTF8 = "UTF-8"; // NOI18N
     private NewProjectConfigurationPanel panel = null;
     // CakePHP 1.x, 2.x : app, CakePHP 3.x : App
-    private String appName;
+    private String defaultAppName;
 
     @Override
     public void addChangeListener(ChangeListener cl) {
@@ -122,8 +138,13 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     @Override
     public boolean isValid() {
         boolean isValid = getErrorMessage() == null;
-        Container parent = getPanel().getParent().getParent();
-        setComponentsEnabled(parent, isValid);
+        Container parent = getPanel().getParent();
+        if (parent != null) {
+            parent = parent.getParent();
+        }
+        if (parent != null) {
+            setComponentsEnabled(parent, isValid);
+        }
         return isValid;
     }
 
@@ -154,14 +175,18 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         setComponentsEnabled(parent, false);
         getPanel().getProgressTextField().setVisible(true);
 
-        // create
-        createCakePHP(targetDirectory);
+        // install CakePHP
+        installCakePHP(phpModule, targetDirectory);
         targetDirectory.refresh(true);
+
+        if (getPanel().isComposer()) {
+            return Collections.emptySet();
+        }
 
         setAppName(targetDirectory);
 
         // change tmp directory permission
-        FileObject tmp = targetDirectory.getFileObject(appName + "/tmp"); // NOI18N
+        FileObject tmp = targetDirectory.getFileObject(defaultAppName + "/tmp"); // NOI18N
         if (tmp != null) {
             CakePhpFileUtils.chmodTmpDirectory(tmp);
         }
@@ -206,19 +231,34 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
     }
 
+    private void createDBFile(PhpModule phpModule) {
+        // create database.php
+        if (CakeVersion.getInstance(phpModule).isCakePhp(3)) {
+            createDatasourcesFile(phpModule);
+        } else {
+            createDatabaseFile(phpModule);
+        }
+    }
+
     /**
      * Create database.php file (CakePHP 1.x, 2.x)
      *
      * @param phpModule
      */
+    @NbBundle.Messages({
+        "CakePhpModuleExtender.not.found.configdir=Not found: app config directoy"
+    })
     private void createDatabaseFile(PhpModule phpModule) {
         // create database.php file
         FileObject configDirectory;
         NewProjectConfigurationPanel p = getPanel();
         NewProjectConfigurationDetailPanel detailPanel = NewProjectConfigurationDetailPanel.getDefault();
         if (p.isDatabasePhp()) {
-
             configDirectory = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+            if (configDirectory == null) {
+                LOGGER.log(Level.WARNING, Bundle.CakePhpModuleExtender_not_found_configdir());
+                return;
+            }
             try {
                 PrintWriter pw = new PrintWriter(configDirectory.createAndOpen("database.php")); // NOI18N
                 pw.println("<?php"); // NOI18N
@@ -410,7 +450,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         Set<FileObject> files = new HashSet<FileObject>();
         files.add(config);
         if (files.isEmpty()) {
-            FileObject index = targetDirectory.getFileObject(appName + "/webroot/index.php"); // NOI18N
+            FileObject index = targetDirectory.getFileObject(defaultAppName + "/webroot/index.php"); // NOI18N
             if (index != null) {
                 files.add(index);
             }
@@ -453,19 +493,21 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     private void setAppName(FileObject targetDirectory) {
         FileObject fileObject = targetDirectory.getFileObject("App"); // NOI18N
         if (fileObject != null) {
-            appName = "App"; // NOI18N
+            defaultAppName = "App"; // NOI18N
         } else {
-            appName = "app"; // NOI18N
+            defaultAppName = "app"; // NOI18N
         }
     }
 
-    private void createCakePHP(FileObject targetDirectory) {
+    private void installCakePHP(PhpModule phpModule, FileObject targetDirectory) throws ExtendingException {
         // create cakephp files
         NewProjectConfigurationPanel p = getPanel();
         if (p.isUnzip()) {
             unzipFromGitHub(p, targetDirectory);
         } else if (p.isLocalFile()) {
             unzipFromLocalZip(targetDirectory);
+        } else if (p.isComposer()) {
+            installWithComposer(phpModule, targetDirectory);
         } else if (p.isGit()) {
             // Linux Mac ... run git command
             createProjectFromGitCommand(targetDirectory);
@@ -496,13 +538,298 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
     }
 
-    private void createDBFile(PhpModule phpModule) {
-        // create database.php
-        if (CakeVersion.getInstance(phpModule).isCakePhp(3)) {
-            createDatasourcesFile(phpModule);
-        } else {
-            createDatabaseFile(phpModule);
+    /**
+     * Installing with Composer.
+     *
+     * @see
+     * http://book.cakephp.org/2.0/en/installation/advanced-installation.html#installing-cakephp-with-composer
+     * @param phpModule
+     * @param targetDirectory
+     * @throws
+     * org.netbeans.modules.php.spi.framework.PhpModuleExtender.ExtendingException
+     */
+    private void installWithComposer(final PhpModule phpModule, FileObject targetDirectory) throws ExtendingException {
+        // prevent NPE
+        CakePreferences.setEnabled(phpModule, Boolean.FALSE);
+
+        // run composer install command
+        if (!composerInstall(targetDirectory, phpModule)) {
+            return;
         }
+
+        // run bake project command
+        bakeProject(phpModule);
+    }
+
+    /**
+     * Run composer install command.
+     *
+     * @param targetDirectory source directory
+     * @param phpModule
+     * @throws
+     * org.netbeans.modules.php.spi.framework.PhpModuleExtender.ExtendingException
+     */
+    @NbBundle.Messages({
+        "# {0} - name",
+        "CakePhpModuleExtender.extending.exception.composer.json=failed creating composer.json: {0}",
+        "# {0} - name",
+        "CakePhpModuleExtender.extending.exception.composer.install=failed installing composer: {0}"
+    })
+    private boolean composerInstall(FileObject targetDirectory, final PhpModule phpModule) throws ExtendingException {
+        boolean isSuccess = true;
+        try {
+            // create composer.json
+            createComposerJson(targetDirectory);
+        } catch (IOException ex) {
+            isSuccess = false;
+            throw new ExtendingException(Bundle.CakePhpModuleExtender_extending_exception_composer_json(phpModule.getName()));
+        }
+        if (!isSuccess) {
+            return false;
+        }
+
+        // install with composer
+        try {
+            Composer composer = Composer.getDefault();
+            composer.setWorkDir(FileUtil.toFile(targetDirectory));
+            Future<Integer> result = composer.install(phpModule);
+            if (result != null) {
+                try {
+                    result.get();
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (ExecutionException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        } catch (InvalidPhpExecutableException ex) {
+            isSuccess = false;
+            throw new ExtendingException(Bundle.CakePhpModuleExtender_extending_exception_composer_install(phpModule.getName()));
+        }
+        return isSuccess;
+    }
+
+    /**
+     * Run bake project.
+     *
+     * @param phpModule
+     * @throws
+     * org.netbeans.modules.php.spi.framework.PhpModuleExtender.ExtendingException
+     */
+    @NbBundle.Messages({
+        "# {0} - name",
+        "CakePhpModuleExtender.extending.exception.bake.project=failed bake project - please check your php interpreter settings on Options: {0}"
+    })
+    private void bakeProject(final PhpModule phpModule) throws ExtendingException {
+        try {
+            CakeScript cakeScript = CakeScript.forComposer(phpModule);
+            final String appName = getPanel().getAppName();
+            CakePreferences.setAppDirectoryPath(phpModule, appName);
+
+            // post-execution create database.php, set default settings
+            Runnable postExecution = new Runnable() {
+                @Override
+                public void run() {
+                    refreshSourceDirectory(phpModule);
+                    CakePreferences.setEnabled(phpModule, Boolean.TRUE);
+                    setAutoCreateViewFile(phpModule);
+                    setIgnoreTmpDirectory(phpModule);
+                    createDBFile(phpModule);
+                    addComposerAutoload(phpModule);
+                    // change core include path define in webroot/index.php, test.php
+                    changeCoreIncludePath(phpModule, appName);
+                }
+            };
+
+            Future<Integer> result = cakeScript.bakeProject(phpModule, appName, getPanel().useEmptyOption(), postExecution); // NOI18N
+            try {
+                if (result != null) {
+                    result.get();
+                }
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (ExecutionException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } catch (InvalidPhpExecutableException ex) {
+            throw new ExtendingException(Bundle.CakePhpModuleExtender_extending_exception_bake_project(phpModule.getName()));
+        }
+        refreshSourceDirectory(phpModule);
+    }
+
+    /**
+     * Refresh source directory.
+     *
+     * @param phpModule
+     */
+    private void refreshSourceDirectory(PhpModule phpModule) {
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory != null) {
+            sourceDirectory.refresh(true);
+        }
+    }
+
+    /**
+     * Create composer.json. Use contents of Options panel.
+     *
+     * @param targetDirectory
+     * @throws IOException
+     */
+    private void createComposerJson(FileObject targetDirectory) throws IOException {
+        String appName = getPanel().getAppName();
+        OutputStream outputStream = targetDirectory.createAndOpen("composer.json"); // NOI18N
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true);
+        try {
+            String composerJson = CakePhpOptions.getInstance().getComposerJson();
+            String placeholder = "\\{\\$nb-app-name\\}"; // NOI18N
+            if (appName.isEmpty()) {
+                composerJson = composerJson.replaceAll(placeholder + "/", ""); // NOI18N
+                composerJson = composerJson.replaceAll(placeholder, ""); // NOI18N
+            } else {
+                composerJson = composerJson.replaceAll(placeholder, appName); // NOI18N
+            }
+            pw.println(composerJson);
+        } finally {
+            outputStream.close();
+            pw.close();
+        }
+    }
+
+    /**
+     * Add Composer autoload settings to bootstrap.php.
+     *
+     * @param phpModule
+     */
+    private void addComposerAutoload(PhpModule phpModule) {
+        FileObject configDirectory = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+        if (configDirectory == null) {
+            return;
+        }
+        FileObject bootstrap = configDirectory.getFileObject("bootstrap.php"); // NOI18N
+        try {
+            DataObject bootstrapDataObject = DataObject.find(bootstrap);
+            EditorCookie ec = bootstrapDataObject.getLookup().lookup(EditorCookie.class);
+            if (ec == null) {
+                return;
+            }
+            StyledDocument document = ec.openDocument();
+            if (document == null) {
+                return;
+            }
+
+            document.insertString(document.getLength(), getComposerAutoloadSettings(), null);
+            ec.saveDocument();
+        } catch (DataObjectNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    /**
+     * Change <code>CORE_INCLUDE_PATH</code> define from hard-coding to relative
+     * path. In case of installing composer, we have to do this change.Target
+     * file:
+     * <ul>
+     * <li>webroot/index.php</li>
+     * <li>webroot/test.</li>
+     * </ul>
+     * <pre>
+     *     // sourcedirectory/app
+     *     define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'Vendor' . DS. 'pear-pear.cakephp.org' . DS . 'CakePHP');
+     *     // app directory is source directory
+     *     define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . APP_DIR . DS 'Vendor' . DS. 'pear-pear.cakephp.org' . DS . 'CakePHP');
+     * </pre>
+     *
+     * @param phpModule
+     */
+    private void changeCoreIncludePath(PhpModule phpModule, String appName) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        FileObject webrootDirectory = cakeModule.getWebrootDirectory(DIR_TYPE.APP);
+        if (webrootDirectory == null) {
+            LOGGER.log(Level.WARNING, "Not found: webroot directory({0})", phpModule.getDisplayName());
+            return;
+        }
+        ArrayList<FileObject> files = new ArrayList<FileObject>(2);
+        FileObject index = webrootDirectory.getFileObject("index.php"); // NOI18N
+        if (index != null) {
+            files.add(index);
+        }
+        FileObject test = webrootDirectory.getFileObject("test.php"); // NOI18N
+        if (test != null) {
+            files.add(test);
+        }
+        for (FileObject file : files) {
+            changeCoreIncludePath(file, appName);
+        }
+    }
+
+    /**
+     * Change <code>CORE_INCLUDE_PATH</code> to relative path.
+     *
+     * @param fileObject
+     * @param appName
+     */
+    private void changeCoreIncludePath(FileObject fileObject, String appName) {
+        try {
+            DataObject dataObject = DataObject.find(fileObject);
+            EditorCookie ec = dataObject.getLookup().lookup(EditorCookie.class);
+            if (ec == null) {
+                return;
+            }
+            final StyledDocument document = ec.openDocument();
+            if (document == null) {
+                return;
+            }
+            String text = document.getText(0, document.getLength());
+            String replacement = "define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . APP_DIR . DS . 'Vendor' . DS. 'pear-pear.cakephp.org' . DS . 'CakePHP');"; // NOI18N
+            if (!StringUtils.isEmpty(appName)) {
+                replacement = "define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'Vendor' . DS. 'pear-pear.cakephp.org' . DS . 'CakePHP');"; // NOI18N
+            }
+            final String insertString = text.replaceFirst("define\\('CAKE_CORE_INCLUDE_PATH',(.*?;)", replacement); // NOI18N
+            NbDocument.runAtomic(document, new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        document.remove(0, document.getLength());
+                        document.insertString(0, insertString, null);
+                    } catch (BadLocationException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            });
+            ec.saveDocument();
+        } catch (DataObjectNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    /**
+     * Get Composer autoload settings.
+     *
+     * @see
+     * @return String for composer autoload settings.
+     */
+    private String getComposerAutoloadSettings() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n// Load Composer autoload.\n"); // NOI18N
+        if (getPanel().getAppName().isEmpty()) {
+            sb.append("require APP . '/Vendor/autoload.php';\n\n"); // NOI18N
+        } else {
+            sb.append("require ROOT . '/Vendor/autoload.php';\n\n"); // NOI18N
+        }
+        sb.append("// Remove and re-prepend CakePHP's autoloader as Composer thinks it is the most important.\n"); // NOI18N
+        sb.append("//See https://github.com/composer/composer/commit/c80cb76b9b5082ecc3e5b53b1050f76bb27b127b\n"); // NOI18N
+        sb.append("spl_autoload_unregister(array('App', 'load'));\n"); // NOI18N
+        sb.append("spl_autoload_register(array('App', 'load'), true, true);\n"); // NOI18N
+        return sb.toString();
     }
 
     //~ Inner class
