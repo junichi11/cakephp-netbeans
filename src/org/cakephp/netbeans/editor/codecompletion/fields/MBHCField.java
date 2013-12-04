@@ -42,12 +42,14 @@
 package org.cakephp.netbeans.editor.codecompletion.fields;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.text.Document;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpCompletionItem;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
@@ -118,15 +120,36 @@ public class MBHCField extends FieldImpl {
             }
         }
 
-        // get target directory
-        FileObject targetDirectory = getTargetDirectory(cakeModule, dirType, pluginName);
-
         // add items
-        if (targetDirectory != null) {
+        for (FileObject targetDirectory : getTargetDirectories(cakeModule, dirType, pluginName)) {
             addItems(targetDirectory, pluginName, caretInputString, items, insertStart, removeLength);
         }
 
         return items;
+    }
+
+    private List<FileObject> getTargetDirectories(CakePhpModule cakeModule, CakePhpModule.DIR_TYPE dirType, String pluginName) {
+        ArrayList<FileObject> targetDirectories = new ArrayList<FileObject>();
+        List<DIR_TYPE> types = Collections.emptyList();
+        if (dirType == DIR_TYPE.APP) {
+            if (fileType == FILE_TYPE.MODEL) {
+                types = Arrays.asList(DIR_TYPE.APP);
+            } else {
+                types = Arrays.asList(DIR_TYPE.APP, DIR_TYPE.CORE);
+            }
+        }
+
+        if (dirType == DIR_TYPE.APP_PLUGIN) {
+            types = Arrays.asList(DIR_TYPE.APP_PLUGIN);
+        }
+
+        for (DIR_TYPE type : types) {
+            FileObject directory = getTargetDirectory(cakeModule, type, pluginName);
+            if (directory != null) {
+                targetDirectories.add(directory);
+            }
+        }
+        return targetDirectories;
     }
 
     private FileObject getTargetDirectory(CakePhpModule cakeModule, CakePhpModule.DIR_TYPE dirType, String pluginName) {
