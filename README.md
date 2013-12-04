@@ -5,8 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/09/08 Support for NetBeans7.3
-- 2013/11/29 last update
+- 2013/12/04 last update
 
 ## ENVIRONMENT
 
@@ -172,7 +171,7 @@ Run Action: see [*1]
 4. Run Configuration
 5. PHP Framework > check CakePHP PHP Web Framework
 
-Select `Unzip` or `Unzip local file` or `git command`.  
+Select `Unzip` or `Unzip local file` or `Composer` or `git command`.  
 If you select `Unzip`, also select CakePHP version.  
 If you want to unzip the local file, please set the option
 (`Tools > Options > PHP > CakePHP > New Project > Local file path`)  
@@ -184,6 +183,11 @@ Also set the following automatically.
 - change Security.salt and Security.cipherSeed values
 
 create a database, you can immediately start development in a local environment.
+
+#### Installing with composer
+
+We can set default `composer.json` on Options panel. We can use `--empty` and app name settings when we create a project.
+`--empty` is used with `bake project`. If app name is empty, app directory is source directory, otherwise it is created under the source directory.
 
 ### Code Completion
 
