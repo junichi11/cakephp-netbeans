@@ -67,9 +67,11 @@ import javax.swing.PopupFactory;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
+import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.awt.StatusLineElementProvider;
 import org.openide.filesystems.FileChangeAdapter;
@@ -89,9 +91,11 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = StatusLineElementProvider.class)
 public class CakePhpStatusLineElement implements StatusLineElementProvider {
 
-    private static final String DEBUG_REGEX = "^\\tConfigure::write\\('debug', (.+)\\)"; // NOI18N
-    private static final String CONFIGURE_WRITE_DEBUG = "\tConfigure::write('debug', %s);"; // NOI18N
-    private final ImageIcon icon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_icon_16.png")); // NOI18N
+    private static final String DEBUG_CORE_REGEX = "^\\tConfigure::write\\('debug', (.+)\\)"; // NOI18N
+    private static final String DEBUG_APP_REGEX = "^\\t'debug' => (.+?),"; // NOI18N
+    private static final String DEBUG_CORE_FORMAT = "\tConfigure::write('debug', %s);"; // NOI18N
+    private static final String DEBUG_APP_FORMAT = "\t'debug' => %s,"; // NOI18N
+    private final ImageIcon icon = new ImageIcon(getClass().getResource("/" + CakePhp.CAKE_ICON_16)); // NOI18N
     private final JLabel debugLabel = new JLabel(""); // NOI18N
     private final JLabel cakeVersionLabel = new JLabel("");
     private static final Map<String, String> debugLevels = new HashMap<String, String>();
@@ -99,7 +103,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private PhpModule phpModule = null;
     private String level = ""; // NOI18N
     private JList list;
-    private DefaultListModel model;
+    private final DefaultListModel model;
     private Popup popup;
     private boolean popupFlg = false;
     private FileChangeAdapterImpl fileChangeListener;
@@ -198,7 +202,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
      */
     public String getDebugLevel(FileObject config) {
         String debugLv = ""; // NOI18N
-        Pattern pattern = Pattern.compile(DEBUG_REGEX);
+        Pattern pattern = Pattern.compile(getDebugRegex(config));
 
         try {
             List<String> lines = config.asLines("UTF-8"); // NOI18N
@@ -214,6 +218,19 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         }
 
         return debugLv;
+    }
+
+    /**
+     * Get regex for debug value.
+     *
+     * @param config core.php or app.php
+     * @return regex for debug value.
+     */
+    private String getDebugRegex(@NonNull FileObject config) {
+        if (isCakePHP3(config)) {
+            return DEBUG_APP_REGEX;
+        }
+        return DEBUG_CORE_REGEX;
     }
 
     /**
@@ -250,12 +267,12 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         }
         try {
             List<String> lines = config.asLines("UTF-8"); // NOI18N
-            Pattern pattern = Pattern.compile(DEBUG_REGEX);
+            Pattern pattern = Pattern.compile(getDebugRegex(config));
             PrintWriter pw = new PrintWriter(config.getOutputStream());
             for (String line : lines) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
-                    line = String.format(CONFIGURE_WRITE_DEBUG, debugLv);
+                    line = String.format(getDebugFormat(config), debugLv);
                 }
                 pw.println(line);
             }
@@ -263,6 +280,31 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    /**
+     * Get debug format.
+     *
+     * @param config
+     * @return format for debug value.
+     */
+    private String getDebugFormat(@NonNull FileObject config) {
+        if (isCakePHP3(config)) {
+            return DEBUG_APP_FORMAT;
+        }
+        return DEBUG_CORE_FORMAT;
+    }
+
+    /**
+     * Check whether version is 3.x. Check config file name. If it's app,
+     * version 3.x, otherwise version 1.x or 2.x.
+     *
+     * @param config
+     * @return true if version is 3.x, otherwise false.
+     */
+    private boolean isCakePHP3(@NonNull FileObject config) {
+        String name = config.getName();
+        return "app".equals(name); // NOI18N
     }
 
     public void setLevel(String level) {
