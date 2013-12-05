@@ -189,10 +189,7 @@ public class FixNamespaceAction extends BaseAction {
             return false;
         }
         CakeVersion version = CakeVersion.getInstance(phpModule);
-        if (!version.isCakePhp(3)) {
-            return false;
-        }
 
-        return true;
+        return version.isCakePhp(3);
     }
 }

@@ -54,7 +54,7 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpModuleFactory {
 
-    private Map<PhpModule, CakePhpModule> modules = new HashMap<PhpModule, CakePhpModule>();
+    private final Map<PhpModule, CakePhpModule> modules = new HashMap<PhpModule, CakePhpModule>();
     private static final CakePhpModuleFactory INSTANCE = new CakePhpModuleFactory();
 
     /**

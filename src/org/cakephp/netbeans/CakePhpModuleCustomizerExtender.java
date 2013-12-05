@@ -69,7 +69,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     private final boolean originalAutoCreateState;
     private final boolean originalIgnoreTmpDirectory;
     private final boolean isEnabled;
-    private ChangeSupport changeSupport = new ChangeSupport(this);
+    private final ChangeSupport changeSupport = new ChangeSupport(this);
     private String errorMessage;
     private boolean isValid;
     private final PhpModule phpModule;
