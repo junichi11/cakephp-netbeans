@@ -348,6 +348,9 @@ public final class CakeScript {
                 .inputOutput(InputOutput.NULL);
     }
 
+    @NbBundle.Messages({
+        "CakeScript.redirect.xml.error=error is occurred when xml file is created for command list."
+    })
     private List<FrameworkCommand> getFrameworkCommandsInternalXml(PhpModule phpModule) {
         File tmpFile;
         try {
@@ -358,6 +361,7 @@ public final class CakeScript {
             return null;
         }
         if (!redirectToFile(phpModule, tmpFile, LIST_XML_COMMAND)) {
+            LOGGER.log(Level.WARNING, Bundle.CakeScript_redirect_xml_error());
             return null;
         }
         List<CakeCommandItem> commandsItem = new ArrayList<CakeCommandItem>();
@@ -415,6 +419,10 @@ public final class CakeScript {
         return commands;
     }
 
+    @NbBundle.Messages({
+        "# {0} - exitValue",
+        "CakeScript.redirect.error=exitValue:{0} There may be some errors when redirect command result to file"
+    })
     private boolean redirectToFile(PhpModule phpModule, File file, List<String> commands) {
         Future<Integer> result = createPhpExecutable(phpModule)
                 .fileOutput(file, "UTF-8", true) // NOI18N
@@ -422,9 +430,17 @@ public final class CakeScript {
                 .additionalParameters(commands)
                 .run(getSilentDescriptor());
         try {
-            if (result == null || result.get() != 0) {
+            if (result == null) {
                 // error
                 return false;
+            }
+            // CakePHP 3.x uses exit() in cake script, so, return value is not 0
+            Integer exitValue = result.get();
+            if (exitValue != 0) {
+                if (exitValue != 1) {
+                    LOGGER.log(Level.WARNING, Bundle.CakeScript_redirect_error(exitValue));
+                    return false;
+                }
             }
         } catch (CancellationException ex) {
             // canceled
