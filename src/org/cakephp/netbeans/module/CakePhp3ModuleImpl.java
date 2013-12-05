@@ -157,7 +157,7 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                         if (type == CakePhpModule.DIR_TYPE.CORE) {
                             return null;
                         }
-                        sb.append("webroot"); // NOI18N
+                        sb.append("../webroot"); // NOI18N
                         break;
                     case NONE:
                         if (type == CakePhpModule.DIR_TYPE.APP_PLUGIN) {
@@ -196,11 +196,14 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
             case APP_VENDOR:
                 return getAppDirectory(type);
             case CORE:
-                path = "lib/Cake"; // NOI18N
+                path = "vendor/cakephp/cakephp/Cake"; // NOI18N
                 break;
-            case PLUGIN: // no break
+            case PLUGIN:
+                path = "Plugin"; // NOI18N
+                break;
             case VENDOR:
-                return null;
+                path = "vendor"; // NOI18N
+                break;
             default:
                 throw new AssertionError();
         }
@@ -219,10 +222,9 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                 return appDir;
             case APP_LIB:
                 return appDir.getFileObject("Lib"); // NOI18N
-            case APP_PLUGIN:
-                return appDir.getFileObject("Plugin"); // NOI18N
+            case APP_PLUGIN: // no break
             case APP_VENDOR:
-                return appDir.getFileObject("vendor"); // NOI18N
+                return null;
             default:
                 throw new AssertionError();
         }

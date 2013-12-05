@@ -220,6 +220,12 @@ public class CakeVersion {
         if (version == null) {
             version = root.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake/VERSION.txt"); // NOI18N
         }
+
+        // CakePHP 3.x
+        if (version == null) {
+            version = root.getFileObject("vendor/cakephp/cakephp/VERSION.txt"); // NOI18N
+        }
+
         if (version == null) {
             return null;
         }
