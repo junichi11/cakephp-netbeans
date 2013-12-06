@@ -99,7 +99,7 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                 case APP_VENDOR: // no break
                 case CORE: // no break
                 case VENDOR: // no break
-                case PLUGIN:
+                case APP_PLUGIN:
                     return null;
                 default:
                     break;
@@ -109,13 +109,13 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
         StringBuilder sb = new StringBuilder();
         switch (type) {
             case APP_LIB: // no break
-            case APP_VENDOR:
+            case VENDOR:
                 if (fileType == null || fileType == CakePhpModule.FILE_TYPE.NONE) {
                     return getDirectory(type);
                 } else {
                     return null;
                 }
-            case APP_PLUGIN: // no break
+            case PLUGIN: // no break
                 if (pluginName == null || pluginName.isEmpty()) {
                     return null;
                 }
@@ -140,6 +140,12 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                         sb.append("View/"); // NOI18N
                         sb.append(DIR_HELPER);
                         break;
+                    case ELEMENT:
+                        sb.append("View/Element"); // NOI18N
+                        break;
+                    case LAYOUT:
+                        sb.append("View/Layout"); // NOI18
+                        break;
                     case BEHAVIOR:
                         sb.append("Model/"); // NOI18N
                         sb.append(DIR_BEHAVIOR);
@@ -160,9 +166,6 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                         sb.append("../webroot"); // NOI18N
                         break;
                     case NONE:
-                        if (type == CakePhpModule.DIR_TYPE.APP_PLUGIN) {
-                            return getDirectory(type).getFileObject(pluginName);
-                        }
                         return getDirectory(type);
                     default:
                         return null;
