@@ -44,6 +44,7 @@ package org.cakephp.netbeans.module;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
@@ -423,5 +424,5 @@ public abstract class CakePhpModuleImpl {
 
     public abstract void refresh();
 
-    public abstract List<String> getAllPluginNames();
+    public abstract Set<String> getAllPluginNames();
 }

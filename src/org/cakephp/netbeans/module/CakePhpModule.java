@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.preferences.CakePreferences;
@@ -410,7 +411,7 @@ public class CakePhpModule implements ChangeListener {
         return impl.isInCakePhp();
     }
 
-    public List<String> getAllPluginNames() {
+    public Set<String> getAllPluginNames() {
         return impl.getAllPluginNames();
     }
 
