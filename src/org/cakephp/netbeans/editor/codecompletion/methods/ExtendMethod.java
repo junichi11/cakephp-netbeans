@@ -43,9 +43,7 @@ package org.cakephp.netbeans.editor.codecompletion.methods;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import static org.cakephp.netbeans.editor.codecompletion.methods.Method.DOT;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
@@ -79,7 +77,8 @@ public class ExtendMethod extends AssetMethod {
     @Override
     public List<String> getElements(int argCount, String input) {
         // extend method was added from 2.x
-        int major = CakeVersion.getInstance(phpModule).getMajor();
+        CakeVersion cakeVersion = CakeVersion.getInstance(phpModule);
+        int major = cakeVersion.getMajor();
         if (major < 2) {
             return Collections.emptyList();
         }
@@ -91,89 +90,46 @@ public class ExtendMethod extends AssetMethod {
         }
 
         // plugin name for input value e.g. Debugkit.something
-        String pluginName = ""; // NOI18N
+        String pluginName = null;
         String basePath;
-        boolean isAbsolutePath = false;
-        if (CakePhpUtils.isAbsolutePath(input)) {
-            isAbsolutePath = true;
-            basePath = input;
+        String[] pluginSplit = CakePhpUtils.pluginSplit(input);
+        if (pluginSplit != null && pluginSplit.length == 2) {
+            pluginName = pluginSplit[0];
+            basePath = pluginSplit[1];
         } else {
-            // split plugin
-            String[] pluginSplit = CakePhpUtils.pluginSplit(input);
-            if (pluginSplit != null && pluginSplit.length == 2) {
-                pluginName = pluginSplit[0];
-                basePath = pluginSplit[1];
-            } else {
-                basePath = input;
-            }
-            if (CakePhpUtils.isAbsolutePath(basePath)) {
-                isAbsolutePath = true;
-            }
+            basePath = input;
         }
+
+        // start with "/"?
+        boolean isAbsolutePath = CakePhpUtils.isAbsolutePath(basePath);
 
         // set sub directory path
         String filter = setSubDirectoryPath(basePath);
 
         List<String> elements = new ArrayList<String>();
         if (argCount == 1) {
-            // set Plugins
-            if (pluginName.isEmpty()) {
-                Set<String> pluginNames = Collections.emptySet();
-                if (!input.contains(SLASH) && !input.contains(DOT)) {
-                    pluginNames = getPluginNames();
-                }
-                for (String name : pluginNames) {
-                    if (name.startsWith(filter)) {
-                        elements.add(name + DOT);
+            // get DIR_TYPE, FILE_TYPE
+            DIR_TYPE dirType = cakeModule.getDirectoryType(currentFile);
+            FILE_TYPE fileType = cakeModule.getFileType(currentFile);
+            FileObject targetDirectory = getTargetDirectory(cakeModule, dirType, fileType, pluginName, isAbsolutePath);
+
+            // add elememts
+            if (targetDirectory != null) {
+                for (FileObject child : targetDirectory.getChildren()) {
+                    // can't use the same file
+                    if (child != currentFile) {
+                        addElement(child, filter, elements, pluginName);
                     }
                 }
             }
 
-            // get DIR_TYPE
-            CakePhpModule.DIR_TYPE dirType = cakeModule.getDirectoryType(currentFile);
-            FileObject viewBaseDirectory;
-
-            // is plugin?
-            if (!pluginName.isEmpty()) {
-                viewBaseDirectory = getPluginViewDirectory(pluginName);
-            } else {
-                pluginName = null;
-                // get current plugin name
-                String currentPluginName = cakeModule.getCurrentPluginName(currentFile);
-                if (currentPluginName.isEmpty()) {
-                    currentPluginName = null;
-                }
-                viewBaseDirectory = cakeModule.getViewDirectory(dirType, currentPluginName);
-            }
-            if (viewBaseDirectory == null) {
-                return Collections.emptyList();
-            }
-
-            if (isAbsolutePath) {
-                // do nothing
-            } else if (cakeModule.isElement(currentFile)) {
-                viewBaseDirectory = viewBaseDirectory.getFileObject("Elements"); // NOI18N
-            } else if (cakeModule.isLayout(currentFile)) {
-                viewBaseDirectory = viewBaseDirectory.getFileObject("Layouts"); // NOI18N
-            } else {
-                if (StringUtils.isEmpty(pluginName)) {
-                    String viewFolderName = getViewFolderName(viewBaseDirectory);
-                    viewBaseDirectory = viewBaseDirectory.getFileObject(viewFolderName);
-                }
-            }
-
-            if (viewBaseDirectory == null) {
-                return Collections.emptyList();
-            }
-
-            viewBaseDirectory = viewBaseDirectory.getFileObject(subDirectoryPath);
-
-            // add elememts
-            if (viewBaseDirectory != null) {
-                for (FileObject child : viewBaseDirectory.getChildren()) {
-                    // can't use the same file
-                    if (child != currentFile) {
-                        addElement(child, filter, elements, pluginName);
+            // add Plugins
+            if (StringUtils.isEmpty(pluginName) && fileType == FILE_TYPE.ELEMENT) {
+                if (!input.contains(SLASH) && !input.contains(DOT)) {
+                    for (String name : cakeModule.getAllPluginNames()) {
+                        if (name.startsWith(filter)) {
+                            elements.add(name + DOT);
+                        }
                     }
                 }
             }
@@ -181,39 +137,40 @@ public class ExtendMethod extends AssetMethod {
         return elements;
     }
 
-    private Set<String> getPluginNames() {
-        Set<String> plugins = new HashSet<String>();
-        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        if (cakeModule == null) {
-            return Collections.emptySet();
-        }
-        for (DIR_TYPE dirType : PLUGINS) {
-            FileObject pluginDirectory = cakeModule.getDirectory(dirType);
-            if (pluginDirectory == null || !pluginDirectory.isFolder()) {
-                continue;
-            }
-            for (FileObject child : pluginDirectory.getChildren()) {
-                if (child.isFolder()) {
-                    plugins.add(child.getName());
+    private FileObject getTargetDirectory(CakePhpModule cakeModule, DIR_TYPE dirType, FILE_TYPE fileType, String pluginName, boolean isAbsolutePath) {
+        boolean isPlugin = !StringUtils.isEmpty(pluginName);
+        FileObject targetDirectory = null;
+        // is plugin?
+        if (isPlugin) {
+            for (DIR_TYPE plugin : PLUGINS) {
+                targetDirectory = cakeModule.getDirectory(plugin, fileType, pluginName);
+                if (targetDirectory != null) {
+                    break;
                 }
             }
+        } else {
+            // get current plugin name
+            String currentPluginName = cakeModule.getCurrentPluginName(currentFile);
+            if (currentPluginName.isEmpty()) {
+                currentPluginName = null;
+            }
+            targetDirectory = cakeModule.getDirectory(dirType, fileType, currentPluginName);
         }
-        return plugins;
-    }
 
-    private FileObject getPluginViewDirectory(String pluginName) {
-        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        if (cakeModule == null) {
+        if (targetDirectory == null) {
             return null;
         }
-        for (DIR_TYPE dirType : PLUGINS) {
-            FileObject pluginViewDirectory = cakeModule.getDirectory(dirType, FILE_TYPE.VIEW, pluginName);
-            if (pluginViewDirectory == null || !pluginViewDirectory.isFolder()) {
-                continue;
-            }
-            return pluginViewDirectory;
+
+        if (!isAbsolutePath && fileType == FILE_TYPE.VIEW && !isPlugin) {
+            String viewFolderName = getViewFolderName(targetDirectory);
+            targetDirectory = targetDirectory.getFileObject(viewFolderName);
         }
-        return null;
+
+        if (targetDirectory == null) {
+            return null;
+        }
+
+        return targetDirectory.getFileObject(subDirectoryPath);
     }
 
     private String getViewFolderName(FileObject viewBaseDirectory) {
