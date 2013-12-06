@@ -526,11 +526,11 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             if (fileName.endsWith("Helper")) { // NOI18N
                 return FILE_TYPE.HELPER;
             }
-        } else if (path.contains("/View/Element/")) { // NOI18N
+        } else if (path.contains("/View/Elements/")) { // NOI18N
             if (CakePhpUtils.isCtpFile(currentFile)) {
                 return FILE_TYPE.ELEMENT;
             }
-        } else if (path.contains("/View/Layout/")) { // NOI18N
+        } else if (path.contains("/View/Layouts/")) { // NOI18N
             if (CakePhpUtils.isCtpFile(currentFile)) {
                 return FILE_TYPE.LAYOUT;
             }
