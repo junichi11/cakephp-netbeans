@@ -86,6 +86,9 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
 
     @Override
     public FileObject getDirectory(CakePhpModule.DIR_TYPE type, CakePhpModule.FILE_TYPE fileType, String pluginName) {
+        if (pluginName != null && pluginName.isEmpty()) {
+            pluginName = null;
+        }
         if (type == null) {
             return null;
         }

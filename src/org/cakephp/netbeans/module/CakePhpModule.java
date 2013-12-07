@@ -43,6 +43,7 @@ package org.cakephp.netbeans.module;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -130,6 +131,8 @@ public class CakePhpModule implements ChangeListener {
             return name;
         }
     }
+
+    public static List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
 
     public FileObject getConfigFile() {
         return impl.getConfigFile();
@@ -317,6 +320,17 @@ public class CakePhpModule implements ChangeListener {
 
     public FileObject getFile(DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String pluginName) {
         return impl.getFile(pluginName, dirType, fileType, fileName);
+    }
+
+    public FileObject getFile(List<DIR_TYPE> dirTypes, FILE_TYPE fileType, String fileName, String pluginName) {
+        FileObject file = null;
+        for (DIR_TYPE dirType : dirTypes) {
+            file = getFile(dirType, fileType, fileName, pluginName);
+            if (file != null) {
+                break;
+            }
+        }
+        return file;
     }
 
     public List<FileObject> getFiles(FileObject targetDirectory, FileFilter filter) {

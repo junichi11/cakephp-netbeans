@@ -107,6 +107,9 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public FileObject getDirectory(DIR_TYPE type, FILE_TYPE fileType, String pluginName) {
+        if (pluginName != null && pluginName.isEmpty()) {
+            pluginName = null;
+        }
         if (type == null) {
             return null;
         }
