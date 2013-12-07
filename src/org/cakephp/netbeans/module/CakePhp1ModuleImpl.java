@@ -254,8 +254,14 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                     case LAYOUT:
                         sb.append("views/layouts"); // NOI18N
                         break;
+                    case TMP:
+                        if (type.isPlugin()) {
+                            return null;
+                        }
+                        sb.append("tmp"); // NOI18N
+                        break;
                     case NONE:
-                        if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
+                        if (type.isPlugin()) {
                             return getDirectory(type).getFileObject(plugin);
                         }
                         return getDirectory(type);

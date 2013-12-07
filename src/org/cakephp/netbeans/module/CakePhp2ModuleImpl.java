@@ -208,6 +208,12 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                         }
                         sb.append("webroot"); // NOI18
                         break;
+                    case TMP:
+                        if (type.isPlugin()) {
+                            return null;
+                        }
+                        sb.append("tmp");
+                        break;
                     case NONE:
                         if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
                             return getDirectory(type).getFileObject(pluginName);

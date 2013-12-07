@@ -168,6 +168,12 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                         }
                         sb.append("../webroot"); // NOI18N
                         break;
+                    case TMP:
+                        if (type.isPlugin()) {
+                            return null;
+                        }
+                        sb.append("../tmp"); // NOI18N
+                        break;
                     case NONE:
                         return getDirectory(type);
                     default:

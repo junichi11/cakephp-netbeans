@@ -46,9 +46,11 @@ import java.util.Collections;
 import java.util.Set;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
+import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
 public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {
@@ -63,7 +65,8 @@ public class CakePhpIgnoredFilesExtender extends PhpModuleIgnoredFilesExtender {
             if (cakeModule == null) {
                 appTmp = null;
             } else {
-                appTmp = new File(FileUtil.toFile(cakeModule.getDirectory(DIR_TYPE.APP)), "tmp"); // NOI18N
+                FileObject tmpDirectory = cakeModule.getDirectory(DIR_TYPE.APP, FILE_TYPE.TMP, null);
+                appTmp = tmpDirectory == null ? null : FileUtil.toFile(tmpDirectory);
             }
         } else {
             appTmp = null;

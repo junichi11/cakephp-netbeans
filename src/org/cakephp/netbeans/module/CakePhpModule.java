@@ -104,6 +104,11 @@ public class CakePhpModule implements ChangeListener {
         VENDOR,
         APP_VENDOR,
         APP_LIB,;
+
+        public boolean isPlugin() {
+            return this == APP_PLUGIN || this == PLUGIN;
+        }
+
     }
 
     public enum FILE_TYPE {
@@ -122,7 +127,8 @@ public class CakePhpModule implements ChangeListener {
         TESTCASE,
         FIXTURE,
         CONSOLE,
-        CONFIG,;
+        CONFIG,
+        TMP,;
 
         @Override
         public String toString() {

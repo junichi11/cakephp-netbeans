@@ -47,8 +47,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
@@ -78,9 +80,8 @@ public final class ClearCacheAction extends BaseAction {
             // called via shortcut
             return;
         }
-        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        FileObject app = module.getDirectory(DIR_TYPE.APP);
-        FileObject cache = app.getFileObject("tmp/cache"); // NOI18N
+        // delete files
+        FileObject cache = getTempCacheDirectory(phpModule);
         if (cache != null && cache.isFolder()) {
             Enumeration<? extends FileObject> children = cache.getChildren(true);
             while (children.hasMoreElements()) {
@@ -92,14 +93,29 @@ public final class ClearCacheAction extends BaseAction {
                         grandChild.delete();
                     } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "can't delete: " + grandChild.getNameExt(), ex);
-                        Icon icon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"));
+                        Icon icon = new ImageIcon(getClass().getResource("/" + CakePhp.CAKE_FAIL_ICON_16)); // NOI18N
                         NotificationDisplayer.getDefault().notify(getPureName(), icon, "Delete fail", null);
                     }
                 }
             }
-            Icon icon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png"));
+            Icon icon = new ImageIcon(getClass().getResource("/" + CakePhp.CAKE_SUCCESS_ICON_16)); // NOI18N
             NotificationDisplayer.getDefault().notify(getPureName(), icon, "Complete success", null);
         }
+    }
+
+    /**
+     * Get tmp/cache directory.
+     *
+     * @param phpModule
+     * @return tmp/cache directory
+     */
+    private FileObject getTempCacheDirectory(PhpModule phpModule) {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        FileObject tmpDirectory = module.getDirectory(DIR_TYPE.APP, FILE_TYPE.TMP, null);
+        if (tmpDirectory == null) {
+            return null;
+        }
+        return tmpDirectory.getFileObject("cache"); // NOI18N
     }
 
     @Override
