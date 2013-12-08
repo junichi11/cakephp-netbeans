@@ -208,9 +208,14 @@ public class MBHCFieldInfo extends FieldInfo {
         if (fileType == FILE_TYPE.NONE) {
             return Collections.emptyList();
         }
-        List<String> list = new ArrayList<String>();
+
         PhpModule phpModule = getPhpModule();
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return Collections.emptyList();
+        }
+
+        List<String> list = new ArrayList<String>();
         EditorSupport editorSupport = Lookup.getDefault().lookup(EditorSupport.class);
         FileObject appDir = module.getDirectory(DIR_TYPE.APP, fileType, null);
         list.addAll(getCommonNames(appDir, editorSupport, null));

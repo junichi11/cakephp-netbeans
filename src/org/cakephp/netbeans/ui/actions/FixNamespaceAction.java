@@ -148,6 +148,9 @@ public class FixNamespaceAction extends BaseAction {
         }
         FileObject parent = target.getParent();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return namespace;
+        }
         FileObject appDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
         FileObject coreDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.CORE);
         if (appDirectory == null || coreDirectory == null || parent == null) {

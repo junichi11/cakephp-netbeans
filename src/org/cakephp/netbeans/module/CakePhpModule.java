@@ -50,6 +50,7 @@ import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.preferences.CakePreferences;
+import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
@@ -292,7 +293,11 @@ public class CakePhpModule implements ChangeListener {
         return impl.getCurrentPluginName(currentFile);
     }
 
+    @CheckForNull
     public static FileObject getCakePhpDirectory(PhpModule phpModule) {
+        if (phpModule == null) {
+            return null;
+        }
         FileObject sourceDirectory = phpModule.getSourceDirectory();
         if (sourceDirectory == null) {
             return null;
@@ -301,7 +306,7 @@ public class CakePhpModule implements ChangeListener {
         String cakePhpDirRelativePath = CakePreferences.getCakePhpDirPath(phpModule);
         FileObject cakePhpDirectory;
         if (!StringUtils.isEmpty(cakePhpDirRelativePath)) {
-            cakePhpDirectory = sourceDirectory.getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
+            cakePhpDirectory = sourceDirectory.getFileObject(cakePhpDirRelativePath);
         } else {
             cakePhpDirectory = phpModule.getSourceDirectory();
         }
@@ -435,9 +440,13 @@ public class CakePhpModule implements ChangeListener {
         return impl.getAllPluginNames();
     }
 
+    @CheckForNull
     public static CakePhpModule forPhpModule(PhpModule phpModule) {
         if (phpModule == null) {
             phpModule = PhpModule.inferPhpModule();
+        }
+        if (phpModule == null) {
+            return null;
         }
         CakePhpModuleFactory factory = CakePhpModuleFactory.getInstance();
         return factory.create(phpModule);

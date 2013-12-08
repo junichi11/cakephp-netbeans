@@ -166,6 +166,9 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
      */
     private FileObject getElementFile(Document doc) {
         CakePhpModule module = CakePhpModule.forPhpModule(PhpModule.inferPhpModule());
+        if (module == null) {
+            return null;
+        }
         FileObject elementFile = null;
 
         // check plugin : Plugin.element

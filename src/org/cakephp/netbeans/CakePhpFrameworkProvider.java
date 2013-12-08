@@ -119,8 +119,12 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     @Override
     public File[] getConfigurationFiles(PhpModule phpModule) {
         // return all php files from app/config
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return new File[0];
+        }
         List<File> configFiles = new LinkedList<File>();
-        FileObject config = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(DIR_TYPE.APP);
+        FileObject config = cakeModule.getConfigDirectory(DIR_TYPE.APP);
         assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
         if (config.isFolder()) {
             Enumeration<? extends FileObject> children = config.getChildren(true);

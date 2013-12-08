@@ -99,6 +99,9 @@ public class CheckDefaultAction extends BaseAction {
         CheckDefaultPanel verifyPanel = getPanel();
         verifyPanel.reset();
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return;
+        }
         FileObject webroot = module.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
 
         // favicon.ico
@@ -150,7 +153,6 @@ public class CheckDefaultAction extends BaseAction {
         }
 
         // Config/core.php :debug level
-
         // open panel
         verifyPanel.showDialog();
     }
@@ -167,6 +169,9 @@ public class CheckDefaultAction extends BaseAction {
         assert favicon != null;
         FileObject targetFavicon = null;
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return false;
+        }
         FileObject webrootDirectory = cakeModule.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
         if (webrootDirectory != null) {
             targetFavicon = webrootDirectory.getFileObject("favicon.ico"); // NOI18N
@@ -223,6 +228,9 @@ public class CheckDefaultAction extends BaseAction {
     private boolean isChangedSessionName(PhpModule phpModule) {
         FileObject config = null;
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return false;
+        }
 
         // CakePHP 1.x, 2.x core.php
         // CakePHP 3.x session.php

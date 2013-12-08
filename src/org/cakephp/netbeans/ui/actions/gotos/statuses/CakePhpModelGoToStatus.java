@@ -164,6 +164,9 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         // XXX more search?
         // only app directory
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(getPhpModule());
+        if (cakeModule == null) {
+            return Collections.emptyList();
+        }
         FileObject controllerDirectory = cakeModule.getControllerDirectory(CakePhpModule.DIR_TYPE.APP);
 
         // scan controllers

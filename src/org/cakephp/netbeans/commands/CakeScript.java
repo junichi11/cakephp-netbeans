@@ -169,6 +169,9 @@ public final class CakeScript {
 
     private static FileObject getPath(PhpModule phpModule) {
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return null;
+        }
         FileObject consoleDirectory = module.getConsoleDirectory(CakePhpModule.DIR_TYPE.APP);
         if (consoleDirectory == null) {
             LOGGER.log(Level.WARNING, "Not found " + SCRIPT_NAME);
@@ -188,6 +191,9 @@ public final class CakeScript {
 
     public void runCommand(PhpModule phpModule, List<String> parameters, Runnable postExecution) {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return;
+        }
         FileObject app = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
         appParams.add("-app"); // NOI18N
         appParams.add(app.getPath());
@@ -465,10 +471,13 @@ public final class CakeScript {
         }
         String[] shells = {CORE_SHELLS_DIRECTORY, VENDORS_SHELLS_DIRECTORY, cakeModule.getAppName() + "/" + VENDORS_SHELLS_DIRECTORY};
 
-        for (String shell : shells) {
-            FileObject shellFileObject = CakePhpModule.getCakePhpDirectory(phpModule).getFileObject(shell);
-            if (shellFileObject != null) {
-                shellDirs.add(shellFileObject);
+        FileObject cakePhpDirectory = CakePhpModule.getCakePhpDirectory(phpModule);
+        if (cakePhpDirectory != null) {
+            for (String shell : shells) {
+                FileObject shellFileObject = cakePhpDirectory.getFileObject(shell);
+                if (shellFileObject != null) {
+                    shellDirs.add(shellFileObject);
+                }
             }
         }
 
@@ -494,14 +503,16 @@ public final class CakeScript {
     private String getShellsPlace(PhpModule phpModule, FileObject shellDir) {
         String place = ""; // NOI18N
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        String app = cakeModule.getAppName();
         FileObject source = CakePhpModule.getCakePhpDirectory(phpModule);
-        if (source.getFileObject(CORE_SHELLS_DIRECTORY) == shellDir) {
-            place = "CORE"; // NOI18N
-        } else if (source.getFileObject(app + "/" + VENDORS_SHELLS_DIRECTORY) == shellDir) {
-            place = "APP VENDOR"; // NOI18N
-        } else if (source.getFileObject(VENDORS_SHELLS_DIRECTORY) == shellDir) {
-            place = "VENDOR"; // NOI18N
+        if (cakeModule != null && source != null) {
+            String app = cakeModule.getAppName();
+            if (source.getFileObject(CORE_SHELLS_DIRECTORY) == shellDir) {
+                place = "CORE"; // NOI18N
+            } else if (source.getFileObject(app + "/" + VENDORS_SHELLS_DIRECTORY) == shellDir) {
+                place = "APP VENDOR"; // NOI18N
+            } else if (source.getFileObject(VENDORS_SHELLS_DIRECTORY) == shellDir) {
+                place = "VENDOR"; // NOI18N
+            }
         }
         return place;
     }

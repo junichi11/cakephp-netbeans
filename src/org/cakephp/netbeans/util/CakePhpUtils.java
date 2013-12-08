@@ -85,7 +85,8 @@ public final class CakePhpUtils {
 
     public static boolean isView(FileObject fo) {
         PhpModule phpModule = PhpModule.forFileObject(fo);
-        return CakePhpModule.forPhpModule(phpModule).isView(fo);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isView(fo);
     }
 
     public static FileObject getView(FileObject controller, PhpBaseElement phpElement) {
@@ -98,7 +99,8 @@ public final class CakePhpUtils {
 
     public static FileObject getView(FileObject controller, String viewName) {
         PhpModule phpModule = PhpModule.forFileObject(controller);
-        return CakePhpModule.forPhpModule(phpModule).getView(controller, viewName);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? null : cakeModule.getView(controller, viewName);
     }
 
     public static FileObject getView(FileObject controller, PhpBaseElement phpElement, FileObject theme) {
@@ -111,7 +113,8 @@ public final class CakePhpUtils {
 
     public static FileObject getView(FileObject controller, String viewName, FileObject theme) {
         PhpModule phpModule = PhpModule.forFileObject(controller);
-        return CakePhpModule.forPhpModule(phpModule).getView(controller, viewName, theme);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? null : cakeModule.getView(controller, viewName, theme);
     }
 
     public static boolean isControllerName(String name) {
@@ -123,12 +126,14 @@ public final class CakePhpUtils {
             return false;
         }
         PhpModule phpModule = PhpModule.forFileObject(fo);
-        return CakePhpModule.forPhpModule(phpModule).isController(fo);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isController(fo);
     }
 
     public static FileObject getController(FileObject view) {
         PhpModule phpModule = PhpModule.forFileObject(view);
-        return CakePhpModule.forPhpModule(phpModule).getController(view);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? null : cakeModule.getController(view);
     }
 
     /**
@@ -170,7 +175,8 @@ public final class CakePhpUtils {
             return false;
         }
         PhpModule phpModule = PhpModule.forFileObject(fo);
-        return CakePhpModule.forPhpModule(phpModule).isComponent(fo);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isComponent(fo);
     }
 
     /**
@@ -184,7 +190,8 @@ public final class CakePhpUtils {
             return false;
         }
         PhpModule phpModule = PhpModule.forFileObject(fo);
-        return CakePhpModule.forPhpModule(phpModule).isHelper(fo);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isHelper(fo);
     }
 
     /**
@@ -198,7 +205,8 @@ public final class CakePhpUtils {
             return false;
         }
         PhpModule phpModule = PhpModule.forFileObject(fo);
-        return CakePhpModule.forPhpModule(phpModule).isModel(fo);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isModel(fo);
     }
 
     /**
@@ -209,7 +217,8 @@ public final class CakePhpUtils {
      */
     public static boolean isBehavior(FileObject fo) {
         PhpModule phpModule = PhpModule.forFileObject(fo);
-        return CakePhpModule.forPhpModule(phpModule).isBehavior(fo);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isBehavior(fo);
     }
 
     public static String getActionName(FileObject view) {
@@ -261,7 +270,8 @@ public final class CakePhpUtils {
 
     public static FileObject createView(FileObject controller, PhpBaseElement phpElement) throws IOException {
         PhpModule phpModule = PhpModule.forFileObject(controller);
-        return CakePhpModule.forPhpModule(phpModule).createView(controller, phpElement);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? null : cakeModule.createView(controller, phpElement);
     }
 
     public static String getCamelCaseName(String name) {
@@ -324,7 +334,8 @@ public final class CakePhpUtils {
      */
     public static boolean isTest(FileObject fo) {
         PhpModule phpModule = PhpModule.forFileObject(fo);
-        return CakePhpModule.forPhpModule(phpModule).isTest(fo);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        return cakeModule == null ? false : cakeModule.isTest(fo);
     }
 
     /**

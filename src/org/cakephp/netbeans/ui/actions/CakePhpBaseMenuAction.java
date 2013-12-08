@@ -41,15 +41,6 @@
  */
 package org.cakephp.netbeans.ui.actions;
 
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToModelsAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToFixturesAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToSmartAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToBehaviorsAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToTestCasesAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToHelpersAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToViewsAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToComponentsAction;
-import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToControllersAction;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,6 +50,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.StyledDocument;
 import org.cakephp.netbeans.CakePhp;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToBehaviorsAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToComponentsAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToControllersAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToFixturesAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToHelpersAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToModelsAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToSmartAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToTestCasesAction;
+import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToViewsAction;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -225,48 +225,51 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         private JPopupMenu popup;
 
         CakeToolbarPresenter() {
-            this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
-            this.popup = new JPopupMenu();
+            PhpModule phpModule = PhpModule.inferPhpModule();
+            if (CakePhpUtils.isCakePHP(phpModule)) {
+                this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
+                this.popup = new JPopupMenu();
 
-            // add actions
-            // smart go to
-            popup.add(CakePhpGoToSmartAction.getInstance());
-            popup.add(CakePhpGoToTestCasesAction.getInstance());
-            popup.add(CakePhpGoToControllersAction.getInstance());
-            popup.add(CakePhpGoToViewsAction.getInstance());
-            popup.add(CakePhpGoToModelsAction.getInstance());
-            popup.add(CakePhpGoToComponentsAction.getInstance());
-            popup.add(CakePhpGoToHelpersAction.getInstance());
-            popup.add(CakePhpGoToBehaviorsAction.getInstance());
-            popup.add(CakePhpGoToFixturesAction.getInstance());
+                // add actions
+                // smart go to
+                popup.add(CakePhpGoToSmartAction.getInstance());
+                popup.add(CakePhpGoToTestCasesAction.getInstance());
+                popup.add(CakePhpGoToControllersAction.getInstance());
+                popup.add(CakePhpGoToViewsAction.getInstance());
+                popup.add(CakePhpGoToModelsAction.getInstance());
+                popup.add(CakePhpGoToComponentsAction.getInstance());
+                popup.add(CakePhpGoToHelpersAction.getInstance());
+                popup.add(CakePhpGoToBehaviorsAction.getInstance());
+                popup.add(CakePhpGoToFixturesAction.getInstance());
 
-            // format
-            popup.add(FormatPlusAction.getInstance());
+                // format
+                popup.add(FormatPlusAction.getInstance());
 
-            // create test
-            DataObject dataObject = getDataObject();
-            if (dataObject != null) {
-                popup.add(new RunBakeTestAction(dataObject));
-            }
-
-            // run action
-            popup.add(RunActionAction.getInstance());
-
-            // fix namespace
-            if (CakeVersion.getInstance(PhpModule.inferPhpModule()).isCakePhp(3)) {
-                FileObject fileObject = getFileObject();
-                if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
-                    popup.add(new FixNamespaceAction());
+                // create test
+                DataObject dataObject = getDataObject();
+                if (dataObject != null) {
+                    popup.add(new RunBakeTestAction(dataObject));
                 }
-            }
 
-            // add listener
-            this.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    CakeToolbarPresenter.this.popup.show(CakeToolbarPresenter.this, 0, CakeToolbarPresenter.this.getHeight());
+                // run action
+                popup.add(RunActionAction.getInstance());
+
+                // fix namespace
+                if (phpModule != null && CakeVersion.getInstance(phpModule).isCakePhp(3)) {
+                    FileObject fileObject = getFileObject();
+                    if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
+                        popup.add(new FixNamespaceAction());
+                    }
                 }
-            });
+
+                // add listener
+                this.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        CakeToolbarPresenter.this.popup.show(CakeToolbarPresenter.this, 0, CakeToolbarPresenter.this.getHeight());
+                    }
+                });
+            }
         }
     }
 }

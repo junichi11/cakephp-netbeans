@@ -88,13 +88,15 @@ public class MVCNodeFactory implements NodeFactory {
         public List<FileObject> keys() {
             if (CakePhpUtils.isCakePHP(phpModule)) {
                 CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-                List<FileObject> list = new ArrayList<FileObject>();
-                list.add(cakeModule.getControllerDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getModelDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getViewDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getHelperDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getWebrootDirectory(DIR_TYPE.APP));
-                return list;
+                if (cakeModule != null) {
+                    List<FileObject> list = new ArrayList<FileObject>();
+                    list.add(cakeModule.getControllerDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getModelDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getViewDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getHelperDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getWebrootDirectory(DIR_TYPE.APP));
+                    return list;
+                }
             }
             return Collections.emptyList();
         }

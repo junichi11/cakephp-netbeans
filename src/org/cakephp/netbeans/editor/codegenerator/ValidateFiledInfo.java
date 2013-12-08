@@ -126,6 +126,9 @@ public class ValidateFiledInfo extends FieldInfo {
         List<String> validations = new ArrayList<String>();
         PhpModule phpModule = getPhpModule();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return validations;
+        }
         FileObject coreDirectory = cakeModule.getDirectory(DIR_TYPE.CORE);
         if (coreDirectory == null) {
             return validations;

@@ -108,10 +108,12 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
 
         // get AppController
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        FileObject appController = cakeModule.getFile(DIR_TYPE.APP, CakePhpModule.FILE_TYPE.CONTROLLER, "App", null);
-        if (appController != null) {
-            for (PhpClass phpClass : parseFields(appController)) {
-                elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
+        if (cakeModule != null) {
+            FileObject appController = cakeModule.getFile(DIR_TYPE.APP, CakePhpModule.FILE_TYPE.CONTROLLER, "App", null);
+            if (appController != null) {
+                for (PhpClass phpClass : parseFields(appController)) {
+                    elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
+                }
             }
         }
 

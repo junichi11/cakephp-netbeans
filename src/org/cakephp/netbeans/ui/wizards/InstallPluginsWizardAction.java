@@ -57,7 +57,10 @@ import org.cakephp.netbeans.util.CakeDefaultZipEntryFilter;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
-import org.openide.*;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
+import org.openide.WizardDescriptor;
 import org.openide.WizardDescriptor.Panel;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
@@ -122,14 +125,20 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
             Panel<WizardDescriptor> panel = (InstallPluginsWizardPanel) panels.get(0);
             InstallPluginsVisualPanel component = (InstallPluginsVisualPanel) panel.getComponent();
 
-            String installPath = component.getInstallPathTextField();
-            CakePhpModule module = CakePhpModule.forPhpModule(pm);
+            final String installPath = component.getInstallPathTextField();
             FileObject cakePhpDirectory = CakePhpModule.getCakePhpDirectory(pm);
+            if (cakePhpDirectory == null) {
+                return;
+            }
             final FileObject installDirectory = cakePhpDirectory.getFileObject(installPath);
-            NotifyDescriptor descriptor = null;
             if (installDirectory == null) {
-                descriptor = new NotifyDescriptor.Message(installPath + " dosen't exist.", NotifyDescriptor.ERROR_MESSAGE);
-                DialogDisplayer.getDefault().notifyLater(descriptor);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        NotifyDescriptor descriptor = new NotifyDescriptor.Message(installPath + " dosen't exist.", NotifyDescriptor.ERROR_MESSAGE);
+                        DialogDisplayer.getDefault().notifyLater(descriptor);
+                    }
+                });
                 return;
             }
             final List<CakePhpPlugin> plugins = component.getCakePhpPluginList();

@@ -202,6 +202,9 @@ public class RunBakeTestAction extends BaseAction {
     private String getPluginName(DIR_TYPE type) {
         if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
             CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+            if (module == null) {
+                return null;
+            }
             String path = module.getDirectory(type).getPath();
             String targetPath = targetFile.getPath();
             targetPath = targetPath.replace(path + "/", ""); // NOI18N
@@ -215,6 +218,9 @@ public class RunBakeTestAction extends BaseAction {
 
     private boolean existTest() {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return false;
+        }
         DIR_TYPE dirType = getDirType();
         FILE_TYPE fileType = getFileType();
         String pluginName = getPluginName(dirType);

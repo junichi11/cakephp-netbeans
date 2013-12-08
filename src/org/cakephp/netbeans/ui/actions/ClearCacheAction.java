@@ -111,6 +111,9 @@ public final class ClearCacheAction extends BaseAction {
      */
     private FileObject getTempCacheDirectory(PhpModule phpModule) {
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return null;
+        }
         FileObject tmpDirectory = module.getDirectory(DIR_TYPE.APP, FILE_TYPE.TMP, null);
         if (tmpDirectory == null) {
             return null;

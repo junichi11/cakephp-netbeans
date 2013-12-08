@@ -414,6 +414,9 @@ public abstract class CakePhpGoToStatus {
             return null;
         }
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return null;
+        }
         return cakeModule.getDirectory(DIR_TYPE.APP, fileType, null);
     }
 

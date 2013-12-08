@@ -199,7 +199,10 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         CakePreferences.setEnabled(phpModule, Boolean.TRUE);
 
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        FileObject config = module.getConfigFile();
+        FileObject config = null;
+        if (module != null) {
+            config = module.getConfigFile();
+        }
 
         if (config != null) {
             // change security string
@@ -250,11 +253,14 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     })
     private void createDatabaseFile(PhpModule phpModule) {
         // create database.php file
-        FileObject configDirectory;
         NewProjectConfigurationPanel p = getPanel();
         NewProjectConfigurationDetailPanel detailPanel = NewProjectConfigurationDetailPanel.getDefault();
         if (p.isDatabasePhp()) {
-            configDirectory = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+            if (cakeModule == null) {
+                return;
+            }
+            FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
             if (configDirectory == null) {
                 LOGGER.log(Level.WARNING, Bundle.CakePhpModuleExtender_not_found_configdir());
                 return;
@@ -701,7 +707,11 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
      * @param phpModule
      */
     private void addComposerAutoload(PhpModule phpModule) {
-        FileObject configDirectory = CakePhpModule.forPhpModule(phpModule).getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return;
+        }
+        FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
         if (configDirectory == null) {
             return;
         }
@@ -747,6 +757,9 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
      */
     private void changeCoreIncludePath(PhpModule phpModule, String appName) {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return;
+        }
         FileObject webrootDirectory = cakeModule.getWebrootDirectory(DIR_TYPE.APP);
         if (webrootDirectory == null) {
             LOGGER.log(Level.WARNING, "Not found: webroot directory({0})", phpModule.getDisplayName());

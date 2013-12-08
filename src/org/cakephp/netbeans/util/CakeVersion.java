@@ -69,6 +69,11 @@ public class CakeVersion {
     private static final Logger LOGGER = Logger.getLogger(CakeVersion.class.getName());
 
     private CakeVersion(PhpModule pm) {
+        if (pm == null) {
+            setErrorVersion();
+            return;
+        }
+
         String[] split = getCakePhpVersionSplit(pm);
         if (split != null) {
             int length = split.length;
@@ -86,23 +91,19 @@ public class CakeVersion {
             }
 
             if (length <= 0) {
-                major = -1;
-                minor = -1;
-                revision = -1;
-                notStable = ""; // NOI18N
+                setErrorVersion();
             }
             CakeVersion.pm = pm;
         } else {
-            FileObject cakephpDirectory = CakePhpModule.getCakePhpDirectory(pm);
-            if (cakephpDirectory != null) {
-                FileObject cake = CakePhpModule.getCakePhpDirectory(pm).getFileObject("cake"); // NOI18N
+            FileObject cakePhpDirectory = CakePhpModule.getCakePhpDirectory(pm);
+            if (cakePhpDirectory != null) {
+                FileObject cake = cakePhpDirectory.getFileObject("cake"); // NOI18N
                 if (cake != null) {
                     major = 1;
                     minor = -1;
                     revision = -1;
                     notStable = ""; // NOI18N
                 } else {
-                    FileObject cakePhpDirectory = CakePhpModule.getCakePhpDirectory(pm);
                     cake = cakePhpDirectory.getFileObject("lib/Cake"); // NOI18N
 
                     // installing with Composer
@@ -111,7 +112,7 @@ public class CakeVersion {
                     }
 
                     if (cake != null) {
-                        FileObject app = CakePhpModule.getCakePhpDirectory(pm).getFileObject("App"); // NOI18N
+                        FileObject app = cakePhpDirectory.getFileObject("App"); // NOI18N
                         if (app != null) {
                             major = 3;
                         } else {
@@ -130,7 +131,6 @@ public class CakeVersion {
             } else {
                 CakeVersion.pm = null;
             }
-
         }
     }
 
@@ -191,6 +191,13 @@ public class CakeVersion {
      */
     public boolean isCakePhp(int majorVersion) {
         return major == majorVersion;
+    }
+
+    private void setErrorVersion() {
+        this.major = -1;
+        this.minor = -1;
+        this.revision = -1;
+        this.notStable = ""; // NOI18N
     }
 
     /**
