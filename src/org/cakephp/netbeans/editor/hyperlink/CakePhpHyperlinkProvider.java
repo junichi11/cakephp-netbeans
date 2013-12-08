@@ -106,14 +106,16 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
             return false;
         }
 
-        AbstractDocument ad = (AbstractDocument) doc;
-        ad.readLock();
-        TokenSequence<PHPTokenId> ts;
-        try {
-            TokenHierarchy hierarchy = TokenHierarchy.get(doc);
-            ts = hierarchy.tokenSequence(PHPTokenId.language());
-        } finally {
-            ad.readUnlock();
+        TokenSequence<PHPTokenId> ts = null;
+        if (doc instanceof AbstractDocument) {
+            AbstractDocument ad = (AbstractDocument) doc;
+            ad.readLock();
+            try {
+                TokenHierarchy hierarchy = TokenHierarchy.get(doc);
+                ts = hierarchy.tokenSequence(PHPTokenId.language());
+            } finally {
+                ad.readUnlock();
+            }
         }
 
         if (ts == null) {
@@ -177,7 +179,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
             elementFile = module.getFile(CakePhpModule.ALL_PLUGINS, FILE_TYPE.ELEMENT, pluginSplit[1], pluginSplit[0]);
         } else if (pluginSplit.length == 1) {
             FileObject currentFileObject = NbEditorUtilities.getFileObject(doc);
-            String pluginName = module.getCurrentPluginName(elementFile);
+            String pluginName = module.getCurrentPluginName(currentFileObject);
             DIR_TYPE dirType = module.getDirectoryType(currentFileObject);
             elementFile = module.getFile(Arrays.asList(dirType, DIR_TYPE.CORE), FILE_TYPE.ELEMENT, targetText, pluginName);
         }
@@ -207,9 +209,8 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
     public int[] getHyperlinkSpan(Document doc, int offset, HyperlinkType hyperlinkType) {
         if (targetFile != null) {
             return new int[]{targetStart, targetEnd};
-        } else {
-            return null;
         }
+        return new int[0];
     }
 
     @Override

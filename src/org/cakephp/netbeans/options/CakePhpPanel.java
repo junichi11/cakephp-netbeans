@@ -60,7 +60,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
     private static final long serialVersionUID = 1542234585504356049L;
     private final CakePhpOptionsPanelController controller;
     private CakePhpOptionsPanelRegisterDialog dialog;
-    private CakePhpPluginTableModel model = new CakePhpPluginTableModel();
+    private final CakePhpPluginTableModel model = new CakePhpPluginTableModel();
 
     CakePhpPanel(CakePhpOptionsPanelController controller) {
         this.controller = controller;
@@ -454,13 +454,13 @@ final class CakePhpPanel extends javax.swing.JPanel {
         return true;
     }
 
-    private class CakePhpPluginTableModel extends AbstractTableModel {
+    private static class CakePhpPluginTableModel extends AbstractTableModel {
 
         private static final int NAME = 0;
         private static final int URL = 1;
         private static final long serialVersionUID = 6148058724466511289L;
         private List<CakePhpPlugin> plugins;
-        private String[] column;
+        private final String[] column;
 
         public CakePhpPluginTableModel() {
             column = new String[]{

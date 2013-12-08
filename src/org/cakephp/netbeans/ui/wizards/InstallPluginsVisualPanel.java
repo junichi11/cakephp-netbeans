@@ -159,14 +159,14 @@ public final class InstallPluginsVisualPanel extends JPanel {
     private javax.swing.JTable pluginTable;
     // End of variables declaration//GEN-END:variables
 
-    private class InstallPluginTableModel extends AbstractTableModel {
+    private static class InstallPluginTableModel extends AbstractTableModel {
 
         private static final int INSTALL = 0;
         private static final int NAME = 1;
         private static final int URL = 2;
         private static final long serialVersionUID = 1795493071005593192L;
         private List<CakePhpPlugin> plugins;
-        private String[] column;
+        private final String[] column;
 
         public InstallPluginTableModel() {
             column = new String[]{

@@ -102,17 +102,19 @@ public class CakePhpOptions {
 
     public void setPlugins(List<CakePhpPlugin> plugins) {
         Preferences p = getPreferences().node(PLUGINS).node(PLUGINS);
-        String lists = ""; // NOI18N
+        StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (CakePhpPlugin plugin : plugins) {
             if (first) {
                 first = false;
             } else {
-                lists += ";"; // NOI18N
+                sb.append(";"); // NOI18N
             }
-            lists += plugin.getName() + "," + plugin.getUrl(); // NOI18N
+            sb.append(plugin.getName())
+                    .append(",") // NOI18N
+                    .append(plugin.getUrl());
         }
-        p.put(PLUGINS, lists);
+        p.put(PLUGINS, sb.toString());
     }
 
     public String getLocalZipFilePath() {
@@ -161,9 +163,13 @@ public class CakePhpOptions {
         InputStream inputStream = CakePhpOptions.class.getResourceAsStream("/org/cakephp/netbeans/resources/composer.json"); // NOI18N
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // NOI18N
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n"); // NOI18N
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n"); // NOI18N
+                }
+            } finally {
+                reader.close();
             }
         } catch (UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);

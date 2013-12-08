@@ -127,7 +127,7 @@ public final class CakePhpGithubTags {
         if (isNetworkError) {
             reload();
         }
-        return names.toArray(new String[]{});
+        return names.toArray(new String[0]);
     }
 
     public String getLatestStableVersion() {

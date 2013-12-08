@@ -266,21 +266,24 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 return;
             }
             try {
-                PrintWriter pw = new PrintWriter(configDirectory.createAndOpen("database.php")); // NOI18N
-                pw.println("<?php"); // NOI18N
-                pw.println("class DATABASE_CONFIG {\n"); // NOI18N
+                OutputStream outputStream = configDirectory.createAndOpen("database.php"); // NOI18N
+                PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true); // NOI18N
+                try {
+                    pw.println("<?php"); // NOI18N
+                    pw.println("class DATABASE_CONFIG {\n"); // NOI18N
 
-                if (detailPanel.isDbDefault()) {
-                    writeDbSettings(phpModule, "default", pw, detailPanel.getDbDefaultPanel()); // NOI18N
+                    if (detailPanel.isDbDefault()) {
+                        writeDbSettings(phpModule, "default", pw, detailPanel.getDbDefaultPanel()); // NOI18N
+                    }
+                    pw.println();
+                    if (detailPanel.isDbTest()) {
+                        writeDbSettings(phpModule, "test", pw, detailPanel.getDbTestPanel()); // NOI18N
+                    }
+                    pw.println("}"); // NOI18N
+                } finally {
+                    outputStream.close();
+                    pw.close();
                 }
-                pw.println();
-                if (detailPanel.isDbTest()) {
-                    writeDbSettings(phpModule, "test", pw, detailPanel.getDbTestPanel()); // NOI18N
-                }
-
-                pw.println("}"); // NOI18N
-
-                pw.close();
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -683,22 +686,30 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
      */
     private void createComposerJson(FileObject targetDirectory) throws IOException {
         String appName = getPanel().getAppName();
-        OutputStream outputStream = targetDirectory.createAndOpen("composer.json"); // NOI18N
-        PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true);
+
+        OutputStream outputStream = null; // NOI18N
         try {
-            String composerJson = CakePhpOptions.getInstance().getComposerJson();
-            String placeholder = "\\{\\$nb-app-name\\}"; // NOI18N
-            if (appName.isEmpty()) {
-                composerJson = composerJson.replaceAll(placeholder + "/", ""); // NOI18N
-                composerJson = composerJson.replaceAll(placeholder, ""); // NOI18N
-            } else {
-                composerJson = composerJson.replaceAll(placeholder, appName); // NOI18N
+            outputStream = targetDirectory.createAndOpen("composer.json");
+            PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true);
+            try {
+                String composerJson = CakePhpOptions.getInstance().getComposerJson();
+                String placeholder = "\\{\\$nb-app-name\\}"; // NOI18N
+                if (appName.isEmpty()) {
+                    composerJson = composerJson.replaceAll(placeholder + "/", ""); // NOI18N
+                    composerJson = composerJson.replaceAll(placeholder, ""); // NOI18N
+                } else {
+                    composerJson = composerJson.replaceAll(placeholder, appName); // NOI18N
+                }
+                pw.println(composerJson);
+            } finally {
+                pw.close();
             }
-            pw.println(composerJson);
         } finally {
-            outputStream.close();
-            pw.close();
+            if (outputStream != null) {
+                outputStream.close();
+            }
         }
+
     }
 
     /**
@@ -803,7 +814,6 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             }
             final String insertString = text.replaceFirst("define\\('CAKE_CORE_INCLUDE_PATH',(.*?;)", replacement); // NOI18N
             NbDocument.runAtomic(document, new Runnable() {
-
                 @Override
                 public void run() {
                     try {
@@ -846,7 +856,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     }
 
     //~ Inner class
-    private class ZipEntryFilterImpl implements FileUtils.ZipEntryFilter {
+    private static class ZipEntryFilterImpl implements FileUtils.ZipEntryFilter {
 
         private static final String CAKEPHP = "cakephp"; // NOI18N
 

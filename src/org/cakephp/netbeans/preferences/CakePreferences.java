@@ -68,6 +68,7 @@ public class CakePreferences {
 
     public static Boolean isEnabled(PhpModule phpModule) {
         String enabled = getPreferences(phpModule).get(ENABLED, null);
+        // is not set by user
         if (enabled == null) {
             return null;
         }

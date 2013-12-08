@@ -90,7 +90,7 @@ import org.openide.util.Lookup;
  */
 public abstract class CakePhpGoToStatus {
 
-    protected static int DEFAULT_OFFSET = 0;
+    protected static final int DEFAULT_OFFSET = 0;
     private FileObject currentFile;
     private int offset;
     private PhpModule phpModule;

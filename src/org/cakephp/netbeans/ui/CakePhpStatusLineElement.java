@@ -48,6 +48,8 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
@@ -268,15 +270,20 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         try {
             List<String> lines = config.asLines("UTF-8"); // NOI18N
             Pattern pattern = Pattern.compile(getDebugRegex(config));
-            PrintWriter pw = new PrintWriter(config.getOutputStream());
-            for (String line : lines) {
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
-                    line = String.format(getDebugFormat(config), debugLv);
+            OutputStream outputStream = config.getOutputStream();
+            PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true); // NOI18N
+            try {
+                for (String line : lines) {
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        line = String.format(getDebugFormat(config), debugLv);
+                    }
+                    pw.println(line);
                 }
-                pw.println(line);
+            } finally {
+                outputStream.close();
+                pw.close();
             }
-            pw.close();
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

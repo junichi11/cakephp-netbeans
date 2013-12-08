@@ -61,7 +61,6 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpViewVisitor extends DefaultVisitor {
 
-    private final FileObject view;
     private final int caretPositon;
     private final Set<String> elementPaths = new HashSet<String>();
     private final Set<String> extendPaths = new HashSet<String>();
@@ -71,7 +70,6 @@ public class CakePhpViewVisitor extends DefaultVisitor {
     private static final String EXTEND = "extend"; // NOI18N
 
     public CakePhpViewVisitor(FileObject view, int caretPositon) {
-        this.view = view;
         this.caretPositon = caretPositon;
     }
 

@@ -54,15 +54,15 @@ import org.openide.DialogDisplayer;
  *
  * @author junichi11
  */
-public class CheckDefaultPanel extends JPanel implements ActionListener {
+public final class CheckDefaultPanel extends JPanel implements ActionListener {
 
     private static final long serialVersionUID = -9147653710118986641L;
     private static final String DEFAULT = "default";
     private static final String OK_PREFIX = "OK"; // NOI18N
-    private DialogDescriptor dialogDescriptor;
+    private final DialogDescriptor dialogDescriptor;
     private Dialog dialog;
-    private Icon successIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png")); // NOI18N
-    private Icon failIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png")); // NOI18N
+    private final Icon successIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png")); // NOI18N
+    private final Icon failIcon = new ImageIcon(getClass().getResource("/org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png")); // NOI18N
 
     /**
      * Creates new form CheckDefaultPanel
@@ -386,8 +386,6 @@ public class CheckDefaultPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == DialogDescriptor.OK_OPTION) {
-            // do nothing
-        }
+        // noop
     }
 }

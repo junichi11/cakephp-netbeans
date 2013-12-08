@@ -77,7 +77,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
 
     private static final String LF = "\n";
     private static final long serialVersionUID = 4405963698419409213L;
-    private static InstallPluginsWizardAction INSTANCE = new InstallPluginsWizardAction();
+    private static final InstallPluginsWizardAction INSTANCE = new InstallPluginsWizardAction();
 
     private InstallPluginsWizardAction() {
     }

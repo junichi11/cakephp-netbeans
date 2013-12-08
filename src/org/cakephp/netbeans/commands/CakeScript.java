@@ -305,7 +305,7 @@ public final class CakeScript {
      */
     private Reader getReaderForBakeProject() throws UnsupportedEncodingException {
         String yes = "y\n"; // NOI18N
-        InputStream in = new ByteArrayInputStream(yes.getBytes());
+        InputStream in = new ByteArrayInputStream(yes.getBytes("UTF-8")); // NOI18N
         return new InputStreamReader(in, "UTF-8"); // NOI18N
     }
 

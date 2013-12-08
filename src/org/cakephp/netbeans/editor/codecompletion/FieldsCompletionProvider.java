@@ -79,7 +79,7 @@ public class FieldsCompletionProvider extends CakePhpCompletionProvider {
         return new AsyncCompletionTask(new AsyncCompletionQueryImpl(fieldName, phpModule), jtc);
     }
 
-    private class AsyncCompletionQueryImpl extends AsyncCompletionQuery {
+    private static class AsyncCompletionQueryImpl extends AsyncCompletionQuery {
 
         private final String fieldName;
         private final PhpModule phpModule;

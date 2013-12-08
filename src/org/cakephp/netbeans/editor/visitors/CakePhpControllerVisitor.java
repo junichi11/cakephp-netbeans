@@ -83,7 +83,6 @@ public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
     private boolean isController = false;
     private boolean isView = false;
     private boolean isTheme = false;
-    private int currentCaretPosition;
 
     public CakePhpControllerVisitor(FileObject fo, PhpClass phpClass) {
         super(fo, phpClass);
@@ -97,7 +96,6 @@ public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
 
     public CakePhpControllerVisitor(FileObject targetFile, int currentCaretPosition) {
         super(targetFile);
-        this.currentCaretPosition = currentCaretPosition;
         setFileInfo(targetFile);
         if (isController) {
             // get PhpBaseElement(Method) for current positon

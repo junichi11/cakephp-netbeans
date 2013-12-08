@@ -56,6 +56,7 @@ import org.openide.util.Exceptions;
  *
  * @author junichi11
  */
+// TODO need improvement because this is not good class
 public class CakeVersion {
 
     private int major;

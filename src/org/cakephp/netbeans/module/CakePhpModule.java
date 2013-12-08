@@ -139,7 +139,7 @@ public class CakePhpModule implements ChangeListener {
         }
     }
 
-    public static List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
+    public static final List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
 
     public FileObject getConfigFile() {
         return impl.getConfigFile();

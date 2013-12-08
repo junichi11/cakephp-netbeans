@@ -186,10 +186,6 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         }
 
         final FileObject target = tmp;
-        if (target == null) {
-            return Collections.emptySet();
-        }
-
         final Set<PhpClass> phpClasses = new HashSet<PhpClass>();
         try {
             ParserManager.parse(Collections.singleton(Source.create(target)), new UserTask() {

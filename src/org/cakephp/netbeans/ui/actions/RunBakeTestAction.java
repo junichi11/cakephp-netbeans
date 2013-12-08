@@ -72,9 +72,9 @@ import org.openide.util.NbBundle;
 public class RunBakeTestAction extends BaseAction {
 
     private static final long serialVersionUID = -3482899506753626339L;
-    private DataObject context;
-    private FileObject targetFile;
-    private PhpModule phpModule;
+    private final DataObject context;
+    private final FileObject targetFile;
+    private final PhpModule phpModule;
     private FileObject test;
 
     public RunBakeTestAction(DataObject context) {

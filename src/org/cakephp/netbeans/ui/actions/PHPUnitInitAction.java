@@ -237,7 +237,7 @@ public class PHPUnitInitAction extends BaseAction {
             // write file
             PrintWriter pw;
             if (phpUnitScript == null) {
-                pw = new PrintWriter(nbproject.createAndOpen(scriptFileName));
+                pw = new PrintWriter(new OutputStreamWriter(nbproject.createAndOpen(scriptFileName), "UTF-8"), true); // NOI18N
             } else {
                 pw = new PrintWriter(new OutputStreamWriter(phpUnitScript.getOutputStream(), "UTF-8"), true); // NOI18N
             }

@@ -117,7 +117,7 @@ public final class FormatPlusAction extends BaseAction {
         reformat(doc);
 
         // Change line feed
-        if (doc.getProperty(BaseDocument.READ_LINE_SEPARATOR_PROP) != BaseDocument.LS_LF) {
+        if (!BaseDocument.LS_LF.equals(doc.getProperty(BaseDocument.READ_LINE_SEPARATOR_PROP))) {
             doc.putProperty(BaseDocument.READ_LINE_SEPARATOR_PROP, BaseDocument.LS_LF);
         }
 

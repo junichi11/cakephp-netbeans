@@ -81,7 +81,7 @@ public class ValidateGenerator implements CodeGenerator {
      * registered by {@link CodeGeneratorContextProvider}
      */
     private ValidateGenerator(Lookup context) {
-        this(context, null);
+        this(context, Collections.<Type>emptyList());
     }
 
     private ValidateGenerator(Lookup context, List<Type> types) {

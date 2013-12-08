@@ -63,8 +63,8 @@ import org.openide.filesystems.FileObject;
 public abstract class CakePhpModuleImpl {
 
     protected PhpModule phpModule;
-    protected static String PHP_EXT = "php"; // NOI18N
-    protected static String CTP_EXT = "ctp"; // NOI18N
+    protected static final String PHP_EXT = "php"; // NOI18N
+    protected static final String CTP_EXT = "ctp"; // NOI18N
     private FileObject appDirectory;
 
     public CakePhpModuleImpl(PhpModule phpModule) {
