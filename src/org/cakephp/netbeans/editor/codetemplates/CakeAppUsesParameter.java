@@ -43,8 +43,10 @@ package org.cakephp.netbeans.editor.codetemplates;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateInsertRequest;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateParameter;
@@ -65,6 +67,7 @@ import org.netbeans.modules.php.editor.api.elements.ClassElement;
 import org.netbeans.modules.php.editor.parser.api.Utils;
 import org.netbeans.modules.php.editor.parser.astnodes.ClassName;
 import org.netbeans.modules.php.editor.parser.astnodes.Expression;
+import org.netbeans.modules.php.editor.parser.astnodes.FunctionInvocation;
 import org.netbeans.modules.php.editor.parser.astnodes.NamespaceName;
 import org.netbeans.modules.php.editor.parser.astnodes.StaticMethodInvocation;
 import org.netbeans.modules.php.editor.parser.astnodes.visitors.DefaultVisitor;
@@ -93,9 +96,15 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
         String appUsesDefault = getDefaultUses(cakeModule, fileObject);
         String parametrizedText = toParametrizeText(request, appUsesDefault);
 
+        // scan current file
+        final DefaultVisitorImpl defaultVisitor = new DefaultVisitorImpl();
+        scan(fileObject, defaultVisitor);
+
         StringBuilder sb = new StringBuilder();
-        sb.append(parametrizedText);
-        sb.append(getOtherClassesText(fileObject, cakeModule));
+        if (!existDefaultClass(defaultVisitor.getExistingClasses())) {
+            sb.append(parametrizedText);
+        }
+        sb.append(getOtherClassesText(fileObject, cakeModule, defaultVisitor));
 
         request.setParametrizedText(sb.toString());
     }
@@ -124,6 +133,20 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
     }
 
     /**
+     * Check whether default class is contained in existingClasses.
+     *
+     * @param existingClasses
+     * @return true if exists, false otherwise.
+     */
+    private boolean existDefaultClass(Set<String> existingClasses) {
+        return existingClasses.contains("AppController") // NOI18N
+                || existingClasses.contains("Component") // NOI18N
+                || existingClasses.contains("AppModel") // NOI18N
+                || existingClasses.contains("ModelBehavior") // NOI18N
+                || existingClasses.contains("AppHelper"); // NOI18N
+    }
+
+    /**
      * Change default to parametrize text.
      *
      * @param request
@@ -143,7 +166,7 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
      * @param cakeModule
      * @return
      */
-    private String getOtherClassesText(FileObject fileObject, CakePhpModule cakeModule) {
+    private String getOtherClassesText(FileObject fileObject, CakePhpModule cakeModule, DefaultVisitorImpl visitor) {
         // add more
         PhpModule phpModule = PhpModule.forFileObject(fileObject);
         StringBuilder sb = new StringBuilder();
@@ -158,7 +181,12 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
         }
 
         ElementQuery.Index index = ElementQueryFactory.createIndexQuery(QuerySupportFactory.get(phpModule.getSourceDirectory()));
-        for (String className : getClasses(fileObject)) {
+        Set<String> existingClasses = visitor.getExistingClasses();
+        for (String className : visitor.getClasses()) {
+            if (existingClasses.contains(className)) {
+                continue;
+            }
+
             for (ClassElement classElement : index.getClasses(NameKind.exact(className))) {
                 FileObject target = classElement.getFileObject();
                 if (target == null) {
@@ -198,9 +226,8 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
      * @param fileObject
      * @return all classe name
      */
-    private Set<String> getClasses(FileObject fileObject) {
-        // parse current file
-        final DefaultVisitorImpl defaultVisitor = new DefaultVisitorImpl();
+    private void scan(FileObject fileObject, final DefaultVisitorImpl defaultVisitor) {
+        // scan current file
         try {
             ParserManager.parse(Collections.singleton(Source.create(fileObject)), new UserTask() {
                 @Override
@@ -214,7 +241,6 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
         } catch (ParseException ex) {
             Exceptions.printStackTrace(ex);
         }
-        return defaultVisitor.getClasses();
     }
 
     /**
@@ -237,7 +263,8 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
 
         public DefaultVisitorImpl() {
         }
-        private final Set<String> phpClasses = new HashSet<String>();
+        private final Set<String> classes = new HashSet<String>();
+        private final Set<String> existingClasses = new HashSet<String>();
 
         @Override
         public void visit(StaticMethodInvocation node) {
@@ -245,8 +272,31 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
             Expression className = node.getClassName();
             if (className instanceof NamespaceName) {
                 String name = CodeUtils.extractQualifiedName((NamespaceName) className);
+                if (name.equals("App")) { // NOI18N
+                    addExistingClass(node);
+                    return;
+                }
                 if (!StringUtils.isEmpty(name) && !ignoreSet.contains(name)) {
-                    phpClasses.add(name);
+                    classes.add(name);
+                }
+            }
+        }
+
+        /**
+         * Add existing class.
+         *
+         * @param node
+         */
+        private void addExistingClass(StaticMethodInvocation node) {
+            FunctionInvocation method = node.getMethod();
+            String functionName = CodeUtils.extractFunctionName(method);
+            if (functionName.equals("uses")) { // NOI18N
+                List<Expression> parameters = method.getParameters();
+                for (Expression parameter : parameters) {
+                    String existClassName = CakePhpCodeUtils.getStringValue(parameter);
+                    if (!StringUtils.isEmpty(existClassName)) {
+                        existingClasses.add(existClassName);
+                    }
                 }
             }
         }
@@ -256,13 +306,18 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
             super.visit(node);
             String name = CodeUtils.extractClassName(node);
             if (!StringUtils.isEmpty(name) && !ignoreSet.contains(name)) {
-                phpClasses.add(name);
+                classes.add(name);
             }
         }
 
         public Set<String> getClasses() {
-            return phpClasses;
+            return classes;
         }
+
+        public Set<String> getExistingClasses() {
+            return existingClasses;
+        }
+
     }
 
 }
