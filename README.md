@@ -33,6 +33,7 @@ Currently, This plugin doesn't recognize CakePHP3.
 - template files (ctp, helper, component, behavior, shell, task)
 - create new CakePHP projects from new project option
 - code completion support [v0.6]
+- code templates
 - format for CakePHP action [v0.6.8]
 - go to element file from view file [v0.6.9]
 - display and change debug level [v0.6.10]
@@ -284,6 +285,16 @@ Check `Auto create a view file when go to view action is run`
 at Right-click on project node > property > Framework > CakePHP
 
 If you use the theme, set $theme to controller field.
+
+### Code Templates
+
+Available code templates : Tools > Options > Editor > Code Templates > HTML/PHP
+
+e.g.
+- cappu -> `App::uses('AppController', 'Controller');`
+- chtml -> `$this->Html->`
+
+This feature is also available with code completion.
 
 ### Go To Action Action
 
