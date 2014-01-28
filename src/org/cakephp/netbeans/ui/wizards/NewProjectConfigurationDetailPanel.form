@@ -64,6 +64,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="testCheckBox">
       <Properties>
+        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/cakephp/netbeans/ui/wizards/Bundle.properties" key="NewProjectConfigurationDetailPanel.testCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>

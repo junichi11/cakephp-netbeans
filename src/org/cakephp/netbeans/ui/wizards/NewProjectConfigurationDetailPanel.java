@@ -117,6 +117,7 @@ public class NewProjectConfigurationDetailPanel extends javax.swing.JPanel {
         defaultCheckBox.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(defaultCheckBox, org.openide.util.NbBundle.getMessage(NewProjectConfigurationDetailPanel.class, "NewProjectConfigurationDetailPanel.defaultCheckBox.text")); // NOI18N
 
+        testCheckBox.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(testCheckBox, org.openide.util.NbBundle.getMessage(NewProjectConfigurationDetailPanel.class, "NewProjectConfigurationDetailPanel.testCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
