@@ -133,8 +133,8 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     private void initComposer() {
         boolean isAvailableComposer = true;
         try {
-            Composer composer = Composer.getDefault();
-            composer.validate(null);
+            // check whether composer is set
+            Composer.getDefault();
         } catch (InvalidPhpExecutableException ex) {
             isAvailableComposer = false;
         }
