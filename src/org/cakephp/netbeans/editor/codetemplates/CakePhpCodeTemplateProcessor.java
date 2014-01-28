@@ -99,6 +99,14 @@ public class CakePhpCodeTemplateProcessor implements CodeTemplateProcessor {
 
     @Override
     public void release() {
+        for (CodeTemplateParameter parameter : request.getMasterParameters()) {
+            CakePhpCodeTemplateParameter cakeParameter = CakePhpCodeTemplateParameterFactory.create(parameter);
+            if (cakeParameter == null) {
+                continue;
+            }
+            // release
+            cakeParameter.release(request);
+        }
     }
 
     @MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = CodeTemplateProcessorFactory.class)

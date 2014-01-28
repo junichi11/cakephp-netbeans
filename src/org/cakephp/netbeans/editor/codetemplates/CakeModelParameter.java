@@ -46,9 +46,12 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.Inflector;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateInsertRequest;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateParameter;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
 public class CakeModelParameter extends CakePhpCodeTemplateParameter {
+
+    private static String lastModelName;
 
     public CakeModelParameter(CodeTemplateParameter parameter) {
         super(parameter);
@@ -57,6 +60,10 @@ public class CakeModelParameter extends CakePhpCodeTemplateParameter {
     @Override
     public void updateValue(CodeTemplateInsertRequest request, FileObject fileObject, CakePhpModule cakeModule) {
         String modelName = "Model"; // NOI18N
+        if (!StringUtils.isEmpty(lastModelName)) {
+            getParameter().setValue(lastModelName);
+            return;
+        }
         if (cakeModule.isController(fileObject)) {
             modelName = getModelName(fileObject);
         }
@@ -73,6 +80,11 @@ public class CakeModelParameter extends CakePhpCodeTemplateParameter {
         String className = CakePhpUtils.getClassName(controller);
         className = className.replace("Controller", ""); // NOI18N
         return Inflector.getInstance().singularize(className);
+    }
+
+    @Override
+    public void release(CodeTemplateInsertRequest request) {
+        lastModelName = getParameter().getValue();
     }
 
 }

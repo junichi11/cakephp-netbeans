@@ -135,7 +135,7 @@ class ${CakeFileName} extends AppHelper {
         <code><![CDATA[public $actsAs = array('${Behavior}');${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cacts">
+    <codetemplate contexts="cake-code" abbreviation="cvalid">
         <code><![CDATA[public $validate = array(${cursor});]]></code>
         <description>CakePHP</description>
     </codetemplate>
@@ -579,6 +579,10 @@ public $hasMany = array(
 		'dependent' => ${true}
 	)
 );${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cmodel">
+        <code><![CDATA[$this->${CakeModel}->${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
     <codetemplate contexts="cake-code" abbreviation="cmfind">

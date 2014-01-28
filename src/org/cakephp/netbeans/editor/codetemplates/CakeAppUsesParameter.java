@@ -109,6 +109,10 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
         request.setParametrizedText(sb.toString());
     }
 
+    @Override
+    public void release(CodeTemplateInsertRequest request) {
+    }
+
     /**
      * Get default App::uses values for current file class.
      *

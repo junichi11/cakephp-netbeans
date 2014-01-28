@@ -60,4 +60,8 @@ public class CakeFileNameParameter extends CakePhpCodeTemplateParameter {
         getParameter().setValue(fileName);
     }
 
+    @Override
+    public void release(CodeTemplateInsertRequest request) {
+    }
+
 }

@@ -73,6 +73,13 @@ abstract class CakePhpCodeTemplateParameter {
      */
     public abstract void updateValue(@NonNull CodeTemplateInsertRequest request, @NonNull FileObject fileObject, @NonNull CakePhpModule cakeModule);
 
+    /**
+     * Release
+     *
+     * @param request
+     */
+    public abstract void release(@NonNull CodeTemplateInsertRequest request);
+
     public static class CakePhpCodeTemplateParameterFactory {
 
         private static final String CAKE_MODEL_VALUE = "CakeModel"; // NOI18N
