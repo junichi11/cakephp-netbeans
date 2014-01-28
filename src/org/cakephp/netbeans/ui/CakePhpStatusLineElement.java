@@ -72,7 +72,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.awt.StatusLineElementProvider;
@@ -418,7 +418,12 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
          * @param phpModule
          */
         private void setCakePHPVersion(PhpModule phpModule) {
-            CakeVersion version = CakeVersion.getInstance(phpModule);
+            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+            if (cakeModule == null) {
+                clearLabel();
+                return;
+            }
+            CakeVersion version = cakeModule.getCakeVersion();
             String versionNumber = version.getVersion();
             cakeVersionLabel.setText(versionNumber + ":"); // NOI18N
             cakeVersionLabel.setIcon(icon);

@@ -61,6 +61,7 @@ import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.NONE;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.TEST;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.VIEW;
 import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.WEBROOT;
+import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
@@ -71,8 +72,8 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
     private static final String DIR_HELPER = "Helper"; // NOI18N
     private static final String DIR_BEHAVIOR = "Behavior"; // NOI18N
 
-    public CakePhp3ModuleImpl(PhpModule phpModule) {
-        super(phpModule);
+    public CakePhp3ModuleImpl(PhpModule phpModule, Versions versions) {
+        super(phpModule, versions);
     }
 
     @Override

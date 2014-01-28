@@ -60,7 +60,6 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.input.InputProcessor;
 import org.netbeans.api.extexecution.input.InputProcessors;
@@ -239,7 +238,8 @@ public final class CakeScript {
             return freshCommands;
         }
         // XXX some error => rerun command with console
-        if (CakeVersion.getInstance(phpModule).isCakePhp(2)) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null && cakeModule.isCakePhp(2)) {
             runCommand(phpModule, Collections.singletonList(LIST_COMMAND), null);
         }
         return null;

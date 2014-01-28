@@ -51,6 +51,7 @@ import java.util.logging.Logger;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -85,8 +86,8 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     // XXX #66 (problem for Mac)
     private final boolean isMac = Utilities.isMac();
 
-    public CakePhp2ModuleImpl(PhpModule phpModule) {
-        super(phpModule);
+    public CakePhp2ModuleImpl(PhpModule phpModule, Versions versions) {
+        super(phpModule, versions);
     }
 
     @Override

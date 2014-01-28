@@ -50,9 +50,9 @@ import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.editor.codegenerator.FieldInfo.FieldInfoFactory;
 import org.cakephp.netbeans.editor.codegenerator.FieldInfo.Type;
 import org.cakephp.netbeans.editor.codegenerator.ui.FieldsGeneratorPanel;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
@@ -160,7 +160,11 @@ public class ValidateGenerator implements CodeGenerator {
             int caretOffset = textComponent.getCaretPosition();
             if (validateStartOffset < caretOffset && caretOffset < validateEndOffset) {
                 // check whether file is Model
-                if (CakePhpUtils.isCakePHP(phpModule) && CakeVersion.getInstance(phpModule).getMajor() > 1) {
+                CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+                if (cakeModule == null) {
+                    return Collections.emptyList();
+                }
+                if (CakePhpUtils.isCakePHP(phpModule) && cakeModule.getCakeVersion().getMajor() > 1) {
                     if (CakePhpUtils.isModel(fileObject)) {
                         return Collections.singletonList(new ValidateGenerator(context, Collections.singletonList(Type.VALIDATE)));
                     }

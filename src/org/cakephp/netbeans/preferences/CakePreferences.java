@@ -42,7 +42,7 @@
 package org.cakephp.netbeans.preferences;
 
 import java.util.prefs.Preferences;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 
 /**
@@ -79,10 +79,12 @@ public class CakePreferences {
         getPreferences(phpModule).put(APP_NAME, appName);
     }
 
-    public static String getAppName(PhpModule phpModule) {
+    public static String getAppName(PhpModule phpModule, CakeVersion version) {
         String appName = getPreferences(phpModule).get(APP_NAME, null); // NOI18N
         if (appName == null) {
-            CakeVersion version = CakeVersion.getInstance(phpModule);
+            if (version == null) {
+                return DEFAULT_APP_NAME;
+            }
             if (version.isCakePhp(3)) {
                 appName = CAKE3_DEFAULT_APP_NAME;
             } else {
@@ -132,8 +134,8 @@ public class CakePreferences {
         return getPreferences(phpModule).getBoolean(SHOW_POPUP_FOR_ONE_ITEM, true);
     }
 
-    public static String getAppDirectoryPath(PhpModule phpModule) {
-        String appName = getAppName(phpModule);
+    public static String getAppDirectoryPath(PhpModule phpModule, CakeVersion version) {
+        String appName = getAppName(phpModule, version);
         return getPreferences(phpModule).get(APP_DIRECTORY_PATH, appName);
     }
 

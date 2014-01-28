@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.editor.codecompletion.methods;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import static org.cakephp.netbeans.editor.codecompletion.methods.Method.DOT;
@@ -49,7 +50,6 @@ import static org.cakephp.netbeans.editor.codecompletion.methods.Method.SLASH;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
@@ -95,7 +95,11 @@ public class AssetMethod extends Method {
 
     @Override
     public List<String> getElements(int argCount, String filter) {
-        int cakeVersion = CakeVersion.getInstance(phpModule).getMajor();
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return Collections.emptyList();
+        }
+        int cakeVersion = cakeModule.getCakeVersion().getMajor();
         List<String> elements = new LinkedList<String>();
         if (type == null) {
             return elements;
@@ -126,8 +130,6 @@ public class AssetMethod extends Method {
 
             // check subdirectory
             filter = setSubDirectoryPath(filter);
-
-            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
 
             // add elements
             for (DIR_TYPE dirType : dirTypes) {

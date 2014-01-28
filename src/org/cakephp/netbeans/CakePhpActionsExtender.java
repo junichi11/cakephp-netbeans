@@ -44,10 +44,15 @@ package org.cakephp.netbeans;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
-import org.cakephp.netbeans.ui.actions.*;
+import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.ui.actions.CakePhpGoToActionAction;
+import org.cakephp.netbeans.ui.actions.CakePhpGoToViewAction;
+import org.cakephp.netbeans.ui.actions.CakePhpRunCommandAction;
+import org.cakephp.netbeans.ui.actions.CheckDefaultAction;
+import org.cakephp.netbeans.ui.actions.ClearCacheAction;
+import org.cakephp.netbeans.ui.actions.PHPUnitInitAction;
 import org.cakephp.netbeans.ui.wizards.InstallPluginsWizardAction;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.PhpModuleActionsExtender;
 import org.netbeans.modules.php.spi.framework.actions.GoToActionAction;
@@ -70,7 +75,8 @@ public class CakePhpActionsExtender extends PhpModuleActionsExtender {
         list.add(InstallPluginsWizardAction.getInstance());
         list.add(CheckDefaultAction.getInstance());
         PhpModule phpModule = PhpModule.inferPhpModule();
-        if (CakeVersion.getInstance(phpModule).getMajor() >= 2) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null && cakeModule.getCakeVersion().getMajor() >= 2) {
             list.add(PHPUnitInitAction.getInstance());
         }
         return list;

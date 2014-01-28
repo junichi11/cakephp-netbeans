@@ -50,6 +50,10 @@ import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.versions.CakeVersion;
+import org.cakephp.netbeans.versions.Versionable;
+import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
+import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -80,6 +84,10 @@ public class CakePhpModule implements ChangeListener {
                 CakePreferences.setAppName(pm, changeName);
             }
         });
+    }
+
+    public PhpModule getPhpModule() {
+        return phpModule;
     }
 
     public String getAppName() {
@@ -438,6 +446,45 @@ public class CakePhpModule implements ChangeListener {
 
     public Set<String> getAllPluginNames() {
         return impl.getAllPluginNames();
+    }
+
+    /**
+     * Get {@link Versions}.
+     *
+     * @return {@link Versions}
+     */
+    public Versions getVersions() {
+        return impl.getVersions();
+    }
+
+    /**
+     * Get {@link Versionable} for {@code VERSION_TYPE}.
+     *
+     * @param versionType {@code VERSION_TYPE}
+     * @return {@link Versionable}
+     */
+    public Versionable getVersion(Versionable.VERSION_TYPE versionType) {
+        return impl.getVersions().getVersion(versionType);
+    }
+
+    /**
+     * Get {@link CakeVersion}.
+     *
+     * @return {@link CakeVersion}
+     */
+    public CakeVersion getCakeVersion() {
+        return (CakeVersion) getVersion(VERSION_TYPE.CAKEPHP);
+    }
+
+    /**
+     * Check CakePHP major version.
+     *
+     * @param majorVersion major version number
+     * @return {@code true} if specified version, {@code false} otherwise.
+     */
+    public boolean isCakePhp(int majorVersion) {
+        CakeVersion version = getCakeVersion();
+        return version.isCakePhp(majorVersion);
     }
 
     @CheckForNull

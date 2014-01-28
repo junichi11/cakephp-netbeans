@@ -52,9 +52,9 @@ import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.editor.codegenerator.FieldInfo.FieldInfoFactory;
 import org.cakephp.netbeans.editor.codegenerator.FieldInfo.Type;
 import org.cakephp.netbeans.editor.codegenerator.ui.FieldsGeneratorPanel;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.DocUtils;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.project.FileOwnerQuery;
@@ -190,9 +190,13 @@ public class MBHCGenerator implements CodeGenerator {
             JTextComponent textComponent = context.lookup(JTextComponent.class);
             FileObject fileObject = CakePhpDocUtils.getFileObject(textComponent.getDocument());
             PhpModule phpModule = PhpModule.forFileObject(fileObject);
-
             // check whether this is CakePHP project
-            if (CakePhpUtils.isCakePHP(phpModule) && CakeVersion.getInstance(phpModule).getMajor() > 1) {
+            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+            if (cakeModule == null) {
+                return Collections.emptyList();
+            }
+
+            if (CakePhpUtils.isCakePHP(phpModule) && cakeModule.getCakeVersion().getMajor() > 1) {
                 List<Type> types = new ArrayList<Type>();
                 if (CakePhpUtils.isController(fileObject)) {
                     types.add(Type.USES);

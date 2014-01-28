@@ -50,6 +50,9 @@ import java.util.regex.Pattern;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.versions.CakeVersion;
+import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
+import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
@@ -66,9 +69,15 @@ public abstract class CakePhpModuleImpl {
     protected static final String PHP_EXT = "php"; // NOI18N
     protected static final String CTP_EXT = "ctp"; // NOI18N
     private FileObject appDirectory;
+    private final Versions versions;
 
-    public CakePhpModuleImpl(PhpModule phpModule) {
+    public CakePhpModuleImpl(PhpModule phpModule, Versions versions) {
         this.phpModule = phpModule;
+        this.versions = versions;
+    }
+
+    public Versions getVersions() {
+        return versions;
     }
 
     public static String getExt(FILE_TYPE type) {
@@ -294,7 +303,7 @@ public abstract class CakePhpModuleImpl {
     }
 
     protected void setAppDirectory() {
-        String appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
+        String appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule, (CakeVersion) versions.getVersion(VERSION_TYPE.CAKEPHP));
         FileObject sourceDirectory = phpModule.getSourceDirectory();
         if (sourceDirectory != null && appDirectoryPath != null) {
             appDirectory = sourceDirectory.getFileObject(appDirectoryPath);

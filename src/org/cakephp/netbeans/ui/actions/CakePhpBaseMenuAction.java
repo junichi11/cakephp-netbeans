@@ -50,6 +50,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.StyledDocument;
 import org.cakephp.netbeans.CakePhp;
+import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToBehaviorsAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToComponentsAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToControllersAction;
@@ -60,7 +61,6 @@ import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToSmartAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToTestCasesAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToViewsAction;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
 import org.openide.awt.ActionID;
@@ -131,7 +131,8 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu menu = new JMenu(Bundle.LBL_CakePHP());
-        if (CakePhpUtils.isCakePHP(PhpModule.inferPhpModule())) {
+        PhpModule phpModule = PhpModule.inferPhpModule();
+        if (CakePhpUtils.isCakePHP(phpModule)) {
             boolean isAvaibable = isAvailableWithEditor();
             // smart go to
             if (isAvaibable) {
@@ -163,9 +164,9 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
                 JMenuItem run = new JMenuItem(RunActionAction.getInstance());
                 menu.add(run);
             }
-
             // fix namespace
-            if (isAvaibable && CakeVersion.getInstance(PhpModule.inferPhpModule()).isCakePhp(3)) {
+            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+            if (isAvaibable && cakeModule != null && cakeModule.isCakePhp(3)) {
                 FileObject fileObject = getFileObject();
                 if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
                     JMenuItem fixNamespace = new JMenuItem(new FixNamespaceAction());
@@ -255,7 +256,8 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
                 popup.add(RunActionAction.getInstance());
 
                 // fix namespace
-                if (phpModule != null && CakeVersion.getInstance(phpModule).isCakePhp(3)) {
+                CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+                if (cakeModule != null && cakeModule.isCakePhp(3)) {
                     FileObject fileObject = getFileObject();
                     if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
                         popup.add(new FixNamespaceAction());

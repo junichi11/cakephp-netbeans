@@ -49,7 +49,7 @@ import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
@@ -76,16 +76,16 @@ public class ExtendMethod extends AssetMethod {
 
     @Override
     public List<String> getElements(int argCount, String input) {
-        // extend method was added from 2.x
-        CakeVersion cakeVersion = CakeVersion.getInstance(phpModule);
-        int major = cakeVersion.getMajor();
-        if (major < 2) {
-            return Collections.emptyList();
-        }
-
         // is ctp file?
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (currentFile == null || cakeModule == null || !CakePhpUtils.isCtpFile(currentFile)) {
+            return Collections.emptyList();
+        }
+
+        // extend method was added from 2.x
+        CakeVersion cakeVersion = cakeModule.getCakeVersion();
+        int major = cakeVersion.getMajor();
+        if (major < 2) {
             return Collections.emptyList();
         }
 

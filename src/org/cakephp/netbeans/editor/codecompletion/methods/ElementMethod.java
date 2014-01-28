@@ -47,7 +47,7 @@ import java.util.List;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
@@ -78,7 +78,7 @@ public class ElementMethod extends AssetMethod {
         }
 
         List<String> elements = new ArrayList<String>();
-        CakeVersion cakeVersion = CakeVersion.getInstance(phpModule);
+        CakeVersion cakeVersion = cakeModule.getCakeVersion();
         int majorVersion = cakeVersion.getMajor();
 
         if (argCount == 1) {

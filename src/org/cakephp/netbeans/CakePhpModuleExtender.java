@@ -74,8 +74,8 @@ import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationDetailPanel;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
 import org.cakephp.netbeans.util.CakePhpFileUtils;
 import org.cakephp.netbeans.util.CakePhpSecurityString;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.CakeZipEntryFilter;
+import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.FileUtils;
@@ -202,17 +202,16 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         FileObject config = null;
         if (module != null) {
             config = module.getConfigFile();
-        }
+            if (config != null) {
+                // change security string
+                changeSecurityString(config);
+            } else {
+                LOGGER.log(Level.WARNING, "Not found: config file(core.php)");
+            }
 
-        if (config != null) {
-            // change security string
-            changeSecurityString(config);
-        } else {
-            LOGGER.log(Level.WARNING, "Not found: config file(core.php)");
+            // create database file
+            createDBFile(module);
         }
-
-        // create database file
-        createDBFile(phpModule);
 
         return getInitialFiles(config, targetDirectory);
     }
@@ -234,12 +233,12 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
     }
 
-    private void createDBFile(PhpModule phpModule) {
+    private void createDBFile(@NonNull CakePhpModule cakeModule) {
         // create database.php
-        if (CakeVersion.getInstance(phpModule).isCakePhp(3)) {
-            createDatasourcesFile(phpModule);
+        if (cakeModule.isCakePhp(3)) {
+            createDatasourcesFile(cakeModule);
         } else {
-            createDatabaseFile(phpModule);
+            createDatabaseFile(cakeModule);
         }
     }
 
@@ -251,15 +250,11 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     @NbBundle.Messages({
         "CakePhpModuleExtender.not.found.configdir=Not found: app config directoy"
     })
-    private void createDatabaseFile(PhpModule phpModule) {
+    private void createDatabaseFile(@NonNull CakePhpModule cakeModule) {
         // create database.php file
         NewProjectConfigurationPanel p = getPanel();
         NewProjectConfigurationDetailPanel detailPanel = NewProjectConfigurationDetailPanel.getDefault();
         if (p.isDatabasePhp()) {
-            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-            if (cakeModule == null) {
-                return;
-            }
             FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
             if (configDirectory == null) {
                 LOGGER.log(Level.WARNING, Bundle.CakePhpModuleExtender_not_found_configdir());
@@ -273,11 +268,11 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                     pw.println("class DATABASE_CONFIG {\n"); // NOI18N
 
                     if (detailPanel.isDbDefault()) {
-                        writeDbSettings(phpModule, "default", pw, detailPanel.getDbDefaultPanel()); // NOI18N
+                        writeDbSettings(cakeModule, "default", pw, detailPanel.getDbDefaultPanel()); // NOI18N
                     }
                     pw.println();
                     if (detailPanel.isDbTest()) {
-                        writeDbSettings(phpModule, "test", pw, detailPanel.getDbTestPanel()); // NOI18N
+                        writeDbSettings(cakeModule, "test", pw, detailPanel.getDbTestPanel()); // NOI18N
                     }
                     pw.println("}"); // NOI18N
                 } finally {
@@ -290,9 +285,9 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
     }
 
-    private void writeDbSettings(PhpModule phpModule, String variableName, PrintWriter pw, DBConfigPanel dbConfigPanel) {
+    private void writeDbSettings(CakePhpModule cakeModule, String variableName, PrintWriter pw, DBConfigPanel dbConfigPanel) {
         pw.println("\tpublic $" + variableName + " = array("); // NOI18N
-        if (CakeVersion.getInstance(phpModule).isCakePhp(2)) {
+        if (cakeModule.isCakePhp(2)) {
             pw.println("\t\t'datasource' => 'Database/" + dbConfigPanel.getDatasource() + "',"); // NOI18N
         } else {
             pw.println("\t\t'driver' => '" + dbConfigPanel.getDatasource().toLowerCase() + "',"); // NOI18N
@@ -316,7 +311,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
      *
      * @param phpModule
      */
-    private void createDatasourcesFile(PhpModule phpModule) {
+    private void createDatasourcesFile(CakePhpModule cakeModule) {
         // TODO use app.php
 //        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
 //        FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
@@ -640,10 +635,18 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 @Override
                 public void run() {
                     refreshSourceDirectory(phpModule);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
                     CakePreferences.setEnabled(phpModule, Boolean.TRUE);
                     setAutoCreateViewFile(phpModule);
                     setIgnoreTmpDirectory(phpModule);
-                    createDBFile(phpModule);
+                    CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+                    if (cakeModule != null) {
+                        createDBFile(cakeModule);
+                    }
                     addComposerAutoload(phpModule);
                     // change core include path define in webroot/index.php, test.php
                     changeCoreIncludePath(phpModule, appName);

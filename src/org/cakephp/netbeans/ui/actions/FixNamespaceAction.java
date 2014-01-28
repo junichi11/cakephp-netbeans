@@ -47,7 +47,6 @@ import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenId;
@@ -188,11 +187,10 @@ public class FixNamespaceAction extends BaseAction {
      * @return true if CakePHP3, otherwiese false;
      */
     private boolean isCakePHP3(PhpModule phpModule) {
-        if (!CakePhpUtils.isCakePHP(phpModule)) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
             return false;
         }
-        CakeVersion version = CakeVersion.getInstance(phpModule);
-
-        return version.isCakePhp(3);
+        return cakeModule.getCakeVersion().isCakePhp(3);
     }
 }

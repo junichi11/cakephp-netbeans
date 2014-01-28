@@ -53,7 +53,7 @@ import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.framework.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
@@ -208,7 +208,11 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         "CakePhpFrameworkProvider.new.version.notification.title={0} : New version({1}) is available"
     })
     private void notificationNewVersion(PhpModule phpModule) {
-        CakeVersion version = CakeVersion.getInstance(phpModule);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return;
+        }
+        CakeVersion version = cakeModule.getCakeVersion();
         if (version.hasUpdate()) {
             // Notification
             NotificationDisplayer notification = NotificationDisplayer.getDefault();

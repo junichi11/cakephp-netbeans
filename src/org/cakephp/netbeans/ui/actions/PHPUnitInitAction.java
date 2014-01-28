@@ -53,7 +53,6 @@ import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.module.CakePhpModule;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.ProjectPropertiesSupport;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -92,7 +91,6 @@ public class PHPUnitInitAction extends BaseAction {
     private static final String FAIL_MSG = "fail";
     private static final String BOOTSTRAP = "bootstrap";
     private FileObject webroot;
-    private CakePhpModule module;
 
     private PHPUnitInitAction() {
     }
@@ -121,8 +119,8 @@ public class PHPUnitInitAction extends BaseAction {
         }
         // check version
         // CakePHP 1.x uses Simple Test
-        module = CakePhpModule.forPhpModule(phpModule);
-        if (module == null || CakeVersion.getInstance(phpModule).getMajor() < 2) {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null || module.getCakeVersion().getMajor() <= 1) {
             return;
         }
         webroot = module.getWebrootDirectory(DIR_TYPE.APP);

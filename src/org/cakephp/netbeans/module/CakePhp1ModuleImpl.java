@@ -55,6 +55,7 @@ import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_PLUGIN;
 import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_VENDOR;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -84,8 +85,8 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_BEHAVIORS = "behaviors"; // NOI18N
     private static final String DIR_FIXTURES = "fixtures"; // NOI18N
 
-    public CakePhp1ModuleImpl(PhpModule phpModule) {
-        super(phpModule);
+    public CakePhp1ModuleImpl(PhpModule phpModule, Versions versions) {
+        super(phpModule, versions);
     }
 
     @Override

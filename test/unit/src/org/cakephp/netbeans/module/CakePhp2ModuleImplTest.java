@@ -50,6 +50,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.versions.VersionsFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -1031,6 +1032,6 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
             public void notifyPropertyChanged(PropertyChangeEvent pce) {
             }
         };
-        module = new CakePhp2ModuleImpl(phpModule);
+        module = new CakePhp2ModuleImpl(phpModule, VersionsFactory.getInstance().create(phpModule));
     }
 }
