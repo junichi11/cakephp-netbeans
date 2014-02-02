@@ -101,11 +101,11 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private final JLabel debugLabel = new JLabel(""); // NOI18N
     private final JLabel cakeVersionLabel = new JLabel("");
     private static final Map<String, String> debugLevels = new HashMap<String, String>();
-    private Lookup.Result result = null;
+    private Lookup.Result<FileObject> result = null;
     private PhpModule phpModule = null;
     private String level = ""; // NOI18N
-    private JList list;
-    private final DefaultListModel model;
+    private JList<String> list;
+    private final DefaultListModel<String> model;
     private Popup popup;
     private boolean popupFlg = false;
     private FileChangeAdapterImpl fileChangeListener;
@@ -122,11 +122,11 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         result.addLookupListener(new LookupListenerImpl());
 
         // create list
-        model = new DefaultListModel();
+        model = new DefaultListModel<String>();
         for (String debugLv : debugLevels.keySet()) {
             model.addElement(debugLv);
         }
-        list = new JList(model);
+        list = new JList<String>(model);
 
         // add mouse listener
         debugLabel.addMouseListener(new MouseAdapter() {

@@ -107,7 +107,7 @@ public class FixNamespaceAction extends BaseAction {
         hasNamespace = false;
         ts.moveStart();
         while (ts.moveNext()) {
-            Token token = ts.token();
+            Token<PHPTokenId> token = ts.token();
             TokenId id = token.id();
             if (id == PHPTokenId.PHP_CLASS) {
                 break;

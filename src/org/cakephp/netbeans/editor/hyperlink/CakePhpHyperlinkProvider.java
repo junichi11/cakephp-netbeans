@@ -111,7 +111,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
             AbstractDocument ad = (AbstractDocument) doc;
             ad.readLock();
             try {
-                TokenHierarchy hierarchy = TokenHierarchy.get(doc);
+                TokenHierarchy<Document> hierarchy = TokenHierarchy.get(doc);
                 ts = hierarchy.tokenSequence(PHPTokenId.language());
             } finally {
                 ad.readUnlock();

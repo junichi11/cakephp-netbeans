@@ -87,7 +87,7 @@ public class MBHCField extends FieldImpl {
 
     @Override
     public List<CompletionItem> getCompletionItems() {
-        TokenSequence ts = CakePhpDocUtils.getTokenSequence(getDocument(), getOffset());
+        TokenSequence<PHPTokenId> ts = CakePhpDocUtils.getTokenSequence(getDocument(), getOffset());
         if (ts == null) {
             return Collections.emptyList();
         }
@@ -97,7 +97,7 @@ public class MBHCField extends FieldImpl {
         }
 
         // caret position information
-        Token caretToken = ts.token();
+        Token<PHPTokenId> caretToken = ts.token();
         String caretInputString = CakePhpUtils.detachQuotes(caretToken.text().toString());
         int insertStart = ts.offset() + 1;
         int removeLength = caretInputString.length();

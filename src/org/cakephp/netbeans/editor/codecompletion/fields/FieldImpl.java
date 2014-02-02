@@ -68,7 +68,7 @@ public abstract class FieldImpl {
         this.doc = doc;
         this.offset = offset;
         this.phpModule = phpModule;
-        TokenSequence ts = CakePhpDocUtils.getTokenSequence(doc, offset);
+        TokenSequence<PHPTokenId> ts = CakePhpDocUtils.getTokenSequence(doc, offset);
         caretPositionToken = ts != null ? ts.token() : null;
         caretPositionText = caretPositionToken != null ? caretPositionToken.text().toString() : null;
     }

@@ -112,7 +112,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         String[] names = githubTags.getNames();
         Arrays.sort(names, new ComparatorImpl());
         versionComboBox.setEnabled(true);
-        versionComboBox.setModel(new DefaultComboBoxModel(names));
+        versionComboBox.setModel(new DefaultComboBoxModel<String>(names));
     }
 
     private void initLocalUnzipping() {
@@ -251,7 +251,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         composerRadioButton = new javax.swing.JRadioButton();
         gitCloneRadioButton = new javax.swing.JRadioButton();
         progressTextField = new javax.swing.JTextField();
-        versionComboBox = new javax.swing.JComboBox();
+        versionComboBox = new javax.swing.JComboBox<String>();
         databaseCheckBox = new javax.swing.JCheckBox();
         dbDetailButton = new javax.swing.JButton();
         emptyCheckBox = new javax.swing.JCheckBox();
@@ -402,7 +402,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JTextField progressTextField;
     private javax.swing.JRadioButton unzipLocalFileRadioButton;
     private javax.swing.JRadioButton unzipRadioButton;
-    private javax.swing.JComboBox versionComboBox;
+    private javax.swing.JComboBox<String> versionComboBox;
     // End of variables declaration//GEN-END:variables
 
     //~ inner class

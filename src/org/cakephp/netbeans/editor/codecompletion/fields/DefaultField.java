@@ -83,9 +83,9 @@ public class DefaultField extends FieldImpl {
         }
 
         ArrayList<CompletionItem> items = new ArrayList<CompletionItem>();
-        TokenSequence ts = CakePhpDocUtils.getTokenSequence(getDocument(), getOffset());
+        TokenSequence<PHPTokenId> ts = CakePhpDocUtils.getTokenSequence(getDocument(), getOffset());
         ts.movePrevious();
-        Token token = ts.token();
+        Token<PHPTokenId> token = ts.token();
         TokenId id = token.id();
         String caretPosigionText = ""; // NOI18N
         int insertStart = getOffset();
