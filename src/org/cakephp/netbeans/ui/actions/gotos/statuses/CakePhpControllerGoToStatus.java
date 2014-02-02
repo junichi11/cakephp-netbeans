@@ -47,13 +47,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.editor.visitors.CakePhpControllerVisitor;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToComponentItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToHelperItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToModelItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToViewItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
@@ -173,14 +173,17 @@ public class CakePhpControllerGoToStatus extends CakePhpGoToStatus {
     private FileObject getThemeDirectory(String themeName) {
         FileObject controller = getCurrentFile();
         PhpModule phpModule = getPhpModule();
-        FileObject themeDirectory;
-        if (CakeVersion.getInstance(phpModule).getMajor() >= 2) {
-            themeDirectory = controller.getFileObject("../../View/Themed"); // NOI18N
-        } else {
-            themeDirectory = controller.getFileObject("../../views/themed"); // NOI18N
-        }
-        if (!StringUtils.isEmpty(themeName) && themeDirectory != null) {
-            return themeDirectory.getFileObject(themeName);
+        FileObject themeDirectory = null;
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null) {
+            if (cakeModule.getCakeVersion().getMajor() >= 2) {
+                themeDirectory = controller.getFileObject("../../View/Themed"); // NOI18N
+            } else {
+                themeDirectory = controller.getFileObject("../../views/themed"); // NOI18N
+            }
+            if (!StringUtils.isEmpty(themeName) && themeDirectory != null) {
+                return themeDirectory.getFileObject(themeName);
+            }
         }
         return themeDirectory;
     }

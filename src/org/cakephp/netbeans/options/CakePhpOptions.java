@@ -41,10 +41,16 @@
  */
 package org.cakephp.netbeans.options;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
 
@@ -61,7 +67,9 @@ public class CakePhpOptions {
     private static final String LOCAL_ZIP_FILE_PATH = "local-zip-file-path"; // NOI18N
     private static final String IGNORE_TMP = "ignore-tmp"; // NOI18N
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
-    private static CakePhpOptions INSTANCE = new CakePhpOptions();
+    private static final String NOTIFY_NEW_VERSION = "notify-new-version"; // NOI18N
+    private static final String COMPOSER_JSON = "composer-json"; // NOI18N
+    private static final CakePhpOptions INSTANCE = new CakePhpOptions();
 
     private CakePhpOptions() {
     }
@@ -94,17 +102,19 @@ public class CakePhpOptions {
 
     public void setPlugins(List<CakePhpPlugin> plugins) {
         Preferences p = getPreferences().node(PLUGINS).node(PLUGINS);
-        String lists = ""; // NOI18N
+        StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (CakePhpPlugin plugin : plugins) {
             if (first) {
                 first = false;
             } else {
-                lists += ";"; // NOI18N
+                sb.append(";"); // NOI18N
             }
-            lists += plugin.getName() + "," + plugin.getUrl(); // NOI18N
+            sb.append(plugin.getName())
+                    .append(",") // NOI18N
+                    .append(plugin.getUrl());
         }
-        p.put(PLUGINS, lists);
+        p.put(PLUGINS, sb.toString());
     }
 
     public String getLocalZipFilePath() {
@@ -129,6 +139,54 @@ public class CakePhpOptions {
 
     public void setAutoCreateView(boolean isAuto) {
         getPreferences().putBoolean(AUTO_CREATE_VIEW, isAuto);
+    }
+
+    public boolean isNotifyNewVersion() {
+        return getPreferences().getBoolean(NOTIFY_NEW_VERSION, false);
+    }
+
+    public void setNotifyNewVersion(boolean isNotify) {
+        getPreferences().putBoolean(NOTIFY_NEW_VERSION, isNotify);
+
+    }
+
+    public String getComposerJson() {
+        String composerJson = getPreferences().get(COMPOSER_JSON, null);
+        if (composerJson == null) {
+            composerJson = getDefaultComposerJson();
+        }
+        return composerJson;
+    }
+
+    private String getDefaultComposerJson() {
+        StringBuilder sb = new StringBuilder();
+        InputStream inputStream = CakePhpOptions.class.getResourceAsStream("/org/cakephp/netbeans/resources/composer.json"); // NOI18N
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // NOI18N
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n"); // NOI18N
+                }
+            } finally {
+                reader.close();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return sb.toString();
+    }
+
+    public void setComposerJson(String text) {
+        getPreferences().put(COMPOSER_JSON, text);
     }
 
     public Preferences getPreferences() {

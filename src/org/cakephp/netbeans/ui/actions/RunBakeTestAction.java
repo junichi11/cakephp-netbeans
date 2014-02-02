@@ -42,11 +42,10 @@
 package org.cakephp.netbeans.ui.actions;
 
 import org.cakephp.netbeans.commands.CakeScript;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -72,9 +71,9 @@ import org.openide.util.NbBundle;
 public class RunBakeTestAction extends BaseAction {
 
     private static final long serialVersionUID = -3482899506753626339L;
-    private DataObject context;
-    private FileObject targetFile;
-    private PhpModule phpModule;
+    private final DataObject context;
+    private final FileObject targetFile;
+    private final PhpModule phpModule;
     private FileObject test;
 
     public RunBakeTestAction(DataObject context) {
@@ -99,8 +98,9 @@ public class RunBakeTestAction extends BaseAction {
             // called via shortcut
             return;
         }
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         // support only CakePHP2.x and 3.x
-        if (CakeVersion.getInstance(phpModule).getMajor() < 2) {
+        if (cakeModule == null || cakeModule.getCakeVersion().getMajor() <= 1) {
             return;
         }
 
@@ -202,6 +202,9 @@ public class RunBakeTestAction extends BaseAction {
     private String getPluginName(DIR_TYPE type) {
         if (type == DIR_TYPE.APP_PLUGIN || type == DIR_TYPE.PLUGIN) {
             CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+            if (module == null) {
+                return null;
+            }
             String path = module.getDirectory(type).getPath();
             String targetPath = targetFile.getPath();
             targetPath = targetPath.replace(path + "/", ""); // NOI18N
@@ -215,6 +218,9 @@ public class RunBakeTestAction extends BaseAction {
 
     private boolean existTest() {
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return false;
+        }
         DIR_TYPE dirType = getDirType();
         FILE_TYPE fileType = getFileType();
         String pluginName = getPluginName(dirType);

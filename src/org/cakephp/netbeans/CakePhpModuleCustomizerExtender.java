@@ -44,10 +44,11 @@ package org.cakephp.netbeans;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.customizer.CakePhpCustomizerPanel;
 import org.cakephp.netbeans.validator.CakePhpCustomizerValidator;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.validation.ValidationResult;
 import org.netbeans.modules.php.spi.framework.PhpModuleCustomizerExtender;
@@ -69,7 +70,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     private final boolean originalAutoCreateState;
     private final boolean originalIgnoreTmpDirectory;
     private final boolean isEnabled;
-    private ChangeSupport changeSupport = new ChangeSupport(this);
+    private final ChangeSupport changeSupport = new ChangeSupport(this);
     private String errorMessage;
     private boolean isValid;
     private final PhpModule phpModule;
@@ -80,9 +81,14 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         cakePhpDirPath = CakePreferences.getCakePhpDirPath(phpModule);
         originalIgnoreTmpDirectory = CakePreferences.ignoreTmpDirectory(phpModule);
         isShowPopupForOneItem = CakePreferences.isShowPopupForOneItem(phpModule);
-        appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule);
         Boolean enabled = CakePreferences.isEnabled(phpModule);
         isEnabled = enabled == null ? false : enabled;
+        CakeVersion cakeVersion = null;
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null) {
+            cakeVersion = cakeModule.getCakeVersion();
+        }
+        appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule, cakeVersion);
     }
 
     @Override
@@ -156,7 +162,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             CakePreferences.setIgnoreTmpDirectory(phpModule, newIgnoreTmpDirectory);
             enumset.add(Change.IGNORED_FILES_CHANGE);
         }
-        if (!newAppDirectoryPath.equals(appDirectoryPath) && !newAppDirectoryPath.isEmpty()) {
+        if (!newAppDirectoryPath.equals(appDirectoryPath)) {
             CakePreferences.setAppDirectoryPath(phpModule, newAppDirectoryPath);
             fireChange();
         }

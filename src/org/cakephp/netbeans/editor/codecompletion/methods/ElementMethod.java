@@ -44,10 +44,10 @@ package org.cakephp.netbeans.editor.codecompletion.methods;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
@@ -58,7 +58,6 @@ import org.openide.filesystems.FileObject;
  */
 public class ElementMethod extends AssetMethod {
 
-    private static final String ELEMENTS = "Elements"; // NOI18N
     private final FileObject currentFile;
 
     public ElementMethod(PhpModule phpModule) {
@@ -79,14 +78,15 @@ public class ElementMethod extends AssetMethod {
         }
 
         List<String> elements = new ArrayList<String>();
-        int cakeVersion = CakeVersion.getInstance(phpModule).getMajor();
+        CakeVersion cakeVersion = cakeModule.getCakeVersion();
+        int majorVersion = cakeVersion.getMajor();
 
         if (argCount == 1) {
             // get plugin name
             boolean isPlugin = false;
             String pluginName = ""; // NOI18N
             String basePath;
-            if (cakeVersion >= 2) {
+            if (majorVersion >= 2) {
                 String[] pluginSplit = CakePhpUtils.pluginSplit(inputValue);
                 if (pluginSplit != null && pluginSplit.length == 2) {
                     pluginName = pluginSplit[0];
@@ -104,7 +104,7 @@ public class ElementMethod extends AssetMethod {
 
             // plugin elements
             // for CakePHP 2.1+
-            if (isPlugin && cakeVersion >= 2) {
+            if (isPlugin && majorVersion >= 2) {
                 for (CakePhpModule.DIR_TYPE dirType : PLUGINS) {
                     FileObject elementsDirectory = cakeModule.getDirectory(dirType, FILE_TYPE.ELEMENT, pluginName);
                     addElements(elementsDirectory, filter, elements, pluginName);
@@ -130,21 +130,13 @@ public class ElementMethod extends AssetMethod {
 
             // plugin names
             // for CakePHP 2.1+
-            if (cakeVersion >= 2) {
-                for (CakePhpModule.DIR_TYPE dirType : PLUGINS) {
-                    FileObject pluginDirectory = cakeModule.getDirectory(dirType);
-                    if (pluginDirectory != null) {
-                        for (FileObject child : pluginDirectory.getChildren()) {
-                            if (child.isFolder()) {
-                                String name = child.getNameExt();
-                                FileObject viewDirectory = cakeModule.getViewDirectory(dirType, name);
-                                if (viewDirectory != null && viewDirectory.getFileObject(ELEMENTS) != null) {
-                                    if (name.startsWith(filter)) {
-                                        name = name + DOT;
-                                        elements.add(name);
-                                    }
-                                }
-                            }
+            if (majorVersion >= 2) {
+                for (String name : cakeModule.getAllPluginNames()) {
+                    for (CakePhpModule.DIR_TYPE dirType : PLUGINS) {
+                        FileObject elementDirectory = cakeModule.getDirectory(dirType, FILE_TYPE.ELEMENT, name);
+                        if (elementDirectory != null && name.startsWith(filter)) {
+                            elements.add(name + DOT);
+                            break;
                         }
                     }
                 }
@@ -185,4 +177,5 @@ public class ElementMethod extends AssetMethod {
     private void addElements(FileObject elementsDirectory, String filter, List<String> elements) {
         addElements(elementsDirectory, filter, elements, null);
     }
+
 }

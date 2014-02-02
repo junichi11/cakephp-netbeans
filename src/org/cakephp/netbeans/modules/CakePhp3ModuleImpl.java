@@ -39,28 +39,29 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_LIB;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_PLUGIN;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_VENDOR;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.CORE;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.PLUGIN;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.VENDOR;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.BEHAVIOR;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.COMPONENT;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.CONFIG;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.CONSOLE;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.CONTROLLER;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.HELPER;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.MODEL;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.NONE;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.TEST;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.VIEW;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.WEBROOT;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_LIB;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_PLUGIN;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_VENDOR;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.CORE;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.PLUGIN;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.VENDOR;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.BEHAVIOR;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.COMPONENT;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.CONFIG;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.CONSOLE;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.CONTROLLER;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.HELPER;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.MODEL;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.NONE;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.TEST;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.VIEW;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.WEBROOT;
+import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
@@ -71,8 +72,8 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
     private static final String DIR_HELPER = "Helper"; // NOI18N
     private static final String DIR_BEHAVIOR = "Behavior"; // NOI18N
 
-    public CakePhp3ModuleImpl(PhpModule phpModule) {
-        super(phpModule);
+    public CakePhp3ModuleImpl(PhpModule phpModule, Versions versions) {
+        super(phpModule, versions);
     }
 
     @Override
@@ -86,6 +87,9 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
 
     @Override
     public FileObject getDirectory(CakePhpModule.DIR_TYPE type, CakePhpModule.FILE_TYPE fileType, String pluginName) {
+        if (pluginName != null && pluginName.isEmpty()) {
+            pluginName = null;
+        }
         if (type == null) {
             return null;
         }
@@ -99,7 +103,7 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                 case APP_VENDOR: // no break
                 case CORE: // no break
                 case VENDOR: // no break
-                case PLUGIN:
+                case APP_PLUGIN:
                     return null;
                 default:
                     break;
@@ -109,13 +113,13 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
         StringBuilder sb = new StringBuilder();
         switch (type) {
             case APP_LIB: // no break
-            case APP_VENDOR:
+            case VENDOR:
                 if (fileType == null || fileType == CakePhpModule.FILE_TYPE.NONE) {
                     return getDirectory(type);
                 } else {
                     return null;
                 }
-            case APP_PLUGIN: // no break
+            case PLUGIN: // no break
                 if (pluginName == null || pluginName.isEmpty()) {
                     return null;
                 }
@@ -140,6 +144,12 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                         sb.append("View/"); // NOI18N
                         sb.append(DIR_HELPER);
                         break;
+                    case ELEMENT:
+                        sb.append("View/Element"); // NOI18N
+                        break;
+                    case LAYOUT:
+                        sb.append("View/Layout"); // NOI18
+                        break;
                     case BEHAVIOR:
                         sb.append("Model/"); // NOI18N
                         sb.append(DIR_BEHAVIOR);
@@ -157,12 +167,15 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                         if (type == CakePhpModule.DIR_TYPE.CORE) {
                             return null;
                         }
-                        sb.append("webroot"); // NOI18N
+                        sb.append("../webroot"); // NOI18N
+                        break;
+                    case TMP:
+                        if (type.isPlugin()) {
+                            return null;
+                        }
+                        sb.append("../tmp"); // NOI18N
                         break;
                     case NONE:
-                        if (type == CakePhpModule.DIR_TYPE.APP_PLUGIN) {
-                            return getDirectory(type).getFileObject(pluginName);
-                        }
                         return getDirectory(type);
                     default:
                         return null;
@@ -196,11 +209,14 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
             case APP_VENDOR:
                 return getAppDirectory(type);
             case CORE:
-                path = "lib/Cake"; // NOI18N
+                path = "vendor/cakephp/cakephp/Cake"; // NOI18N
                 break;
-            case PLUGIN: // no break
+            case PLUGIN:
+                path = "Plugin"; // NOI18N
+                break;
             case VENDOR:
-                return null;
+                path = "vendor"; // NOI18N
+                break;
             default:
                 throw new AssertionError();
         }
@@ -219,10 +235,9 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                 return appDir;
             case APP_LIB:
                 return appDir.getFileObject("Lib"); // NOI18N
-            case APP_PLUGIN:
-                return appDir.getFileObject("Plugin"); // NOI18N
+            case APP_PLUGIN: // no break
             case APP_VENDOR:
-                return appDir.getFileObject("vendor"); // NOI18N
+                return null;
             default:
                 throw new AssertionError();
         }
@@ -241,6 +256,9 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
         }
         FileObject parent = target.getParent();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return namespace;
+        }
         FileObject appDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
         FileObject coreDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.CORE);
         if (appDirectory == null || coreDirectory == null || parent == null) {

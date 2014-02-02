@@ -53,9 +53,9 @@ import org.cakephp.netbeans.editor.visitors.CakePhpComponentVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpControllerVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpFieldsVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpHelperVisitor;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.DefaultFileFilter;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.DefaultFileFilter;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.ParserManager;
@@ -108,10 +108,12 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
 
         // get AppController
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        FileObject appController = cakeModule.getFile(DIR_TYPE.APP, CakePhpModule.FILE_TYPE.CONTROLLER, "App", null);
-        if (appController != null) {
-            for (PhpClass phpClass : parseFields(appController)) {
-                elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
+        if (cakeModule != null) {
+            FileObject appController = cakeModule.getFile(DIR_TYPE.APP, CakePhpModule.FILE_TYPE.CONTROLLER, "App", null);
+            if (appController != null) {
+                for (PhpClass phpClass : parseFields(appController)) {
+                    elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
+                }
             }
         }
 
@@ -184,10 +186,6 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         }
 
         final FileObject target = tmp;
-        if (target == null) {
-            return Collections.emptySet();
-        }
-
         final Set<PhpClass> phpClasses = new HashSet<PhpClass>();
         try {
             ParserManager.parse(Collections.singleton(Source.create(target)), new UserTask() {

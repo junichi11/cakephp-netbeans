@@ -126,11 +126,11 @@ public class CakePhpDocUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static TokenSequence getTokenSequence(Document doc, int offset) {
+    public static TokenSequence<PHPTokenId> getTokenSequence(Document doc, int offset) {
         DocUtils.atomicLock(doc);
         TokenSequence<PHPTokenId> tokenSequence = null;
         try {
-            TokenHierarchy hierarchy = TokenHierarchy.get(doc);
+            TokenHierarchy<Document> hierarchy = TokenHierarchy.get(doc);
             tokenSequence = hierarchy.tokenSequence(PHPTokenId.language());
         } finally {
             DocUtils.atomicUnlock(doc);

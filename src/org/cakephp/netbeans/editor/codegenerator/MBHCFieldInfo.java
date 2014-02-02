@@ -53,9 +53,9 @@ import static org.cakephp.netbeans.editor.codegenerator.FieldInfo.Type.ACTS_AS;
 import static org.cakephp.netbeans.editor.codegenerator.FieldInfo.Type.COMPONENTS;
 import static org.cakephp.netbeans.editor.codegenerator.FieldInfo.Type.HELPERS;
 import static org.cakephp.netbeans.editor.codegenerator.FieldInfo.Type.USES;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.parsing.api.ParserManager;
@@ -208,9 +208,14 @@ public class MBHCFieldInfo extends FieldInfo {
         if (fileType == FILE_TYPE.NONE) {
             return Collections.emptyList();
         }
-        List<String> list = new ArrayList<String>();
+
         PhpModule phpModule = getPhpModule();
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null) {
+            return Collections.emptyList();
+        }
+
+        List<String> list = new ArrayList<String>();
         EditorSupport editorSupport = Lookup.getDefault().lookup(EditorSupport.class);
         FileObject appDir = module.getDirectory(DIR_TYPE.APP, fileType, null);
         list.addAll(getCommonNames(appDir, editorSupport, null));

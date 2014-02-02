@@ -184,6 +184,15 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.php.composer</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>0-1</release-version>
+                        <specification-version>0.13.2</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.php.editor</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -326,8 +335,8 @@
             </test-dependencies>
             <public-packages/>
             <class-path-extension>
-                <runtime-relative-path>ext/json.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/json.jar</binary-origin>
+                <runtime-relative-path>ext/gson-2.2.4-for-cakephp-netbeans.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/gson-2.2.4-for-cakephp-netbeans.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

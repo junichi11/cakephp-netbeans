@@ -56,7 +56,7 @@ public class FieldsGeneratorPanel extends javax.swing.JPanel {
 
     private static final long serialVersionUID = -2775979252996739813L;
     protected final String className;
-    private List<FieldInfo> fields;
+    private final List<FieldInfo> fields;
 
     /**
      * Creates new form FieldsGeneratorPanel

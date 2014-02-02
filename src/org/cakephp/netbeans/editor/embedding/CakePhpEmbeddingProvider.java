@@ -46,7 +46,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
-import org.netbeans.api.lexer.*;
+import org.netbeans.api.lexer.Token;
+import org.netbeans.api.lexer.TokenHierarchy;
+import org.netbeans.api.lexer.TokenId;
+import org.netbeans.api.lexer.TokenSequence;
+import org.netbeans.api.lexer.TokenUtilities;
 import org.netbeans.modules.parsing.api.Embedding;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.EmbeddingProvider;
@@ -74,7 +78,6 @@ public class CakePhpEmbeddingProvider extends EmbeddingProvider {
         while (sequence.moveNext()) {
             Token<? extends TokenId> t = sequence.token();
             TokenId id = t.id();
-            String s = id.primaryCategory();
             if (scriptFlg) {
                 if (id == PHPTokenId.T_INLINE_HTML) {
                     embeddings.add(snpsht.create(sequence.offset(), t.length(), "text/javascript")); // NOI18N

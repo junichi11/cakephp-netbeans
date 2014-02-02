@@ -51,13 +51,13 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
-import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.cakephp.netbeans.ui.GoToPopup;
-import org.cakephp.netbeans.ui.actions.gotos.items.GoToViewItem;
 import org.cakephp.netbeans.ui.PopupUtil;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
+import org.cakephp.netbeans.ui.actions.gotos.items.GoToViewItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.editor.EditorSupport;
@@ -110,6 +110,9 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         // support for only app view file
         // TODO support for theme?
         PhpModule phpModule = PhpModule.forFileObject(controller);
+        if (phpModule == null) {
+            return false;
+        }
         if (CakePreferences.getAutoCreateView(phpModule)) {
             try {
                 view = CakePhpUtils.createView(controller, phpElement);
@@ -134,7 +137,13 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         PhpModule phpModule = PhpModule.forFileObject(controller);
         FileObject[] themes = null;
         FileObject themeDirectory = null;
-        if (CakeVersion.getInstance(phpModule).isCakePhp(2)) {
+
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return new FileObject[0];
+        }
+
+        if (cakeModule.getCakeVersion().getMajor() >= 2) {
             themeDirectory = controller.getFileObject("../../View/Themed"); // NOI18N
         } else {
             themeDirectory = controller.getFileObject("../../views/themed"); // NOI18N

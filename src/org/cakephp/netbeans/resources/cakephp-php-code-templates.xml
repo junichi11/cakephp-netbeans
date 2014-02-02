@@ -1,0 +1,592 @@
+<?xml version="1.0"?>
+<!--
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright 2013 Oracle and/or its affiliates. All rights reserved.
+
+Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+The contents of this file are subject to the terms of either the GNU
+General Public License Version 2 only ("GPL") or the Common
+Development and Distribution License("CDDL") (collectively, the
+"License"). You may not use this file except in compliance with the
+License. You can obtain a copy of the License at
+http://www.netbeans.org/cddl-gplv2.html
+or nbbuild/licenses/CDDL-GPL-2-CP. See the License for the
+specific language governing permissions and limitations under the
+License.  When distributing the software, include this License Header
+Notice in each file and include the License file at
+nbbuild/licenses/CDDL-GPL-2-CP.  Oracle designates this
+particular file as subject to the "Classpath" exception as provided
+by Oracle in the GPL Version 2 section of the License file that
+accompanied this code. If applicable, add the following below the
+License Header, with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+If you wish your version of this file to be governed by only the CDDL
+or only the GPL Version 2, indicate your decision by adding
+"[Contributor] elects to include this software in this distribution
+under the [CDDL or GPL Version 2] license." If you do not indicate a
+single choice of license, a recipient has the option to distribute
+your version of this file under either the CDDL, the GPL Version 2 or
+to extend the choice of license to its licensees as provided above.
+However, if you add GPL Version 2 code and therefore, elected the GPL
+Version 2 license, then the option applies only if the new code is
+made subject to such option by the copyright holder.
+
+Contributor(s):
+
+Portions Copyrighted 2013 Sun Microsystems, Inc.
+-->
+
+<!DOCTYPE codetemplates PUBLIC "-//NetBeans//DTD Editor Code Templates settings 1.0//EN" "http://www.netbeans.org/dtds/EditorCodeTemplates-1_0.dtd">
+<codetemplates>
+    <codetemplate contexts="cake-code" abbreviation="cappu">
+        <code><![CDATA[App::uses('${className}', '${location}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cappua">
+        <code><![CDATA[App::uses(${CakeAppUses});${cursor}]]></code>
+        <description>CakePHP : detect classes</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chs">
+        <code><![CDATA[h(${selection})${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cconfr">
+        <code><![CDATA[Configure::read('${var}')${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cconfw">
+        <code><![CDATA[Configure::write('${conifg}', ${value});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="ccr">
+        <code><![CDATA[ClassRegistry::init('${Model}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--classes-->
+    <codetemplate contexts="cake-code" abbreviation="ccontclass">
+        <code><![CDATA[App::uses('AppController', 'Controller');
+
+class ${CakeFileName} extends AppController {
+	public function ${view}($$${id}) {
+		${cursor}
+	}}]]>
+        </code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="ccompclass">
+        <code><![CDATA[App::uses('Component', 'Controller');
+
+class ${CakeFileName} extends Component {
+	public function ${method}() {
+		${cursor}
+	}
+}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cmodelclass">
+        <code><![CDATA[App::uses('AppModel', 'Model');
+
+class ${CakeFileName} extends AppModel {
+	public function ${method}() {
+		${cursor}
+	}
+}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chelpclass">
+        <code><![CDATA[App::uses('AppHelper', 'View/Helper');
+
+class ${CakeFileName} extends AppHelper {
+	public function ${method}() {
+		${cursor}
+	}
+}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cbehavclass">
+        <code><![CDATA[class ${Name}Behavior extends ModelBehavior {
+	public function ${method}() {
+		${cursor}
+	}
+}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--fields-->
+    <codetemplate contexts="cake-code" abbreviation="ccomp">
+        <code><![CDATA[public $components = array('${Component}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chelp">
+        <code><![CDATA[public $helpers = array('${Helper}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cuses">
+        <code><![CDATA[public $uses = array('${Model}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cacts">
+        <code><![CDATA[public $actsAs = array('${Behavior}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cvalid">
+        <code><![CDATA[public $validate = array(${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cth">
+        <code><![CDATA[public $theme = '${Theme}';${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Controller-->
+    <codetemplate contexts="cake-code" abbreviation="cset">
+        <code><![CDATA[$this->set('${name}', $$${var});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="ctitle">
+        <code><![CDATA[$this->set('title_for_layout', '${title}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="ctheme">
+        <code><![CDATA[$this->theme = '${Theme}';${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="credarr">
+        <code><![CDATA[$this->redirect(array('controller' => '${name}', 'action' => '${name}'));${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cred">
+        <code><![CDATA[$this->redirect('${url}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cren">
+        <code><![CDATA[$this->render('${view}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cnfe">
+        <code><![CDATA[throw new NotFoundException('${404 Error - Page not found}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="creqa">
+        <code><![CDATA[$this->requestAction('${path}')${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="creqa2">
+        <code><![CDATA[$this->requestAction(array('controller' => '${articles}', 'action' => '${featured}'), array('return'))${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crquery">
+        <code><![CDATA[$this->request->query['${date}'];${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crdata">
+        <code><![CDATA[$this->request->data${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cris">
+        <code><![CDATA[$this->request->is('${post}')${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crin">
+        <code><![CDATA[$this->request->input(${cursor});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crjson">
+        <code><![CDATA[$$${data} = $this->request->input('json_decode');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crxml">
+        <code><![CDATA[$$${data} = $this->request->input('Xml::build', array('return' => 'domdocument'));${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="croa">
+        <code><![CDATA[$this->request->onlyAllow(${$methods})${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crref">
+        <code><![CDATA[$this->request->referer()${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crrefl">
+        <code><![CDATA[$this->request->referer(${$local})${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crescache">
+        <code><![CDATA[$this->response->cache('${-1 minute}', '${+5 days}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--View-->
+    <codetemplate contexts="cake-code" abbreviation="cel">
+        <code><![CDATA[echo $this->element('${element}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cel2">
+        <code><![CDATA[echo $this->element('${element}', array('${var}' => ${'message'}));${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="celcache">
+        <code><![CDATA[echo $this->element('${element}', ${array()}, array('cache' => true));${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cex">
+        <code><![CDATA[echo $this->extend('${name}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfet">
+        <code><![CDATA[echo $this->fetch('${name}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cstart">
+        <code><![CDATA[$this->start('${name}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cend">
+        <code><![CDATA[$this->end();${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="clay">
+        <code><![CDATA[$this->layout = '${default}';${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Html Helper-->
+    <codetemplate contexts="cake-code" abbreviation="chtml">
+        <code><![CDATA[$this->Html->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chtmle">
+        <code><![CDATA[echo $this->Html->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chcss">
+        <code><![CDATA[echo $this->Html->css('${css}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chscr">
+        <code><![CDATA[echo $this->Html->script('${script}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chchar">
+        <code><![CDATA[echo $this->Html->charset(${cursor});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chmeta">
+        <code><![CDATA[echo $this->Html->meta(${cursor});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chimg">
+        <code><![CDATA[echo $this->Html->image('${path}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chimgl">
+        <code><![CDATA[echo $this->Html->image('${path}', array('alt' => '${alt}', 'url' => '${url}'));${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chlink">
+        <code><![CDATA[echo $this->Html->link('${title}', ${$url});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chscrstart">
+        <code><![CDATA[$this->Html->scriptStart(${cursor});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chscrstarti">
+        <code><![CDATA[$this->Html->scriptStart(array('inline' => ${false}));${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chscrend">
+        <code><![CDATA[$this->Html->scriptEnd();${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Form Helper-->
+    <codetemplate contexts="cake-code" abbreviation="cform">
+        <code><![CDATA[$this->Form->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cforme">
+        <code><![CDATA[echo $this->Form->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfcheck">
+        <code><![CDATA[echo $this->Form->checkbox('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfcreate">
+        <code><![CDATA[echo $this->Form->create('${Model}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfdate">
+        <code><![CDATA[echo $this->Form->dateTime('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfday">
+        <code><![CDATA[echo $this->Form->day('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfend">
+        <code><![CDATA[echo $this->Form->end(${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cferror">
+        <code><![CDATA[echo $this->Form->error('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cffile">
+        <code><![CDATA[echo $this->Form->file('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfhid">
+        <code><![CDATA[echo $this->Form->hidden('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfhour">
+        <code><![CDATA[echo $this->Form->hour('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfin">
+        <code><![CDATA[echo $this->Form->input('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfinputs">
+        <code><![CDATA[echo $this->Form->inputs(${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cflabel">
+        <code><![CDATA[echo $this->Form->label(${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfmeridian">
+        <code><![CDATA[echo $this->Form->meridian('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfminute">
+        <code><![CDATA[echo $this->Form->minute('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfmonth">
+        <code><![CDATA[echo $this->Form->month('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfpostb">
+        <code><![CDATA[echo $this->Form->postButton('${title}', ${$url}${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfpostl">
+        <code><![CDATA[echo $this->Form->postButton('${title}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfradio">
+        <code><![CDATA[echo $this->Form->radio('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfselect">
+        <code><![CDATA[echo $this->Form->select('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfsec">
+        <code><![CDATA[echo $this->Form->select(${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfsub">
+        <code><![CDATA[echo $this->Form->submit(${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cftext">
+        <code><![CDATA[echo $this->Form->textarea('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfunlock">
+        <code><![CDATA[echo $this->Form->unlockField(${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cfyear">
+        <code><![CDATA[echo $this->Form->year('${field}'${cursor});]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Session Helper Component-->
+    <codetemplate contexts="cake-code" abbreviation="csession">
+        <code><![CDATA[$this->Session->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="csessione">
+        <code><![CDATA[$this->Session->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="csread">
+        <code><![CDATA[$this->Session->read('${name}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cscheck">
+        <code><![CDATA[$this->Session->check('${name}')${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cserr">
+        <code><![CDATA[$this->Session->error();${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="csflash">
+        <code><![CDATA[$this->Session->flash('${key}');${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="csvalid">
+        <code><![CDATA[$this->Session->valid()${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <codetemplate contexts="cake-code" abbreviation="csdelete">
+        <code><![CDATA[$this->Session->delete('${name}')${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="csid">
+        <code><![CDATA[$this->Session->id(${id});${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cssetf">
+        <code><![CDATA[$this->Session->setFlash('${message})';${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cswrite">
+        <code><![CDATA[$this->Session->write('${name}')${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Number Helper-->
+    <codetemplate contexts="cake-code" abbreviation="cnumber">
+        <code><![CDATA[$this->Number->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cnumbere">
+        <code><![CDATA[echo $this->Number->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Paginator Helper-->
+    <codetemplate contexts="cake-code" abbreviation="cpaginator">
+        <code><![CDATA[$this->Paginator->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cpaginatore">
+        <code><![CDATA[echo $this->Paginator->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Rss Helper-->
+    <codetemplate contexts="cake-code" abbreviation="crss">
+        <code><![CDATA[$this->Rss->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="crsse">
+        <code><![CDATA[echo $this->Rss->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Text Helper-->
+    <codetemplate contexts="cake-code" abbreviation="ctext">
+        <code><![CDATA[$this->Text->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="ctexte">
+        <code><![CDATA[echo $this->Text->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Time Helper-->
+    <codetemplate contexts="cake-code" abbreviation="ctime">
+        <code><![CDATA[$this->Time->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="ctimee">
+        <code><![CDATA[echo $this->Time->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Auth Component-->
+    <codetemplate contexts="cake-code" abbreviation="cauth">
+        <code><![CDATA[$this->Auth->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Acl Component-->
+    <codetemplate contexts="cake-code" abbreviation="cacl">
+        <code><![CDATA[$this->Acl->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Cookie Component-->
+    <codetemplate contexts="cake-code" abbreviation="ccookie">
+        <code><![CDATA[$this->Cookie->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Email Component-->
+    <codetemplate contexts="cake-code" abbreviation="cemail">
+        <code><![CDATA[$this->Email->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--RequestHandler Component-->
+    <codetemplate contexts="cake-code" abbreviation="crequesth">
+        <code><![CDATA[$this->RequestHandler->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Security Component-->
+    <codetemplate contexts="cake-code" abbreviation="csecurity">
+        <code><![CDATA[$this->Security->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+
+    <!--Models-->
+    <codetemplate contexts="cake-code" abbreviation="cho">
+        <code><![CDATA[
+public $hasOne = array(
+	'${Profile}' => array(
+		'className'    => '${Profile}',
+		'conditions'   => '${conditions}',
+		'dependent'    => ${true}
+	)
+);${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cbelongs">
+        <code><![CDATA[
+public $belongsTo = array(
+    '${User}' => array(
+        'className'    => '${User}',
+        'foreignKey'   => '${user_id}'
+    )
+);${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="chm">
+        <code><![CDATA[
+public $hasMany = array(
+	'${Comment}' => array(
+		'className' => '${Comment}',
+		'foreignKey' => '${user_id}',
+		'conditions' => ${conditions},
+		'order' => '${order}',
+		'limit'  => ${limit},
+		'dependent' => ${true}
+	)
+);${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cmodel">
+        <code><![CDATA[$this->${CakeModel}->${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+    <codetemplate contexts="cake-code" abbreviation="cmfind">
+        <code><![CDATA[$this->${CakeModel}->find('${first}', ${$options})${cursor}]]></code>
+        <description>CakePHP</description>
+    </codetemplate>
+</codetemplates>

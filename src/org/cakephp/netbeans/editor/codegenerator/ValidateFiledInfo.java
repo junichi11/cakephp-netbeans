@@ -46,8 +46,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.text.JTextComponent;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.editor.PhpClass.Method;
@@ -126,6 +126,9 @@ public class ValidateFiledInfo extends FieldInfo {
         List<String> validations = new ArrayList<String>();
         PhpModule phpModule = getPhpModule();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return validations;
+        }
         FileObject coreDirectory = cakeModule.getDirectory(DIR_TYPE.CORE);
         if (coreDirectory == null) {
             return validations;

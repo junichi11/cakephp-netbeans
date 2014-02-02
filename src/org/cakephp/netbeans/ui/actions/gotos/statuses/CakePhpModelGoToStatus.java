@@ -53,7 +53,7 @@ import org.cakephp.netbeans.editor.visitors.CakePhpControllerVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpFixtureVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpModelVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpTestCaseVisitor;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToBehaviorItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToControllerItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToFixtureItem;
@@ -164,6 +164,9 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         // XXX more search?
         // only app directory
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(getPhpModule());
+        if (cakeModule == null) {
+            return Collections.emptyList();
+        }
         FileObject controllerDirectory = cakeModule.getControllerDirectory(CakePhpModule.DIR_TYPE.APP);
 
         // scan controllers

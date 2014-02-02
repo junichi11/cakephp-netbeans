@@ -42,12 +42,16 @@
 package org.cakephp.netbeans.util;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.UUID;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -68,6 +72,7 @@ public class CakePhpSecurityString {
 
     /**
      * Change Security.salt and Security.cipherSeed
+     *
      * @param config core.php file
      * @throws IOException
      */
@@ -75,27 +80,32 @@ public class CakePhpSecurityString {
         List<String> lines = config.asLines();
         String salt = CakePhpSecurityString.generateSecurityKey("SHA-1"); // NOI18N
         String cipherSeed = CakePhpSecurityString.generateCipherSeed();
-
-        PrintWriter pw = new PrintWriter(config.getOutputStream());
-        for(String line : lines){
-            if(line.contains(CONFIGURE_WRITE_SECURITY_SALT_PATTERN)){
-                line = String.format(CONFIGURE_WRITE_SECURITY_SALTS_FORMAT, salt);
-            }else if(line.contains(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN)){
-                line = String.format(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT, cipherSeed);
-            } else if (line.contains(CAKE_3_CONFIGURE_WRITE_SECURITY_SALT_PATTERN)) {
-                line = String.format(CAKE_3_CONFIGURE_WRITE_SECURITY_SALTS_FORMAT, salt);
-            } else if (line.contains(CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN)) {
-                line = String.format(CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT, cipherSeed);
-            } else {
-                // nothing
+        OutputStream outputStream = config.getOutputStream();
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true); // NOI18N
+        try {
+            for (String line : lines) {
+                if (line.contains(CONFIGURE_WRITE_SECURITY_SALT_PATTERN)) {
+                    line = String.format(CONFIGURE_WRITE_SECURITY_SALTS_FORMAT, salt);
+                } else if (line.contains(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN)) {
+                    line = String.format(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT, cipherSeed);
+                } else if (line.contains(CAKE_3_CONFIGURE_WRITE_SECURITY_SALT_PATTERN)) {
+                    line = String.format(CAKE_3_CONFIGURE_WRITE_SECURITY_SALTS_FORMAT, salt);
+                } else if (line.contains(CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN)) {
+                    line = String.format(CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT, cipherSeed);
+                } else {
+                    // nothing
+                }
+                pw.println(line);
             }
-            pw.println(line);
+        } finally {
+            outputStream.close();
+            pw.close();
         }
-        pw.close();
     }
 
     /**
      * Generate security random string
+     *
      * @param algorithm e.g. SHA-1, SHA-256, MD5, ...
      * @return
      * @throws NoSuchAlgorithmException
@@ -108,8 +118,8 @@ public class CakePhpSecurityString {
 
     public static String generateCipherSeed() {
         StringBuilder sb = new StringBuilder(30);
-        for(int i = 0; i < 30; i++){
-            int random = (int)(Math.random() * 10);
+        for (int i = 0; i < 30; i++) {
+            int random = (int) (Math.random() * 10);
             sb.append(Integer.toString(random));
         }
 
@@ -118,33 +128,39 @@ public class CakePhpSecurityString {
 
     /**
      * Generate digest from string
+     *
      * @param string if string is null, generate uuid (UUID.randamUUID())
      * @param algorithm e.g. SHA-1, SHA-256, MD5, ... if null, use SHA-1
      * @return digest (Hexadecimal hash value)
      * @throws NoSuchAlgorithmException
      */
     public static String hash(String string, String algorithm) throws NoSuchAlgorithmException {
-        if(string == null){
+        if (string == null) {
             string = UUID.randomUUID().toString();
         }
-        if(algorithm == null){
+        if (algorithm == null) {
             algorithm = "SHA-1"; // NOI18N
         }
 
         MessageDigest md = MessageDigest.getInstance(algorithm);
-        md.update(string.getBytes());
+        try {
+            md.update(string.getBytes("UTF-8")); // NOI18N
+        } catch (UnsupportedEncodingException ex) {
+            Exceptions.printStackTrace(ex);
+        }
 
         return toHex(md.digest());
     }
 
     /**
      * Convert byte array to a hexadecimal numbers string
+     *
      * @param bytes byte array
      * @return hexadeximal numbers string
      */
     private static String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        for(byte b : bytes) {
+        for (byte b : bytes) {
             String hex = String.format("%02x", b); // NOI18N
             sb.append(hex);
         }

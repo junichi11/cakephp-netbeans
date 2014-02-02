@@ -39,12 +39,15 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import java.util.HashMap;
 import java.util.Map;
 import org.cakephp.netbeans.preferences.CakePreferences;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.versions.CakeVersion;
+import org.cakephp.netbeans.versions.Versionable;
+import org.cakephp.netbeans.versions.Versions;
+import org.cakephp.netbeans.versions.VersionsFactory;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
@@ -54,8 +57,9 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpModuleFactory {
 
-    private Map<PhpModule, CakePhpModule> modules = new HashMap<PhpModule, CakePhpModule>();
+    private final Map<PhpModule, CakePhpModule> modules = new HashMap<PhpModule, CakePhpModule>();
     private static final CakePhpModuleFactory INSTANCE = new CakePhpModuleFactory();
+    private boolean isCreating = false;
 
     /**
      * Get instance. singleton
@@ -77,39 +81,59 @@ public class CakePhpModuleFactory {
      * otherwise null
      */
     public synchronized CakePhpModule create(PhpModule phpModule) {
+        assert !isCreating;
         CakePhpModule module = modules.get(phpModule);
         if (module == null) {
-            // create implementation class
-            CakeVersion version = CakeVersion.getInstance(phpModule);
-            CakePhpModuleImpl impl = null;
-            if (version.isCakePhp(1)) {
-                impl = new CakePhp1ModuleImpl(phpModule);
-            } else if (version.isCakePhp(2)) {
-                impl = new CakePhp2ModuleImpl(phpModule);
-            } else if (version.isCakePhp(3)) {
-                impl = new CakePhp3ModuleImpl(phpModule);
-            }
+            try {
+                start();
+                // create implementation class
+                VersionsFactory factory = VersionsFactory.getInstance();
+                Versions versions = factory.create(phpModule);
+                CakeVersion version = (CakeVersion) versions.getVersion(Versionable.VERSION_TYPE.CAKEPHP);
+                if (versions.size() == 0 || version == null) {
+                    return null;
+                }
 
-            // can't know version
-            if (impl == null) {
-                return null;
-            }
+                CakePhpModuleImpl impl = null;
+                if (version.isCakePhp(1)) {
+                    impl = new CakePhp1ModuleImpl(phpModule, versions);
+                } else if (version.isCakePhp(2)) {
+                    impl = new CakePhp2ModuleImpl(phpModule, versions);
+                } else if (version.isCakePhp(3)) {
+                    impl = new CakePhp3ModuleImpl(phpModule, versions);
+                }
 
-            // check app directory
-            String appPath = CakePreferences.getAppDirectoryPath(phpModule);
-            FileObject sourceDirectory = phpModule.getSourceDirectory();
-            if (sourceDirectory == null) {
-                return null;
-            }
-            FileObject app = sourceDirectory.getFileObject(appPath);
-            if (app == null) {
-                return null;
-            }
+                // can't know version
+                if (impl == null) {
+                    return null;
+                }
 
-            // create module class
-            module = new CakePhpModule(phpModule, impl);
-            modules.put(phpModule, module);
+                // check app directory
+                String appPath = CakePreferences.getAppDirectoryPath(phpModule, version);
+                FileObject sourceDirectory = phpModule.getSourceDirectory();
+                if (sourceDirectory == null) {
+                    return null;
+                }
+                FileObject app = sourceDirectory.getFileObject(appPath);
+                if (app == null) {
+                    return null;
+                }
+
+                // create module class
+                module = new CakePhpModule(phpModule, impl);
+                modules.put(phpModule, module);
+            } finally {
+                finish();
+            }
         }
         return module;
+    }
+
+    private void start() {
+        isCreating = true;
+    }
+
+    private void finish() {
+        isCreating = false;
     }
 }

@@ -49,17 +49,16 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.options.CakePhpPlugin;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.util.NbBundle;
 
 public final class InstallPluginsVisualPanel extends JPanel {
 
     private static final long serialVersionUID = 4577339233353249978L;
-    private InstallPluginTableModel model = new InstallPluginTableModel();
+    private final InstallPluginTableModel model = new InstallPluginTableModel();
 
     /**
      * Creates new form InstallPluginsVisualPanel
@@ -72,7 +71,9 @@ public final class InstallPluginsVisualPanel extends JPanel {
         if (cakeModule != null) {
             appName = cakeModule.getAppName() == null ? "" : cakeModule.getAppName();
         }
-        if (CakeVersion.getInstance(pm).getMajor() >= 2) {
+        if (cakeModule == null) {
+            installPathTextField.setText(""); // NOI18N
+        } else if (cakeModule.getCakeVersion().getMajor() >= 2) {
             installPathTextField.setText(appName + "/Plugin"); // NOI18N
         } else {
             installPathTextField.setText(appName + "/plugins"); // NOI18N
@@ -159,14 +160,14 @@ public final class InstallPluginsVisualPanel extends JPanel {
     private javax.swing.JTable pluginTable;
     // End of variables declaration//GEN-END:variables
 
-    private class InstallPluginTableModel extends AbstractTableModel {
+    private static class InstallPluginTableModel extends AbstractTableModel {
 
         private static final int INSTALL = 0;
         private static final int NAME = 1;
         private static final int URL = 2;
         private static final long serialVersionUID = 1795493071005593192L;
         private List<CakePhpPlugin> plugins;
-        private String[] column;
+        private final String[] column;
 
         public InstallPluginTableModel() {
             column = new String[]{

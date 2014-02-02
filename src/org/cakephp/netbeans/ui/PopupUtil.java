@@ -112,7 +112,6 @@ public final class PopupUtil {
         // 1. on linux, creates mediumweight popup taht doesn't refresh behind visible glasspane
         // 2. on mac, needs an owner frame otherwise hiding tooltip also hides the popup. (linux requires no owner frame to force heavyweight)
         // 3. the created window is not focusable window
-
         popupWindow = new JDialog(getMainWindow());
         popupWindow.setName(POPUP_NAME);
         popupWindow.setUndecorated(undecorated);
@@ -129,9 +128,9 @@ public final class PopupUtil {
             popupWindow.getAccessibleContext().setAccessibleDescription(a11yDesc);
         }
 
-        if (title != null) {
-            // popupWindow.setTitle( title );
-        }
+//        if (title != null) {
+        // popupWindow.setTitle( title );
+//        }
         // popupWindow.setAlwaysOnTop( true );
         popupWindow.getContentPane().add(content);
         // popupWindow.addFocusListener( mfl );
@@ -179,7 +178,7 @@ public final class PopupUtil {
         Point point = new Point(0, 0);
         SwingUtilities.convertPointToScreen(point, getMainWindow());
         popupWindow.setLocation(point.x + (getMainWindow().getWidth() - popupWindow.getWidth()) / 2,
-            point.y + (getMainWindow().getHeight() - popupWindow.getHeight()) / 3);
+                point.y + (getMainWindow().getHeight() - popupWindow.getHeight()) / 3);
     }
     private static final int X_INSET = 10;
     private static final int Y_INSET = X_INSET;
@@ -239,7 +238,7 @@ public final class PopupUtil {
                 int newState = windowEvent.getNewState();
 
                 if (((oldState & Frame.ICONIFIED) == 0)
-                    && ((newState & Frame.ICONIFIED) == Frame.ICONIFIED)) {
+                        && ((newState & Frame.ICONIFIED) == Frame.ICONIFIED)) {
                     hidePopup();
 //                } else if (((oldState & Frame.ICONIFIED) == Frame.ICONIFIED) &&
 //                           ((newState & Frame.ICONIFIED) == 0 )) {

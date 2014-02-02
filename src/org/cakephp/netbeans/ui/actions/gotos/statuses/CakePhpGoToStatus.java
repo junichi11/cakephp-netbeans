@@ -49,9 +49,9 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToBehaviorItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToComponentItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToControllerItem;
@@ -90,7 +90,7 @@ import org.openide.util.Lookup;
  */
 public abstract class CakePhpGoToStatus {
 
-    protected static int DEFAULT_OFFSET = 0;
+    protected static final int DEFAULT_OFFSET = 0;
     private FileObject currentFile;
     private int offset;
     private PhpModule phpModule;
@@ -414,6 +414,9 @@ public abstract class CakePhpGoToStatus {
             return null;
         }
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return null;
+        }
         return cakeModule.getDirectory(DIR_TYPE.APP, fileType, null);
     }
 

@@ -44,10 +44,9 @@ package org.cakephp.netbeans.ui.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenId;
@@ -108,7 +107,7 @@ public class FixNamespaceAction extends BaseAction {
         hasNamespace = false;
         ts.moveStart();
         while (ts.moveNext()) {
-            Token token = ts.token();
+            Token<PHPTokenId> token = ts.token();
             TokenId id = token.id();
             if (id == PHPTokenId.PHP_CLASS) {
                 break;
@@ -148,6 +147,9 @@ public class FixNamespaceAction extends BaseAction {
         }
         FileObject parent = target.getParent();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return namespace;
+        }
         FileObject appDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
         FileObject coreDirectory = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.CORE);
         if (appDirectory == null || coreDirectory == null || parent == null) {
@@ -185,14 +187,10 @@ public class FixNamespaceAction extends BaseAction {
      * @return true if CakePHP3, otherwiese false;
      */
     private boolean isCakePHP3(PhpModule phpModule) {
-        if (!CakePhpUtils.isCakePHP(phpModule)) {
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
             return false;
         }
-        CakeVersion version = CakeVersion.getInstance(phpModule);
-        if (!version.isCakePhp(3)) {
-            return false;
-        }
-
-        return true;
+        return cakeModule.getCakeVersion().isCakePhp(3);
     }
 }

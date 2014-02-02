@@ -41,6 +41,8 @@
  */
 package org.cakephp.netbeans.module;
 
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.DefaultFileFilter;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,7 +53,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.NodeChangeListener;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

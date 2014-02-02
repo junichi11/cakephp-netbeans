@@ -47,8 +47,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.ChangeListener;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -88,13 +88,15 @@ public class MVCNodeFactory implements NodeFactory {
         public List<FileObject> keys() {
             if (CakePhpUtils.isCakePHP(phpModule)) {
                 CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-                List<FileObject> list = new ArrayList<FileObject>();
-                list.add(cakeModule.getControllerDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getModelDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getViewDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getHelperDirectory(DIR_TYPE.APP));
-                list.add(cakeModule.getWebrootDirectory(DIR_TYPE.APP));
-                return list;
+                if (cakeModule != null) {
+                    List<FileObject> list = new ArrayList<FileObject>();
+                    list.add(cakeModule.getControllerDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getModelDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getViewDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getHelperDirectory(DIR_TYPE.APP));
+                    list.add(cakeModule.getWebrootDirectory(DIR_TYPE.APP));
+                    return list;
+                }
             }
             return Collections.emptyList();
         }

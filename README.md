@@ -1,12 +1,11 @@
-# About
+# NetBeans CakePHP Plugin
 
 This plugin provides support for CakePHP.
 
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2012/09/08 Support for NetBeans7.3
-- 2013/07/12 last update
+- 2013/12/04 last update
 
 ## ENVIRONMENT
 
@@ -34,10 +33,11 @@ Currently, This plugin doesn't recognize CakePHP3.
 - template files (ctp, helper, component, behavior, shell, task)
 - create new CakePHP projects from new project option
 - code completion support [v0.6]
+- code templates
 - format for CakePHP action [v0.6.8]
 - go to element file from view file [v0.6.9]
 - display and change debug level [v0.6.10]
-- display CakePHP version number on status bar 
+- display CakePHP version number on status bar
 - multiple app directories support [v0.6.14]
 - check default action [v0.6.15]
 - image and element code completion [v0.6.16]
@@ -172,9 +172,9 @@ Run Action: see [*1]
 4. Run Configuration
 5. PHP Framework > check CakePHP PHP Web Framework
 
-Select `Unzip` or `Unzip local file` or `git command`.  
+Select `Unzip` or `Unzip local file` or `Composer` or `git command`.  
 If you select `Unzip`, also select CakePHP version.  
-If you want to unzip the local file, please set the option   
+If you want to unzip the local file, please set the option
 (`Tools > Options > PHP > CakePHP > New Project > Local file path`)  
 If you want to create a database.php file, please, check the Create database.php.
 
@@ -184,6 +184,11 @@ Also set the following automatically.
 - change Security.salt and Security.cipherSeed values
 
 create a database, you can immediately start development in a local environment.
+
+#### Installing with composer
+
+We can set default `composer.json` on Options panel. We can use `--empty` and app name settings when we create a project.
+`--empty` is used with `bake project`. If app name is empty, app directory is source directory, otherwise it is created under the source directory.
 
 ### Code Completion
 
@@ -202,7 +207,7 @@ public $helpers('Session', 'Html' => array('className' => 'MyHtml'));
 // $this->Html-> [Ctrl + Space] => display MyHtmlHelper class methods and fields
 ```
 
-image file completion
+#### image file completion
 
 ```php
 $this->Html->image('[Ctrl + Space]');
@@ -230,13 +235,29 @@ $this->Html->css('/mydir/[Ctrl + Space]');
 $this->Html->script('PluginName.[Ctrl + Space]');
 ```
 
-element file completion
+#### element file completion
 
 ```php
 $this->element('[Ctrl + Space]');
 // popup file names in the appdir/View/Elements/
 $this->element('MyPlugin.[Ctrl + Space]');
 // support for Plugin elements (CakePHP 2.x)
+```
+
+#### fields completion
+
+This is available in the following fields. This can also complete the plugin name.
+Please run code completion again(i.e. [Ctrl + Space]) after "PluginName.".
+
+- $components
+- $helpers
+- $uses
+- $actsAs
+
+```php
+// e.g.
+public $components = array('[Ctrl + Space]');
+public $components = array('DebugKit.[Ctrl + Space]');
 ```
 
 ### Go To View Action
@@ -264,6 +285,16 @@ Check `Auto create a view file when go to view action is run`
 at Right-click on project node > property > Framework > CakePHP
 
 If you use the theme, set $theme to controller field.
+
+### Code Templates
+
+Available code templates : Tools > Options > Editor > Code Templates > HTML/PHP
+
+e.g.
+- cappu -> `App::uses('AppController', 'Controller');`
+- chtml -> `$this->Html->`
+
+This feature is also available with code completion.
 
 ### Go To Action Action
 
@@ -459,7 +490,7 @@ Add namespace to top of file if it doesn't exist.
 
 ```php
 // e.g.
-<?php 
+<?php
 namespace App\Controller;
 ```
 

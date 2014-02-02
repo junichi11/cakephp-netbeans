@@ -39,15 +39,22 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.versions.CakeVersion;
+import org.cakephp.netbeans.versions.Versionable;
+import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
+import org.cakephp.netbeans.versions.Versions;
+import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
@@ -61,9 +68,9 @@ import org.openide.filesystems.FileRenameEvent;
  */
 public class CakePhpModule implements ChangeListener {
 
-    private PhpModule phpModule;
-    private CakePhpModuleImpl impl;
-    private FileObject app;
+    private final PhpModule phpModule;
+    private final CakePhpModuleImpl impl;
+    private final FileObject app;
 
     public CakePhpModule(PhpModule phpModule, CakePhpModuleImpl impl) {
         this.phpModule = phpModule;
@@ -77,6 +84,10 @@ public class CakePhpModule implements ChangeListener {
                 CakePreferences.setAppName(pm, changeName);
             }
         });
+    }
+
+    public PhpModule getPhpModule() {
+        return phpModule;
     }
 
     public String getAppName() {
@@ -102,6 +113,11 @@ public class CakePhpModule implements ChangeListener {
         VENDOR,
         APP_VENDOR,
         APP_LIB,;
+
+        public boolean isPlugin() {
+            return this == APP_PLUGIN || this == PLUGIN;
+        }
+
     }
 
     public enum FILE_TYPE {
@@ -120,7 +136,8 @@ public class CakePhpModule implements ChangeListener {
         TESTCASE,
         FIXTURE,
         CONSOLE,
-        CONFIG,;
+        CONFIG,
+        TMP,;
 
         @Override
         public String toString() {
@@ -129,6 +146,8 @@ public class CakePhpModule implements ChangeListener {
             return name;
         }
     }
+
+    public static final List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
 
     public FileObject getConfigFile() {
         return impl.getConfigFile();
@@ -282,7 +301,11 @@ public class CakePhpModule implements ChangeListener {
         return impl.getCurrentPluginName(currentFile);
     }
 
+    @CheckForNull
     public static FileObject getCakePhpDirectory(PhpModule phpModule) {
+        if (phpModule == null) {
+            return null;
+        }
         FileObject sourceDirectory = phpModule.getSourceDirectory();
         if (sourceDirectory == null) {
             return null;
@@ -291,7 +314,7 @@ public class CakePhpModule implements ChangeListener {
         String cakePhpDirRelativePath = CakePreferences.getCakePhpDirPath(phpModule);
         FileObject cakePhpDirectory;
         if (!StringUtils.isEmpty(cakePhpDirRelativePath)) {
-            cakePhpDirectory = sourceDirectory.getFileObject(CakePreferences.getCakePhpDirPath(phpModule));
+            cakePhpDirectory = sourceDirectory.getFileObject(cakePhpDirRelativePath);
         } else {
             cakePhpDirectory = phpModule.getSourceDirectory();
         }
@@ -316,6 +339,17 @@ public class CakePhpModule implements ChangeListener {
 
     public FileObject getFile(DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String pluginName) {
         return impl.getFile(pluginName, dirType, fileType, fileName);
+    }
+
+    public FileObject getFile(List<DIR_TYPE> dirTypes, FILE_TYPE fileType, String fileName, String pluginName) {
+        FileObject file = null;
+        for (DIR_TYPE dirType : dirTypes) {
+            file = getFile(dirType, fileType, fileName, pluginName);
+            if (file != null) {
+                break;
+            }
+        }
+        return file;
     }
 
     public List<FileObject> getFiles(FileObject targetDirectory, FileFilter filter) {
@@ -410,9 +444,56 @@ public class CakePhpModule implements ChangeListener {
         return impl.isInCakePhp();
     }
 
+    public Set<String> getAllPluginNames() {
+        return impl.getAllPluginNames();
+    }
+
+    /**
+     * Get {@link Versions}.
+     *
+     * @return {@link Versions}
+     */
+    public Versions getVersions() {
+        return impl.getVersions();
+    }
+
+    /**
+     * Get {@link Versionable} for {@code VERSION_TYPE}.
+     *
+     * @param versionType {@code VERSION_TYPE}
+     * @return {@link Versionable}
+     */
+    public Versionable getVersion(Versionable.VERSION_TYPE versionType) {
+        return impl.getVersions().getVersion(versionType);
+    }
+
+    /**
+     * Get {@link CakeVersion}.
+     *
+     * @return {@link CakeVersion}
+     */
+    public CakeVersion getCakeVersion() {
+        return (CakeVersion) getVersion(VERSION_TYPE.CAKEPHP);
+    }
+
+    /**
+     * Check CakePHP major version.
+     *
+     * @param majorVersion major version number
+     * @return {@code true} if specified version, {@code false} otherwise.
+     */
+    public boolean isCakePhp(int majorVersion) {
+        CakeVersion version = getCakeVersion();
+        return version.isCakePhp(majorVersion);
+    }
+
+    @CheckForNull
     public static CakePhpModule forPhpModule(PhpModule phpModule) {
         if (phpModule == null) {
             phpModule = PhpModule.inferPhpModule();
+        }
+        if (phpModule == null) {
+            return null;
         }
         CakePhpModuleFactory factory = CakePhpModuleFactory.getInstance();
         return factory.create(phpModule);

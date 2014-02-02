@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,17 +37,31 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.editor.codetemplates;
 
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateInsertRequest;
+import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateParameter;
 import org.openide.filesystems.FileObject;
 
-/**
- *
- * @author junichi11
- */
-public interface FileFilter {
+public class CakeFileNameParameter extends CakePhpCodeTemplateParameter {
 
-    public boolean accept(FileObject fo);
+    public CakeFileNameParameter(CodeTemplateParameter parameter) {
+        super(parameter);
+    }
+
+    @Override
+    public void updateValue(CodeTemplateInsertRequest request, FileObject fileObject, CakePhpModule cakeModule) {
+        String fileName = fileObject.getName();
+        fileName = CakePhpUtils.getCamelCaseName(fileName);
+        getParameter().setValue(fileName);
+    }
+
+    @Override
+    public void release(CodeTemplateInsertRequest request) {
+    }
+
 }

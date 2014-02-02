@@ -41,118 +41,229 @@
  */
 package org.cakephp.netbeans.editor.hyperlink;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
-import org.netbeans.lib.editor.hyperlink.spi.HyperlinkProvider;
+import org.netbeans.lib.editor.hyperlink.spi.HyperlinkProviderExt;
+import org.netbeans.lib.editor.hyperlink.spi.HyperlinkType;
 import org.netbeans.modules.csl.api.UiUtils;
+import org.netbeans.modules.editor.NbEditorUtilities;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.FileUtils;
+import org.netbeans.modules.php.editor.lexer.LexUtilities;
 import org.netbeans.modules.php.editor.lexer.PHPTokenId;
+import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author junichi11
  */
-@MimeRegistration(mimeType = "text/x-php5", service = HyperlinkProvider.class)
-public class CakePhpHyperlinkProvider implements HyperlinkProvider {
+@MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = HyperlinkProviderExt.class)
+public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
 
-    private static final String ELEMENTS_DIR_NAME = "Elements";
-    private FileObject element;
-    private String target;
+    private FileObject targetFile;
+    private String targetText;
     private int targetStart;
     private int targetEnd;
+    private String tooltipText;
+    private static final List<String> targetMethods = Arrays.asList("element"); // NOI18N
 
     @Override
-    public boolean isHyperlinkPoint(Document doc, int offset) {
+    public Set<HyperlinkType> getSupportedHyperlinkTypes() {
+        return Collections.singleton(HyperlinkType.GO_TO_DECLARATION);
+    }
+
+    @Override
+    public String getTooltipText(Document dcmnt, int i, HyperlinkType hyperlinkType) {
+        return tooltipText;
+    }
+
+    @Override
+    public boolean isHyperlinkPoint(Document doc, int offset, HyperlinkType hyperlinkType) {
         return verifyState(doc, offset);
     }
 
     @SuppressWarnings("unchecked")
     public boolean verifyState(Document doc, int offset) {
-        AbstractDocument ad = (AbstractDocument) doc;
-        ad.readLock();
-        try {
-            TokenHierarchy hierarchy = TokenHierarchy.get(doc);
-            TokenSequence<PHPTokenId> ts = hierarchy.tokenSequence(PHPTokenId.language());
-            if (ts == null) {
+        PhpModule phpModule = PhpModule.inferPhpModule();
+        if (phpModule == null || !CakePhpUtils.isCakePHP(phpModule)) {
+            return false;
+        }
+
+        TokenSequence<PHPTokenId> ts = null;
+        if (doc instanceof AbstractDocument) {
+            AbstractDocument ad = (AbstractDocument) doc;
+            ad.readLock();
+            try {
+                TokenHierarchy<Document> hierarchy = TokenHierarchy.get(doc);
+                ts = hierarchy.tokenSequence(PHPTokenId.language());
+            } finally {
+                ad.readUnlock();
+            }
+        }
+
+        if (ts == null) {
+            return false;
+        }
+
+        ts.move(offset);
+        ts.moveNext();
+        Token<PHPTokenId> token = ts.token();
+        PHPTokenId id = token.id();
+        int newOffset = ts.offset();
+        String methodName = getMethodName(ts);
+        if (!isTarget(methodName)) {
+            return false;
+        }
+
+        if (id == PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
+            targetText = token.text().toString();
+            if (targetText.length() > 2) {
+                targetText = CakePhpUtils.detachQuotes(targetText);
+            } else {
+                targetText = ""; // NOI18N
                 return false;
             }
 
-            ts.move(offset);
-            ts.moveNext();
-            Token<PHPTokenId> token = ts.token();
-            target = token.text().toString();
-            PHPTokenId id = token.id();
-            int newOffset = ts.offset();
-
-            if (!isElement(ts)) {
-                return false;
+            targetFile = getTargetFile(doc, methodName);
+            if (targetFile != null) {
+                targetStart = newOffset + 1;
+                targetEnd = targetStart + targetText.length();
+                tooltipText = getTooltipText(phpModule, targetFile);
+                return true;
             }
-
-            if (id == PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
-                target = token.text().toString();
-                if (target.length() > 2) {
-                    target = target.substring(1, target.length() - 1);
-                } else {
-                    target = ""; // NOI18N
-                    return false;
-                }
-                PhpModule pm = PhpModule.inferPhpModule();
-                CakePhpModule module = CakePhpModule.forPhpModule(pm);
-                element = module.getViewFile(DIR_TYPE.APP, ELEMENTS_DIR_NAME, target);
-                if (element == null) {
-                    element = module.getViewFile(DIR_TYPE.CORE, ELEMENTS_DIR_NAME, target);
-                }
-                if (element != null) {
-                    targetStart = newOffset + 1;
-                    targetEnd = targetStart + target.length();
-                    return true;
-                }
-            }
-        } finally {
-            ad.readUnlock();
         }
 
         return false;
     }
 
-    @Override
-    public int[] getHyperlinkSpan(Document doc, int offset) {
-        if (element != null) {
-            return new int[]{targetStart, targetEnd};
-        } else {
+    private FileObject getTargetFile(Document doc, String methodName) {
+        if (isElement(methodName)) {
+            return getElementFile(doc);
+        }
+        return null;
+    }
+
+    /**
+     * Get element file.
+     *
+     * @param doc
+     * @return element file
+     */
+    private FileObject getElementFile(Document doc) {
+        CakePhpModule module = CakePhpModule.forPhpModule(PhpModule.inferPhpModule());
+        if (module == null) {
             return null;
         }
+        FileObject elementFile = null;
+
+        // check plugin : Plugin.element
+        String[] pluginSplit = CakePhpUtils.pluginSplit(targetText);
+        if (pluginSplit.length == 2) {
+            elementFile = module.getFile(CakePhpModule.ALL_PLUGINS, FILE_TYPE.ELEMENT, pluginSplit[1], pluginSplit[0]);
+        } else if (pluginSplit.length == 1) {
+            FileObject currentFileObject = NbEditorUtilities.getFileObject(doc);
+            String pluginName = module.getCurrentPluginName(currentFileObject);
+            DIR_TYPE dirType = module.getDirectoryType(currentFileObject);
+            elementFile = module.getFile(Arrays.asList(dirType, DIR_TYPE.CORE), FILE_TYPE.ELEMENT, targetText, pluginName);
+        }
+
+        return elementFile;
+    }
+
+    /**
+     * Get text for tooltip. Return a path from source direcotry. If target file
+     * doesn't exist under the source directory, just return the file path.
+     *
+     * @param phpModule
+     * @param target
+     * @return tooltip text
+     */
+    private String getTooltipText(@NonNull PhpModule phpModule, @NonNull FileObject target) {
+        String targetPath = target.getPath();
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory != null) {
+            String sourceDirectoryPath = sourceDirectory.getPath();
+            return targetPath.replace(sourceDirectoryPath, ""); // NOI18N
+        }
+        return targetPath;
     }
 
     @Override
-    public void performClickAction(Document doc, int offset) {
-        if (element != null) {
-            UiUtils.open(element, 0);
+    public int[] getHyperlinkSpan(Document doc, int offset, HyperlinkType hyperlinkType) {
+        if (targetFile != null) {
+            return new int[]{targetStart, targetEnd};
         }
+        return new int[0];
+    }
+
+    @Override
+    public void performClickAction(Document doc, int offset, HyperlinkType hyperlinkType) {
+        if (targetFile != null) {
+            try {
+                DataObject dataObject = DataObject.find(targetFile);
+                EditorCookie ec = dataObject.getLookup().lookup(EditorCookie.class
+                );
+                if (ec != null) {
+                    ec.open();
+                    return;
+                }
+
+                UiUtils.open(targetFile, 0);
+            } catch (DataObjectNotFoundException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+
+    /**
+     * Check target method name.
+     *
+     * @param methodName
+     * @return {@code true} if target methos name, {@code false} otherwise.
+     */
+    private boolean isTarget(String methodName) {
+        return targetMethods.contains(methodName);
     }
 
     /**
      * Check element method
      *
-     * @param ts
-     * @return boolean
+     * @param methodName
+     * @return {@code true} if method name is element, {@code false} otherwise
      */
-    private boolean isElement(TokenSequence<PHPTokenId> ts) {
-        ts.movePrevious();
-        ts.movePrevious();
-        Token<PHPTokenId> method = ts.token();
-        String methodName = method.text().toString();
-        PHPTokenId methodId = method.id();
-        if (!methodName.equals("element") || methodId != PHPTokenId.PHP_STRING) { // NOI18N
-            return false;
+    private boolean isElement(String methodName) {
+        return methodName.equals("element"); // NOI18N
+    }
+
+    /**
+     * Get method name from current token sequence.
+     *
+     * @param ts token sequence
+     * @return String if previous token has {@code PHPTokenId.PHP_STRING}, null
+     * otherwiese.
+     */
+    private String getMethodName(TokenSequence<PHPTokenId> ts) {
+        Token<? extends PHPTokenId> previousToken = LexUtilities.findPreviousToken(ts, Arrays.asList(PHPTokenId.PHP_STRING, PHPTokenId.PHP_SEMICOLON));
+        if (previousToken == null || previousToken.id() == PHPTokenId.PHP_SEMICOLON) {
+            return null;
         }
-        return true;
+        return previousToken.text().toString();
     }
 }

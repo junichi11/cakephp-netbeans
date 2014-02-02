@@ -116,11 +116,8 @@ public final class FormatPlusAction extends BaseAction {
 
         reformat(doc);
 
-        // Remove tab from Document Block
-        removeIndentDocBlock();
-
         // Change line feed
-        if (doc.getProperty(BaseDocument.READ_LINE_SEPARATOR_PROP) != BaseDocument.LS_LF) {
+        if (!BaseDocument.LS_LF.equals(doc.getProperty(BaseDocument.READ_LINE_SEPARATOR_PROP))) {
             doc.putProperty(BaseDocument.READ_LINE_SEPARATOR_PROP, BaseDocument.LS_LF);
         }
 
@@ -141,6 +138,9 @@ public final class FormatPlusAction extends BaseAction {
                 public void run() {
                     try {
                         reformat.reformat(0, baseDoc.getLength());
+
+                        // Remove tab from Document Block
+                        removeIndentDocBlock();
                     } catch (BadLocationException ex) {
                         LOGGER.log(Level.WARNING, null, ex);
                     }

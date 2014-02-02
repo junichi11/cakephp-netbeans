@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,24 +37,57 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
-
-import org.openide.filesystems.FileObject;
+package org.cakephp.netbeans.github;
 
 /**
  *
  * @author junichi11
  */
-public class DefaultFileFilter implements FileFilter {
+public final class GithubTag {
+
+    private final String name;
+    private final String zipball_url;
+    private final String tarball_url;
+    private final GithubTagCommit commit;
+
+    // Format
+    //  {
+    //    "name": "2.4.3",
+    //    "zipball_url": "https://api.github.com/repos/cakephp/cakephp/zipball/2.4.3",
+    //    "tarball_url": "https://api.github.com/repos/cakephp/cakephp/tarball/2.4.3",
+    //    "commit": {
+    //      "sha": "eb34e011e2384041997da167821c36125e8f836e",
+    //      "url": "https://api.github.com/repos/cakephp/cakephp/commits/eb34e011e2384041997da167821c36125e8f836e"
+    //    }
+    //  }
+    public GithubTag(String name, String zipball_url, String tarball_url, GithubTagCommit commit) {
+        this.name = name;
+        this.zipball_url = zipball_url;
+        this.tarball_url = tarball_url;
+        this.commit = commit;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getZipballUrl() {
+        return zipball_url;
+    }
+
+    public String getTarballUrl() {
+        return tarball_url;
+    }
+
+    public GithubTagCommit getCommit() {
+        return commit;
+    }
 
     @Override
-    public boolean accept(FileObject fo) {
-        String name = fo.getName();
-        if (name.startsWith("App") || name.startsWith("app") || name.equals("empty")) { // NOI18N
-            return false;
-        }
-        return true;
+    public String toString() {
+        return name;
     }
+
 }

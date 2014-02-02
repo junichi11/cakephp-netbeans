@@ -286,9 +286,11 @@ public class RunActionAction extends BaseAction {
         StringBuilder sb = new StringBuilder();
         PhpModuleProperties properties = phpModule.getProperties();
         String urlPath = properties.getUrl();
-        sb.append(urlPath);
-        if (!urlPath.endsWith(SLASH)) {
-            sb.append(SLASH);
+        if (!StringUtils.isEmpty(urlPath)) {
+            sb.append(urlPath);
+            if (!urlPath.endsWith(SLASH)) {
+                sb.append(SLASH);
+            }
         }
         sb.append(controllerId)
                 .append(SLASH)

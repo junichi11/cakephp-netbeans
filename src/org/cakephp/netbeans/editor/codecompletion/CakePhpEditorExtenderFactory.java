@@ -42,7 +42,7 @@
 package org.cakephp.netbeans.editor.codecompletion;
 
 import org.cakephp.netbeans.editor.CakePhpEditorExtender;
-import org.cakephp.netbeans.util.CakeVersion;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 
 /**
@@ -52,13 +52,15 @@ import org.netbeans.modules.php.api.phpmodule.PhpModule;
 public final class CakePhpEditorExtenderFactory {
 
     public static CakePhpEditorExtender create(PhpModule phpModule) {
-        CakeVersion version = CakeVersion.getInstance(phpModule);
-        if (version.isCakePhp(1)) {
-            return new CakePhp1EditorExtender(phpModule);
-        } else if (version.isCakePhp(2)) {
-            return new CakePhp2EditorExtender(phpModule);
-        } else if (version.isCakePhp(3)) {
-            return new CakePhp3EditorExtender(phpModule);
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null) {
+            if (cakeModule.isCakePhp(1)) {
+                return new CakePhp1EditorExtender(phpModule);
+            } else if (cakeModule.isCakePhp(2)) {
+                return new CakePhp2EditorExtender(phpModule);
+            } else if (cakeModule.isCakePhp(3)) {
+                return new CakePhp3EditorExtender(phpModule);
+            }
         }
         return null;
     }

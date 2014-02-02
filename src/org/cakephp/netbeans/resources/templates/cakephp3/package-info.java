@@ -8,6 +8,22 @@
             description = "CtpTemplateDescription.html",
             scriptEngine = "freemarker"),
     @TemplateRegistration(
+            position = 110,
+            folder = "CakePHP3 Framework",
+            iconBase = CakePhp.PHP_ICON,
+            displayName = "#Controller_DisplayName",
+            content = "Controller.php",
+            description = "ControllerDescription.html",
+            scriptEngine = "freemarker"),
+    @TemplateRegistration(
+            position = 120,
+            folder = "CakePHP3 Framework",
+            iconBase = CakePhp.PHP_ICON,
+            displayName = "#Model_DisplayName",
+            content = "Model.php",
+            description = "ModelDescription.html",
+            scriptEngine = "freemarker"),
+    @TemplateRegistration(
             position = 200,
             folder = "CakePHP3 Framework",
             iconBase = CakePhp.PHP_ICON,
@@ -48,6 +64,8 @@
             description = "TaskDescription.html",
             scriptEngine = "freemarker"),})
 @NbBundle.Messages({
+    "Controller_DisplayName=CakePHP3 Controller",
+    "Model_DisplayName=CakePHP3 Model",
     "Component_DisplayName=CakePHP3 Component",
     "Helper_DisplayName=CakePHP3 Helper",
     "Behavior_DisplayName=CakePHP3 Behavior",

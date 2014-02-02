@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.ui.actions;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,14 +50,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.cakephp.netbeans.CakePhp;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
-import org.cakephp.netbeans.util.CakeVersion;
 import org.cakephp.netbeans.util.ProjectPropertiesSupport;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -89,7 +91,6 @@ public class PHPUnitInitAction extends BaseAction {
     private static final String FAIL_MSG = "fail";
     private static final String BOOTSTRAP = "bootstrap";
     private FileObject webroot;
-    private CakePhpModule module;
 
     private PHPUnitInitAction() {
     }
@@ -118,8 +119,8 @@ public class PHPUnitInitAction extends BaseAction {
         }
         // check version
         // CakePHP 1.x uses Simple Test
-        module = CakePhpModule.forPhpModule(phpModule);
-        if (module == null || CakeVersion.getInstance(phpModule).getMajor() < 2) {
+        CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
+        if (module == null || module.getCakeVersion().getMajor() <= 1) {
             return;
         }
         webroot = module.getWebrootDirectory(DIR_TYPE.APP);
@@ -193,6 +194,9 @@ public class PHPUnitInitAction extends BaseAction {
      *
      * @param phpModule
      */
+    @NbBundle.Messages({
+        "PHPUnitInitAction.phpunit.script.overwrite.confirmation=phpunit script file already exists. Do you want to overwrite?"
+    })
     private void createScript(PhpModule phpModule) {
         FileObject nbproject = CakePhpUtils.getNbproject(phpModule);
 
@@ -204,28 +208,48 @@ public class PHPUnitInitAction extends BaseAction {
         }
 
         String scriptFileName = getScriptFileName();
-        if (nbproject.getFileObject(scriptFileName) == null) {
-            FileObject script = FileUtil.getConfigFile(CONFIG_PATH + scriptFileName);
-            try {
-                String format;
-                if (Utilities.isWindows()) {
-                    String path = nbproject.getPath().replace("/", "\\"); // NOI18N
-                    format = script.asText("UTF-8");
-                    format = format.replace(":NetBeansSuite:", path + "\\" + NET_BEANS_SUITE_PHP); // NOI18N
-                    format = format.replace(":PHPUnitPath:", phpUnit); // NOI18N
-                } else {
-                    format = String.format(script.asText("UTF-8"), nbproject.getPath() + "/" + NET_BEANS_SUITE_PHP, phpUnit); // NOI18N
-                }
-                PrintWriter pw = new PrintWriter(nbproject.createAndOpen(scriptFileName));
-                pw.print(format);
-                pw.close();
-                messages.put(PHPUNIT, SUCCESS_MSG);
-            } catch (IOException ex) {
-                messages.put(PHPUNIT, FAIL_MSG);
+
+        FileObject phpUnitScript = nbproject.getFileObject(scriptFileName);
+        // overwrite confirmation
+        if (phpUnitScript != null) {
+            NotifyDescriptor.Confirmation confirmation = new NotifyDescriptor.Confirmation(
+                    Bundle.PHPUnitInitAction_phpunit_script_overwrite_confirmation(),
+                    NotifyDescriptor.YES_NO_OPTION);
+            if (DialogDisplayer.getDefault().notify(confirmation) != NotifyDescriptor.YES_OPTION) {
+                return;
             }
-            FileObject createdFile = nbproject.getFileObject(scriptFileName);
-            FileUtil.toFile(createdFile).setExecutable(true);
         }
+
+        FileObject script = FileUtil.getConfigFile(CONFIG_PATH + scriptFileName);
+        try {
+            String format;
+            if (Utilities.isWindows()) {
+                String path = nbproject.getPath().replace("/", "\\"); // NOI18N
+                format = script.asText("UTF-8");
+                format = format.replace(":NetBeansSuite:", path + "\\" + NET_BEANS_SUITE_PHP); // NOI18N
+                format = format.replace(":PHPUnitPath:", phpUnit); // NOI18N
+            } else {
+                format = String.format(script.asText("UTF-8"), phpUnit); // NOI18N
+            }
+
+            // write file
+            PrintWriter pw;
+            if (phpUnitScript == null) {
+                pw = new PrintWriter(new OutputStreamWriter(nbproject.createAndOpen(scriptFileName), "UTF-8"), true); // NOI18N
+            } else {
+                pw = new PrintWriter(new OutputStreamWriter(phpUnitScript.getOutputStream(), "UTF-8"), true); // NOI18N
+            }
+            try {
+                pw.print(format);
+            } finally {
+                pw.close();
+            }
+            messages.put(PHPUNIT, SUCCESS_MSG);
+        } catch (IOException ex) {
+            messages.put(PHPUNIT, FAIL_MSG);
+        }
+        FileObject createdFile = nbproject.getFileObject(scriptFileName);
+        FileUtil.toFile(createdFile).setExecutable(true);
     }
 
     private String getPHPUnitPath() {
