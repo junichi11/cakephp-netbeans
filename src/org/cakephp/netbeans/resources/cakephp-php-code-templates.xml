@@ -417,10 +417,6 @@ class ${CakeFileName} extends AppHelper {
         <code><![CDATA[$this->Session->${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="csessione">
-        <code><![CDATA[$this->Session->${cursor}]]></code>
-        <description>CakePHP</description>
-    </codetemplate>
     <codetemplate contexts="cake-code" abbreviation="csread">
         <code><![CDATA[$this->Session->read('${name}');${cursor}]]></code>
         <description>CakePHP</description>
