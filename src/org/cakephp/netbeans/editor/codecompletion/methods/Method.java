@@ -44,7 +44,7 @@ package org.cakephp.netbeans.editor.codecompletion.methods;
 import java.util.Arrays;
 import java.util.List;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpCompletionItem;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.editor.completion.CompletionItem;
 import org.openide.filesystems.FileObject;

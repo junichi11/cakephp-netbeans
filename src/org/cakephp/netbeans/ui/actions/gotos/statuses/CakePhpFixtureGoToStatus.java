@@ -49,7 +49,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.editor.visitors.CakePhpFixtureVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpTestCaseVisitor;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToModelItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToTestCaseItem;

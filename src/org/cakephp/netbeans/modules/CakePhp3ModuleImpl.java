@@ -39,28 +39,28 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_LIB;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_PLUGIN;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_VENDOR;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.CORE;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.PLUGIN;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.VENDOR;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.BEHAVIOR;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.COMPONENT;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.CONFIG;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.CONSOLE;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.CONTROLLER;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.HELPER;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.MODEL;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.NONE;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.TEST;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.VIEW;
-import static org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE.WEBROOT;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_LIB;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_PLUGIN;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_VENDOR;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.CORE;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.PLUGIN;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.VENDOR;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.BEHAVIOR;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.COMPONENT;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.CONFIG;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.CONSOLE;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.CONTROLLER;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.HELPER;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.MODEL;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.NONE;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.TEST;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.VIEW;
+import static org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE.WEBROOT;
 import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;

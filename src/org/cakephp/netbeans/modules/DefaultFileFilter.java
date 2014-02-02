@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import org.openide.filesystems.FileObject;
 
@@ -47,7 +47,14 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-public interface FileFilter {
+public class DefaultFileFilter implements FileFilter {
 
-    public boolean accept(FileObject fo);
+    @Override
+    public boolean accept(FileObject fo) {
+        String name = fo.getName();
+        if (name.startsWith("App") || name.startsWith("app") || name.equals("empty")) { // NOI18N
+            return false;
+        }
+        return true;
+    }
 }

@@ -44,7 +44,7 @@ package org.cakephp.netbeans;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.customizer.CakePhpCustomizerPanel;
 import org.cakephp.netbeans.validator.CakePhpCustomizerValidator;

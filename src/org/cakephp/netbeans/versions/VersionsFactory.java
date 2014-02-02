@@ -45,7 +45,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
 import org.netbeans.api.annotations.common.CheckForNull;

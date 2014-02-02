@@ -70,7 +70,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.cakephp.netbeans.CakePhp;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.api.annotations.common.NonNull;

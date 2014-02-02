@@ -53,7 +53,7 @@ import org.cakephp.netbeans.editor.visitors.CakePhpControllerVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpFixtureVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpModelVisitor;
 import org.cakephp.netbeans.editor.visitors.CakePhpTestCaseVisitor;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToBehaviorItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToControllerItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToFixtureItem;

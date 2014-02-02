@@ -49,7 +49,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.options.CakePhpPlugin;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;

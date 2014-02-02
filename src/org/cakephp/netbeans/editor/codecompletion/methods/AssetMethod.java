@@ -47,9 +47,9 @@ import java.util.LinkedList;
 import java.util.List;
 import static org.cakephp.netbeans.editor.codecompletion.methods.Method.DOT;
 import static org.cakephp.netbeans.editor.codecompletion.methods.Method.SLASH;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 

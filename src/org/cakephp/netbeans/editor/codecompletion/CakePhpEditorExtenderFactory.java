@@ -42,7 +42,7 @@
 package org.cakephp.netbeans.editor.codecompletion;
 
 import org.cakephp.netbeans.editor.CakePhpEditorExtender;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 
 /**

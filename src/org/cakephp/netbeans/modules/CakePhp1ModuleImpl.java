@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,12 +48,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_LIB;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_PLUGIN;
-import static org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE.APP_VENDOR;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_LIB;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_PLUGIN;
+import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_VENDOR;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;

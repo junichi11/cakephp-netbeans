@@ -44,7 +44,7 @@ package org.cakephp.netbeans.editor.codecompletion.methods;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;

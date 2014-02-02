@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpPlugin;
 import org.cakephp.netbeans.ui.actions.ClearCacheAction;
 import org.cakephp.netbeans.util.CakeDefaultZipEntryFilter;

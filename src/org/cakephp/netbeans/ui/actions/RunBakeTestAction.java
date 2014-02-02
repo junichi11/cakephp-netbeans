@@ -42,9 +42,9 @@
 package org.cakephp.netbeans.ui.actions;
 
 import org.cakephp.netbeans.commands.CakeScript;
-import org.cakephp.netbeans.module.CakePhpModule;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;

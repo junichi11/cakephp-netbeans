@@ -44,7 +44,7 @@ package org.cakephp.netbeans.editor.codetemplates;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.editor.codetemplates.CakePhpCodeTemplateParameter.CakePhpCodeTemplateParameterFactory;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateInsertRequest;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateParameter;

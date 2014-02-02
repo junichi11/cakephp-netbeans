@@ -50,7 +50,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.StyledDocument;
 import org.cakephp.netbeans.CakePhp;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToBehaviorsAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToComponentsAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToControllersAction;

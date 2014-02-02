@@ -44,7 +44,7 @@ package org.cakephp.netbeans;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.CakePhpGoToActionAction;
 import org.cakephp.netbeans.ui.actions.CakePhpGoToViewAction;
 import org.cakephp.netbeans.ui.actions.CakePhpRunCommandAction;

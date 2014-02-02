@@ -50,7 +50,7 @@ import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.editor.codegenerator.FieldInfo.FieldInfoFactory;
 import org.cakephp.netbeans.editor.codegenerator.FieldInfo.Type;
 import org.cakephp.netbeans.editor.codegenerator.ui.FieldsGeneratorPanel;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;

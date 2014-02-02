@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -47,8 +47,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.cakephp.netbeans.module.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.module.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.versions.CakeVersion;
 import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;

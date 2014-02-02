@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.module;
+package org.cakephp.netbeans.modules;
 
 import java.util.HashMap;
 import java.util.Map;

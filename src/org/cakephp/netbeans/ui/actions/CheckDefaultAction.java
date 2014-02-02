@@ -47,7 +47,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;

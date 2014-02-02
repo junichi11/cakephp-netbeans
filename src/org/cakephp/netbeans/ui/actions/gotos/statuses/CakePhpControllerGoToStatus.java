@@ -47,7 +47,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.editor.visitors.CakePhpControllerVisitor;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToComponentItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToHelperItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;

@@ -41,7 +41,7 @@
  */
 package org.cakephp.netbeans.editor.codetemplates;
 
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateInsertRequest;

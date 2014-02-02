@@ -50,7 +50,7 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.CakePhpFrameworkProvider;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.modules.editor.NbEditorUtilities;
 import org.netbeans.modules.php.api.editor.EditorSupport;

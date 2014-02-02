@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateInsertRequest;

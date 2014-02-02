@@ -41,7 +41,7 @@
  */
 package org.cakephp.netbeans.editor.codetemplates;
 
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.Inflector;
 import org.netbeans.lib.editor.codetemplates.spi.CodeTemplateInsertRequest;

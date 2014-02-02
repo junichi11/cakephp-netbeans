@@ -51,7 +51,7 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
-import org.cakephp.netbeans.module.CakePhpModule;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.GoToPopup;
 import org.cakephp.netbeans.ui.PopupUtil;
