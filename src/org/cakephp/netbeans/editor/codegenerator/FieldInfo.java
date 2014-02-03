@@ -255,7 +255,7 @@ public abstract class FieldInfo {
      */
     protected PhpModule getPhpModule() {
         FileObject fileObject = getFileObject();
-        return PhpModule.forFileObject(fileObject);
+        return PhpModule.Factory.forFileObject(fileObject);
     }
 
     //~ inner classes

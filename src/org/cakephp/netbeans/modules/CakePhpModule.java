@@ -490,7 +490,7 @@ public class CakePhpModule implements ChangeListener {
     @CheckForNull
     public static CakePhpModule forPhpModule(PhpModule phpModule) {
         if (phpModule == null) {
-            phpModule = PhpModule.inferPhpModule();
+            phpModule = PhpModule.Factory.inferPhpModule();
         }
         if (phpModule == null) {
             return null;

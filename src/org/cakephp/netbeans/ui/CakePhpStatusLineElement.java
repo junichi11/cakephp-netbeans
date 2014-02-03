@@ -348,7 +348,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
             }
 
             // get PhpModule
-            PhpModule currentPhpModule = PhpModule.forFileObject(fileObject);
+            PhpModule currentPhpModule = PhpModule.Factory.forFileObject(fileObject);
             if (!CakePhpUtils.isCakePHP(currentPhpModule)) {
                 clearLabel();
                 phpModule = null;

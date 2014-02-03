@@ -91,6 +91,6 @@ public abstract class CakePhpCompletionProvider implements CompletionProvider {
         if (fo == null) {
             return null;
         }
-        return PhpModule.forFileObject(fo);
+        return PhpModule.Factory.forFileObject(fo);
     }
 }

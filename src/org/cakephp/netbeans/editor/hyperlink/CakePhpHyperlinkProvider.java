@@ -101,7 +101,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
 
     @SuppressWarnings("unchecked")
     public boolean verifyState(Document doc, int offset) {
-        PhpModule phpModule = PhpModule.inferPhpModule();
+        PhpModule phpModule = PhpModule.Factory.inferPhpModule();
         if (phpModule == null || !CakePhpUtils.isCakePHP(phpModule)) {
             return false;
         }
@@ -167,7 +167,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
      * @return element file
      */
     private FileObject getElementFile(Document doc) {
-        CakePhpModule module = CakePhpModule.forPhpModule(PhpModule.inferPhpModule());
+        CakePhpModule module = CakePhpModule.forPhpModule(PhpModule.Factory.inferPhpModule());
         if (module == null) {
             return null;
         }

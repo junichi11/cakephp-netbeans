@@ -141,7 +141,7 @@ public class ValidateGenerator implements CodeGenerator {
         public List<? extends CodeGenerator> create(Lookup context) {
             JTextComponent textComponent = context.lookup(JTextComponent.class);
             FileObject fileObject = CakePhpDocUtils.getFileObject(textComponent.getDocument());
-            PhpModule phpModule = PhpModule.forFileObject(fileObject);
+            PhpModule phpModule = PhpModule.Factory.forFileObject(fileObject);
 
             // check whether caret position is in validate array
             // XXX : check more exactly

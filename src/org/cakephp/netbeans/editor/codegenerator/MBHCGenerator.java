@@ -189,7 +189,7 @@ public class MBHCGenerator implements CodeGenerator {
         public List<? extends CodeGenerator> create(Lookup context) {
             JTextComponent textComponent = context.lookup(JTextComponent.class);
             FileObject fileObject = CakePhpDocUtils.getFileObject(textComponent.getDocument());
-            PhpModule phpModule = PhpModule.forFileObject(fileObject);
+            PhpModule phpModule = PhpModule.Factory.forFileObject(fileObject);
             // check whether this is CakePHP project
             CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
             if (cakeModule == null) {

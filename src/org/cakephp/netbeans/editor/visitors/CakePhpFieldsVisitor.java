@@ -99,13 +99,13 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
     public CakePhpFieldsVisitor(FileObject targetFile, PhpClass phpClass) {
         this.phpClass = phpClass;
         this.targetFile = targetFile;
-        phpModule = PhpModule.forFileObject(targetFile);
+        phpModule = PhpModule.Factory.forFileObject(targetFile);
     }
 
     public CakePhpFieldsVisitor(FileObject targetFile) {
         this.phpClass = null;
         this.targetFile = targetFile;
-        phpModule = PhpModule.forFileObject(targetFile);
+        phpModule = PhpModule.Factory.forFileObject(targetFile);
     }
 
     /**

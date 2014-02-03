@@ -79,7 +79,7 @@ public class RunBakeTestAction extends BaseAction {
     public RunBakeTestAction(DataObject context) {
         this.context = context;
         targetFile = context.getPrimaryFile();
-        phpModule = PhpModule.forFileObject(targetFile);
+        phpModule = PhpModule.Factory.forFileObject(targetFile);
     }
 
     @Override

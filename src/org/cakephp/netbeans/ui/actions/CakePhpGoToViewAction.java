@@ -109,7 +109,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         // auto create a view file
         // support for only app view file
         // TODO support for theme?
-        PhpModule phpModule = PhpModule.forFileObject(controller);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(controller);
         if (phpModule == null) {
             return false;
         }
@@ -134,7 +134,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
      * @return theme directories
      */
     public FileObject[] getThemes() {
-        PhpModule phpModule = PhpModule.forFileObject(controller);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(controller);
         FileObject[] themes = null;
         FileObject themeDirectory = null;
 

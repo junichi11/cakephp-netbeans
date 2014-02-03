@@ -78,7 +78,7 @@ public class CakePhp3EditorExtender extends CakePhpEditorExtender {
     @Override
     public PhpClass getHelperPhpClass() {
         String className = "AppHelper"; // NOI18N
-        CakePhpModule cakeModule = CakePhpModule.forPhpModule(PhpModule.inferPhpModule());
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(PhpModule.Factory.inferPhpModule());
         String appName = cakeModule == null ? "" : cakeModule.getAppName();
         String fullyQualifiedName = "\\" + appName + "\\" + className; // NOI18N
         return new PhpClass(className, fullyQualifiedName);

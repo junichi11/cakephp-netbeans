@@ -77,7 +77,7 @@ public class CakePhpCodeTemplateProcessor implements CodeTemplateProcessor {
         }
 
         // check whether current project is cakephp
-        PhpModule phpModule = PhpModule.forFileObject(currentFileObject);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(currentFileObject);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {
             return;

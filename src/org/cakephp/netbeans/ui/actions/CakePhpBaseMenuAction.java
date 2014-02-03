@@ -131,7 +131,7 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu menu = new JMenu(Bundle.LBL_CakePHP());
-        PhpModule phpModule = PhpModule.inferPhpModule();
+        PhpModule phpModule = PhpModule.Factory.inferPhpModule();
         if (CakePhpUtils.isCakePHP(phpModule)) {
             boolean isAvaibable = isAvailableWithEditor();
             // smart go to
@@ -196,7 +196,7 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     @Override
     public Component getToolbarPresenter() {
         CakeToolbarPresenter cakeToolbarPresenter = new CakeToolbarPresenter();
-        if (CakePhpUtils.isCakePHP(PhpModule.inferPhpModule())) {
+        if (CakePhpUtils.isCakePHP(PhpModule.Factory.inferPhpModule())) {
             cakeToolbarPresenter.setVisible(true);
         } else {
             cakeToolbarPresenter.setVisible(false);
@@ -226,7 +226,7 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         private JPopupMenu popup;
 
         CakeToolbarPresenter() {
-            PhpModule phpModule = PhpModule.inferPhpModule();
+            PhpModule phpModule = PhpModule.Factory.inferPhpModule();
             if (CakePhpUtils.isCakePHP(phpModule)) {
                 this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
                 this.popup = new JPopupMenu();

@@ -41,14 +41,16 @@
  */
 package org.cakephp.netbeans.module;
 
-import org.cakephp.netbeans.modules.CakePhp2ModuleImpl;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.NodeChangeListener;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import org.cakephp.netbeans.modules.CakePhp2ModuleImpl;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.versions.VersionsFactory;
@@ -61,6 +63,7 @@ import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -1022,15 +1025,26 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
             }
 
             @Override
-            public void propertyChanged(PropertyChangeEvent pce) {
-            }
-
-            @Override
             public void openCustomizer(String string) {
             }
 
             @Override
             public void notifyPropertyChanged(PropertyChangeEvent pce) {
+            }
+
+            @Override
+            public FileObject getTestDirectory(FileObject fo) {
+                return null;
+            }
+
+            @Override
+            public List<FileObject> getTestDirectories() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public Lookup getLookup() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         };
         module = new CakePhp2ModuleImpl(phpModule, VersionsFactory.getInstance().create(phpModule));

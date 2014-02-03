@@ -68,7 +68,7 @@ public class MVCNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project p) {
-        PhpModule phpModule = PhpModule.lookupPhpModule(p);
+        PhpModule phpModule = PhpModule.Factory.lookupPhpModule(p);
         if (CakePhpUtils.isCakePHP(phpModule)) {
             return new MVCNodeList(phpModule);
         }
@@ -77,7 +77,7 @@ public class MVCNodeFactory implements NodeFactory {
 
     private static class MVCNodeList implements NodeList<FileObject> {
 
-        private PhpModule phpModule;
+        private final PhpModule phpModule;
         private static final Logger LOGGER = Logger.getLogger(MVCNodeList.class.getName());
 
         public MVCNodeList(PhpModule phpModule) {

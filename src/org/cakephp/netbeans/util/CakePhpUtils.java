@@ -84,7 +84,7 @@ public final class CakePhpUtils {
     }
 
     public static boolean isView(FileObject fo) {
-        PhpModule phpModule = PhpModule.forFileObject(fo);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fo);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? false : cakeModule.isView(fo);
     }
@@ -98,7 +98,7 @@ public final class CakePhpUtils {
     }
 
     public static FileObject getView(FileObject controller, String viewName) {
-        PhpModule phpModule = PhpModule.forFileObject(controller);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(controller);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? null : cakeModule.getView(controller, viewName);
     }
@@ -112,7 +112,7 @@ public final class CakePhpUtils {
     }
 
     public static FileObject getView(FileObject controller, String viewName, FileObject theme) {
-        PhpModule phpModule = PhpModule.forFileObject(controller);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(controller);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? null : cakeModule.getView(controller, viewName, theme);
     }
@@ -125,13 +125,13 @@ public final class CakePhpUtils {
         if (isTest(fo)) {
             return false;
         }
-        PhpModule phpModule = PhpModule.forFileObject(fo);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fo);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? false : cakeModule.isController(fo);
     }
 
     public static FileObject getController(FileObject view) {
-        PhpModule phpModule = PhpModule.forFileObject(view);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(view);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? null : cakeModule.getController(view);
     }
@@ -174,7 +174,7 @@ public final class CakePhpUtils {
         if (isTest(fo)) {
             return false;
         }
-        PhpModule phpModule = PhpModule.forFileObject(fo);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fo);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? false : cakeModule.isComponent(fo);
     }
@@ -189,7 +189,7 @@ public final class CakePhpUtils {
         if (isTest(fo)) {
             return false;
         }
-        PhpModule phpModule = PhpModule.forFileObject(fo);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fo);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? false : cakeModule.isHelper(fo);
     }
@@ -204,7 +204,7 @@ public final class CakePhpUtils {
         if (isTest(fo)) {
             return false;
         }
-        PhpModule phpModule = PhpModule.forFileObject(fo);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fo);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? false : cakeModule.isModel(fo);
     }
@@ -216,7 +216,7 @@ public final class CakePhpUtils {
      * @return model true, otherwise false
      */
     public static boolean isBehavior(FileObject fo) {
-        PhpModule phpModule = PhpModule.forFileObject(fo);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fo);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? false : cakeModule.isBehavior(fo);
     }
@@ -269,7 +269,7 @@ public final class CakePhpUtils {
     }
 
     public static FileObject createView(FileObject controller, PhpBaseElement phpElement) throws IOException {
-        PhpModule phpModule = PhpModule.forFileObject(controller);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(controller);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? null : cakeModule.createView(controller, phpElement);
     }
@@ -333,7 +333,7 @@ public final class CakePhpUtils {
      * @return true if file is test case, otherwise false.
      */
     public static boolean isTest(FileObject fo) {
-        PhpModule phpModule = PhpModule.forFileObject(fo);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fo);
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         return cakeModule == null ? false : cakeModule.isTest(fo);
     }

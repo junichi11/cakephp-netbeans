@@ -172,7 +172,7 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
      */
     private String getOtherClassesText(FileObject fileObject, CakePhpModule cakeModule, DefaultVisitorImpl visitor) {
         // add more
-        PhpModule phpModule = PhpModule.forFileObject(fileObject);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fileObject);
         StringBuilder sb = new StringBuilder();
         if (phpModule == null) {
             return sb.toString();
