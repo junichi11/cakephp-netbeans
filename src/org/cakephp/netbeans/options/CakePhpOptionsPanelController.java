@@ -44,17 +44,23 @@ package org.cakephp.netbeans.options;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
+import org.netbeans.modules.php.api.util.UiUtils;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 
-@OptionsPanelController.SubRegistration(location = "org-netbeans-modules-php-project-ui-options-PHPOptionsCategory",
-displayName = "#AdvancedOption_DisplayName_CakePhp",
-keywords = "#AdvancedOption_Keywords_CakePhp",
-keywordsCategory = "org-netbeans-modules-php-project-ui-options-PHPOptionsCategory/CakePhp")
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_CakePhp=CakePHP", "AdvancedOption_Keywords_CakePhp=CakePHP"})
+@UiUtils.PhpOptionsPanelRegistration(
+        id = CakePhpOptionsPanelController.ID,
+        displayName = "#LBL_CakePhpOptionsName",
+        position = 500
+)
+@NbBundle.Messages({"LBL_CakePhpOptionsName=CakePHP", "CakePhp.options.keywords.TabTitle=Frameworks & Tools"})
+@OptionsPanelController.Keywords(keywords = {"php", "cakephp", "cakephp2", "cakephp3"},
+        location = UiUtils.OPTIONS_PATH, tabTitle = "#CakePhp.options.keywords.TabTitle")
 public final class CakePhpOptionsPanelController extends OptionsPanelController {
 
+    static final String ID = "CakePHP"; // NOI18N
     private CakePhpPanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
