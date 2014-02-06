@@ -284,7 +284,7 @@ public class RunActionAction extends BaseAction {
     private void openBrowser(PhpModule phpModule, String controllerId, String actionId, Map<String, String> getRequests) {
         // build url
         StringBuilder sb = new StringBuilder();
-        PhpModuleProperties properties = phpModule.getProperties();
+        PhpModuleProperties properties = phpModule.getLookup().lookup(PhpModuleProperties.Factory.class).getProperties();
         String urlPath = properties.getUrl();
         if (!StringUtils.isEmpty(urlPath)) {
             sb.append(urlPath);

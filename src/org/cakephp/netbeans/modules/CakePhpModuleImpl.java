@@ -210,7 +210,7 @@ public abstract class CakePhpModuleImpl {
     }
 
     public FileObject getWebrootDirectory(DIR_TYPE type) {
-        PhpModuleProperties properties = phpModule.getProperties();
+        PhpModuleProperties properties = phpModule.getLookup().lookup(PhpModuleProperties.Factory.class).getProperties();
         FileObject webroot = properties.getWebRoot();
         if (webroot == phpModule.getSourceDirectory()) {
             return getDirectory(type, FILE_TYPE.WEBROOT);
