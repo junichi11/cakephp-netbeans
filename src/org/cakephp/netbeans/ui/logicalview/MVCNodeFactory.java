@@ -49,6 +49,8 @@ import java.util.logging.Logger;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -90,15 +92,47 @@ public class MVCNodeFactory implements NodeFactory {
                 CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
                 if (cakeModule != null) {
                     List<FileObject> list = new ArrayList<FileObject>();
-                    list.add(cakeModule.getControllerDirectory(DIR_TYPE.APP));
-                    list.add(cakeModule.getModelDirectory(DIR_TYPE.APP));
-                    list.add(cakeModule.getViewDirectory(DIR_TYPE.APP));
-                    list.add(cakeModule.getHelperDirectory(DIR_TYPE.APP));
-                    list.add(cakeModule.getWebrootDirectory(DIR_TYPE.APP));
+                    for (Object object : getAvailableCustomNodeList()) {
+                        if (object instanceof FILE_TYPE) {
+                            FileObject directory = cakeModule.getDirectory(DIR_TYPE.APP, (FILE_TYPE) object, null);
+                            if (directory == null) {
+                                continue;
+                            }
+                            list.add(directory);
+                        }
+                        if (object instanceof DIR_TYPE) {
+                            FileObject directory = cakeModule.getDirectory((DIR_TYPE) object);
+                            if (directory == null) {
+                                continue;
+                            }
+                            list.add(directory);
+                        }
+                    }
                     return list;
                 }
             }
             return Collections.emptyList();
+        }
+
+        private List<Object> getAvailableCustomNodeList() {
+            CakePhpOptions options = CakePhpOptions.getInstance();
+            List<Object> list = new ArrayList<Object>();
+            for (String customNode : options.getAvailableCustomNodes()) {
+                if (customNode.equals("Controller")) { // NOI18N
+                    list.add(FILE_TYPE.CONTROLLER);
+                } else if (customNode.equals("View")) { // NOI18N
+                    list.add(FILE_TYPE.VIEW);
+                } else if (customNode.equals("Model")) { // NOI18N
+                    list.add(FILE_TYPE.MODEL);
+                } else if (customNode.equals("webroot")) { // NOI18N
+                    list.add(FILE_TYPE.WEBROOT);
+                } else if (customNode.equals("Helper")) { // NOI18N
+                    list.add(FILE_TYPE.HELPER);
+                } else if (customNode.equals("app/Plugin")) { // NOI18N
+                    list.add(DIR_TYPE.APP_PLUGIN);
+                }
+            }
+            return list;
         }
 
         @Override

@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
@@ -69,7 +70,20 @@ public class CakePhpOptions {
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String NOTIFY_NEW_VERSION = "notify-new-version"; // NOI18N
     private static final String COMPOSER_JSON = "composer-json"; // NOI18N
+    private static final String AVAILABLE_CUSTOM_NODES = "available-custom-nodes"; // NOI18N
     private static final CakePhpOptions INSTANCE = new CakePhpOptions();
+    public static final List<String> DEFAULT_AVAILABLE_NODES = Arrays.asList(
+            "Controller", // NOI18N
+            "Model", // NOI18N
+            "View", // NOI18N
+            "Helper", // NOI18N
+            "webroot" // NOI18N
+    );
+    public static final List<String> ALL_AVAILABLE_NODES = new ArrayList<String>(DEFAULT_AVAILABLE_NODES);
+
+    static {
+        ALL_AVAILABLE_NODES.add("app/Plugin"); // NOI18N
+    }
 
     private CakePhpOptions() {
     }
@@ -187,6 +201,18 @@ public class CakePhpOptions {
 
     public void setComposerJson(String text) {
         getPreferences().put(COMPOSER_JSON, text);
+    }
+
+    public List<String> getAvailableCustomNodes() {
+        String nodes = getPreferences().get(AVAILABLE_CUSTOM_NODES, null);
+        if (nodes == null) {
+            return DEFAULT_AVAILABLE_NODES;
+        }
+        return StringUtils.explode(nodes, "|"); // NOI18N
+    }
+
+    public void setAvailableCustomNodes(List<String> nodes) {
+        getPreferences().put(AVAILABLE_CUSTOM_NODES, StringUtils.implode(nodes, "|")); // NOI18N
     }
 
     public Preferences getPreferences() {
