@@ -38,6 +38,46 @@
  * Contributor(s):
  *
  * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ *//*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ *
+ * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+ * Other names may be trademarks of their respective owners.
+ *
+ * The contents of this file are subject to the terms of either the GNU
+ * General Public License Version 2 only ("GPL") or the Common
+ * Development and Distribution License("CDDL") (collectively, the
+ * "License"). You may not use this file except in compliance with the
+ * License. You can obtain a copy of the License at
+ * http://www.netbeans.org/cddl-gplv2.html
+ * or nbbuild/licenses/CDDL-GPL-2-CP. See the License for the
+ * specific language governing permissions and limitations under the
+ * License.  When distributing the software, include this License Header
+ * Notice in each file and include the License file at
+ * nbbuild/licenses/CDDL-GPL-2-CP.  Oracle designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Oracle in the GPL Version 2 section of the License file that
+ * accompanied this code. If applicable, add the following below the
+ * License Header, with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * If you wish your version of this file to be governed by only the CDDL
+ * or only the GPL Version 2, indicate your decision by adding
+ * "[Contributor] elects to include this software in this distribution
+ * under the [CDDL or GPL Version 2] license." If you do not indicate a
+ * single choice of license, a recipient has the option to distribute
+ * your version of this file under either the CDDL, the GPL Version 2 or
+ * to extend the choice of license to its licensees as provided above.
+ * However, if you add GPL Version 2 code and therefore, elected the GPL
+ * Version 2 license, then the option applies only if the new code is
+ * made subject to such option by the copyright holder.
+ *
+ * Contributor(s):
+ *
+ * Portions Copyrighted 2012 Sun Microsystems, Inc.
  */
 package org.cakephp.netbeans.options;
 
@@ -55,14 +95,14 @@ import org.openide.filesystems.FileChooserBuilder;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
-final class CakePhpPanel extends javax.swing.JPanel {
+final class CakePhpOptionsPanel extends javax.swing.JPanel {
 
     private static final long serialVersionUID = 1542234585504356049L;
     private final CakePhpOptionsPanelController controller;
     private CakePhpOptionsPanelRegisterDialog dialog;
     private final CakePhpPluginTableModel model = new CakePhpPluginTableModel();
 
-    CakePhpPanel(CakePhpOptionsPanelController controller) {
+    CakePhpOptionsPanel(CakePhpOptionsPanelController controller) {
         this.controller = controller;
         initComponents();
         initialize();
@@ -114,23 +154,23 @@ final class CakePhpPanel extends javax.swing.JPanel {
         editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
 
-        org.openide.awt.Mnemonics.setLocalizedText(defaultLabel, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.defaultLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(defaultLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.defaultLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(ignoreTempDirectoryCheckBox, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.ignoreTempDirectoryCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(ignoreTempDirectoryCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.ignoreTempDirectoryCheckBox.text")); // NOI18N
         ignoreTempDirectoryCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ignoreTempDirectoryCheckBoxActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(autoCreateViewCheckBox, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.autoCreateViewCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(autoCreateViewCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.autoCreateViewCheckBox.text")); // NOI18N
         autoCreateViewCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 autoCreateViewCheckBoxActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(notifyNewVersionCheckBox, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.notifyNewVersionCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(notifyNewVersionCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.notifyNewVersionCheckBox.text")); // NOI18N
         notifyNewVersionCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 notifyNewVersionCheckBoxActionPerformed(evt);
@@ -175,27 +215,27 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addContainerGap(282, Short.MAX_VALUE))
         );
 
-        optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.generalPanel.TabConstraints.tabTitle"), generalPanel); // NOI18N
+        optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.generalPanel.TabConstraints.tabTitle"), generalPanel); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(localFilePathLabel, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.localFilePathLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(localFilePathLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.localFilePathLabel.text")); // NOI18N
 
-        localFilePathTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.localFilePathTextField.text")); // NOI18N
+        localFilePathTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.localFilePathTextField.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.browseButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.browseButton.text")); // NOI18N
         browseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(resetButton, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.resetButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(resetButton, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.resetButton.text")); // NOI18N
         resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(installingComposerLabel, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.installingComposerLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(installingComposerLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.installingComposerLabel.text")); // NOI18N
 
         composerJsonEditorPane.setContentType("text/x-json"); // NOI18N
         jScrollPane3.setViewportView(composerJsonEditorPane);
@@ -237,12 +277,12 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addGap(6, 6, 6))
         );
 
-        optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.newProjectPanel.TabConstraints.tabTitle"), newProjectPanel); // NOI18N
+        optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.newProjectPanel.TabConstraints.tabTitle"), newProjectPanel); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(pluginListLabel, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.pluginListLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(pluginListLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.pluginListLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(messageLabel, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.messageLabel.text")); // NOI18N
-        messageLabel.setToolTipText(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.messageLabel.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(messageLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.messageLabel.text")); // NOI18N
+        messageLabel.setToolTipText(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.messageLabel.toolTipText")); // NOI18N
 
         pluginTable.setModel(model);
         pluginTable.setColumnSelectionAllowed(true);
@@ -250,21 +290,21 @@ final class CakePhpPanel extends javax.swing.JPanel {
         jScrollPane2.setViewportView(pluginTable);
         pluginTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
-        org.openide.awt.Mnemonics.setLocalizedText(addButton, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.addButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(addButton, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.addButton.text")); // NOI18N
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(editButton, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.editButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(editButton, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.editButton.text")); // NOI18N
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(deleteButton, org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.deleteButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(deleteButton, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.deleteButton.text")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -312,7 +352,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.pluginsPanel.TabConstraints.tabTitle"), pluginsPanel); // NOI18N
+        optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.pluginsPanel.TabConstraints.tabTitle"), pluginsPanel); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -379,7 +419,7 @@ final class CakePhpPanel extends javax.swing.JPanel {
 
     @NbBundle.Messages("LBL_LocalFilePath=Local File Path (zip file)")
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
-        File localFile = new FileChooserBuilder(CakePhpPanel.class.getName())
+        File localFile = new FileChooserBuilder(CakePhpOptionsPanel.class.getName())
                 .setTitle(Bundle.LBL_LocalFilePath())
                 .setFilesOnly(true)
                 .setFileFilter(new FileNameExtensionFilter("ZIP File", "zip")) // NOI18N
@@ -464,8 +504,8 @@ final class CakePhpPanel extends javax.swing.JPanel {
 
         public CakePhpPluginTableModel() {
             column = new String[]{
-                NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.pluginTable.columnModel.title0"),
-                NbBundle.getMessage(CakePhpPanel.class, "CakePhpPanel.pluginTable.columnModel.title1")
+                NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.pluginTable.columnModel.title0"),
+                NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.pluginTable.columnModel.title1")
             };
             plugins = new ArrayList<CakePhpPlugin>();
         }

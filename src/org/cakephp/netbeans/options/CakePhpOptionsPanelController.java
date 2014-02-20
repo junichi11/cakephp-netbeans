@@ -61,7 +61,7 @@ import org.openide.util.NbBundle;
 public final class CakePhpOptionsPanelController extends OptionsPanelController {
 
     static final String ID = "CakePHP"; // NOI18N
-    private CakePhpPanel panel;
+    private CakePhpOptionsPanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
@@ -113,9 +113,9 @@ public final class CakePhpOptionsPanelController extends OptionsPanelController 
         pcs.removePropertyChangeListener(l);
     }
 
-    private CakePhpPanel getPanel() {
+    private CakePhpOptionsPanel getPanel() {
         if (panel == null) {
-            panel = new CakePhpPanel(this);
+            panel = new CakePhpOptionsPanel(this);
         }
         return panel;
     }
