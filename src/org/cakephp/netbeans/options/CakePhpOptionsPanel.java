@@ -83,6 +83,7 @@ package org.cakephp.netbeans.options;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +93,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ui.OpenProjects;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileChooserBuilder;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
@@ -505,6 +511,25 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         List<String> nodes = customNodesList.getSelectedValuesList();
         options.setAvailableCustomNodes(nodes);
         options.setComposerJson(composerJsonEditorPane.getText());
+
+        // notify
+        notifyPropertyChanged();
+    }
+
+    private void notifyPropertyChanged() {
+        Project[] openProjects = OpenProjects.getDefault().getOpenProjects();
+        for (Project project : openProjects) {
+            PhpModule phpModule = PhpModule.Factory.lookupPhpModule(project);
+            if (phpModule != null) {
+                if (CakePhpUtils.isCakePHP(phpModule)) {
+                    CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+                    if (cakeModule == null) {
+                        continue;
+                    }
+                    cakeModule.notifyPropertyChanged(new PropertyChangeEvent(this, CakePhpModule.PROPERTY_CHANGE_CAKE, null, null));
+                }
+            }
+        }
     }
 
     private void setAvailableCustomNodes() {

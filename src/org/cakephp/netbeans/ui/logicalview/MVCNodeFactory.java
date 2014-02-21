@@ -41,6 +41,8 @@
  */
 package org.cakephp.netbeans.ui.logicalview;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,6 +62,7 @@ import org.netbeans.spi.project.ui.support.NodeList;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
 import org.openide.nodes.Node;
+import org.openide.util.ChangeSupport;
 
 /**
  *
@@ -77,35 +80,36 @@ public class MVCNodeFactory implements NodeFactory {
         return NodeFactorySupport.fixedNodeList();
     }
 
-    private static class MVCNodeList implements NodeList<FileObject> {
+    private static class MVCNodeList implements NodeList<Node>, PropertyChangeListener {
 
         private final PhpModule phpModule;
         private static final Logger LOGGER = Logger.getLogger(MVCNodeList.class.getName());
+        private final ChangeSupport changeSupport = new ChangeSupport(this);
 
         public MVCNodeList(PhpModule phpModule) {
             this.phpModule = phpModule;
         }
 
         @Override
-        public List<FileObject> keys() {
+        public List<Node> keys() {
             if (CakePhpUtils.isCakePHP(phpModule)) {
+                FileObject rootFolder = null;
                 CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
                 if (cakeModule != null) {
-                    List<FileObject> list = new ArrayList<FileObject>();
+                    List<Node> list = new ArrayList<Node>();
                     for (Object object : getAvailableCustomNodeList()) {
                         if (object instanceof FILE_TYPE) {
-                            FileObject directory = cakeModule.getDirectory(DIR_TYPE.APP, (FILE_TYPE) object, null);
-                            if (directory == null) {
-                                continue;
-                            }
-                            list.add(directory);
+                            rootFolder = cakeModule.getDirectory(DIR_TYPE.APP, (FILE_TYPE) object, null);
                         }
                         if (object instanceof DIR_TYPE) {
-                            FileObject directory = cakeModule.getDirectory((DIR_TYPE) object);
-                            if (directory == null) {
-                                continue;
-                            }
-                            list.add(directory);
+                            rootFolder = cakeModule.getDirectory((DIR_TYPE) object);
+                        }
+                        if (rootFolder == null) {
+                            continue;
+                        }
+                        DataFolder folder = getFolder(rootFolder);
+                        if (folder != null) {
+                            list.add(new MVCNode(folder, null, rootFolder.getName()));
                         }
                     }
                     return list;
@@ -137,22 +141,20 @@ public class MVCNodeFactory implements NodeFactory {
 
         @Override
         public void addChangeListener(ChangeListener l) {
+            changeSupport.addChangeListener(l);
         }
 
         @Override
         public void removeChangeListener(ChangeListener l) {
+            changeSupport.removeChangeListener(l);
+        }
+
+        void fireChange() {
+            changeSupport.fireChange();
         }
 
         @Override
-        public Node node(FileObject key) {
-            Node node = null;
-            if (key != null) {
-                FileObject rootFolder = key;
-                DataFolder folder = getFolder(rootFolder);
-                if (folder != null) {
-                    node = new MVCNode(folder, null, key.getName());
-                }
-            }
+        public Node node(Node node) {
             return node;
         }
 
@@ -170,10 +172,21 @@ public class MVCNodeFactory implements NodeFactory {
 
         @Override
         public void addNotify() {
+            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+            if (cakeModule != null) {
+                cakeModule.addPropertyChangeListener(this);
+            }
         }
 
         @Override
         public void removeNotify() {
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (CakePhpModule.PROPERTY_CHANGE_CAKE.equals(evt.getPropertyName())) {
+                fireChange();
+            }
         }
     }
 }

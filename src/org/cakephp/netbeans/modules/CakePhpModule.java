@@ -41,12 +41,16 @@
  */
 package org.cakephp.netbeans.modules;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.preferences.CakePreferences;
@@ -71,6 +75,8 @@ public class CakePhpModule implements ChangeListener {
     private final PhpModule phpModule;
     private final CakePhpModuleImpl impl;
     private final FileObject app;
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    public static String PROPERTY_CHANGE_CAKE = "property-change-cake"; // NOI18N
 
     public CakePhpModule(PhpModule phpModule, CakePhpModuleImpl impl) {
         this.phpModule = phpModule;
@@ -485,6 +491,31 @@ public class CakePhpModule implements ChangeListener {
     public boolean isCakePhp(int majorVersion) {
         CakeVersion version = getCakeVersion();
         return version.isCakePhp(majorVersion);
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    public void notifyPropertyChanged(PropertyChangeEvent event) {
+        if (PROPERTY_CHANGE_CAKE.equals(event.getPropertyName())) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    refreshNodes();
+                }
+            });
+        }
+
+    }
+
+    void refreshNodes() {
+        propertyChangeSupport.firePropertyChange(PROPERTY_CHANGE_CAKE, null, null);
     }
 
     @CheckForNull
