@@ -52,6 +52,7 @@ import java.util.prefs.Preferences;
 import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.ProjectPropertiesSupport;
 import org.netbeans.api.project.Project;
@@ -220,7 +221,11 @@ public class PHPUnitInitAction extends BaseAction {
 
         FileObject script = FileUtil.getConfigFile(CONFIG_PATH + scriptFileName);
         try {
-            String format = String.format(script.asText("UTF-8"), phpUnit); // NOI18N
+            String commandAndOptions = phpUnit;
+            if (CakePhpOptions.getInstance().isTestStderr()) {
+                commandAndOptions = commandAndOptions.concat(" --stderr"); // NOI18N
+            }
+            String format = String.format(script.asText("UTF-8"), commandAndOptions); // NOI18N
 
             // write file
             PrintWriter pw;

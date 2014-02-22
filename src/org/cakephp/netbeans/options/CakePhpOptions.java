@@ -70,6 +70,7 @@ public class CakePhpOptions {
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String NOTIFY_NEW_VERSION = "notify-new-version"; // NOI18N
     private static final String NOTIFY_AUTO_DETECTION = "notify-auto-detection"; // NOI18N
+    private static final String TEST_STDERR = "test-stderr"; // NOI18N
     private static final String COMPOSER_JSON = "composer-json"; // NOI18N
     private static final String AVAILABLE_CUSTOM_NODES = "available-custom-nodes"; // NOI18N
     private static final CakePhpOptions INSTANCE = new CakePhpOptions();
@@ -171,6 +172,15 @@ public class CakePhpOptions {
 
     public void setNotifyAutoDetection(boolean isNotify) {
         getPreferences().putBoolean(NOTIFY_AUTO_DETECTION, isNotify);
+
+    }
+
+    public boolean isTestStderr() {
+        return getPreferences().getBoolean(TEST_STDERR, false);
+    }
+
+    public void setTestStderr(boolean isStderr) {
+        getPreferences().putBoolean(TEST_STDERR, isStderr);
 
     }
 

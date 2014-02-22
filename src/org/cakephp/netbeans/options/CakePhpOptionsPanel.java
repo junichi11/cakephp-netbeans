@@ -149,6 +149,9 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         customNodesList = new javax.swing.JList();
         jSeparator1 = new javax.swing.JSeparator();
+        testLabel = new javax.swing.JLabel();
+        testStderrCheckBox = new javax.swing.JCheckBox();
+        jSeparator2 = new javax.swing.JSeparator();
         newProjectPanel = new javax.swing.JPanel();
         localFilePathLabel = new javax.swing.JLabel();
         localFilePathTextField = new javax.swing.JTextField();
@@ -197,6 +200,11 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
 
         jScrollPane1.setViewportView(customNodesList);
 
+        org.openide.awt.Mnemonics.setLocalizedText(testLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.testLabel.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(testStderrCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.testStderrCheckBox.text")); // NOI18N
+        testStderrCheckBox.setToolTipText(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.testStderrCheckBox.toolTipText")); // NOI18N
+
         javax.swing.GroupLayout generalPanelLayout = new javax.swing.GroupLayout(generalPanel);
         generalPanel.setLayout(generalPanelLayout);
         generalPanelLayout.setHorizontalGroup(
@@ -231,6 +239,17 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
                                             .addComponent(notifyAutoDetectionCheckBox)
                                             .addComponent(notifyNewVersionCheckBox))))
                                 .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(12, 12, 12))
+                    .addGroup(generalPanelLayout.createSequentialGroup()
+                        .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(generalPanelLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(testStderrCheckBox)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(generalPanelLayout.createSequentialGroup()
+                                .addComponent(testLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator2)))
                         .addGap(12, 12, 12))))
         );
         generalPanelLayout.setVerticalGroup(
@@ -254,11 +273,17 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
                 .addComponent(notifyNewVersionCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(notifyAutoDetectionCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(testLabel)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(testStderrCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(customNodesLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.generalPanel.TabConstraints.tabTitle"), generalPanel); // NOI18N
@@ -522,6 +547,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         autoCreateViewCheckBox.setSelected(options.isAutoCreateView());
         notifyNewVersionCheckBox.setSelected(options.isNotifyNewVersion());
         notifyAutoDetectionCheckBox.setSelected(options.isNotifyAutoDetection());
+        testStderrCheckBox.setSelected(options.isTestStderr());
         composerJsonEditorPane.setText(options.getComposerJson());
         setAvailableCustomNodes();
     }
@@ -535,6 +561,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
             options.setAutoCreateView(autoCreateViewCheckBox.isSelected());
             options.setNotifyNewVersion(notifyNewVersionCheckBox.isSelected());
             options.setNotifyAutoDetection(notifyAutoDetectionCheckBox.isSelected());
+            options.setTestStderr(testStderrCheckBox.isSelected());
         }
         List<String> nodes = customNodesList.getSelectedValuesList();
         options.setAvailableCustomNodes(nodes);
@@ -662,6 +689,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel localFilePathLabel;
     private javax.swing.JTextField localFilePathTextField;
     private javax.swing.JLabel messageLabel;
@@ -674,5 +702,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JTable pluginTable;
     private javax.swing.JPanel pluginsPanel;
     private javax.swing.JButton resetButton;
+    private javax.swing.JLabel testLabel;
+    private javax.swing.JCheckBox testStderrCheckBox;
     // End of variables declaration//GEN-END:variables
 }
