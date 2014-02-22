@@ -69,6 +69,7 @@ public class CakePhpOptions {
     private static final String IGNORE_TMP = "ignore-tmp"; // NOI18N
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String NOTIFY_NEW_VERSION = "notify-new-version"; // NOI18N
+    private static final String NOTIFY_AUTO_DETECTION = "notify-auto-detection"; // NOI18N
     private static final String COMPOSER_JSON = "composer-json"; // NOI18N
     private static final String AVAILABLE_CUSTOM_NODES = "available-custom-nodes"; // NOI18N
     private static final CakePhpOptions INSTANCE = new CakePhpOptions();
@@ -161,6 +162,15 @@ public class CakePhpOptions {
 
     public void setNotifyNewVersion(boolean isNotify) {
         getPreferences().putBoolean(NOTIFY_NEW_VERSION, isNotify);
+
+    }
+
+    public boolean isNotifyAutoDetection() {
+        return getPreferences().getBoolean(NOTIFY_AUTO_DETECTION, true);
+    }
+
+    public void setNotifyAutoDetection(boolean isNotify) {
+        getPreferences().putBoolean(NOTIFY_AUTO_DETECTION, isNotify);
 
     }
 

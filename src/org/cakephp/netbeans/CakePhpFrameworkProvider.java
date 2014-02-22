@@ -214,7 +214,9 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         }
 
         // auto detection
-        RP.schedule(new CakePhpAutoDetectionTask(phpModule), 1, TimeUnit.MINUTES);
+        if (CakePhpOptions.getInstance().isNotifyAutoDetection()) {
+            RP.schedule(new CakePhpAutoDetectionTask(phpModule), 1, TimeUnit.MINUTES);
+        }
     }
 
     @NbBundle.Messages({
