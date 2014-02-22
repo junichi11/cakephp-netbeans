@@ -57,7 +57,6 @@ import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.project.ui.support.NodeFactory;
-import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.netbeans.spi.project.ui.support.NodeList;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
@@ -74,10 +73,7 @@ public class MVCNodeFactory implements NodeFactory {
     @Override
     public NodeList<?> createNodes(Project p) {
         PhpModule phpModule = PhpModule.Factory.lookupPhpModule(p);
-        if (CakePhpUtils.isCakePHP(phpModule)) {
-            return new MVCNodeList(phpModule);
-        }
-        return NodeFactorySupport.fixedNodeList();
+        return new MVCNodeList(phpModule);
     }
 
     private static class MVCNodeList implements NodeList<Node>, PropertyChangeListener {

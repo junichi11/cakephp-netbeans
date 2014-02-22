@@ -41,6 +41,7 @@
  */
 package org.cakephp.netbeans;
 
+import java.beans.PropertyChangeEvent;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
@@ -81,8 +82,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         cakePhpDirPath = CakePreferences.getCakePhpDirPath(phpModule);
         originalIgnoreTmpDirectory = CakePreferences.ignoreTmpDirectory(phpModule);
         isShowPopupForOneItem = CakePreferences.isShowPopupForOneItem(phpModule);
-        Boolean enabled = CakePreferences.isEnabled(phpModule);
-        isEnabled = enabled == null ? false : enabled;
+        isEnabled = CakePreferences.isEnabled(phpModule);
         CakeVersion cakeVersion = null;
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
@@ -165,6 +165,10 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         if (!newAppDirectoryPath.equals(appDirectoryPath)) {
             CakePreferences.setAppDirectoryPath(phpModule, newAppDirectoryPath);
             fireChange();
+        }
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule != null) {
+            cakeModule.notifyPropertyChanged(new PropertyChangeEvent(this, CakePhpModule.PROPERTY_CHANGE_CAKE, null, null));
         }
         return enumset;
     }

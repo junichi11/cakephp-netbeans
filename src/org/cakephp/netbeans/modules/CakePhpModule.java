@@ -73,23 +73,36 @@ import org.openide.filesystems.FileRenameEvent;
 public class CakePhpModule implements ChangeListener {
 
     private final PhpModule phpModule;
-    private final CakePhpModuleImpl impl;
-    private final FileObject app;
+    private CakePhpModuleImpl impl;
+    private FileObject appDirectory = null;
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private final FileChangeAdapter fileChangeAdapter = new FileChangeAdapter() {
+        @Override
+        public void fileRenamed(FileRenameEvent fe) {
+            String changeName = fe.getFile().getName();
+            CakePreferences.setAppName(phpModule, changeName);
+        }
+    };
     public static String PROPERTY_CHANGE_CAKE = "property-change-cake"; // NOI18N
 
     public CakePhpModule(PhpModule phpModule, CakePhpModuleImpl impl) {
         this.phpModule = phpModule;
         this.impl = impl;
-        app = impl.getDirectory(DIR_TYPE.APP);
-        final PhpModule pm = phpModule;
-        app.addFileChangeListener(new FileChangeAdapter() {
-            @Override
-            public void fileRenamed(FileRenameEvent fe) {
-                String changeName = fe.getFile().getName();
-                CakePreferences.setAppName(pm, changeName);
+        setAppDirectory();
+    }
+
+    private void setAppDirectory() {
+        FileObject newAppDirectory = impl.getDirectory(DIR_TYPE.APP);
+        if (newAppDirectory == null) {
+            return;
+        }
+        if (appDirectory == null || appDirectory != newAppDirectory) {
+            if (appDirectory != null) {
+                appDirectory.removeFileChangeListener(fileChangeAdapter);
             }
-        });
+            appDirectory = newAppDirectory;
+            appDirectory.addFileChangeListener(fileChangeAdapter);
+        }
     }
 
     public PhpModule getPhpModule() {
@@ -107,6 +120,10 @@ public class CakePhpModule implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
         impl.refresh();
+    }
+
+    void setImpl(CakePhpModuleImpl impl) {
+        this.impl = impl;
     }
 
     public enum DIR_TYPE {
@@ -508,10 +525,14 @@ public class CakePhpModule implements ChangeListener {
                 @Override
                 public void run() {
                     refreshNodes();
+                    reset();
                 }
             });
         }
+    }
 
+    void reset() {
+        CakePhpModuleFactory.getInstance().reset(this);
     }
 
     void refreshNodes() {

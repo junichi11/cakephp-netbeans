@@ -43,13 +43,12 @@ package org.cakephp.netbeans.modules;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.versions.CakeVersion;
 import org.cakephp.netbeans.versions.Versionable;
 import org.cakephp.netbeans.versions.Versions;
 import org.cakephp.netbeans.versions.VersionsFactory;
+import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.openide.filesystems.FileObject;
 
 /**
  *
@@ -86,37 +85,9 @@ public class CakePhpModuleFactory {
         if (module == null) {
             try {
                 start();
-                // create implementation class
-                VersionsFactory factory = VersionsFactory.getInstance();
-                Versions versions = factory.create(phpModule);
-                CakeVersion version = (CakeVersion) versions.getVersion(Versionable.VERSION_TYPE.CAKEPHP);
-                if (versions.size() == 0 || version == null) {
-                    return null;
-                }
-
-                CakePhpModuleImpl impl = null;
-                if (version.isCakePhp(1)) {
-                    impl = new CakePhp1ModuleImpl(phpModule, versions);
-                } else if (version.isCakePhp(2)) {
-                    impl = new CakePhp2ModuleImpl(phpModule, versions);
-                } else if (version.isCakePhp(3)) {
-                    impl = new CakePhp3ModuleImpl(phpModule, versions);
-                }
-
-                // can't know version
-                if (impl == null) {
-                    return null;
-                }
-
-                // check app directory
-                String appPath = CakePreferences.getAppDirectoryPath(phpModule, version);
-                FileObject sourceDirectory = phpModule.getSourceDirectory();
-                if (sourceDirectory == null) {
-                    return null;
-                }
-                FileObject app = sourceDirectory.getFileObject(appPath);
-                if (app == null) {
-                    return null;
+                CakePhpModuleImpl impl = getCakePhpModuleImpl(phpModule);
+                if (phpModule == null) {
+                    return new CakePhpModule(phpModule, impl);
                 }
 
                 // create module class
@@ -127,6 +98,35 @@ public class CakePhpModuleFactory {
             }
         }
         return module;
+    }
+
+    public void reset(@NonNull CakePhpModule cakePhpModule) {
+        PhpModule phpModule = cakePhpModule.getPhpModule();
+        if (phpModule != null) {
+            CakePhpModuleImpl impl = getCakePhpModuleImpl(phpModule);
+            cakePhpModule.setImpl(impl);
+        }
+    }
+
+    private CakePhpModuleImpl getCakePhpModuleImpl(PhpModule phpModule) {
+        VersionsFactory factory = VersionsFactory.getInstance();
+        Versions versions = factory.create(phpModule);
+        CakeVersion version = (CakeVersion) versions.getVersion(Versionable.VERSION_TYPE.CAKEPHP);
+        if (version == null) {
+            return new CakePhpDummyModuleImpl(phpModule, versions);
+        }
+
+        CakePhpModuleImpl impl;
+        if (version.isCakePhp(1)) {
+            impl = new CakePhp1ModuleImpl(phpModule, versions);
+        } else if (version.isCakePhp(2)) {
+            impl = new CakePhp2ModuleImpl(phpModule, versions);
+        } else if (version.isCakePhp(3)) {
+            impl = new CakePhp3ModuleImpl(phpModule, versions);
+        } else {
+            impl = new CakePhpDummyModuleImpl(phpModule, versions);
+        }
+        return impl;
     }
 
     private void start() {

@@ -41,23 +41,31 @@
  */
 package org.cakephp.netbeans;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
+import org.cakephp.netbeans.validator.CakePhpCustomizerValidator;
 import org.cakephp.netbeans.versions.CakeVersion;
+import org.cakephp.netbeans.versions.Versionable;
+import org.cakephp.netbeans.versions.VersionsFactory;
 import org.netbeans.modules.php.api.framework.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.FileUtils;
+import org.netbeans.modules.php.api.validation.ValidationResult;
 import org.netbeans.modules.php.spi.editor.EditorExtender;
 import org.netbeans.modules.php.spi.framework.PhpFrameworkProvider;
 import org.netbeans.modules.php.spi.framework.PhpModuleActionsExtender;
@@ -65,16 +73,19 @@ import org.netbeans.modules.php.spi.framework.PhpModuleCustomizerExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
 import org.netbeans.modules.php.spi.framework.commands.FrameworkCommandSupport;
+import org.openide.awt.Notification;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
+import org.openide.util.RequestProcessor;
 
 // TODO: in static block, consider registering *.ctp as a php mime-type (can be dangerous, do it only if it's not already set!)
 public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     // TODO: provide better badge icon
+    private static final RequestProcessor RP = new RequestProcessor(CakePhpFrameworkProvider.class);
     private static final String ICON_PATH = "org/cakephp/netbeans/ui/resources/cakephp_badge_8.png"; // NOI18N
     private static final CakePhpFrameworkProvider INSTANCE = new CakePhpFrameworkProvider();
     private static final Comparator<File> FILE_COMPARATOR = new Comparator<File>() {
@@ -106,14 +117,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public boolean isInPhpModule(PhpModule phpModule) {
-        Boolean enabled = CakePreferences.isEnabled(phpModule);
-        if (enabled != null) {
-            // manually
-            return enabled;
-        }
-        // automatically
-        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        return cakeModule == null ? false : cakeModule.isInCakePhp();
+        return CakePreferences.isEnabled(phpModule);
     }
 
     @Override
@@ -194,12 +198,23 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         return CakePhpEditorExtenderFactory.create(phpModule);
     }
 
+    @NbBundle.Messages({
+        "# {0} - name",
+        "CakePhpFrameworkProvider.autoditection=CakePHP autoditection : {0}",
+        "CakePhpFrameworkProvider.autoditection.action=If you want to enable as CakePHP project, please click here."
+    })
     @Override
     public void phpModuleOpened(PhpModule phpModule) {
-        // check available new version
-        if (CakePhpOptions.getInstance().isNotifyNewVersion()) {
-            notificationNewVersion(phpModule);
+        if (isInPhpModule(phpModule)) {
+            // check available new version
+            if (CakePhpOptions.getInstance().isNotifyNewVersion()) {
+                notificationNewVersion(phpModule);
+            }
+            return;
         }
+
+        // auto detection
+        RP.schedule(new CakePhpAutoDetectionTask(phpModule), 1, TimeUnit.MINUTES);
     }
 
     @NbBundle.Messages({
@@ -225,4 +240,63 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         }
     }
 
+    private static class CakePhpAutoDetectionTask implements Runnable {
+
+        private final PhpModule phpModule;
+        private Notification notification;
+
+        public CakePhpAutoDetectionTask(PhpModule phpModule) {
+            this.phpModule = phpModule;
+        }
+
+        @Override
+        public void run() {
+            FileObject sourceDirectory = phpModule.getSourceDirectory();
+            if (sourceDirectory == null) {
+                // project is broken
+                return;
+            }
+            CakeVersion version = (CakeVersion) VersionsFactory.getInstance().create(phpModule, Versionable.VERSION_TYPE.CAKEPHP);
+            ValidationResult result = new CakePhpCustomizerValidator()
+                    .validateCakePhpPath(sourceDirectory, CakePreferences.getCakePhpDirPath(phpModule))
+                    .validateAppPath(sourceDirectory, CakePreferences.getAppDirectoryPath(phpModule, version))
+                    .getResult();
+
+            if (result.hasErrors()) {
+                return;
+            }
+            if (result.hasWarnings()) {
+                return;
+            }
+
+            // everything ok
+            if (!CakePreferences.isEnabled(phpModule)) {
+                NotificationDisplayer notificationDisplayer = NotificationDisplayer.getDefault();
+                notification = notificationDisplayer.notify(
+                        Bundle.CakePhpFrameworkProvider_autoditection(phpModule.getDisplayName()), // title
+                        NotificationDisplayer.Priority.LOW.getIcon(), // icon
+                        Bundle.CakePhpFrameworkProvider_autoditection_action(), // detail
+                        new CakePhpAutoDetectionActionListener(), // action
+                        NotificationDisplayer.Priority.LOW); // priority
+            }
+        }
+
+        private class CakePhpAutoDetectionActionListener implements ActionListener {
+
+            public CakePhpAutoDetectionActionListener() {
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CakePreferences.setEnabled(phpModule, true);
+                CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+                phpModule.notifyPropertyChanged(new PropertyChangeEvent(this, PhpModule.PROPERTY_FRAMEWORKS, null, null));
+                if (cakeModule != null) {
+                    cakeModule.notifyPropertyChanged(new PropertyChangeEvent(this, CakePhpModule.PROPERTY_CHANGE_CAKE, null, null));
+                }
+                notification.clear();
+            }
+        }
+
+    }
 }

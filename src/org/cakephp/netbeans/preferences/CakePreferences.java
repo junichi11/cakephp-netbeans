@@ -66,13 +66,8 @@ public class CakePreferences {
         getPreferences(phpModule).putBoolean(ENABLED, isEnabled);
     }
 
-    public static Boolean isEnabled(PhpModule phpModule) {
-        String enabled = getPreferences(phpModule).get(ENABLED, null);
-        // is not set by user
-        if (enabled == null) {
-            return null;
-        }
-        return Boolean.valueOf(enabled);
+    public static boolean isEnabled(PhpModule phpModule) {
+        return getPreferences(phpModule).getBoolean(ENABLED, false);
     }
 
     public static void setAppName(PhpModule phpModule, String appName) {
