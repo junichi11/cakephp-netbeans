@@ -65,7 +65,6 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
-import org.openide.util.Utilities;
 
 /**
  *
@@ -84,8 +83,7 @@ public class PHPUnitInitAction extends BaseAction {
     private static final String CONFIG_NET_BEANS_SUITE_PHP = CONFIG_PATH + NET_BEANS_SUITE_PHP;
     private static final String CONFIG_BOOTSTRAP_PHPUNIT_PHP = CONFIG_PATH + BOOTSTRAP_PHPUNIT_PHP;
     private static final String PHPUNIT = "phpunit"; // NOI18N
-    private static final String PHPUNIT_BAT = PHPUNIT + ".bat"; // NOI18N
-    private static final String PHPUNIT_SH = PHPUNIT + ".sh"; // NOI18N
+    private static final String PHPUNIT_PHP = PHPUNIT + ".php"; // NOI18N
     private static final Map<String, String> messages = new HashMap<String, String>();
     private static final String SUCCESS_MSG = "success";
     private static final String FAIL_MSG = "fail";
@@ -222,15 +220,7 @@ public class PHPUnitInitAction extends BaseAction {
 
         FileObject script = FileUtil.getConfigFile(CONFIG_PATH + scriptFileName);
         try {
-            String format;
-            if (Utilities.isWindows()) {
-                String path = nbproject.getPath().replace("/", "\\"); // NOI18N
-                format = script.asText("UTF-8");
-                format = format.replace(":NetBeansSuite:", path + "\\" + NET_BEANS_SUITE_PHP); // NOI18N
-                format = format.replace(":PHPUnitPath:", phpUnit); // NOI18N
-            } else {
-                format = String.format(script.asText("UTF-8"), phpUnit); // NOI18N
-            }
+            String format = String.format(script.asText("UTF-8"), phpUnit); // NOI18N
 
             // write file
             PrintWriter pw;
@@ -272,17 +262,12 @@ public class PHPUnitInitAction extends BaseAction {
     }
 
     /**
-     * Get script file name.
+     * Get script file name. php intepreter is used in NetBeans 7.4. we have to
+     * use php script. #70 https://gist.github.com/nojimage/7655837
      *
-     * @return phpunit.bat if os is windows, otherwise phpunit.sh
+     * @return phpunit.php
      */
     private String getScriptFileName() {
-        String script = ""; // NOI18N
-        if (Utilities.isWindows()) {
-            script = PHPUNIT_BAT;
-        } else {
-            script = PHPUNIT_SH;
-        }
-        return script;
+        return PHPUNIT_PHP;
     }
 }
