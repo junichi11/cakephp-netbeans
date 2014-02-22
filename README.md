@@ -5,7 +5,7 @@ This plugin provides support for CakePHP.
 *** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
 
 - 2010/07/16
-- 2013/12/04 last update
+- 2014/02/22 last update
 
 ## ENVIRONMENT
 
@@ -22,8 +22,6 @@ Currently, This plugin doesn't recognize CakePHP3.
 
 - badge icon ![badge icon](https://raw.github.com/junichi11/cakephp-netbeans/cakephp2/src/org/cakephp/netbeans/ui/resources/cakephp_badge_8.png) (displayed on project folder)
 - configuration files (add app/config files to important files)
-- display file path in Toolbar
-(If you don't want to display, uncheck Display > Toolbar > View.)
 - ignored files (hide app/tmp directory)
 - cake commands support [*1]
 - go to view, go to action
@@ -47,6 +45,11 @@ Currently, This plugin doesn't recognize CakePHP3.
 - fix namespace action (only CakePHP3.x)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
+
+# How to enable
+
+CakePHP project is not recognized automatically from NetBeans 8.0.
+Please check project properties > Framework > CakePHP > enabled
 
 ### Ignore tmp directory
 app/tmp is ignored with default. If you would like to avoid this, please, uncheck `ignore tmp directory` option.
