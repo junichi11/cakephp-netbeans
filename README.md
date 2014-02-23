@@ -161,9 +161,12 @@ Settings: `Tool > Option > PHP > CakePHP`
 - Name : Set Plugin name. This name is Folder name.
 - Url : Set github zipball url
 
+#### Note
 **Url is only zipball url.**
 
 Run Action: see [*1]
+
+Plugin version numbers are not necessarily latest. Please try to check and edit them manually.
 
 ### Create New CakePHP Project
 
