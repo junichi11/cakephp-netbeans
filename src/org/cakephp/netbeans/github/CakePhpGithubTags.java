@@ -52,6 +52,8 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.openide.util.Exceptions;
 
 /**
@@ -63,7 +65,7 @@ public final class CakePhpGithubTags {
     private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
     private ArrayList<GithubTag> tags;
     private ArrayList<String> names;
-    private boolean isNetworkError = false;
+    private boolean isNetworkError = true;
     private static final CakePhpGithubTags INSTANCE = new CakePhpGithubTags();
 
     public static CakePhpGithubTags getInstance() {
@@ -71,11 +73,11 @@ public final class CakePhpGithubTags {
     }
 
     private CakePhpGithubTags() {
-        init();
     }
 
     private void init() {
         isNetworkError = false;
+        tags = new ArrayList<GithubTag>();
         try {
             // JSON -> Object
             Gson gson = new Gson();
@@ -98,6 +100,9 @@ public final class CakePhpGithubTags {
         }
 
         names = new ArrayList<String>(tags.size());
+        if (isNetworkError) {
+            return;
+        }
         for (GithubTag tag : tags) {
             names.add(tag.getName());
         }
@@ -107,9 +112,12 @@ public final class CakePhpGithubTags {
         init();
     }
 
-    public ArrayList<GithubTag> getTags() {
+    public List<GithubTag> getTags() {
         if (isNetworkError) {
             reload();
+        }
+        if (tags == null) {
+            return Collections.emptyList();
         }
         return tags;
     }
@@ -135,6 +143,7 @@ public final class CakePhpGithubTags {
             reload();
         }
         for (String name : names) {
+            // not stable version
             if (name.contains("-")) { // NOI18N
                 continue;
             }
