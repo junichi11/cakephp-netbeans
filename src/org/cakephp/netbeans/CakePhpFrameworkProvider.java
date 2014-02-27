@@ -47,6 +47,8 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.modules.CakePhpModule;
@@ -84,6 +86,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         }
     };
     private final BadgeIcon badgeIcon;
+    private static final Logger LOGGER = Logger.getLogger(CakePhpFrameworkProvider.class.getName());
 
     private CakePhpFrameworkProvider() {
         super("cakephp", // NOI18N
@@ -116,6 +119,10 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         return cakeModule == null ? false : cakeModule.isInCakePhp();
     }
 
+    @NbBundle.Messages({
+        "# {0} - name",
+        "CakePhpFrameworkProvider.config.invalid=app config directory not found for CakePHP project {0}"
+    })
     @Override
     public File[] getConfigurationFiles(PhpModule phpModule) {
         // return all php files from app/config
@@ -125,7 +132,10 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         }
         List<File> configFiles = new LinkedList<File>();
         FileObject config = cakeModule.getConfigDirectory(DIR_TYPE.APP);
-        assert config != null : "app/config or app/Config not found for CakePHP project " + phpModule.getDisplayName();
+        if (config == null) {
+            LOGGER.log(Level.WARNING, Bundle.CakePhpFrameworkProvider_config_invalid(phpModule.getDisplayName()));
+            return new File[0];
+        }
         if (config.isFolder()) {
             Enumeration<? extends FileObject> children = config.getChildren(true);
             while (children.hasMoreElements()) {

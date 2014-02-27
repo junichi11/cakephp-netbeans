@@ -361,6 +361,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    @NbBundle.Messages("NewProjectConfigurationPanel.git.invalid=Not found git command (CakePHP NewProjectConfigurationPanel)")
     private void gitCloneRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gitCloneRadioButtonActionPerformed
         try {
             Process process = Runtime.getRuntime().exec("git"); // NOI18N
@@ -368,7 +369,7 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
+            LOGGER.log(Level.WARNING, Bundle.NewProjectConfigurationPanel_git_invalid());
             gitCloneRadioButton.setSelected(false);
             unzipRadioButton.setSelected(true);
             gitCloneRadioButton.setEnabled(false);
