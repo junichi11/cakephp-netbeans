@@ -438,8 +438,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     }
 
     /**
-     * Get opend files. Get files to be opened When New CakePHP Project is
-     * opened.
+     * Get files to open When New CakePHP Project is opened.
      *
      * @param config
      * @param targetDirectory

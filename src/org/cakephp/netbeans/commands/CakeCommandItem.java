@@ -49,9 +49,9 @@ import java.util.List;
  */
 public class CakeCommandItem {
 
-    private String command;
-    private String description;
-    private String displayName;
+    private final String command;
+    private final String description;
+    private final String displayName;
     private List<CakeCommandItem> subcommands;
 
     public CakeCommandItem(String command, String description, String displayName) {
