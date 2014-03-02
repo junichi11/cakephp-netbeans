@@ -57,6 +57,7 @@ import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.modules.CakePhpModuleFactory;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.validator.CakePhpCustomizerValidator;
@@ -227,6 +228,11 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         if (CakePhpOptions.getInstance().isNotifyAutoDetection()) {
             RP.schedule(new CakePhpAutoDetectionTask(phpModule), 1, TimeUnit.MINUTES);
         }
+    }
+
+    @Override
+    public void phpModuleClosed(PhpModule phpModule) {
+        CakePhpModuleFactory.getInstance().remove(phpModule);
     }
 
     @NbBundle.Messages({

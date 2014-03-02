@@ -100,12 +100,26 @@ public class CakePhpModuleFactory {
         return module;
     }
 
+    /**
+     * Reset CakePhpModuleImpl for specific PhpModule.
+     *
+     * @param cakePhpModule
+     */
     public void reset(@NonNull CakePhpModule cakePhpModule) {
         PhpModule phpModule = cakePhpModule.getPhpModule();
         if (phpModule != null) {
             CakePhpModuleImpl impl = getCakePhpModuleImpl(phpModule);
             cakePhpModule.setImpl(impl);
         }
+    }
+
+    /**
+     * Remove CakePhpModule from moudles.
+     *
+     * @param phpModule
+     */
+    public void remove(@NonNull PhpModule phpModule) {
+        modules.remove(phpModule);
     }
 
     private CakePhpModuleImpl getCakePhpModuleImpl(PhpModule phpModule) {
