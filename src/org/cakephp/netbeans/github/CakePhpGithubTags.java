@@ -41,119 +41,26 @@
  */
 package org.cakephp.netbeans.github;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.openide.util.Exceptions;
-
 /**
  *
  * @author junichi11
  */
-public final class CakePhpGithubTags {
+public final class CakePhpGithubTags extends GithubTagsBase {
 
     private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
-    private ArrayList<GithubTag> tags;
-    private ArrayList<String> names;
-    private boolean isNetworkError = true;
     private static final CakePhpGithubTags INSTANCE = new CakePhpGithubTags();
 
     public static CakePhpGithubTags getInstance() {
         return INSTANCE;
     }
 
-    private CakePhpGithubTags() {
+    @Override
+    public String getUrl() {
+        return GITHUB_API_REPOS_TAGS;
     }
 
-    private void init() {
-        isNetworkError = false;
-        tags = new ArrayList<GithubTag>();
-        try {
-            // JSON -> Object
-            Gson gson = new Gson();
-            URL tagsJson = new URL(GITHUB_API_REPOS_TAGS);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8")); // NOI18N
-            try {
-                JsonReader jsonReader = new JsonReader(reader);
-                Type type = new TypeToken<ArrayList<GithubTag>>() {
-                }.getType();
-                tags = gson.fromJson(jsonReader, type);
-            } finally {
-                reader.close();
-            }
-        } catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (UnsupportedEncodingException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (IOException ex) {
-            isNetworkError = true;
-        }
-
-        names = new ArrayList<String>(tags.size());
-        if (isNetworkError) {
-            return;
-        }
-        for (GithubTag tag : tags) {
-            names.add(tag.getName());
-        }
-    }
-
-    public void reload() {
-        init();
-    }
-
-    public List<GithubTag> getTags() {
-        if (isNetworkError) {
-            reload();
-        }
-        if (tags == null) {
-            return Collections.emptyList();
-        }
-        return tags;
-    }
-
-    public String getZipUrl(String name) {
-        for (GithubTag tag : tags) {
-            if (tag.getName().equals(name)) {
-                return tag.getZipballUrl();
-            }
-        }
+    @Override
+    public Filter getFilter() {
         return null;
     }
-
-    public String[] getNames() {
-        if (isNetworkError) {
-            reload();
-        }
-        return names.toArray(new String[0]);
-    }
-
-    public String getLatestStableVersion() {
-        if (isNetworkError) {
-            reload();
-        }
-        for (String name : names) {
-            // not stable version
-            if (name.contains("-")) { // NOI18N
-                continue;
-            }
-            return name;
-        }
-        return null;
-    }
-
-    public boolean isNetworkError() {
-        return isNetworkError;
-    }
-
 }
