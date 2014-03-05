@@ -88,7 +88,7 @@ public class NewProjectConfigurationPanel extends JPanel {
         initComponents();
         cakephpRadioButton.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, false));
         basercmsRadioButton.setIcon(ImageUtilities.loadImageIcon(CakePhp.BASER_ICON_16, false));
-
+        basercmsRadioButton.setVisible(CakePhpOptions.getInstance().isBaserCmsEnabled());
         // progress information
         if (isNetworkError()) {
             LOGGER.log(Level.WARNING, Bundle.LBL_ConnectErrorMessage());
