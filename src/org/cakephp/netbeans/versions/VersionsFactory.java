@@ -41,18 +41,12 @@
  */
 package org.cakephp.netbeans.versions;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.cakephp.netbeans.modules.CakePhpModule;
-import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -60,7 +54,6 @@ import org.openide.util.Exceptions;
  */
 public final class VersionsFactory {
 
-    private static final Logger LOGGER = Logger.getLogger(VersionsFactory.class.getName());
     private static final VersionsFactory INSTANCE = new VersionsFactory();
 
     public static VersionsFactory getInstance() {
@@ -147,6 +140,9 @@ public final class VersionsFactory {
             case CAKEPHP:
                 version = new CakeVersion(versionNumber, major, minor, revision, notStable);
                 break;
+            case BASERCMS:
+                version = new BaserCmsVersion(versionNumber, major, minor, revision, notStable);
+                break;
             default:
                 throw new AssertionError();
         }
@@ -164,48 +160,12 @@ public final class VersionsFactory {
     private FileObject getVersionFile(PhpModule phpModule, VERSION_TYPE versionType) {
         switch (versionType) {
             case CAKEPHP:
-                return getCakePhpVersionFile(phpModule);
+                return CakeVersion.getVersionFile(phpModule);
+            case BASERCMS:
+                return BaserCmsVersion.getVersionFile(phpModule);
             default:
                 return null;
         }
-    }
-
-    /**
-     * Get CakePHP VERSION.txt file.
-     *
-     * @param phpModule
-     * @return version file if file exists, {@code null} otherwise.
-     */
-    private FileObject getCakePhpVersionFile(PhpModule phpModule) {
-        // If install this plugin after PHP project was deleted,
-        // PhpModule exists yet, but we can't get Project directory.
-        // So, null might be returned to root variable
-        FileObject root = CakePhpModule.getCakePhpDirectory(phpModule);
-        if (root == null) {
-            LOGGER.log(Level.INFO, "Not Found:{0}", CakePreferences.getCakePhpDirPath(phpModule));
-            return null;
-        }
-
-        FileObject cake = root.getFileObject("cake"); // NOI18N
-        FileObject version;
-        if (cake != null) {
-            // CakePHP 1.x
-            version = root.getFileObject("cake/VERSION.txt"); // NOI18N
-        } else {
-            // CakePHP 2.x
-            version = root.getFileObject("lib/Cake/VERSION.txt"); // NOI18N
-        }
-        // installing with Composer
-        if (version == null) {
-            // CakePHP 2.x
-            version = root.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake/VERSION.txt"); // NOI18N
-        }
-
-        // CakePHP 3.x
-        if (version == null) {
-            version = root.getFileObject("vendor/cakephp/cakephp/VERSION.txt"); // NOI18N
-        }
-        return version;
     }
 
     /**
@@ -219,33 +179,12 @@ public final class VersionsFactory {
     private String getVersionNumber(@NonNull FileObject versionFile, VERSION_TYPE versionType) {
         switch (versionType) {
             case CAKEPHP:
-                return getCakePhpVersionNumber(versionFile);
+                return CakeVersion.getVersionNumber(versionFile);
+            case BASERCMS:
+                return BaserCmsVersion.getVersionNumber(versionFile);
             default:
                 return null;
         }
-    }
-
-    /**
-     * Get CakePHP version number.
-     *
-     * @param versionFile
-     * @return version number | {@code null}
-     */
-    private String getCakePhpVersionNumber(@NonNull FileObject versionFile) {
-        try {
-            String versionNumber = ""; // NOI18N
-            for (String line : versionFile.asLines("UTF-8")) { // NOI18N
-                if (!line.contains("//") && !line.equals("")) { // NOI18N
-                    line = line.trim();
-                    versionNumber = line;
-                    break;
-                }
-            }
-            return versionNumber;
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
     }
 
     /**

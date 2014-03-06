@@ -43,7 +43,6 @@ package org.cakephp.netbeans.modules;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -111,7 +110,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         if (pluginName != null && pluginName.isEmpty()) {
             pluginName = null;
         }
-        if (type == null) {
+        if (type == null || !type.isCake()) {
             return null;
         }
         if (fileType == null && pluginName == null) {
@@ -124,6 +123,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                 case APP_VENDOR:
                 case CORE:
                 case VENDOR:
+                case BASER:
                     return null;
                 default:
                     break;
@@ -236,7 +236,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public FileObject getDirectory(DIR_TYPE type) {
-        if (type == null) {
+        if (type == null || !type.isCake()) {
             return null;
         }
         FileObject sourceDirectory = getCakePhpDirectory();
@@ -260,7 +260,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                 path = "vendors"; // NOI18N
                 break;
             default:
-                throw new AssertionError();
+                return null;
         }
 
         return sourceDirectory.getFileObject(path);
@@ -282,7 +282,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             case APP_VENDOR:
                 return appDir.getFileObject("Vendor"); // NOI18N
             default:
-                throw new AssertionError();
+                return null;
         }
     }
 
@@ -570,7 +570,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     @Override
     public Set<String> getAllPluginNames() {
         Set<String> allPlugins = new HashSet<String>();
-        for (DIR_TYPE dirType : Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN)) {
+        for (DIR_TYPE dirType : CakePhpModule.ALL_PLUGINS) {
             FileObject directory = getDirectory(dirType);
             if (directory == null) {
                 continue;

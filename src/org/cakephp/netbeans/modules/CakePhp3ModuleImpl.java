@@ -218,7 +218,7 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
                 path = "vendor"; // NOI18N
                 break;
             default:
-                throw new AssertionError();
+                return null;
         }
 
         return sourceDirectory.getFileObject(path);
@@ -239,7 +239,7 @@ public class CakePhp3ModuleImpl extends CakePhp2ModuleImpl {
             case APP_VENDOR:
                 return null;
             default:
-                throw new AssertionError();
+                return null;
         }
     }
 

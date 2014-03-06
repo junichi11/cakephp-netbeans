@@ -52,6 +52,7 @@ public interface Versionable {
     public enum VERSION_TYPE {
 
         CAKEPHP,
+        BASERCMS,
     }
 
     public String getVersion();

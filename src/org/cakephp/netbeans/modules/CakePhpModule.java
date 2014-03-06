@@ -131,14 +131,25 @@ public class CakePhpModule implements ChangeListener {
         NONE,
         APP,
         CORE,
+        BASER,
         PLUGIN,
         APP_PLUGIN,
+        BASER_PLUGIN,
         VENDOR,
         APP_VENDOR,
         APP_LIB,;
 
         public boolean isPlugin() {
-            return this == APP_PLUGIN || this == PLUGIN;
+            return this == APP_PLUGIN || this == PLUGIN || this == BASER_PLUGIN;
+        }
+
+        public boolean isCake() {
+            return this == CORE
+                    || this == APP
+                    || this == PLUGIN
+                    || this == APP_PLUGIN
+                    || this == APP_VENDOR
+                    || this == APP_LIB;
         }
 
     }
@@ -170,7 +181,7 @@ public class CakePhpModule implements ChangeListener {
         }
     }
 
-    public static final List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
+    public static final List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN, DIR_TYPE.BASER_PLUGIN);
 
     public FileObject getConfigFile() {
         return impl.getConfigFile();

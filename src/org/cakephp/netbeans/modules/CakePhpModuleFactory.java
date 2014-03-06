@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.cakephp.netbeans.versions.CakeVersion;
 import org.cakephp.netbeans.versions.Versionable;
+import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
 import org.cakephp.netbeans.versions.Versions;
 import org.cakephp.netbeans.versions.VersionsFactory;
 import org.netbeans.api.annotations.common.NonNull;
@@ -134,7 +135,11 @@ public class CakePhpModuleFactory {
         if (version.isCakePhp(1)) {
             impl = new CakePhp1ModuleImpl(phpModule, versions);
         } else if (version.isCakePhp(2)) {
-            impl = new CakePhp2ModuleImpl(phpModule, versions);
+            if (versions.hasVersion(VERSION_TYPE.BASERCMS)) {
+                impl = new BaserCms3ModuleImpl(phpModule, versions);
+            } else {
+                impl = new CakePhp2ModuleImpl(phpModule, versions);
+            }
         } else if (version.isCakePhp(3)) {
             impl = new CakePhp3ModuleImpl(phpModule, versions);
         } else {
