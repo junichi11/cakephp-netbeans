@@ -76,6 +76,25 @@ public abstract class CakePhpModuleImpl {
         this.versions = versions;
     }
 
+    /**
+     * Get {@link PhpModuleProperties}.
+     *
+     * @param phpModule {@link PhpModule}
+     * @return
+     */
+    public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
+        PhpModuleProperties properties = new PhpModuleProperties();
+        FileObject webroot = getWebrootDirectory(DIR_TYPE.APP);
+        if (webroot != null) {
+            properties = properties.setWebRoot(webroot);
+        }
+        FileObject test = getTestDirectory(DIR_TYPE.APP);
+        if (test != null) {
+            properties = properties.setTests(test);
+        }
+        return properties;
+    }
+
     public Versions getVersions() {
         return versions;
     }
@@ -434,4 +453,5 @@ public abstract class CakePhpModuleImpl {
     public abstract void refresh();
 
     public abstract Set<String> getAllPluginNames();
+
 }

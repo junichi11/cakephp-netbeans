@@ -61,6 +61,7 @@ import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileObject;
@@ -548,6 +549,10 @@ public class CakePhpModule implements ChangeListener {
 
     void refreshNodes() {
         propertyChangeSupport.firePropertyChange(PROPERTY_CHANGE_CAKE, null, null);
+    }
+
+    public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
+        return impl.getPhpModuleProperties(phpModule);
     }
 
     @CheckForNull

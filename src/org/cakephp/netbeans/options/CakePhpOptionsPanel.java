@@ -182,6 +182,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         baserCmsEnabledCheckBox = new javax.swing.JCheckBox();
         baserCmsLabel = new javax.swing.JLabel();
         baserCmsLearnMoreLabel = new javax.swing.JLabel();
+        baserCmsVagrantSettingsCheckBox = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(defaultLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.defaultLabel.text")); // NOI18N
 
@@ -457,6 +458,11 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.nodePanel.TabConstraints.tabTitle"), nodePanel); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(baserCmsEnabledCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.baserCmsEnabledCheckBox.text")); // NOI18N
+        baserCmsEnabledCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                baserCmsEnabledCheckBoxActionPerformed(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(baserCmsLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.baserCmsLabel.text")); // NOI18N
 
@@ -470,6 +476,8 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(baserCmsVagrantSettingsCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.baserCmsVagrantSettingsCheckBox.text")); // NOI18N
+
         javax.swing.GroupLayout cmsPanelLayout = new javax.swing.GroupLayout(cmsPanel);
         cmsPanel.setLayout(cmsPanelLayout);
         cmsPanelLayout.setHorizontalGroup(
@@ -480,10 +488,15 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
                     .addComponent(baserCmsLabel)
                     .addGroup(cmsPanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(baserCmsEnabledCheckBox)
-                        .addGap(18, 18, 18)
-                        .addComponent(baserCmsLearnMoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(405, Short.MAX_VALUE))
+                        .addGroup(cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(cmsPanelLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(baserCmsVagrantSettingsCheckBox))
+                            .addGroup(cmsPanelLayout.createSequentialGroup()
+                                .addComponent(baserCmsEnabledCheckBox)
+                                .addGap(18, 18, 18)
+                                .addComponent(baserCmsLearnMoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(263, Short.MAX_VALUE))
         );
         cmsPanelLayout.setVerticalGroup(
             cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -494,7 +507,9 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
                 .addGroup(cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(baserCmsEnabledCheckBox)
                     .addComponent(baserCmsLearnMoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(190, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(baserCmsVagrantSettingsCheckBox)
+                .addContainerGap(160, Short.MAX_VALUE))
         );
 
         optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.cmsPanel.TabConstraints.tabTitle"), cmsPanel); // NOI18N
@@ -605,6 +620,10 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         baserCmsLearnMoreLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }//GEN-LAST:event_baserCmsLearnMoreLabelMouseEntered
 
+    private void baserCmsEnabledCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baserCmsEnabledCheckBoxActionPerformed
+        baserCmsVagrantSettingsCheckBox.setEnabled(baserCmsEnabledCheckBox.isSelected());
+    }//GEN-LAST:event_baserCmsEnabledCheckBoxActionPerformed
+
     private void setLocalPath(String path) {
         localFilePathTextField.setText(path);
     }
@@ -639,6 +658,8 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         setAvailableCustomNodes();
         // cms
         baserCmsEnabledCheckBox.setSelected(options.isBaserCmsEnabled());
+        baserCmsVagrantSettingsCheckBox.setSelected(options.isBaserCmsVagrantSettings());
+        baserCmsEnabledCheckBoxActionPerformed(null);
     }
 
     void store() {
@@ -657,6 +678,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         options.setComposerJson(composerJsonEditorPane.getText());
         // cms
         options.setBaserCmsEnabled(baserCmsEnabledCheckBox.isSelected());
+        options.setBaserCmsVagrantSettings(baserCmsVagrantSettingsCheckBox.isSelected());
         // notify
         notifyPropertyChanged();
     }
@@ -767,6 +789,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox baserCmsEnabledCheckBox;
     private javax.swing.JLabel baserCmsLabel;
     private javax.swing.JLabel baserCmsLearnMoreLabel;
+    private javax.swing.JCheckBox baserCmsVagrantSettingsCheckBox;
     private javax.swing.JButton browseButton;
     private javax.swing.JPanel cmsPanel;
     private javax.swing.JEditorPane composerJsonEditorPane;

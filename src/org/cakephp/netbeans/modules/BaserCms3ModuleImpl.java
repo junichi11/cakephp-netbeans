@@ -42,8 +42,10 @@
 package org.cakephp.netbeans.modules;
 
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
+import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
 
@@ -56,6 +58,34 @@ public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
 
     public BaserCms3ModuleImpl(PhpModule phpModule, Versions versions) {
         super(phpModule, versions);
+    }
+
+    /**
+     * Get {@link PhpModuleProperties}. If vagrant settings is enabled, set
+     * index and url.
+     *
+     * @param phpModule {@link PhpModule}
+     * @return
+     */
+    @Override
+    public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
+        PhpModuleProperties properties = super.getPhpModuleProperties(phpModule);
+        CakePhpOptions options = CakePhpOptions.getInstance();
+        if (options.isBaserCmsEnabled() && options.isBaserCmsVagrantSettings()) {
+            FileObject cakePhpDirectory = CakePhpModule.getCakePhpDirectory(phpModule);
+            if (cakePhpDirectory != null) {
+                // url
+                // XXX url is not set
+                // TODO WORKAROUND: find private.properties then set url to it manually
+                properties = properties.setUrl("http://192.168.33.10/"); // NOI18N
+                // index.php
+                FileObject index = cakePhpDirectory.getFileObject("index.php"); // NOI18N
+                if (index != null) {
+                    properties = properties.setIndexFile(index);
+                }
+            }
+        }
+        return properties;
     }
 
     @Override

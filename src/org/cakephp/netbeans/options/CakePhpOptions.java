@@ -74,6 +74,7 @@ public class CakePhpOptions {
     private static final String COMPOSER_JSON = "composer-json"; // NOI18N
     private static final String AVAILABLE_CUSTOM_NODES = "available-custom-nodes"; // NOI18N
     private static final String BASERCMS_ENABLED = "basercms-enabled"; // NOI18N
+    private static final String BASERCMS_VAGARANT_SETTINGS = "basercms-vagrant-settings"; // NOI18N
     private static final CakePhpOptions INSTANCE = new CakePhpOptions();
     public static final List<String> DEFAULT_AVAILABLE_NODES = Arrays.asList(
             "Controller", // NOI18N
@@ -244,7 +245,16 @@ public class CakePhpOptions {
         getPreferences().putBoolean(BASERCMS_ENABLED, isEnabled);
     }
 
+    public boolean isBaserCmsVagrantSettings() {
+        return getPreferences().getBoolean(BASERCMS_VAGARANT_SETTINGS, false);
+    }
+
+    public void setBaserCmsVagrantSettings(boolean isEnabled) {
+        getPreferences().putBoolean(BASERCMS_VAGARANT_SETTINGS, isEnabled);
+    }
+
     public Preferences getPreferences() {
         return NbPreferences.forModule(CakePhpOptions.class);
     }
+
 }
