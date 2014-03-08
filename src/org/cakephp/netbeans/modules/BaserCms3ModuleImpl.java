@@ -60,6 +60,18 @@ public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
         super(phpModule, versions);
     }
 
+    @Override
+    public boolean isView(FileObject fo) {
+        if (fo == null) {
+            return false;
+        }
+        String filePath = fo.getPath();
+        if (filePath.contains("/webroot/theme/")) { // NOI18N
+            return true;
+        }
+        return super.isView(fo);
+    }
+
     /**
      * Get {@link PhpModuleProperties}. If vagrant settings is enabled, set
      * index and url.
@@ -115,7 +127,7 @@ public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
                 if (StringUtils.isEmpty(pluginName)) {
                     return null;
                 }
-                sb.append(pluginName);
+                sb.append(pluginName).append("/"); // NOI18N
             case BASER:
                 switch (fileType) {
                     case CONTROLLER:
