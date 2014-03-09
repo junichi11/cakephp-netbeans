@@ -57,7 +57,6 @@ import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
-import org.cakephp.netbeans.modules.CakePhpModuleFactory;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.validator.CakePhpCustomizerValidator;
@@ -232,7 +231,10 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
     @Override
     public void phpModuleClosed(PhpModule phpModule) {
-        CakePhpModuleFactory.getInstance().remove(phpModule);
+        // FIXME
+        // CakePhpModule is created again
+        // because StatusLineElementProvider is called after PhpModule is closed
+        // CakePhpModuleFactory.getInstance().remove(phpModule);
     }
 
     @NbBundle.Messages({
