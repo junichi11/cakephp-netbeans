@@ -96,15 +96,6 @@ import org.openide.util.actions.Presenter;
 public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup, Presenter.Toolbar {
 
     private static final long serialVersionUID = 7615298169771540650L;
-    private final JMenuItem goToSmartActionMenu = new JMenuItem(CakePhpGoToSmartAction.getInstance());
-    private final JMenuItem goToControllersActionMenu = new JMenuItem(CakePhpGoToControllersAction.getInstance());
-    private final JMenuItem goToViewsActionMenu = new JMenuItem(CakePhpGoToViewsAction.getInstance());
-    private final JMenuItem goToModelsActionMenu = new JMenuItem(CakePhpGoToModelsAction.getInstance());
-    private final JMenuItem goToComponentsActionMenu = new JMenuItem(CakePhpGoToComponentsAction.getInstance());
-    private final JMenuItem goToHelpersActionMenu = new JMenuItem(CakePhpGoToHelpersAction.getInstance());
-    private final JMenuItem goToBehaviorsActionMenu = new JMenuItem(CakePhpGoToBehaviorsAction.getInstance());
-    private final JMenuItem goToFixturesActionMenu = new JMenuItem(CakePhpGoToFixturesAction.getInstance());
-    private final JMenuItem goToTestCasesActionMenu = new JMenuItem(CakePhpGoToTestCasesAction.getInstance());
 
     private CakePhpBaseMenuAction() {
     }
@@ -136,15 +127,15 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
             boolean isAvaibable = isAvailableWithEditor();
             // smart go to
             if (isAvaibable) {
-                menu.add(goToSmartActionMenu);
-                menu.add(goToTestCasesActionMenu);
-                menu.add(goToControllersActionMenu);
-                menu.add(goToViewsActionMenu);
-                menu.add(goToModelsActionMenu);
-                menu.add(goToComponentsActionMenu);
-                menu.add(goToHelpersActionMenu);
-                menu.add(goToBehaviorsActionMenu);
-                menu.add(goToFixturesActionMenu);
+                menu.add(CakePhpGoToSmartAction.getInstance());
+                menu.add(CakePhpGoToTestCasesAction.getInstance());
+                menu.add(CakePhpGoToControllersAction.getInstance());
+                menu.add(CakePhpGoToViewsAction.getInstance());
+                menu.add(CakePhpGoToModelsAction.getInstance());
+                menu.add(CakePhpGoToComponentsAction.getInstance());
+                menu.add(CakePhpGoToHelpersAction.getInstance());
+                menu.add(CakePhpGoToBehaviorsAction.getInstance());
+                menu.add(CakePhpGoToFixturesAction.getInstance());
             }
 
             // format
@@ -223,13 +214,13 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
     private class CakeToolbarPresenter extends JButton {
 
         private static final long serialVersionUID = 2139565806752438122L;
-        private JPopupMenu popup;
+        private JPopupMenu popup = new JPopupMenu();
 
         CakeToolbarPresenter() {
             PhpModule phpModule = PhpModule.inferPhpModule();
             if (CakePhpUtils.isCakePHP(phpModule)) {
                 this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
-                this.popup = new JPopupMenu();
+                popup.removeAll();
 
                 // add actions
                 // smart go to
