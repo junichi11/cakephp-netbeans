@@ -66,7 +66,7 @@ public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
             return false;
         }
         String filePath = fo.getPath();
-        if (filePath.contains("/webroot/theme/")) { // NOI18N
+        if (filePath.matches("\\A.+(/webroot/theme/|/Baser/View/).+\\z")) { // NOI18N
             return true;
         }
         return super.isView(fo);
