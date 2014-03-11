@@ -292,8 +292,13 @@ Portions Copyrighted 2012 Sun Microsystems, Inc.
             <folder name="baserCMS3">
                 <attr name="displayName" bundlevalue="org.netbeans.modules.css.palette.csssourcefilepalette.Bundle#Palettes/PHP/baserCMS3"/>
                 <file name="charset.xml" url="../basercms/palette/charset.xml"/>
+                <file name="contentsName.xml" url="../basercms/palette/contentsName.xml"/>
                 <file name="css.xml" url="../basercms/palette/css.xml"/>
+                <file name="docType.xml" url="../basercms/palette/docType.xml"/>
+                <file name="element.xml" url="../basercms/palette/element.xml"/>
+                <file name="footer.xml" url="../basercms/palette/footer.xml"/>
                 <file name="func.xml" url="../basercms/palette/func.xml"/>
+                <file name="icon.xml" url="../basercms/palette/icon.xml"/>
                 <file name="img.xml" url="../basercms/palette/img.xml"/>
                 <file name="js.xml" url="../basercms/palette/js.xml"/>
                 <file name="link.xml" url="../basercms/palette/link.xml"/>
@@ -301,7 +306,7 @@ Portions Copyrighted 2012 Sun Microsystems, Inc.
                 <file name="metaKeywords.xml" url="../basercms/palette/metaKeywords.xml"/>
                 <file name="scripts.xml" url="../basercms/palette/scripts.xml"/>
                 <file name="title.xml" url="../basercms/palette/title.xml"/>
-                <file name="icon.xml" url="../basercms/palette/icon.xml"/>
+                <file name="xmlHeader.xml" url="../basercms/palette/xmlHeader.xml"/>
             </folder>
         </folder>
     </folder>
