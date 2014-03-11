@@ -112,6 +112,8 @@ public final class BaserCmsActionMenu extends AbstractAction implements Presente
             super(Bundle.CTL_BaserCmsActionMenu());
             // add actions
             add(new InitializeVagrantSettingsAction());
+            add(new RunPhpMyAdminAction());
+            add(new RunPhpPgAdminAction());
         }
     }
 
