@@ -82,7 +82,7 @@ public class InitializeVagrantSettingsAction extends BaserCmsBaseAction {
         HashMap<String, String> propertiesMap = new HashMap<String, String>();
         propertiesMap.put("index.file", "index.file=index.php"); // NOI18N
         propertiesMap.put("run.as", "run.as=LOCAL"); // NOI18N
-        propertiesMap.put("url", "url=http://192.168.30.10"); // NOI18N
+        propertiesMap.put("url", "url=http://192.168.33.10"); // NOI18N
         FileObject projectDirectory = phpModule.getProjectDirectory();
         FileObject privateProperties = projectDirectory.getFileObject("nbproject/private/private.properties"); // NOI18N
         if (privateProperties == null) {
