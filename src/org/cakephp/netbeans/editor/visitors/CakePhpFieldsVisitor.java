@@ -222,9 +222,9 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
     private Set<CakePhpModule.DIR_TYPE> getDirTypes(boolean isPlugin) {
         Set<CakePhpModule.DIR_TYPE> dirTypes;
         if (isPlugin) {
-            dirTypes = EnumSet.of(CakePhpModule.DIR_TYPE.APP_PLUGIN, CakePhpModule.DIR_TYPE.PLUGIN);
+            dirTypes = EnumSet.of(CakePhpModule.DIR_TYPE.APP_PLUGIN, CakePhpModule.DIR_TYPE.PLUGIN, CakePhpModule.DIR_TYPE.BASER_PLUGIN);
         } else {
-            dirTypes = EnumSet.of(CakePhpModule.DIR_TYPE.APP);
+            dirTypes = EnumSet.of(CakePhpModule.DIR_TYPE.APP, CakePhpModule.DIR_TYPE.BASER);
         }
         return dirTypes;
     }
