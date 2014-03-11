@@ -65,6 +65,17 @@ public class BaserCms3EditorExtender extends CakePhp2EditorExtender {
     }
 
     @Override
+    public void addDefaultComponents(PhpClass phpClass, FileObject fo) {
+        // add all components
+        PhpModule phpModule = getPhpModule();
+        CakePhpModule baserModule = CakePhpModule.forPhpModule(phpModule);
+        if (baserModule != null) {
+            addComponents(phpClass, baserModule.getDirectory(DIR_TYPE.BASER, FILE_TYPE.COMPONENT, null));
+        }
+        super.addDefaultComponents(phpClass, fo);
+    }
+
+    @Override
     public void addDefaultHelpers(PhpClass phpClass, FileObject fo) {
         if (!isView()) {
             return;
@@ -83,25 +94,49 @@ public class BaserCms3EditorExtender extends CakePhp2EditorExtender {
     }
 
     /**
+     * Add components to field for {@link PhpClass}.
+     *
+     * @param phpClass
+     * @param componentDirectory
+     */
+    private void addComponents(@NonNull PhpClass phpClass, FileObject componentDirectory) {
+        addElements(phpClass, componentDirectory, FILE_TYPE.COMPONENT);
+    }
+
+    /**
      * Add helpers to field for {@link PhpClass}.
      *
      * @param phpClass
      * @param helperDirectory
      */
     private void addHelpers(@NonNull PhpClass phpClass, FileObject helperDirectory) {
-        if (helperDirectory == null) {
+        addElements(phpClass, helperDirectory, FILE_TYPE.HELPER);
+    }
+
+    /**
+     * Add elements to field for {@link PhpClass}.
+     *
+     * @param phpClass
+     * @param helperDirectory
+     */
+    private void addElements(@NonNull PhpClass phpClass, FileObject targetDirectory, FILE_TYPE fileType) {
+        if (targetDirectory == null) {
             return;
         }
-        for (FileObject child : helperDirectory.getChildren()) {
+        for (FileObject child : targetDirectory.getChildren()) {
             if (!FileUtils.isPhpFile(child)) {
                 continue;
             }
             String fullName = child.getName();
-            if ("AppHelper".equals(fullName)) { // NOI18N
+            if (fileType == FILE_TYPE.HELPER && "AppHelper".equals(fullName)) { // NOI18N
                 continue;
             }
-            String name = fullName.replace(FILE_TYPE.HELPER.toString(), ""); // NOI18N
-            phpClass.addField(name, new PhpClass(name, name + FILE_TYPE.HELPER.toString()), child, 0);
+            String name = fullName.replace(fileType.toString(), ""); // NOI18N
+            if (fileType == FILE_TYPE.MODEL) {
+                phpClass.addField(name, new PhpClass(name, name), child, 0);
+            } else {
+                phpClass.addField(name, new PhpClass(name, name + fileType.toString()), child, 0);
+            }
         }
     }
 

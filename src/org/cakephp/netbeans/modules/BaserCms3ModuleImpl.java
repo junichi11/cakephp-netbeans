@@ -41,6 +41,8 @@
  */
 package org.cakephp.netbeans.modules;
 
+import java.util.Arrays;
+import java.util.List;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.versions.Versions;
@@ -55,6 +57,9 @@ import org.openide.filesystems.FileObject;
  * @author junichi11
  */
 public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
+
+    // don't change order
+    private static final List<DIR_TYPE> ALL_BASER_DIR_TYPES = Arrays.asList(DIR_TYPE.BASER_PLUGIN, DIR_TYPE.BASER);
 
     public BaserCms3ModuleImpl(PhpModule phpModule, Versions versions) {
         super(phpModule, versions);
@@ -86,6 +91,27 @@ public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
             return CakePhpModule.FILE_TYPE.VIEW;
         }
         return super.getFileType(currentFile);
+    }
+
+    @Override
+    public DIR_TYPE getDirectoryType(FileObject currentFile) {
+        String path = currentFile.getPath();
+        for (DIR_TYPE dirType : ALL_BASER_DIR_TYPES) {
+            FileObject directory = getDirectory(dirType);
+            if (directory == null) {
+                continue;
+            }
+            if (path.startsWith(directory.getPath())) {
+                return dirType;
+            }
+        }
+        return super.getDirectoryType(currentFile);
+    }
+
+    @Override
+    public String getFileNameWithExt(CakePhpModule.FILE_TYPE type, String name) {
+        String fileNameWithExt = super.getFileNameWithExt(type, name);
+        return fileNameWithExt.replace(".ctp", ".php"); // NOI18N
     }
 
     /**
