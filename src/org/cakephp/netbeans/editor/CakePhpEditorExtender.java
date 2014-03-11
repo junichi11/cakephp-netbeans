@@ -57,6 +57,7 @@ import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.DefaultFileFilter;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
@@ -67,6 +68,7 @@ import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.editor.PhpVariable;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.editor.parser.api.Utils;
 import org.netbeans.modules.php.spi.editor.EditorExtender;
@@ -223,6 +225,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
      * @param fileType
      * @return
      */
+    @CheckForNull
     private PhpClass getPhpClass(FileObject fo) {
         if (CakePhpUtils.isComponent(fo)) {
             return getComponentPhpClass();
@@ -237,8 +240,10 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
                 }
             }
             return getControllerPhpClass();
-        } else if (CakePhpUtils.isCtpFile(fo)) {
-            return getViewPhpClass();
+        } else if (CakePhpUtils.isView(fo)) {
+            if (CakePhpUtils.isCtpFile(fo) || FileUtils.isPhpFile(fo)) {
+                return getViewPhpClass();
+            }
         } else if (CakePhpUtils.isHelper(fo)) {
             return getHelperPhpClass();
         }

@@ -66,10 +66,26 @@ public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
             return false;
         }
         String filePath = fo.getPath();
-        if (filePath.matches("\\A.+(/webroot/theme/|/Baser/View/).+\\z")) { // NOI18N
+        if (filePath.matches("\\A.+(/webroot/theme/|/Baser/View/|/Baser/Plugin/.+/View/).+\\z")) { // NOI18N
             return true;
         }
         return super.isView(fo);
+    }
+
+    @Override
+    public CakePhpModule.FILE_TYPE getFileType(FileObject currentFile) {
+        if (currentFile == null) {
+            return CakePhpModule.FILE_TYPE.NONE;
+        }
+        String path = currentFile.getPath();
+        if (path.matches("\\A.+(/View/Elements/|/webroot/theme/.+/Elements/).+\\z")) { // NOI18N
+            return CakePhpModule.FILE_TYPE.ELEMENT;
+        } else if (path.matches("\\A.+(/View/Layouts/|/webroot/thehme/.+/Layouts/).+\\z")) { // NOI18N
+            return CakePhpModule.FILE_TYPE.LAYOUT;
+        } else if (path.matches("\\A.+(/View/|/webroot/theme/).+\\z")) { // NOI18N
+            return CakePhpModule.FILE_TYPE.VIEW;
+        }
+        return super.getFileType(currentFile);
     }
 
     /**
