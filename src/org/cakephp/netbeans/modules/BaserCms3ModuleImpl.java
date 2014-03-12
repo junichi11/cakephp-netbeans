@@ -41,6 +41,7 @@
  */
 package org.cakephp.netbeans.modules;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
@@ -49,7 +50,9 @@ import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.StringUtils;
+import org.netbeans.spi.project.support.ant.PropertyUtils;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 
 /**
  * CakePhpModuleImpl for baserCMS 3.x.x
@@ -58,6 +61,8 @@ import org.openide.filesystems.FileObject;
  */
 public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
 
+    private static final String FILE_VIEW_RELATIVE = "../View/%s/%s.php"; // NOI18N
+    private static final String FILE_THEME_VIEW_RELATIVE = "../View/Themed/%s/%s/%s.php"; // NOI18N
     // don't change order
     private static final List<DIR_TYPE> ALL_BASER_DIR_TYPES = Arrays.asList(DIR_TYPE.BASER_PLUGIN, DIR_TYPE.BASER);
 
@@ -75,6 +80,26 @@ public class BaserCms3ModuleImpl extends CakePhp2ModuleImpl {
             return true;
         }
         return super.isView(fo);
+    }
+
+    @Override
+    public FileObject getView(FileObject controller, String viewName) {
+        File parent = FileUtil.toFile(controller).getParentFile();
+        File view = PropertyUtils.resolveFile(parent, String.format(FILE_VIEW_RELATIVE, getViewFolderName(controller.getName()), viewName));
+        if (view.isFile()) {
+            return FileUtil.toFileObject(view);
+        }
+        return null;
+    }
+
+    @Override
+    public FileObject getView(FileObject controller, String viewName, FileObject theme) {
+        File parent = FileUtil.toFile(controller).getParentFile();
+        File view = PropertyUtils.resolveFile(parent, String.format(FILE_THEME_VIEW_RELATIVE, theme.getName(), getViewFolderName(controller.getName()), viewName));
+        if (view.isFile()) {
+            return FileUtil.toFileObject(view);
+        }
+        return null;
     }
 
     @Override
