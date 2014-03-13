@@ -77,7 +77,8 @@ public final class BaserCmsActionMenu extends AbstractAction implements Presente
     public static final List<? extends AbstractAction> ALL_ACTIONS = Arrays.asList(
             new InitializeVagrantSettingsAction(),
             new RunPhpMyAdminAction(),
-            new RunPhpPgAdminAction()
+            new RunPhpPgAdminAction(),
+            new CopyThemeAction()
     );
     private static final long serialVersionUID = -5524423067942402655L;
     private JMenu baserCmsActions = null;
