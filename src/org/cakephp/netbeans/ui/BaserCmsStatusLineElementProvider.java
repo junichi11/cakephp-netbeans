@@ -44,13 +44,18 @@ package org.cakephp.netbeans.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import org.cakephp.netbeans.CakePhp;
+import org.cakephp.netbeans.basercms.ui.actions.BaserCmsActionMenu;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.versions.Versionable;
@@ -66,7 +71,7 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * {@link StatusLineElementProvider} for baserCMS version.
+ * {@link StatusLineElementProvider} for baserCMS version number.
  *
  * @author junichi11
  */
@@ -78,6 +83,7 @@ public class BaserCmsStatusLineElementProvider implements StatusLineElementProvi
 
     public BaserCmsStatusLineElementProvider() {
         versionLabel.setVisible(false);
+        versionLabel.addMouseListener(new PopupMenu());
         result = Utilities.actionsGlobalContext().lookupResult(FileObject.class);
         result.addLookupListener(new LookupListenerImpl());
     }
@@ -146,6 +152,32 @@ public class BaserCmsStatusLineElementProvider implements StatusLineElementProvi
             }
             versionLabel.setText(version.getVersion());
             versionLabel.setVisible(true);
+        }
+    }
+
+    //~ Inner class
+    private static class PopupMenu extends MouseAdapter {
+
+        private final JPopupMenu popupMenu = new JPopupMenu();
+
+        public PopupMenu() {
+            for (AbstractAction action : BaserCmsActionMenu.ALL_ACTIONS) {
+                popupMenu.add(action);
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent mouseEvent) {
+            if (mouseEvent.isPopupTrigger()) {
+                popupMenu.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent mouseEvent) {
+            if (mouseEvent.isPopupTrigger()) {
+                popupMenu.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
+            }
         }
     }
 }

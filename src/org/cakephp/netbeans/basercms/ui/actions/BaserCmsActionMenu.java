@@ -42,10 +42,13 @@
 package org.cakephp.netbeans.basercms.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.versions.Versionable;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.awt.ActionID;
@@ -71,6 +74,11 @@ import org.openide.util.actions.Presenter;
 @NbBundle.Messages("CTL_BaserCmsActionMenu=baserCMS")
 public final class BaserCmsActionMenu extends AbstractAction implements Presenter.Popup {
 
+    public static final List<? extends AbstractAction> ALL_ACTIONS = Arrays.asList(
+            new InitializeVagrantSettingsAction(),
+            new RunPhpMyAdminAction(),
+            new RunPhpPgAdminAction()
+    );
     private static final long serialVersionUID = -5524423067942402655L;
     private JMenu baserCmsActions = null;
 
@@ -90,7 +98,14 @@ public final class BaserCmsActionMenu extends AbstractAction implements Presente
         if (baserCmsActions == null) {
             baserCmsActions = new BaserCmsActions();
         }
+
         baserCmsActions.setVisible(true);
+        if (!CakePhpOptions.getInstance().isBaserCmsEnabled()) {
+            baserCmsActions.setVisible(false);
+            return baserCmsActions;
+        }
+
+        // check whether module is baserCMS
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
             Versionable version = cakeModule.getVersion(Versionable.VERSION_TYPE.BASERCMS);
@@ -111,9 +126,9 @@ public final class BaserCmsActionMenu extends AbstractAction implements Presente
         public BaserCmsActions() {
             super(Bundle.CTL_BaserCmsActionMenu());
             // add actions
-            add(new InitializeVagrantSettingsAction());
-            add(new RunPhpMyAdminAction());
-            add(new RunPhpPgAdminAction());
+            for (AbstractAction action : ALL_ACTIONS) {
+                add(action);
+            }
         }
     }
 
