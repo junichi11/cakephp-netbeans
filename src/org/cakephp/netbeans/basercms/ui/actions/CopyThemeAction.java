@@ -247,7 +247,7 @@ public class CopyThemeAction extends BaserCmsBaseAction implements ChangeListene
             return;
         }
 
-        // warings
+        // warnings
         if (result.hasWarnings()) {
             getPanel().setError(result.getWarnings().get(0).getMessage());
             getPanel().setOkButtonValid(false);
