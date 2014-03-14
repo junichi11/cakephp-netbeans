@@ -44,7 +44,9 @@ package org.cakephp.netbeans.basercms.ui.actions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.basercms.ui.CopyThemePanel;
@@ -128,15 +130,51 @@ public class CopyThemeAction extends BaserCmsBaseAction implements ChangeListene
                 FileObject existingThemeDirectory = themeDirectory.getFileObject(existingThemeName);
                 try {
                     existingThemeDirectory.copy(themeDirectory, themeName, ""); // NOI18N
-                    FileObject defaultFile = themeDirectory.getFileObject(themeName + "/Layouts/default.php");  // NOI18N
-                    if (defaultFile != null) {
-                        UiUtils.open(defaultFile, 0);
+                    // get initial files
+                    Set<FileObject> initialFiles = getInitialFiles(themeDirectory, themeName);
+                    for (FileObject file : initialFiles) {
+                        UiUtils.open(file, 0);
                     }
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
         });
+    }
+
+    /**
+     * Get initial files to be opened when the copying is complete.
+     *
+     * @param themeDirectory
+     * @param themeName
+     * @return initial files to be opened
+     */
+    private Set<FileObject> getInitialFiles(FileObject themeDirectory, String themeName) {
+        Set<FileObject> initialFiles = new HashSet<FileObject>();
+        FileObject newThemeDirectory = themeDirectory.getFileObject(themeName);
+        if (newThemeDirectory == null) {
+            return initialFiles;
+        }
+
+        // Layouts default
+        FileObject defaultFile = newThemeDirectory.getFileObject("Layouts/default.php");  // NOI18N
+        if (defaultFile != null) {
+            initialFiles.add(defaultFile);
+        }
+
+        // VERSION.txt
+        FileObject versionFile = newThemeDirectory.getFileObject("VERSION.txt"); // NOI18N
+        if (versionFile != null) {
+            initialFiles.add(versionFile);
+        }
+
+        // config.php
+        FileObject configFile = newThemeDirectory.getFileObject("config.php"); // NOI18N
+        if (configFile != null) {
+            initialFiles.add(configFile);
+        }
+
+        return initialFiles;
     }
 
     @NbBundle.Messages("CopyThemeAction.notFound.themes=Not found existing themes")
