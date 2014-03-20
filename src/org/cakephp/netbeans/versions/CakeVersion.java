@@ -41,8 +41,17 @@
  */
 package org.cakephp.netbeans.versions;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cakephp.netbeans.github.CakePhpGithubTags;
+import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.preferences.CakePreferences;
+import org.netbeans.api.annotations.common.NonNull;
+import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
+import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 
 public final class CakeVersion implements Versionable {
 
@@ -52,6 +61,7 @@ public final class CakeVersion implements Versionable {
     private final String notStable;
     private final String versionNumber;
     private String latestStableVersion;
+    private static final Logger LOGGER = Logger.getLogger(CakeVersion.class.getName());
 
     CakeVersion(String versionNumber, int major, int minor, int revision, String notStable) {
         this.versionNumber = versionNumber;
@@ -121,4 +131,67 @@ public final class CakeVersion implements Versionable {
     public VERSION_TYPE getType() {
         return VERSION_TYPE.CAKEPHP;
     }
+
+    /**
+     * Get CakePHP VERSION.txt file.
+     *
+     * @param phpModule
+     * @return version file if file exists, {@code null} otherwise.
+     */
+    public static FileObject getVersionFile(PhpModule phpModule) {
+        // If install this plugin after PHP project was deleted,
+        // PhpModule exists yet, but we can't get Project directory.
+        // So, null might be returned to root variable
+        FileObject root = CakePhpModule.getCakePhpDirectory(phpModule);
+        if (root == null) {
+            LOGGER.log(Level.INFO, "Not Found:{0}", CakePreferences.getCakePhpDirPath(phpModule));
+            return null;
+        }
+
+        FileObject cake = root.getFileObject("cake"); // NOI18N
+        FileObject version;
+        if (cake != null) {
+            // CakePHP 1.x
+            version = root.getFileObject("cake/VERSION.txt"); // NOI18N
+        } else {
+            // CakePHP 2.x
+            version = root.getFileObject("lib/Cake/VERSION.txt"); // NOI18N
+        }
+        // installing with Composer
+        if (version == null) {
+            // CakePHP 2.x
+            version = root.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake/VERSION.txt"); // NOI18N
+        }
+
+        // CakePHP 3.x
+        if (version == null) {
+            version = root.getFileObject("vendor/cakephp/cakephp/VERSION.txt"); // NOI18N
+        }
+        return version;
+
+    }
+
+    /**
+     * Get CakePHP version number.
+     *
+     * @param versionFile
+     * @return version number | {@code null}
+     */
+    public static String getVersionNumber(@NonNull FileObject versionFile) {
+        try {
+            String versionNumber = ""; // NOI18N
+            for (String line : versionFile.asLines("UTF-8")) { // NOI18N
+                if (!line.contains("//") && !line.equals("")) { // NOI18N
+                    line = line.trim();
+                    versionNumber = line;
+                    break;
+                }
+            }
+            return versionNumber;
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+
 }

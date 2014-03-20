@@ -41,6 +41,8 @@
  */
 package org.cakephp.netbeans.versions;
 
+import java.util.Comparator;
+
 /**
  *
  * @author junichi11
@@ -50,6 +52,7 @@ public interface Versionable {
     public enum VERSION_TYPE {
 
         CAKEPHP,
+        BASERCMS,
     }
 
     public String getVersion();
@@ -67,5 +70,44 @@ public interface Versionable {
     public String getLatestStableVersion();
 
     public VERSION_TYPE getType();
+
+    public static final Comparator<String> VERSION_COMPARATOR = new Comparator<String>() {
+
+        private static final String NUMBER_REGEX = "[0-9]+"; // NOI18N
+        private static final String SPLIT_REGEX = "[., -]"; // NOI18N
+
+        @Override
+        public int compare(String a, String b) {
+            String[] aArray = a.split(SPLIT_REGEX);
+            String[] bArray = b.split(SPLIT_REGEX);
+            int aLength = aArray.length;
+            int bLength = bArray.length;
+            for (int i = 0; i < aLength; i++) {
+                if (i == aLength - 1) {
+                    if ((bLength - aLength) < 0) {
+                        return -1;
+                    }
+                }
+                String aString = aArray[i];
+                String bString = bArray[i];
+                if (aString.matches(NUMBER_REGEX) && bString.matches(NUMBER_REGEX)) {
+                    try {
+                        Integer aInt = Integer.parseInt(aString);
+                        Integer bInt = Integer.parseInt(bString);
+                        if (aInt == bInt) {
+                            continue;
+                        } else {
+                            return bInt - aInt;
+                        }
+                    } catch (NumberFormatException ex) {
+                        return 1;
+                    }
+                } else {
+                    return b.compareTo(a);
+                }
+            }
+            return 1;
+        }
+    };
 
 }

@@ -62,5 +62,8 @@ public class CakePhp {
     public static final String GOTO_BEHAVIOR_ICON = "org/cakephp/netbeans/ui/resources/goto_behavior_icon.png";
     public static final String GOTO_TESTCASE_ICON = "org/cakephp/netbeans/ui/resources/goto_testcase_icon.png";
     public static final String GOTO_FIXTURE_ICON = "org/cakephp/netbeans/ui/resources/goto_fixture_icon.png";
+    // basercms
+    public static final String BASER_ICON_16 = "org/cakephp/netbeans/ui/resources/basercms_icon_16.png";
+    public static final String BASER_ICON_32 = "org/cakephp/netbeans/ui/resources/basercms_icon_32.png";
     public static final String CTP = "ctp";
 }

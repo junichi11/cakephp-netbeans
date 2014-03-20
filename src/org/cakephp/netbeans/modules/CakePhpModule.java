@@ -61,6 +61,7 @@ import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileObject;
@@ -131,14 +132,25 @@ public class CakePhpModule implements ChangeListener {
         NONE,
         APP,
         CORE,
+        BASER,
         PLUGIN,
         APP_PLUGIN,
+        BASER_PLUGIN,
         VENDOR,
         APP_VENDOR,
         APP_LIB,;
 
         public boolean isPlugin() {
-            return this == APP_PLUGIN || this == PLUGIN;
+            return this == APP_PLUGIN || this == PLUGIN || this == BASER_PLUGIN;
+        }
+
+        public boolean isCake() {
+            return this == CORE
+                    || this == APP
+                    || this == PLUGIN
+                    || this == APP_PLUGIN
+                    || this == APP_VENDOR
+                    || this == APP_LIB;
         }
 
     }
@@ -170,7 +182,7 @@ public class CakePhpModule implements ChangeListener {
         }
     }
 
-    public static final List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN);
+    public static final List<DIR_TYPE> ALL_PLUGINS = Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN, DIR_TYPE.BASER_PLUGIN);
 
     public FileObject getConfigFile() {
         return impl.getConfigFile();
@@ -537,6 +549,10 @@ public class CakePhpModule implements ChangeListener {
 
     void refreshNodes() {
         propertyChangeSupport.firePropertyChange(PROPERTY_CHANGE_CAKE, null, null);
+    }
+
+    public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
+        return impl.getPhpModuleProperties(phpModule);
     }
 
     @CheckForNull

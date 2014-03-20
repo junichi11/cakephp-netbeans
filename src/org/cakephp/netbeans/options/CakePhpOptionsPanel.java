@@ -81,10 +81,13 @@
  */
 package org.cakephp.netbeans.options;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -93,12 +96,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.openide.awt.HtmlBrowser;
 import org.openide.filesystems.FileChooserBuilder;
+import org.openide.util.Exceptions;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
@@ -113,6 +120,8 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         this.controller = controller;
         initComponents();
         initialize();
+        // basercms
+        baserCmsLabel.setIcon(ImageUtilities.loadImageIcon(CakePhp.BASER_ICON_16, false));
         // TODO listen to changes in form fields and call controller.changed()
     }
 
@@ -169,6 +178,11 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         customNodesLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         customNodesList = new javax.swing.JList();
+        cmsPanel = new javax.swing.JPanel();
+        baserCmsEnabledCheckBox = new javax.swing.JCheckBox();
+        baserCmsLabel = new javax.swing.JLabel();
+        baserCmsLearnMoreLabel = new javax.swing.JLabel();
+        baserCmsVagrantSettingsCheckBox = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(defaultLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.defaultLabel.text")); // NOI18N
 
@@ -443,6 +457,63 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
 
         optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.nodePanel.TabConstraints.tabTitle"), nodePanel); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(baserCmsEnabledCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.baserCmsEnabledCheckBox.text")); // NOI18N
+        baserCmsEnabledCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                baserCmsEnabledCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(baserCmsLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.baserCmsLabel.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(baserCmsLearnMoreLabel, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.baserCmsLearnMoreLabel.text")); // NOI18N
+        baserCmsLearnMoreLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                baserCmsLearnMoreLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                baserCmsLearnMoreLabelMouseEntered(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(baserCmsVagrantSettingsCheckBox, org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.baserCmsVagrantSettingsCheckBox.text")); // NOI18N
+
+        javax.swing.GroupLayout cmsPanelLayout = new javax.swing.GroupLayout(cmsPanel);
+        cmsPanel.setLayout(cmsPanelLayout);
+        cmsPanelLayout.setHorizontalGroup(
+            cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cmsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(baserCmsLabel)
+                    .addGroup(cmsPanelLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(cmsPanelLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(baserCmsVagrantSettingsCheckBox))
+                            .addGroup(cmsPanelLayout.createSequentialGroup()
+                                .addComponent(baserCmsEnabledCheckBox)
+                                .addGap(18, 18, 18)
+                                .addComponent(baserCmsLearnMoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(263, Short.MAX_VALUE))
+        );
+        cmsPanelLayout.setVerticalGroup(
+            cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cmsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(baserCmsLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(cmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(baserCmsEnabledCheckBox)
+                    .addComponent(baserCmsLearnMoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(baserCmsVagrantSettingsCheckBox)
+                .addContainerGap(160, Short.MAX_VALUE))
+        );
+
+        optionsTabbedPane.addTab(org.openide.util.NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.cmsPanel.TabConstraints.tabTitle"), cmsPanel); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -451,7 +522,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(optionsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+            .addComponent(optionsTabbedPane)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -536,6 +607,23 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         controller.changed();
     }//GEN-LAST:event_notifyNewVersionCheckBoxActionPerformed
 
+    private void baserCmsLearnMoreLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_baserCmsLearnMoreLabelMouseClicked
+        try {
+            URL url = new URL("http://basercms.net/"); // NOI18N
+            HtmlBrowser.URLDisplayer.getDefault().showURL(url);
+        } catch (MalformedURLException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }//GEN-LAST:event_baserCmsLearnMoreLabelMouseClicked
+
+    private void baserCmsLearnMoreLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_baserCmsLearnMoreLabelMouseEntered
+        baserCmsLearnMoreLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_baserCmsLearnMoreLabelMouseEntered
+
+    private void baserCmsEnabledCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baserCmsEnabledCheckBoxActionPerformed
+        baserCmsVagrantSettingsCheckBox.setEnabled(baserCmsEnabledCheckBox.isSelected());
+    }//GEN-LAST:event_baserCmsEnabledCheckBoxActionPerformed
+
     private void setLocalPath(String path) {
         localFilePathTextField.setText(path);
     }
@@ -568,6 +656,10 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         testStderrCheckBox.setSelected(options.isTestStderr());
         composerJsonEditorPane.setText(options.getComposerJson());
         setAvailableCustomNodes();
+        // cms
+        baserCmsEnabledCheckBox.setSelected(options.isBaserCmsEnabled());
+        baserCmsVagrantSettingsCheckBox.setSelected(options.isBaserCmsVagrantSettings());
+        baserCmsEnabledCheckBoxActionPerformed(null);
     }
 
     void store() {
@@ -584,7 +676,9 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         List<String> nodes = customNodesList.getSelectedValuesList();
         options.setAvailableCustomNodes(nodes);
         options.setComposerJson(composerJsonEditorPane.getText());
-
+        // cms
+        options.setBaserCmsEnabled(baserCmsEnabledCheckBox.isSelected());
+        options.setBaserCmsVagrantSettings(baserCmsVagrantSettingsCheckBox.isSelected());
         // notify
         notifyPropertyChanged();
     }
@@ -692,7 +786,12 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JCheckBox autoCreateViewCheckBox;
+    private javax.swing.JCheckBox baserCmsEnabledCheckBox;
+    private javax.swing.JLabel baserCmsLabel;
+    private javax.swing.JLabel baserCmsLearnMoreLabel;
+    private javax.swing.JCheckBox baserCmsVagrantSettingsCheckBox;
     private javax.swing.JButton browseButton;
+    private javax.swing.JPanel cmsPanel;
     private javax.swing.JEditorPane composerJsonEditorPane;
     private javax.swing.JLabel customNodesLabel;
     private javax.swing.JList customNodesList;

@@ -46,175 +46,112 @@
  */
 package org.cakephp.netbeans.ui.wizards;
 
+import java.awt.BorderLayout;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import org.cakephp.netbeans.github.CakePhpGithubTags;
+import javax.swing.AbstractButton;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeListener;
+import org.cakephp.netbeans.CakePhp;
 import org.cakephp.netbeans.options.CakePhpOptions;
-import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
+import org.netbeans.api.annotations.common.CheckForNull;
+import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.modules.php.api.util.StringUtils;
-import org.netbeans.modules.php.composer.api.Composer;
+import org.openide.util.ChangeSupport;
 import org.openide.util.Exceptions;
-import org.openide.util.NbBundle;
+import org.openide.util.ImageUtilities;
 
 /**
  *
  * @author junichi11
  */
-public class NewProjectConfigurationPanel extends javax.swing.JPanel {
+public class NewProjectConfigurationPanel extends JPanel {
 
     private static final long serialVersionUID = 7874450246517944114L;
     private String errorMessage;
     private boolean isNetworkError = false;
     private static final Logger LOGGER = Logger.getLogger(NewProjectConfigurationPanel.class.getName());
+    private final Map<String, ConfigurationInnerPanel> panels = new HashMap<String, ConfigurationInnerPanel>();
+    private final ChangeSupport changeSupport = new ChangeSupport(this);
 
     /**
      * Creates new form NewProjectConfigurationPanel
      */
-    @NbBundle.Messages({
-        "LBL_ConnectErrorMessage=Is not connected to the network.",
-        "LBL_NewProjectWizardErrorMessage=Please, connect to the network or set CakePHP local file option"
-    })
     public NewProjectConfigurationPanel() {
         initComponents();
-
+        cakephpRadioButton.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, false));
+        basercmsRadioButton.setIcon(ImageUtilities.loadImageIcon(CakePhp.BASER_ICON_16, false));
+        basercmsRadioButton.setVisible(CakePhpOptions.getInstance().isBaserCmsEnabled());
         // progress information
-        progressTextField.setText(""); // NOI18N
-        progressTextField.setEnabled(false);
-        progressTextField.setVisible(false);
         if (isNetworkError()) {
             LOGGER.log(Level.WARNING, Bundle.LBL_ConnectErrorMessage());
-            return;
         }
+    }
 
-        // github
-        initUnzipping();
-
-        // local
-        initLocalUnzipping();
-
-        // composer
-        initComposer();
-
-        // check git command
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                validateGitCommand();
+    /**
+     * Add ConfigurationInnerPanel. JRadioButtons named the same as category
+     * name of panel must exist.
+     *
+     * @param panel ConfigurationInnerPanel
+     */
+    public void addPanel(@NonNull ConfigurationInnerPanel panel) {
+        Enumeration<AbstractButton> buttons = buttonGroup.getElements();
+        boolean existButton = false;
+        String categoryName = panel.getCategoryName();
+        assert categoryName != null;
+        while (buttons.hasMoreElements()) {
+            AbstractButton button = buttons.nextElement();
+            if (button.getText().equals(categoryName)) {
+                existButton = true;
+                break;
             }
-        });
-    }
-
-    private void initUnzipping() {
-        unzipRadioButton.setSelected(true);
-
-        CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
-        String[] names = githubTags.getNames();
-        Arrays.sort(names, new ComparatorImpl());
-        versionComboBox.setEnabled(true);
-        versionComboBox.setModel(new DefaultComboBoxModel<String>(names));
-    }
-
-    private void initLocalUnzipping() {
-        // local file
-        CakePhpOptions options = CakePhpOptions.getInstance();
-        String localFilePath = options.getLocalZipFilePath();
-        if (StringUtils.isEmpty(localFilePath)) {
-            unzipLocalFileRadioButton.setEnabled(false);
-            unzipLocalFileRadioButton.setVisible(false);
-        } else {
-            unzipLocalFileRadioButton.setToolTipText(localFilePath);
+        }
+        if (existButton) {
+            panel.setNetworkError(isNetworkError);
+            panels.put(categoryName, panel);
         }
     }
 
-    @NbBundle.Messages({
-        "NewProjectConfigurationPanel.composer.app.name.tooltip=app name: If it's empty, source directory is app directory"
-    })
-    private void initComposer() {
-        boolean isAvailableComposer = true;
-        try {
-            // check whether composer is set
-            Composer.getDefault();
-        } catch (InvalidPhpExecutableException ex) {
-            isAvailableComposer = false;
-        }
-
-        final boolean isAvailable = isAvailableComposer;
-        // use invokeLator because enabled doesn't work
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                composerRadioButton.setEnabled(isAvailable);
-                composerRadioButton.setVisible(isAvailable);
-                emptyCheckBox.setSelected(true);
-                emptyCheckBox.setEnabled(false);
-                emptyCheckBox.setVisible(isAvailable);
-                appNameTextField.setText(""); // NOI18N
-                appNameTextField.setEnabled(false);
-                appNameTextField.setVisible(isAvailable);
-                appNameTextField.setToolTipText(Bundle.NewProjectConfigurationPanel_composer_app_name_tooltip());
-                appNameLabel.setEnabled(false);
-                appNameLabel.setVisible(isAvailable);
-            }
-        });
+    /**
+     * Get CakePhpConfigurationInnerPanel.
+     *
+     * @return panel
+     */
+    public CakePhpConfigurationInnerPanel getCakePanel() {
+        return (CakePhpConfigurationInnerPanel) panels.get(cakephpRadioButton.getText());
     }
 
-    public boolean isDatabasePhp() {
-        return databaseCheckBox.isSelected();
-    }
-
-    public String getSelectedUrl() {
-        String selectedVersion = (String) versionComboBox.getSelectedItem();
-        CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
-        return githubTags.getZipUrl(selectedVersion);
-    }
-
+    /**
+     * Get error message.
+     *
+     * @return error message if there are some problems, {@code null} otherwise.
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
-    public boolean isUnzip() {
-        return unzipRadioButton.isSelected();
-    }
-
-    public boolean isLocalFile() {
-        return unzipLocalFileRadioButton.isSelected();
-    }
-
-    public boolean isComposer() {
-        return composerRadioButton.isSelected();
-    }
-
-    public boolean isGit() {
-        return gitCloneRadioButton.isSelected();
-    }
-
-    public boolean useEmptyOption() {
-        return emptyCheckBox.isSelected();
-    }
-
-    public String getAppName() {
-        return appNameTextField.getText().trim();
-    }
-
-    public JTextField getProgressTextField() {
-        return progressTextField;
-    }
-
+    /**
+     * Check wheter local zip file path is set.
+     *
+     * @return {@code true} if the path is set, {@code false} otherwise.
+     */
     private boolean isEnabledLocalPath() {
         String localZipFilePath = CakePhpOptions.getInstance().getLocalZipFilePath();
         return !StringUtils.isEmpty(localZipFilePath);
     }
 
+    /**
+     * Check whether PC is connected to internet.
+     *
+     * @return {@code ture} Is connected to internet, {@code false} otherwise.
+     */
     private boolean isNetworkError() {
         isNetworkError = false;
         try {
@@ -229,50 +166,89 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
         return isNetworkError;
     }
 
+    /**
+     * Set error message
+     */
     public void setError() {
         if (isNetworkError) {
             if (!isEnabledLocalPath()) {
                 errorMessage = Bundle.LBL_NewProjectWizardErrorMessage();
             } else {
                 errorMessage = null;
-                unzipRadioButton.setEnabled(false);
-                composerRadioButton.setEnabled(false);
-                emptyCheckBox.setEnabled(false);
-                versionComboBox.setEnabled(false);
-                gitCloneRadioButton.setEnabled(false);
-                unzipLocalFileRadioButton.setEnabled(true);
             }
         }
     }
 
     /**
-     * Composer also uses git command. If "git" command is invalid, components
-     * of composer also hide.
+     * Set enabled for radio buttons.
+     *
+     * @param isEnabled
      */
-    @NbBundle.Messages("NewProjectConfigurationPanel.git.invalid=Not found git command (CakePHP NewProjectConfigurationPanel)")
-    private void validateGitCommand() {
-        try {
-            Process process = Runtime.getRuntime().exec("git"); // NOI18N
-            process.waitFor();
-        } catch (InterruptedException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (IOException ex) {
-            // git
-            gitCloneRadioButton.setSelected(false);
-            gitCloneRadioButton.setEnabled(false);
-            gitCloneRadioButton.setVisible(false);
-            // composer
-            composerRadioButton.setSelected(false);
-            composerRadioButton.setEnabled(false);
-            composerRadioButton.setVisible(false);
-            emptyCheckBox.setVisible(false);
-            appNameLabel.setVisible(false);
-            appNameTextField.setVisible(false);
+    public void setRadioButtonsEnabled(boolean isEnabled) {
+        cakephpRadioButton.setEnabled(isEnabled);
+        basercmsRadioButton.setEnabled(isEnabled);
+    }
 
-            unzipRadioButton.setSelected(true);
+    /**
+     * Check whether CakePHP is selected.
+     *
+     * @return {@code true} if CakePHP is selected, {@code false} otherwise.
+     */
+    public boolean isCakePhp() {
+        return cakephpRadioButton.isSelected();
+    }
 
-            LOGGER.log(Level.WARNING, Bundle.NewProjectConfigurationPanel_git_invalid());
+    /**
+     * Check whether baserCMS is selected.
+     *
+     * @return {@code true} if baserCMS is selected, {@code false} otherwise.
+     */
+    public boolean isBaserCms() {
+        return basercmsRadioButton.isSelected();
+    }
+
+    /**
+     * Change to selected panel.
+     */
+    public void changePanel() {
+        configurationPanel.removeAll();
+        ConfigurationInnerPanel selectedPanel = getSelectedPanel();
+        if (selectedPanel != null) {
+            configurationPanel.add(selectedPanel, BorderLayout.CENTER);
         }
+        configurationPanel.revalidate();
+        configurationPanel.repaint();
+
+        fireChange();
+    }
+
+    /**
+     * Get selected panel.
+     *
+     * @return
+     */
+    @CheckForNull
+    public ConfigurationInnerPanel getSelectedPanel() {
+        Enumeration<AbstractButton> elements = buttonGroup.getElements();
+        while (elements.hasMoreElements()) {
+            AbstractButton button = elements.nextElement();
+            if (button.isSelected()) {
+                return panels.get(button.getText());
+            }
+        }
+        return null;
+    }
+
+    public void addChangeListener(ChangeListener changeListener) {
+        changeSupport.addChangeListener(changeListener);
+    }
+
+    public void removeChangeListener(ChangeListener changeListener) {
+        changeSupport.removeChangeListener(changeListener);
+    }
+
+    void fireChange() {
+        changeSupport.fireChange();
     }
 
     /**
@@ -285,194 +261,66 @@ public class NewProjectConfigurationPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
-        unzipRadioButton = new javax.swing.JRadioButton();
-        unzipLocalFileRadioButton = new javax.swing.JRadioButton();
-        composerRadioButton = new javax.swing.JRadioButton();
-        gitCloneRadioButton = new javax.swing.JRadioButton();
-        progressTextField = new javax.swing.JTextField();
-        versionComboBox = new javax.swing.JComboBox<String>();
-        databaseCheckBox = new javax.swing.JCheckBox();
-        dbDetailButton = new javax.swing.JButton();
-        emptyCheckBox = new javax.swing.JCheckBox();
-        appNameTextField = new javax.swing.JTextField();
-        appNameLabel = new javax.swing.JLabel();
+        cakephpRadioButton = new javax.swing.JRadioButton();
+        basercmsRadioButton = new javax.swing.JRadioButton();
+        configurationPanel = new javax.swing.JPanel();
 
         setAutoscrolls(true);
 
-        buttonGroup.add(unzipRadioButton);
-        unzipRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipRadioButton.text")); // NOI18N
-        unzipRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                unzipRadioButtonStateChanged(evt);
-            }
-        });
-
-        buttonGroup.add(unzipLocalFileRadioButton);
-        unzipLocalFileRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.unzipLocalFileRadioButton.text")); // NOI18N
-
-        buttonGroup.add(composerRadioButton);
-        composerRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.composerRadioButton.text")); // NOI18N
-        composerRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                composerRadioButtonStateChanged(evt);
-            }
-        });
-
-        buttonGroup.add(gitCloneRadioButton);
-        gitCloneRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.gitCloneRadioButton.text")); // NOI18N
-        gitCloneRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup.add(cakephpRadioButton);
+        cakephpRadioButton.setSelected(true);
+        cakephpRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.cakephpRadioButton.text")); // NOI18N
+        cakephpRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gitCloneRadioButtonActionPerformed(evt);
+                cakephpRadioButtonActionPerformed(evt);
             }
         });
 
-        progressTextField.setEditable(false);
-        progressTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.progressTextField.text")); // NOI18N
-        progressTextField.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        databaseCheckBox.setSelected(true);
-        databaseCheckBox.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.databaseCheckBox.text")); // NOI18N
-
-        dbDetailButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.dbDetailButton.text")); // NOI18N
-        dbDetailButton.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup.add(basercmsRadioButton);
+        basercmsRadioButton.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.basercmsRadioButton.text")); // NOI18N
+        basercmsRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dbDetailButtonActionPerformed(evt);
+                basercmsRadioButtonActionPerformed(evt);
             }
         });
 
-        emptyCheckBox.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.emptyCheckBox.text")); // NOI18N
-        emptyCheckBox.setEnabled(false);
-
-        appNameTextField.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.appNameTextField.text")); // NOI18N
-
-        appNameLabel.setText(org.openide.util.NbBundle.getMessage(NewProjectConfigurationPanel.class, "NewProjectConfigurationPanel.appNameLabel.text")); // NOI18N
+        configurationPanel.setLayout(new javax.swing.BoxLayout(configurationPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(progressTextField)
+            .addComponent(configurationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(composerRadioButton)
+                .addComponent(cakephpRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(emptyCheckBox)
-                .addGap(18, 18, 18)
-                .addComponent(appNameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(appNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(67, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(databaseCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dbDetailButton))
-                    .addComponent(gitCloneRadioButton)
-                    .addComponent(unzipLocalFileRadioButton)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(unzipRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(versionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(basercmsRadioButton)
+                .addGap(0, 42, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(databaseCheckBox)
-                    .addComponent(dbDetailButton))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(unzipRadioButton)
-                    .addComponent(versionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(unzipLocalFileRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(composerRadioButton)
-                    .addComponent(emptyCheckBox)
-                    .addComponent(appNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(appNameLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gitCloneRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(progressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cakephpRadioButton)
+                    .addComponent(basercmsRadioButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(configurationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 18, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void gitCloneRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gitCloneRadioButtonActionPerformed
-        validateGitCommand();
-    }//GEN-LAST:event_gitCloneRadioButtonActionPerformed
+    private void basercmsRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_basercmsRadioButtonActionPerformed
+        changePanel();
+    }//GEN-LAST:event_basercmsRadioButtonActionPerformed
 
-    private void dbDetailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dbDetailButtonActionPerformed
-        NewProjectConfigurationDetailPanel detailPanel = NewProjectConfigurationDetailPanel.getDefault();
-        detailPanel.showDialog();
-    }//GEN-LAST:event_dbDetailButtonActionPerformed
-
-    private void composerRadioButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_composerRadioButtonStateChanged
-        emptyCheckBox.setEnabled(isComposer());
-        appNameTextField.setEnabled(isComposer());
-        appNameLabel.setEnabled(isComposer());
-    }//GEN-LAST:event_composerRadioButtonStateChanged
-
-    private void unzipRadioButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_unzipRadioButtonStateChanged
-        versionComboBox.setEnabled(isUnzip());
-    }//GEN-LAST:event_unzipRadioButtonStateChanged
+    private void cakephpRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cakephpRadioButtonActionPerformed
+        changePanel();
+    }//GEN-LAST:event_cakephpRadioButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel appNameLabel;
-    private javax.swing.JTextField appNameTextField;
+    private javax.swing.JRadioButton basercmsRadioButton;
     private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JRadioButton composerRadioButton;
-    private javax.swing.JCheckBox databaseCheckBox;
-    private javax.swing.JButton dbDetailButton;
-    private javax.swing.JCheckBox emptyCheckBox;
-    private javax.swing.JRadioButton gitCloneRadioButton;
-    private javax.swing.JTextField progressTextField;
-    private javax.swing.JRadioButton unzipLocalFileRadioButton;
-    private javax.swing.JRadioButton unzipRadioButton;
-    private javax.swing.JComboBox<String> versionComboBox;
+    private javax.swing.JRadioButton cakephpRadioButton;
+    private javax.swing.JPanel configurationPanel;
     // End of variables declaration//GEN-END:variables
 
-    //~ inner class
-    private static class ComparatorImpl implements Comparator<String> {
-
-        public ComparatorImpl() {
-        }
-        private static final String NUMBER_REGEX = "[0-9]+"; // NOI18N
-        private static final String SPLIT_REGEX = "[., -]"; // NOI18N
-
-        @Override
-        public int compare(String a, String b) {
-            String[] aArray = a.split(SPLIT_REGEX);
-            String[] bArray = b.split(SPLIT_REGEX);
-            int aLength = aArray.length;
-            int bLength = bArray.length;
-            for (int i = 0; i < aLength; i++) {
-                if (i == aLength - 1) {
-                    if ((bLength - aLength) < 0) {
-                        return -1;
-                    }
-                }
-                String aString = aArray[i];
-                String bString = bArray[i];
-                if (aString.matches(NUMBER_REGEX) && bString.matches(NUMBER_REGEX)) {
-                    try {
-                        Integer aInt = Integer.parseInt(aString);
-                        Integer bInt = Integer.parseInt(bString);
-                        if (aInt == bInt) {
-                            continue;
-                        } else {
-                            return bInt - aInt;
-                        }
-                    } catch (NumberFormatException ex) {
-                        return 1;
-                    }
-                } else {
-                    return b.compareTo(a);
-                }
-            }
-            return 1;
-        }
-    }
 }

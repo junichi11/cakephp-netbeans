@@ -81,7 +81,8 @@ public final class CakePhpGoToStatusFactory {
             status = CakePhpControllerGoToStatus.getInstance();
         } else if (CakePhpUtils.isModel(targetFile)) {
             status = CakePhpModelGoToStatus.getInstance();
-        } else if (CakePhpUtils.isCtpFile(targetFile)) {
+        } else if (CakePhpUtils.isView(targetFile)) {
+            // TODO check ctp extension? or add settings for it?
             status = CakePhpViewGoToStatus.getInstance();
         } else if (CakePhpUtils.isComponent(targetFile)) {
             status = CakePhpComponentGoToStatus.getInstance();

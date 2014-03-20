@@ -115,7 +115,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         if (pluginName != null && pluginName.isEmpty()) {
             pluginName = null;
         }
-        if (type == null) {
+        if (type == null || !type.isCake()) {
             return null;
         }
         if (fileType == null && pluginName == null) {
@@ -282,7 +282,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public FileObject getDirectory(DIR_TYPE type) {
-        if (type == null) {
+        if (type == null || !type.isCake()) {
             return null;
         }
         FileObject cakePhpDirectory = getCakePhpDirectory();
@@ -307,7 +307,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                 path = "vendors"; // NOI18N
                 break;
             default:
-                throw new AssertionError();
+                return null;
         }
 
         return cakePhpDirectory.getFileObject(path);
@@ -329,7 +329,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
             case APP_VENDOR:
                 return appDir.getFileObject("vendors"); // NOI18N
             default:
-                throw new AssertionError();
+                return null;
         }
     }
 

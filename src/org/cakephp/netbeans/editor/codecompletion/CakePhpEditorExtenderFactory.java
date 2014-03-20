@@ -43,6 +43,7 @@ package org.cakephp.netbeans.editor.codecompletion;
 
 import org.cakephp.netbeans.editor.CakePhpEditorExtender;
 import org.cakephp.netbeans.modules.CakePhpModule;
+import org.cakephp.netbeans.versions.Versionable;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 
 /**
@@ -57,6 +58,9 @@ public final class CakePhpEditorExtenderFactory {
             if (cakeModule.isCakePhp(1)) {
                 return new CakePhp1EditorExtender(phpModule);
             } else if (cakeModule.isCakePhp(2)) {
+                if (cakeModule.getVersion(Versionable.VERSION_TYPE.BASERCMS) != null) {
+                    return new BaserCms3EditorExtender(phpModule);
+                }
                 return new CakePhp2EditorExtender(phpModule);
             } else if (cakeModule.isCakePhp(3)) {
                 return new CakePhp3EditorExtender(phpModule);

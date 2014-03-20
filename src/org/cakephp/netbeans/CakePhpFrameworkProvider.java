@@ -174,16 +174,8 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     public PhpModuleProperties getPhpModuleProperties(PhpModule phpModule) {
         PhpModuleProperties properties = new PhpModuleProperties();
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        if (module == null) {
-            return properties;
-        }
-        FileObject webroot = module.getWebrootDirectory(DIR_TYPE.APP);
-        if (webroot != null) {
-            properties = properties.setWebRoot(webroot);
-        }
-        FileObject test = module.getTestDirectory(DIR_TYPE.APP);
-        if (test != null) {
-            properties = properties.setTests(test);
+        if (module != null) {
+            properties = module.getPhpModuleProperties(phpModule);
         }
         return properties;
     }
