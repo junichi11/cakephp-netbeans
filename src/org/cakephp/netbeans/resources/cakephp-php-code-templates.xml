@@ -447,7 +447,7 @@ class ${CakeFileName} extends AppHelper {
         <description>CakePHP</description>
     </codetemplate>
     <codetemplate contexts="cake-code" abbreviation="cssetf">
-        <code><![CDATA[$this->Session->setFlash('${message})';${cursor}]]></code>
+        <code><![CDATA[$this->Session->setFlash('${message}');${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
     <codetemplate contexts="cake-code" abbreviation="cswrite">
