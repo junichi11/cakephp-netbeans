@@ -18,6 +18,11 @@ This plugin provides support for CakePHP.
 
 Currently, This plugin doesn't recognize CakePHP3.
 
+## How to enable
+
+CakePHP project is not recognized automatically from NetBeans 8.0.
+Please check project properties > Framework > CakePHP > enabled
+
 ## WHAT WORKS
 
 - badge icon ![badge icon](https://raw.github.com/junichi11/cakephp-netbeans/cakephp2/src/org/cakephp/netbeans/ui/resources/cakephp_badge_8.png) (displayed on project folder)
@@ -45,11 +50,6 @@ Currently, This plugin doesn't recognize CakePHP3.
 - fix namespace action (only CakePHP3.x)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
-
-# How to enable
-
-CakePHP project is not recognized automatically from NetBeans 8.0.
-Please check project properties > Framework > CakePHP > enabled
 
 ### Ignore tmp directory
 app/tmp is ignored with default. If you would like to avoid this, please, uncheck `ignore tmp directory` option.
@@ -499,6 +499,25 @@ Add namespace to top of file if it doesn't exist.
 <?php
 namespace App\Controller;
 ```
+
+## CMS support
+
+### baserCMS3
+
+baserCMS is open source CMS and powered by CakePHP Framework.
+
+#### Features
+
+- Setting action for Vagrant
+- Pallete
+- Run PhpMyAdmin and PhpPgAdmin action
+- Copy existing theme action
+- New Project Wizard
+
+#### References
+
+- http://basercms.net/
+- https://github.com/basercms/basercms
 
 ## HOW TO RUN
 
