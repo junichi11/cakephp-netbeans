@@ -2,14 +2,12 @@
 
 This plugin provides support for CakePHP.
 
-*** KEEP THIS FILE UPDATED OR REMOVE IT COMPLETELY ***
-
 - 2010/07/16
-- 2014/02/22 last update
+- 2014/03/20 last update
 
-## ENVIRONMENT
+## Environment
 
-- NetBeans 7.3+
+- NetBeans 8.0+
 - CakePHP 1.3.x
 - CakePHP 2.x
 - CakePHP 3.x (early support)
@@ -23,9 +21,9 @@ Currently, This plugin doesn't recognize CakePHP3.
 CakePHP project is not recognized automatically from NetBeans 8.0.
 Please check project properties > Framework > CakePHP > enabled
 
-## WHAT WORKS
+## What Works
 
-- badge icon ![badge icon](https://raw.github.com/junichi11/cakephp-netbeans/cakephp2/src/org/cakephp/netbeans/ui/resources/cakephp_badge_8.png) (displayed on project folder)
+- badge icon ![badge icon](https://raw.github.com/junichi11/cakephp-netbeans/master/src/org/cakephp/netbeans/ui/resources/cakephp_badge_8.png) (displayed on project folder)
 - configuration files (add app/config files to important files)
 - ignored files (hide app/tmp directory)
 - cake commands support [*1]
@@ -213,7 +211,7 @@ public $helpers('Session', 'Html' => array('className' => 'MyHtml'));
 // $this->Html-> [Ctrl + Space] => display MyHtmlHelper class methods and fields
 ```
 
-#### image file completion
+#### Image File Completion
 
 ```php
 $this->Html->image('[Ctrl + Space]');
@@ -241,7 +239,7 @@ $this->Html->css('/mydir/[Ctrl + Space]');
 $this->Html->script('PluginName.[Ctrl + Space]');
 ```
 
-#### element file completion
+#### Element File Completion
 
 ```php
 $this->element('[Ctrl + Space]');
@@ -250,7 +248,7 @@ $this->element('MyPlugin.[Ctrl + Space]');
 // support for Plugin elements (CakePHP 2.x)
 ```
 
-#### fields completion
+#### Fields Completion
 
 This is available in the following fields. This can also complete the plugin name.
 Please run code completion again(i.e. [Ctrl + Space]) after "PluginName.".
@@ -315,7 +313,7 @@ You can go to specific files relate to a current file.
 e.g. In case of current file is Controller, you can go to existing view, model, component, helper and test.
 ![go to navigations matrix](https://dl.dropboxusercontent.com/u/10953443/netbeans-cakephp-plugin/go-to-navigagions-matrix.png)
 
-#### how to run
+#### How To Run
 
 There are three ways.
 
@@ -323,7 +321,7 @@ There are three ways.
 - Editor Toolbar Menu
 - Context Menu
 
-#### shortcuts
+#### Shortcuts
 
 Pattern : [Ctrl + Shift + G] [*] \(or [Ctrl + J] [*]\)
 
@@ -339,14 +337,14 @@ Pattern : [Ctrl + Shift + G] [*] \(or [Ctrl + J] [*]\)
 
 Of course, if you don't like these shortcuts, you are able to change them in Options (KeyMap).
 
-#### settings
+#### Settings
 
 project properties > Frameworks > CakePHP
 Please uncheck the following if you would like to go to it soon (without popup) when candidate file is only one.
 
 - Show the popup for one candidate item.
 
-#### notice
+#### Note
 
 - Core helpers, components and behaviors are not contained in popup items.
 - Go To View / Action Action is not changed yet.
@@ -423,7 +421,7 @@ If you run this action, you can test using fixture with NetBeans.
 https://gist.github.com/2055307 ([nojimage](https://github.com/nojimage))
 
 ### Code Generation
-#### How to run
+#### How To Run
 `Alt` + `Insert` or Right-click on editor, select `Insert Code`.
 
 #### Generate uses, helpers, components and actsAs fields
@@ -485,7 +483,7 @@ public function index() {
 }
 ```
 
-#### Notice
+#### Note
 Currently, this is available for the simple situation.
 
 Please also see the following: https://github.com/junichi11/cakephp-netbeans/issues/16
@@ -500,7 +498,7 @@ Add namespace to top of file if it doesn't exist.
 namespace App\Controller;
 ```
 
-## CMS support
+## CMS Support
 
 ### baserCMS3
 
@@ -519,12 +517,12 @@ baserCMS is open source CMS and powered by CakePHP Framework.
 - http://basercms.net/
 - https://github.com/basercms/basercms
 
-## HOW TO RUN
+## How To Run
 
 - download NBM file or manually create NBM file
 - manually install NBM file
 
-## HOW TO DEVELOP
+## How To Develop
 
 - read this page [1] for the general overview but notice that current sources need to be used, then
 - checkout NB sources via Mercurial (preferred, easy updates)[2] or download archive with latest NB sources from NB download site [3]
