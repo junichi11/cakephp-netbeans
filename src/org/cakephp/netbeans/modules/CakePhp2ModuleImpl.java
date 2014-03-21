@@ -153,6 +153,9 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
                 sb.append("/"); // NOI18N
             case CORE: // no break
             case APP:
+                if (fileType == null) {
+                    return null;
+                }
                 switch (fileType) {
                     case CONTROLLER:
                     case VIEW:
@@ -244,7 +247,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             LOGGER.log(Level.WARNING, "Not found source directory");
             return null;
         }
-        String path = ""; // NOI18N
+        String path;
         switch (type) {
             case APP:
             case APP_LIB:

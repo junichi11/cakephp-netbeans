@@ -229,7 +229,8 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         List<GoToItem> controllers = getController();
         List<GoToItem> testCases = getTestCases();
         List<GoToItem> fixtrues = getFixtrues();
-        List<GoToItem> items = new ArrayList<GoToItem>(getAllSize(controllers, testCases, models, fixtrues));
+        int size = controllers.size() + testCases.size() + models.size() + fixtrues.size();
+        List<GoToItem> items = new ArrayList<GoToItem>(size);
         items.addAll(controllers);
         items.addAll(testCases);
         items.addAll(models);

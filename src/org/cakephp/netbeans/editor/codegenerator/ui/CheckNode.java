@@ -85,7 +85,7 @@ public abstract class CheckNode extends DefaultMutableTreeNode {
         this.isSelected = isSelected;
 
         if ((selectionMode == DIG_IN_SELECTION) && (children != null)) {
-            Enumeration en = children.elements();
+            Enumeration<?> en = children.elements();
             while (en.hasMoreElements()) {
                 CheckNode node = (CheckNode) en.nextElement();
                 node.setSelected(isSelected);

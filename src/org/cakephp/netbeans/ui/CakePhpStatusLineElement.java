@@ -403,8 +403,8 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
          * @return current FileObject if exists, otherwise null
          */
         private FileObject getFileObject(LookupEvent lookupEvent) {
-            Lookup.Result lookupResult = (Lookup.Result) lookupEvent.getSource();
-            Collection c = lookupResult.allInstances();
+            Lookup.Result<?> lookupResult = (Lookup.Result<?>) lookupEvent.getSource();
+            Collection<?> c = (Collection<?>) lookupResult.allInstances();
             FileObject fileObject = null;
             if (!c.isEmpty()) {
                 fileObject = (FileObject) c.iterator().next();

@@ -129,13 +129,13 @@ public class BaserCmsStatusLineElementProvider implements StatusLineElementProvi
             if (!CakePhpOptions.getInstance().isBaserCmsEnabled()) {
                 return;
             }
-            Lookup.Result<FileObject> lookupResult = (Lookup.Result<FileObject>) event.getSource();
-            Collection<? extends FileObject> fileObjects = lookupResult.allInstances();
+            Lookup.Result<?> lookupResult = (Lookup.Result<?>) event.getSource();
+            Collection<?> fileObjects = (Collection<?>) lookupResult.allInstances();
             if (fileObjects.isEmpty()) {
                 return;
             }
 
-            FileObject fileObject = fileObjects.iterator().next();
+            FileObject fileObject = (FileObject) fileObjects.iterator().next();
             PhpModule phpModule = PhpModule.Factory.forFileObject(fileObject);
             if (phpModule == null) {
                 return;

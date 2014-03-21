@@ -103,7 +103,7 @@ public class FixNamespaceAction extends BaseAction {
         }
 
         // check namespace
-        TokenSequence ts = CakePhpDocUtils.getTokenSequence(document, 0);
+        TokenSequence<PHPTokenId> ts = CakePhpDocUtils.getTokenSequence(document, 0);
         hasNamespace = false;
         ts.moveStart();
         while (ts.moveNext()) {

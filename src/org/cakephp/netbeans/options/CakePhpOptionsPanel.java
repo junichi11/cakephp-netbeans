@@ -177,7 +177,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         nodePanel = new javax.swing.JPanel();
         customNodesLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        customNodesList = new javax.swing.JList();
+        customNodesList = new javax.swing.JList<String>();
         cmsPanel = new javax.swing.JPanel();
         baserCmsEnabledCheckBox = new javax.swing.JCheckBox();
         baserCmsLabel = new javax.swing.JLabel();
@@ -794,7 +794,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel cmsPanel;
     private javax.swing.JEditorPane composerJsonEditorPane;
     private javax.swing.JLabel customNodesLabel;
-    private javax.swing.JList customNodesList;
+    private javax.swing.JList<String> customNodesList;
     private javax.swing.JLabel defaultLabel;
     private javax.swing.JSeparator defaultSeparator;
     private javax.swing.JButton deleteButton;
