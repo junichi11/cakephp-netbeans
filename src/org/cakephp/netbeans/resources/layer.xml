@@ -290,7 +290,7 @@ Portions Copyrighted 2012 Sun Microsystems, Inc.
     <folder name="Palettes">
         <folder name="PHP">
             <folder name="baserCMS3">
-                <attr name="displayName" bundlevalue="org.netbeans.modules.css.palette.csssourcefilepalette.Bundle#Palettes/PHP/baserCMS3"/>
+                <attr name="displayName" bundlevalue="org.cakephp.netbeans.basercms.palette.Bundle#Palettes/PHP/baserCMS3"/>
                 <file name="charset.xml" url="../basercms/palette/charset.xml"/>
                 <file name="contentsName.xml" url="../basercms/palette/contentsName.xml"/>
                 <file name="css.xml" url="../basercms/palette/css.xml"/>
