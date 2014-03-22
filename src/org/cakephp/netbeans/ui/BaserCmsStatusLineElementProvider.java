@@ -54,7 +54,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
-import org.cakephp.netbeans.CakePhp;
+import org.cakephp.netbeans.basercms.BaserCms;
 import org.cakephp.netbeans.basercms.ui.actions.BaserCmsActionMenu;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.options.CakePhpOptions;
@@ -78,7 +78,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = StatusLineElementProvider.class)
 public class BaserCmsStatusLineElementProvider implements StatusLineElementProvider {
 
-    private final JLabel versionLabel = new JLabel(ImageUtilities.loadImageIcon(CakePhp.BASER_ICON_16, false));
+    private final JLabel versionLabel = new JLabel(ImageUtilities.loadImageIcon(BaserCms.BASER_ICON_16, false));
     private final Result<FileObject> result;
 
     public BaserCmsStatusLineElementProvider() {

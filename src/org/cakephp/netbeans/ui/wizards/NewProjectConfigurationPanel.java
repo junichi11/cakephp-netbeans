@@ -60,6 +60,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.CakePhp;
+import org.cakephp.netbeans.basercms.BaserCms;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NonNull;
@@ -87,7 +88,7 @@ public class NewProjectConfigurationPanel extends JPanel {
     public NewProjectConfigurationPanel() {
         initComponents();
         cakephpRadioButton.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, false));
-        basercmsRadioButton.setIcon(ImageUtilities.loadImageIcon(CakePhp.BASER_ICON_16, false));
+        basercmsRadioButton.setIcon(ImageUtilities.loadImageIcon(BaserCms.BASER_ICON_16, false));
         basercmsRadioButton.setVisible(CakePhpOptions.getInstance().isBaserCmsEnabled());
         // progress information
         if (isNetworkError()) {

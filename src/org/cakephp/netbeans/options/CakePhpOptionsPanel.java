@@ -96,7 +96,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import org.cakephp.netbeans.CakePhp;
+import org.cakephp.netbeans.basercms.BaserCms;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.project.Project;
@@ -121,7 +121,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
         initComponents();
         initialize();
         // basercms
-        baserCmsLabel.setIcon(ImageUtilities.loadImageIcon(CakePhp.BASER_ICON_16, false));
+        baserCmsLabel.setIcon(ImageUtilities.loadImageIcon(BaserCms.BASER_ICON_16, false));
         // TODO listen to changes in form fields and call controller.changed()
     }
 
