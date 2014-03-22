@@ -110,7 +110,7 @@ public class GoToPopup extends JPanel implements FocusListener {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        jList1 = new javax.swing.JList<GoToItem>();
 
         setFocusCycleRoot(true);
         setLayout(new java.awt.GridBagLayout());
@@ -164,12 +164,12 @@ public class GoToPopup extends JPanel implements FocusListener {
     }//GEN-LAST:event_jList1KeyPressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList jList1;
+    private javax.swing.JList<GoToItem> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
     private void openSelected() {
-        GoToItem item = (GoToItem) jList1.getSelectedValue();
+        GoToItem item = jList1.getSelectedValue();
         FileObject fileObject = item.getFileObject();
         int offset = item.getOffset();
         if (fileObject != null && offset >= 0) {
@@ -191,8 +191,8 @@ public class GoToPopup extends JPanel implements FocusListener {
         PopupUtil.hidePopup();
     }
 
-    private ListModel createListModel() {
-        DefaultListModel dlm = new DefaultListModel();
+    private ListModel<GoToItem> createListModel() {
+        DefaultListModel<GoToItem> dlm = new DefaultListModel<GoToItem>();
 
         for (GoToItem el : items) {
             dlm.addElement(el);
@@ -207,7 +207,7 @@ public class GoToPopup extends JPanel implements FocusListener {
 
         @Override
         public Component getListCellRendererComponent(
-                JList list,
+                JList<?> list,
                 Object value,
                 int index,
                 boolean isSelected,

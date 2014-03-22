@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2012 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2014 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,33 +37,19 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2012 Sun Microsystems, Inc.
+ * Portions Copyrighted 2014 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans;
+package org.cakephp.netbeans.basercms;
 
 /**
  *
  * @author junichi11
  */
-public final class CakePhp {
+public final class BaserCms {
 
-    private CakePhp() {
+    private BaserCms() {
     }
 
-    public static final String CAKE_BADGE_8 = "org/cakephp/netbeans/ui/resources/cakephp_badge_8.png"; // NOI18N
-    public static final String CAKE_ICON_8 = "org/cakephp/netbeans/ui/resources/cakephp_icon_8.png"; // NOI18N
-    public static final String CAKE_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_icon_16.png"; // NOI18N
-    public static final String CAKE_SUCCESS_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_success_icon_16.png"; // NOI18N
-    public static final String CAKE_FAIL_ICON_16 = "org/cakephp/netbeans/ui/resources/cakephp_fail_icon_16.png"; // NOI18N
-    public static final String PHP_ICON = "org/cakephp/netbeans/resources/php_icon.png"; // NOI18N
-    public static final String CTP_ICON = "org/cakephp/netbeans/resources/ctp_icon.png"; // NOI18N
-    public static final String GOTO_CONTROLLER_ICON = "org/cakephp/netbeans/ui/resources/goto_controller_icon.png"; // NOI18N
-    public static final String GOTO_MODEL_ICON = "org/cakephp/netbeans/ui/resources/goto_model_icon.png"; // NOI18N
-    public static final String GOTO_VIEW_ICON = "org/cakephp/netbeans/ui/resources/goto_view_icon.png"; // NOI18N
-    public static final String GOTO_COMPONENT_ICON = "org/cakephp/netbeans/ui/resources/goto_component_icon.png"; // NOI18N
-    public static final String GOTO_HELPER_ICON = "org/cakephp/netbeans/ui/resources/goto_helper_icon.png"; // NOI18N
-    public static final String GOTO_BEHAVIOR_ICON = "org/cakephp/netbeans/ui/resources/goto_behavior_icon.png"; // NOI18N
-    public static final String GOTO_TESTCASE_ICON = "org/cakephp/netbeans/ui/resources/goto_testcase_icon.png"; // NOI18N
-    public static final String GOTO_FIXTURE_ICON = "org/cakephp/netbeans/ui/resources/goto_fixture_icon.png"; // NOI18N
-    public static final String CTP = "ctp"; // NOI18N
+    public static final String BASER_ICON_16 = "org/cakephp/netbeans/basercms/ui/resources/basercms_icon_16.png"; // NOI18N
+    public static final String BASER_ICON_32 = "org/cakephp/netbeans/basercms/ui/resources/basercms_icon_32.png"; // NOI18N
 }

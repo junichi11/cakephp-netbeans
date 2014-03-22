@@ -6,8 +6,8 @@
     <body>
         <![CDATA[<?php $this->BcBaser->docType() ?>]]>
     </body>
-    <icon16 urlvalue="org/cakephp/netbeans/ui/resources/basercms_icon_16.png" />
-    <icon32 urlvalue="org/cakephp/netbeans/ui/resources/basercms_icon_32.png" />
+    <icon16 urlvalue="org/cakephp/netbeans/basercms/ui/resources/basercms_icon_16.png" />
+    <icon32 urlvalue="org/cakephp/netbeans/basercms/ui/resources/basercms_icon_32.png" />
     <inline-description>
         <display-name>docType</display-name>
         <tooltip>

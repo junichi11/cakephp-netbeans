@@ -327,7 +327,8 @@ public abstract class CakePhpGoToStatus {
 
         String target = getTestCaseClassName(currentFile);
         if (!StringUtils.isEmpty(target) && !target.contains(" ")) { // NOI18N
-            FileObject targetDirectory = phpModule.getTestDirectory();
+            // null means first test directory
+            FileObject targetDirectory = phpModule.getTestDirectory(null);
             Set<ClassElement> classElements = new HashSet<ClassElement>();
             if (targetDirectory != null) {
                 classElements.addAll(getClassElements(targetDirectory, target));
@@ -387,22 +388,14 @@ public abstract class CakePhpGoToStatus {
     }
 
     private int getAllSize() {
-        return getAllSize(getControllers(),
-                getModels(),
-                getViews(),
-                getComponents(),
-                getHelpers(),
-                getBehaviors(),
-                getTestCases(),
-                getFixtrues());
-    }
-
-    protected int getAllSize(List... lists) {
-        int size = 0;
-        for (List list : lists) {
-            size = size + list.size();
-        }
-        return size;
+        return getControllers().size()
+                + getModels().size()
+                + getViews().size()
+                + getComponents().size()
+                + getHelpers().size()
+                + getBehaviors().size()
+                + getTestCases().size()
+                + getFixtrues().size();
     }
 
     public void sort(List<GoToItem> views) {

@@ -53,38 +53,37 @@ import java.util.regex.Pattern;
  * copy from package org.netbeans.modules.websvc.saas.codegen.util
  */
 /**
- * <p>API for performing inflections (pluralization, singularization, and so on)
- * on various strings. These inflections will be useful in code generators that
+ * <p>
+ * API for performing inflections (pluralization, singularization, and so on) on
+ * various strings. These inflections will be useful in code generators that
  * convert things like database table names into Java class names.</p>
  *
- * <p>The
- * <code>getInstance()</code> method returns a singleton instance of this class
- * with a default set of rules, which can then be customized. Rules added during
- * customization will take precedence over the standard ones. Use the
- * <code>addIrregular()</code>,
- * <code>addPlural()</code>,
- * <code>addSingular()</code>, and
- * <code>addUncountable()</code> methods to add additional rules ot the default
- * ones.</p>
+ * <p>
+ * The <code>getInstance()</code> method returns a singleton instance of this
+ * class with a default set of rules, which can then be customized. Rules added
+ * during customization will take precedence over the standard ones. Use the
+ * <code>addIrregular()</code>, <code>addPlural()</code>,
+ * <code>addSingular()</code>, and <code>addUncountable()</code> methods to add
+ * additional rules ot the default ones.</p>
  *
- * <p><strong>IMPLEMENTATION NOTE</strong> - The default implementation is
- * intended to be functionally compatible with the
- * <code>Inflector::inflections</code> class in Ruby on Rails. The
- * <code>gsub()</code> method on Ruby strings matches regular expressions
- * anywhere in the input. However, nearly all of the actual patterns used in
- * this module use
- * <code>$</code> at the end to match the end of the input string (so that only
- * the last word in a multiple word phrase will be singularized or pluralized).
- * Therefore, the Java versions of the regular expressions have been modified to
- * capture all text before the interesting characters at the end, and emit them
- * as part of the result, so that the entire string can be matched against a
- * pattern once.</p>
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong> - The default implementation is intended
+ * to be functionally compatible with the <code>Inflector::inflections</code>
+ * class in Ruby on Rails. The <code>gsub()</code> method on Ruby strings
+ * matches regular expressions anywhere in the input. However, nearly all of the
+ * actual patterns used in this module use <code>$</code> at the end to match
+ * the end of the input string (so that only the last word in a multiple word
+ * phrase will be singularized or pluralized). Therefore, the Java versions of
+ * the regular expressions have been modified to capture all text before the
+ * interesting characters at the end, and emit them as part of the result, so
+ * that the entire string can be matched against a pattern once.</p>
  */
 public final class Inflector {
 
     // ------------------------------------------------------------ Constructors
     /**
-     * <p>Private constructor to avoid instantiation.</p>
+     * <p>
+     * Private constructor to avoid instantiation.</p>
      */
     private Inflector() {
 
@@ -156,33 +155,36 @@ public final class Inflector {
     }
     // -------------------------------------------------------- Static Variables
     /**
-     * <p>The singleton instance returned by the default
-     * <code>getInstance()</code> method.</p>
+     * <p>
+     * The singleton instance returned by the default <code>getInstance()</code>
+     * method.</p>
      */
     private transient static Inflector instance = null;
     /**
-     * <p>List of
-     * <code>Replacer</code>s for performing replacement operations on matches
-     * for plural words.</p>
+     * <p>
+     * List of <code>Replacer</code>s for performing replacement operations on
+     * matches for plural words.</p>
      */
-    private List plurals = new LinkedList();
+    private final List<Replacer> plurals = new LinkedList<Replacer>();
     /**
-     * <p>List of
-     * <code>Replacer</code>s for performing replacement operations on matches
-     * for addSingular words.</p>
+     * <p>
+     * List of <code>Replacer</code>s for performing replacement operations on
+     * matches for addSingular words.</p>
      */
-    private List singulars = new ArrayList();
+    private final List<Replacer> singulars = new ArrayList<Replacer>();
     /**
-     * <p>List of words that represent addUncountable concepts that cannot be
+     * <p>
+     * List of words that represent addUncountable concepts that cannot be
      * pluralized or singularized.</p>
      */
-    private List uncountables = new LinkedList();
+    private final List<String> uncountables = new LinkedList<String>();
 
     // ------------------------------------------------------ Instance Variables
     // ---------------------------------------------------------- Static Methods
     /**
-     * <p>Return a fully configured {@link Inflector} instance that can be used
-     * for performing transformations.</p>
+     * <p>
+     * Return a fully configured {@link Inflector} instance that can be used for
+     * performing transformations.</p>
      */
     public static Inflector getInstance() {
 
@@ -195,8 +197,9 @@ public final class Inflector {
 
     // ---------------------------------------------------------- Public Methods
     /**
-     * <p>Convert strings to
-     * <code>EmbeddedCamelCase</code>. Embedded underscores will be removed.</p>
+     * <p>
+     * Convert strings to <code>EmbeddedCamelCase</code>. Embedded underscores
+     * will be removed.</p>
      *
      * @param word Word to be converted
      */
@@ -207,15 +210,16 @@ public final class Inflector {
     }
 
     /**
-     * <p>Convert word strings consisting of lower case letters and underscore
-     * characters between words into
-     * <code>embeddedCamelCase</code> or
-     * <code>EmbeddedCamelCase</code>, depending on the
-     * <code>lower</code> flag. Embedded underscores will be removed. Embedded
-     * '/' characters will be replaced by '.', making this method useful in
-     * converting path-like names into fully qualified classnames.</p>
+     * <p>
+     * Convert word strings consisting of lower case letters and underscore
+     * characters between words into <code>embeddedCamelCase</code> or
+     * <code>EmbeddedCamelCase</code>, depending on the <code>lower</code> flag.
+     * Embedded underscores will be removed. Embedded '/' characters will be
+     * replaced by '.', making this method useful in converting path-like names
+     * into fully qualified classnames.</p>
      *
-     * <p><strong>IMPLEMENTATION DIFFERENCE</strong> - The Rails version of this
+     * <p>
+     * <strong>IMPLEMENTATION DIFFERENCE</strong> - The Rails version of this
      * method also converts '/' characters to '::' because that reflects the
      * normal syntax for fully qualified names in Ruby.</p>
      *
@@ -277,7 +281,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Create and return a simple class name that corresponds to a addPlural
+     * <p>
+     * Create and return a simple class name that corresponds to a addPlural
      * table name. Any leading schema name will be trimmed.</p>
      *
      * <table border="1" width="100%">
@@ -308,7 +313,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Replace underscores in the specified word with dashes.</p>
+     * <p>
+     * Replace underscores in the specified word with dashes.</p>
      *
      * <table border="1" width="100%">
      * <tr>
@@ -334,8 +340,9 @@ public final class Inflector {
     }
 
     /**
-     * <p>Remove any package name from a fully qualified class name, returning
-     * only the simple classname.</p>
+     * <p>
+     * Remove any package name from a fully qualified class name, returning only
+     * the simple classname.</p>
      *
      * <table border="1" width="100%">
      * <tr>
@@ -366,7 +373,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Create and return a foreign key name from a class name, separating the
+     * <p>
+     * Create and return a foreign key name from a class name, separating the
      * "id" suffix with an underscore.</p>
      */
     public String foreignKey(String className) {
@@ -376,7 +384,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Create and return a foreign key name from a class name, optionally
+     * <p>
+     * Create and return a foreign key name from a class name, optionally
      * inserting an underscore before the "id" portion.</p>
      *
      * <table border="1" width="100%">
@@ -413,8 +422,9 @@ public final class Inflector {
     }
 
     /**
-     * <p>Capitalize the first word in a lower cased and underscored string,
-     * turn underscores into spaces, and string any trailing "_id". Like
+     * <p>
+     * Capitalize the first word in a lower cased and underscored string, turn
+     * underscores into spaces, and string any trailing "_id". Like
      * <code>titleize()</code>, this is meant for creating pretty output, and is
      * not intended for code generation.</p>
      *
@@ -455,7 +465,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Turn a number into a corresponding ordinal string used to denote the
+     * <p>
+     * Turn a number into a corresponding ordinal string used to denote the
      * position in an ordered sequence.</p>
      *
      * <table border="1" width="100%">
@@ -511,7 +522,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Return a addPlural version of the specified (addSingular) word.</p>
+     * <p>
+     * Return a addPlural version of the specified (addSingular) word.</p>
      *
      *
      * @param word Singular word to be converted
@@ -527,7 +539,7 @@ public final class Inflector {
 
         // Scan our patterns for a match and return the correct replacement
         for (int i = 0; i < plurals.size(); i++) {
-            Replacer replacer = (Replacer) plurals.get(i);
+            Replacer replacer = plurals.get(i);
             if (replacer.matches(word)) {
                 return replacer.replacement();
             }
@@ -539,7 +551,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Return a addSingular version of the specified (addPlural) word.</p>
+     * <p>
+     * Return a addSingular version of the specified (addPlural) word.</p>
      *
      *
      * @param word Plural word to be converted
@@ -555,7 +568,7 @@ public final class Inflector {
 
         // Scan our patterns for a match and return the correct replacement
         for (int i = 0; i < singulars.size(); i++) {
-            Replacer replacer = (Replacer) singulars.get(i);
+            Replacer replacer = singulars.get(i);
             if (replacer.matches(word)) {
                 return replacer.replacement();
             }
@@ -567,9 +580,10 @@ public final class Inflector {
     }
 
     /**
-     * <p>Convert the simple name of a model class into the corresponding name
-     * of a database table, by uncamelizing, inserting underscores, and
-     * pluralizing the last word.</p>
+     * <p>
+     * Convert the simple name of a model class into the corresponding name of a
+     * database table, by uncamelizing, inserting underscores, and pluralizing
+     * the last word.</p>
      *
      * <table border="1" width="100%">
      * <tr>
@@ -595,7 +609,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Capitalize all the words, and replace some characters in the string to
+     * <p>
+     * Capitalize all the words, and replace some characters in the string to
      * create a nicer looking title. This is meant for creating pretty output,
      * and is not intended for code generation.</p>
      *
@@ -640,10 +655,10 @@ public final class Inflector {
     }
 
     /**
-     * <p>The reverse of
-     * <code>camelize()</code>, makes an underscored form from the expression in
-     * the string. Changes "." to "/" to convert fully qualified class names
-     * into paths.</p>
+     * <p>
+     * The reverse of <code>camelize()</code>, makes an underscored form from
+     * the expression in the string. Changes "." to "/" to convert fully
+     * qualified class names into paths.</p>
      *
      * <table border="1" width="100%">
      * <tr>
@@ -697,8 +712,9 @@ public final class Inflector {
 
     // --------------------------------------------------- Customization Methods
     /**
-     * <p>Add the addSingular and addPlural forms of words that cannot be
-     * converted using the normal rules.</p>
+     * <p>
+     * Add the addSingular and addPlural forms of words that cannot be converted
+     * using the normal rules.</p>
      *
      *
      * @param singular Singular form of the word
@@ -714,9 +730,9 @@ public final class Inflector {
     }
 
     /**
-     * <p>Add a match pattern and replacement rule for converting addPlural
-     * forms to addSingular forms. By default, matches will be case
-     * insensitive.</p>
+     * <p>
+     * Add a match pattern and replacement rule for converting addPlural forms
+     * to addSingular forms. By default, matches will be case insensitive.</p>
      *
      *
      * @param match Match pattern regular expression
@@ -729,8 +745,9 @@ public final class Inflector {
     }
 
     /**
-     * <p>Add a match pattern and replacement rule for converting addPlural
-     * forms to addSingular forms.</p>
+     * <p>
+     * Add a match pattern and replacement rule for converting addPlural forms
+     * to addSingular forms.</p>
      *
      *
      * @param match Match pattern regular expression
@@ -744,9 +761,9 @@ public final class Inflector {
     }
 
     /**
-     * <p>Add a match pattern and replacement rule for converting addSingular
-     * forms to addPlural forms. By default, matches will be case
-     * insensitive.</p>
+     * <p>
+     * Add a match pattern and replacement rule for converting addSingular forms
+     * to addPlural forms. By default, matches will be case insensitive.</p>
      *
      *
      * @param match Match pattern regular expression
@@ -759,8 +776,9 @@ public final class Inflector {
     }
 
     /**
-     * <p>Add a match pattern and replacement rule for converting addSingular
-     * forms to addPlural forms.</p>
+     * <p>
+     * Add a match pattern and replacement rule for converting addSingular forms
+     * to addPlural forms.</p>
      *
      *
      * @param match Match pattern regular expression
@@ -774,7 +792,8 @@ public final class Inflector {
     }
 
     /**
-     * <p>Add a word that cannot be converted between addSingular and
+     * <p>
+     * Add a word that cannot be converted between addSingular and
      * addPlural.</p>
      *
      *
@@ -788,8 +807,9 @@ public final class Inflector {
 
     // --------------------------------------------------------- Private Classes
     /**
-     * <p>Internal class that uses a regular expression matcher to both match
-     * the specified regular expression to a specified word, and (if successful)
+     * <p>
+     * Internal class that uses a regular expression matcher to both match the
+     * specified regular expression to a specified word, and (if successful)
      * perform the appropriate substitutions.</p>
      */
     private class Replacer {
@@ -810,13 +830,12 @@ public final class Inflector {
 
         // ------------------------------------------------------ Public Methods
         /**
-         * <p>Return
-         * <code>true</code> if our regular expression pattern matches the
-         * specified input. If it does, save necessary state information so that
-         * the
-         * <code>replacement()</code> method will return appropriate results
-         * based on the
-         * <code>rule</code> specified to our constructor.</p>
+         * <p>
+         * Return <code>true</code> if our regular expression pattern matches
+         * the specified input. If it does, save necessary state information so
+         * that the <code>replacement()</code> method will return appropriate
+         * results based on the <code>rule</code> specified to our
+         * constructor.</p>
          *
          * @param input Input characters to be matched
          */
@@ -835,11 +854,11 @@ public final class Inflector {
         }
 
         /**
-         * <p>Return a replacement string based on the
-         * <code>rule</code> that was specified to our constructor. This method
+         * <p>
+         * Return a replacement string based on the <code>rule</code> that was
+         * specified to our constructor. This method
          * <strong>MUST</strong>
-         * only be called when the
-         * <code>matches()</code> method has returned
+         * only be called when the <code>matches()</code> method has returned
          * <code>true</code>.</p>
          */
         public String replacement() {
