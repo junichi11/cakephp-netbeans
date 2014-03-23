@@ -46,9 +46,7 @@ import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.text.JTextComponent;
-import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.editor.Utilities;
-import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.spi.palette.DragAndDropHandler;
 import org.netbeans.spi.palette.PaletteActions;
 import org.netbeans.spi.palette.PaletteController;
@@ -69,7 +67,7 @@ public class BaserCmsPaletteFactory {
     public static final String BASERCMS3_CATEGORY = "baserCMS3"; // NOI18N
     private static PaletteController palette = null;
 
-    @MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = PaletteController.class)
+//    @MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = PaletteController.class)
     public static PaletteController createPalette() {
         if (palette == null) {
             try {
