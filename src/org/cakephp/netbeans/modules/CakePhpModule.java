@@ -507,6 +507,7 @@ public class CakePhpModule implements ChangeListener {
      *
      * @return {@link CakeVersion}
      */
+    @CheckForNull
     public CakeVersion getCakeVersion() {
         return (CakeVersion) getVersion(VERSION_TYPE.CAKEPHP);
     }
