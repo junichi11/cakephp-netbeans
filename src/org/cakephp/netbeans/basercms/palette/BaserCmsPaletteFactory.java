@@ -41,13 +41,17 @@
  */
 package org.cakephp.netbeans.basercms.palette;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
-import org.netbeans.api.editor.mimelookup.MimeRegistration;
+import javax.swing.text.JTextComponent;
+import org.netbeans.editor.Utilities;
 import org.netbeans.spi.palette.DragAndDropHandler;
 import org.netbeans.spi.palette.PaletteActions;
 import org.netbeans.spi.palette.PaletteController;
 import org.netbeans.spi.palette.PaletteFactory;
+import org.openide.text.ActiveEditorDrop;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.datatransfer.ExTransferable;
@@ -63,7 +67,7 @@ public class BaserCmsPaletteFactory {
     public static final String BASERCMS3_CATEGORY = "baserCMS3"; // NOI18N
     private static PaletteController palette = null;
 
-    @MimeRegistration(mimeType = "text/html", service = PaletteController.class)
+//    @MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = PaletteController.class)
     public static PaletteController createPalette() {
         if (palette == null) {
             try {
@@ -73,7 +77,7 @@ public class BaserCmsPaletteFactory {
                 Exceptions.printStackTrace(ex);
             }
         }
-        return null;
+        return palette;
     }
 
     private static class BaserCmsPaletteActions extends PaletteActions {
@@ -99,8 +103,34 @@ public class BaserCmsPaletteFactory {
         }
 
         @Override
-        public Action getPreferredAction(Lookup arg0) {
-            return null;
+        public Action getPreferredAction(Lookup item) {
+            return new BaserCmsPaletteInsertAction(item);
+        }
+    }
+
+    private static class BaserCmsPaletteInsertAction extends AbstractAction {
+
+        private static final long serialVersionUID = -543790648415736041L;
+        private final Lookup item;
+
+        public BaserCmsPaletteInsertAction(Lookup item) {
+            this.item = item;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ActiveEditorDrop activeEditorDrop = item.lookup(ActiveEditorDrop.class);
+            JTextComponent target = Utilities.getFocusedComponent();
+            if (target == null) {
+                return;
+            }
+            try {
+                activeEditorDrop.handleTransfer(target);
+            } finally {
+                Utilities.requestFocus(target);
+            }
+            PaletteController palette = BaserCmsPaletteFactory.createPalette();
+            palette.clearSelection();
         }
 
     }
