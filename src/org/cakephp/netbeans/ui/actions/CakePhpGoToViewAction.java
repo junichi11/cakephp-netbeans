@@ -58,6 +58,7 @@ import org.cakephp.netbeans.ui.PopupUtil;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToViewItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.editor.EditorSupport;
@@ -142,8 +143,11 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
         if (cakeModule == null) {
             return new FileObject[0];
         }
-
-        if (cakeModule.getCakeVersion().getMajor() >= 2) {
+        CakeVersion cakeVersion = cakeModule.getCakeVersion();
+        if (cakeVersion == null) {
+            return new FileObject[0];
+        }
+        if (cakeVersion.getMajor() >= 2) {
             themeDirectory = controller.getFileObject("../../View/Themed"); // NOI18N
         } else {
             themeDirectory = controller.getFileObject("../../views/themed"); // NOI18N

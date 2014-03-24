@@ -50,6 +50,7 @@ import static org.cakephp.netbeans.editor.codecompletion.methods.Method.SLASH;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.openide.filesystems.FileObject;
 
@@ -99,7 +100,11 @@ public class AssetMethod extends Method {
         if (cakeModule == null) {
             return Collections.emptyList();
         }
-        int cakeVersion = cakeModule.getCakeVersion().getMajor();
+        CakeVersion version = cakeModule.getCakeVersion();
+        if (version == null) {
+            return Collections.emptyList();
+        }
+        int cakeVersion = version.getMajor();
         List<String> elements = new LinkedList<String>();
         if (type == null) {
             return elements;

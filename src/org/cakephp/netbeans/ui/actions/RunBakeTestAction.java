@@ -46,6 +46,7 @@ import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -100,7 +101,11 @@ public class RunBakeTestAction extends BaseAction {
         }
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         // support only CakePHP2.x and 3.x
-        if (cakeModule == null || cakeModule.getCakeVersion().getMajor() <= 1) {
+        if (cakeModule == null) {
+            return;
+        }
+        CakeVersion version = cakeModule.getCakeVersion();
+        if (version == null || version.getMajor() <= 1) {
             return;
         }
 

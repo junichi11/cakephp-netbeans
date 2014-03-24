@@ -52,6 +52,7 @@ import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpCodeUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
@@ -396,7 +397,11 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
         if (cakeModule == null) {
             return name;
         }
-        int major = cakeModule.getCakeVersion().getMajor();
+        CakeVersion version = cakeModule.getCakeVersion();
+        if (version == null) {
+            return name;
+        }
+        int major = version.getMajor();
         if (major >= 3) {
             name = CakePhpUtils.getFullyQualifiedClassName(entityFile);
         } else {
