@@ -423,7 +423,12 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                 clearLabel();
                 return;
             }
+            // TODO better checking
             CakeVersion version = cakeModule.getCakeVersion();
+            if (version == null) {
+                clearLabel();
+                return;
+            }
             String versionNumber = version.getVersion();
             cakeVersionLabel.setText(versionNumber + ":"); // NOI18N
             cakeVersionLabel.setIcon(icon);
