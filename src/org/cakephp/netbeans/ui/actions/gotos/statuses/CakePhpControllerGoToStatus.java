@@ -54,6 +54,7 @@ import org.cakephp.netbeans.ui.actions.gotos.items.GoToItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToModelItem;
 import org.cakephp.netbeans.ui.actions.gotos.items.GoToViewItem;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.StringUtils;
@@ -176,7 +177,11 @@ public class CakePhpControllerGoToStatus extends CakePhpGoToStatus {
         FileObject themeDirectory = null;
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
-            if (cakeModule.getCakeVersion().getMajor() >= 2) {
+            CakeVersion version = cakeModule.getCakeVersion();
+            if (version == null) {
+                return null;
+            }
+            if (version.getMajor() >= 2) {
                 themeDirectory = controller.getFileObject("../../View/Themed"); // NOI18N
             } else {
                 themeDirectory = controller.getFileObject("../../views/themed"); // NOI18N

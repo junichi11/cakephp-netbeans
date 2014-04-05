@@ -191,6 +191,6 @@ public class FixNamespaceAction extends BaseAction {
         if (cakeModule == null) {
             return false;
         }
-        return cakeModule.getCakeVersion().isCakePhp(3);
+        return cakeModule.isCakePhp(3);
     }
 }

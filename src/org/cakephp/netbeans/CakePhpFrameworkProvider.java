@@ -240,7 +240,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
             return;
         }
         CakeVersion version = cakeModule.getCakeVersion();
-        if (version.hasUpdate()) {
+        if (version != null && version.hasUpdate()) {
             // Notification
             NotificationDisplayer notification = NotificationDisplayer.getDefault();
             String latestStableVersion = version.getLatestStableVersion();

@@ -507,6 +507,7 @@ public class CakePhpModule implements ChangeListener {
      *
      * @return {@link CakeVersion}
      */
+    @CheckForNull
     public CakeVersion getCakeVersion() {
         return (CakeVersion) getVersion(VERSION_TYPE.CAKEPHP);
     }
@@ -519,6 +520,9 @@ public class CakePhpModule implements ChangeListener {
      */
     public boolean isCakePhp(int majorVersion) {
         CakeVersion version = getCakeVersion();
+        if (version == null) {
+            return false;
+        }
         return version.isCakePhp(majorVersion);
     }
 

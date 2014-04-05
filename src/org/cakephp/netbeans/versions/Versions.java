@@ -44,6 +44,7 @@ package org.cakephp.netbeans.versions;
 import java.util.Collection;
 import java.util.Map;
 import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
+import org.netbeans.api.annotations.common.CheckForNull;
 
 /**
  *
@@ -73,6 +74,7 @@ public class Versions {
      * @return version if has version for {@code VERSION_TYPE}, {@code null}
      * otherwise.
      */
+    @CheckForNull
     public Versionable getVersion(VERSION_TYPE versionType) {
         return versionsMap.get(versionType);
     }

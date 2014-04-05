@@ -79,6 +79,9 @@ public class ElementMethod extends AssetMethod {
 
         List<String> elements = new ArrayList<String>();
         CakeVersion cakeVersion = cakeModule.getCakeVersion();
+        if (cakeVersion == null) {
+            return Collections.emptyList();
+        }
         int majorVersion = cakeVersion.getMajor();
 
         if (argCount == 1) {

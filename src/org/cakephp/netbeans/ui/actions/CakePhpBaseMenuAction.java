@@ -171,12 +171,12 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         return menu;
     }
 
-    private DataObject getDataObject() {
+    private static DataObject getDataObject() {
         Lookup context = Utilities.actionsGlobalContext();
         return context.lookup(DataObject.class);
     }
 
-    private FileObject getFileObject() {
+    private static FileObject getFileObject() {
         DataObject dataObject = getDataObject();
         if (dataObject != null) {
             return dataObject.getPrimaryFile();
@@ -186,13 +186,15 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
 
     @Override
     public Component getToolbarPresenter() {
-        CakeToolbarPresenter cakeToolbarPresenter = new CakeToolbarPresenter();
         if (CakePhpUtils.isCakePHP(PhpModule.Factory.inferPhpModule())) {
+            CakeToolbarPresenter cakeToolbarPresenter = new CakeToolbarPresenter();
             cakeToolbarPresenter.setVisible(true);
+            return cakeToolbarPresenter;
         } else {
-            cakeToolbarPresenter.setVisible(false);
+            JButton button = new JButton();
+            button.setVisible(false);
+            return button;
         }
-        return cakeToolbarPresenter;
     }
 
     private boolean isAvailableWithEditor() {
@@ -211,58 +213,56 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         private static final CakePhpBaseMenuAction INSTANCE = new CakePhpBaseMenuAction();
     }
 
-    private class CakeToolbarPresenter extends JButton {
+    private static class CakeToolbarPresenter extends JButton {
 
         private static final long serialVersionUID = 2139565806752438122L;
-        private JPopupMenu popup = new JPopupMenu();
 
         CakeToolbarPresenter() {
-            PhpModule phpModule = PhpModule.Factory.inferPhpModule();
-            if (CakePhpUtils.isCakePHP(phpModule)) {
-                this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
-                popup.removeAll();
+            this.setIcon(ImageUtilities.loadImageIcon(CakePhp.CAKE_ICON_16, true));
+            // add listener
+            this.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    PhpModule phpModule = PhpModule.Factory.inferPhpModule();
+                    JPopupMenu popup = new JPopupMenu();
+                    if (CakePhpUtils.isCakePHP(phpModule)) {
+                        // add actions
+                        // smart go to
+                        popup.add(CakePhpGoToSmartAction.getInstance());
+                        popup.add(CakePhpGoToTestCasesAction.getInstance());
+                        popup.add(CakePhpGoToControllersAction.getInstance());
+                        popup.add(CakePhpGoToViewsAction.getInstance());
+                        popup.add(CakePhpGoToModelsAction.getInstance());
+                        popup.add(CakePhpGoToComponentsAction.getInstance());
+                        popup.add(CakePhpGoToHelpersAction.getInstance());
+                        popup.add(CakePhpGoToBehaviorsAction.getInstance());
+                        popup.add(CakePhpGoToFixturesAction.getInstance());
 
-                // add actions
-                // smart go to
-                popup.add(CakePhpGoToSmartAction.getInstance());
-                popup.add(CakePhpGoToTestCasesAction.getInstance());
-                popup.add(CakePhpGoToControllersAction.getInstance());
-                popup.add(CakePhpGoToViewsAction.getInstance());
-                popup.add(CakePhpGoToModelsAction.getInstance());
-                popup.add(CakePhpGoToComponentsAction.getInstance());
-                popup.add(CakePhpGoToHelpersAction.getInstance());
-                popup.add(CakePhpGoToBehaviorsAction.getInstance());
-                popup.add(CakePhpGoToFixturesAction.getInstance());
+                        // format
+                        popup.add(FormatPlusAction.getInstance());
 
-                // format
-                popup.add(FormatPlusAction.getInstance());
+                        // create test
+                        DataObject dataObject = getDataObject();
+                        if (dataObject != null) {
+                            popup.add(new RunBakeTestAction(dataObject));
+                        }
 
-                // create test
-                DataObject dataObject = getDataObject();
-                if (dataObject != null) {
-                    popup.add(new RunBakeTestAction(dataObject));
-                }
+                        // run action
+                        popup.add(RunActionAction.getInstance());
 
-                // run action
-                popup.add(RunActionAction.getInstance());
+                        // fix namespace
+                        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+                        if (cakeModule != null && cakeModule.isCakePhp(3)) {
+                            FileObject fileObject = getFileObject();
+                            if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
+                                popup.add(new FixNamespaceAction());
+                            }
+                        }
 
-                // fix namespace
-                CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-                if (cakeModule != null && cakeModule.isCakePhp(3)) {
-                    FileObject fileObject = getFileObject();
-                    if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
-                        popup.add(new FixNamespaceAction());
+                        popup.show(CakeToolbarPresenter.this, 0, CakeToolbarPresenter.this.getHeight());
                     }
                 }
-
-                // add listener
-                this.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        CakeToolbarPresenter.this.popup.show(CakeToolbarPresenter.this, 0, CakeToolbarPresenter.this.getHeight());
-                    }
-                });
-            }
+            });
         }
     }
 }

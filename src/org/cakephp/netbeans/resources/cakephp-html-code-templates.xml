@@ -44,65 +44,65 @@ Portions Copyrighted 2013 Sun Microsystems, Inc.
 <!DOCTYPE codetemplates PUBLIC "-//NetBeans//DTD Editor Code Templates settings 1.0//EN" "http://www.netbeans.org/dtds/EditorCodeTemplates-1_0.dtd">
 <codetemplates>
     <!--php-->
-    <codetemplate contexts="cake-code" abbreviation="ph">
+    <codetemplate contexts="" abbreviation="ph">
         <code><![CDATA[<?php ${cursor}]]>
         </code>
         <description>PHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="php">
+    <codetemplate contexts="" abbreviation="php">
         <code><![CDATA[<?php ${cursor}?>]]>
         </code>
         <description>PHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="phpln">
+    <codetemplate contexts="" abbreviation="phpln">
         <code><![CDATA[<?php
 ${cursor}
 ?>]]>
         </code>
         <description>PHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="phpe">
+    <codetemplate contexts="" abbreviation="phpe">
         <code><![CDATA[<?php echo ${cursor};?>]]>
         </code>
         <description>PHP</description>
     </codetemplate>
 
-    <codetemplate contexts="cake-code" abbreviation="chs">
+    <codetemplate contexts="" abbreviation="chs">
         <code><![CDATA[<?php echo h(${selection})${cursor}?>]]>
         </code>
         <description>CakePHP</description>
     </codetemplate>
 
     <!--View-->
-    <codetemplate contexts="cake-code" abbreviation="cel">
+    <codetemplate contexts="" abbreviation="cel">
         <code><![CDATA[<?php echo $this->element('${element}'); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cel2">
+    <codetemplate contexts="" abbreviation="cel2">
         <code><![CDATA[<?php echo $this->element('${element}', array('${var}' => ${'message'})); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="celcache">
+    <codetemplate contexts="" abbreviation="celcache">
         <code><![CDATA[<?php echo $this->element('${element}', ${array()}, array('cache' => true)); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cex">
+    <codetemplate contexts="" abbreviation="cex">
         <code><![CDATA[<?php echo $this->extend('${name}'); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfet">
+    <codetemplate contexts="" abbreviation="cfet">
         <code><![CDATA[<?php echo $this->fetch('${name}'); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cstart">
+    <codetemplate contexts="" abbreviation="cstart">
         <code><![CDATA[<?php $this->start('${name}');?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cend">
+    <codetemplate contexts="" abbreviation="cend">
         <code><![CDATA[<?php $this->end();?>${cursor} ]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cstarte">
+    <codetemplate contexts="" abbreviation="cstarte">
         <code><![CDATA[<?php $this->start('${name}');?>${cursor}
 <?php $this->end();?>
 ]]></code>
@@ -110,65 +110,65 @@ ${cursor}
     </codetemplate>
 
     <!--Html Helper-->
-    <codetemplate contexts="cake-code" abbreviation="chtml">
+    <codetemplate contexts="" abbreviation="chtml">
         <code><![CDATA[<?php $this->Html->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chtmle">
+    <codetemplate contexts="" abbreviation="chtmle">
         <code><![CDATA[<?php echo $this->Html->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chcss">
+    <codetemplate contexts="" abbreviation="chcss">
         <code><![CDATA[<?php echo $this->Html->css('${css}'); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chscr">
+    <codetemplate contexts="" abbreviation="chscr">
         <code><![CDATA[<?php echo $this->Html->script('${script}'); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chchar">
+    <codetemplate contexts="" abbreviation="chchar">
         <code><![CDATA[<?php echo $this->Html->charset(${cursor}); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chmeta">
+    <codetemplate contexts="" abbreviation="chmeta">
         <code><![CDATA[<?php echo $this->Html->meta(${cursor}); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chimage">
+    <codetemplate contexts="" abbreviation="chimage">
         <code><![CDATA[<?php echo $this->Html->image${cursor}?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chimg">
+    <codetemplate contexts="" abbreviation="chimg">
         <code><![CDATA[<?php echo $this->Html->image('${path}'); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chimgl">
+    <codetemplate contexts="" abbreviation="chimgl">
         <code><![CDATA[<?php echo $this->Html->image('${path}', array('alt' => '${alt}', 'url' => '${url}')); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chlink">
+    <codetemplate contexts="" abbreviation="chlink">
         <code><![CDATA[<?php echo $this->Html->link('${title}', ${$url}); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chscrstart">
+    <codetemplate contexts="" abbreviation="chscrstart">
         <code><![CDATA[<?php $this->Html->scriptStart(${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chscrstarti">
+    <codetemplate contexts="" abbreviation="chscrstarti">
         <code><![CDATA[<?php $this->Html->scriptStart(array('inline' => ${false})); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chscrend">
+    <codetemplate contexts="" abbreviation="chscrend">
         <code><![CDATA[<?php $this->Html->scriptEnd(); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chscrstarte">
+    <codetemplate contexts="" abbreviation="chscrstarte">
         <code><![CDATA[<?php $this->Html->scriptStart(); ?>${cursor}
 <?php $this->Html->scriptEnd(); ?>
 ]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="chscrstartei">
+    <codetemplate contexts="" abbreviation="chscrstartei">
         <code><![CDATA[<?php $this->Html->scriptStart(array('inline' => ${false})); ?>${cursor}
 <?php $this->Html->scriptEnd(); ?>
 ]]></code>
@@ -176,182 +176,182 @@ ${cursor}
     </codetemplate>
 
     <!--Form Helper-->
-    <codetemplate contexts="cake-code" abbreviation="cform">
+    <codetemplate contexts="" abbreviation="cform">
         <code><![CDATA[<?php $this->Form->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cforme">
+    <codetemplate contexts="" abbreviation="cforme">
         <code><![CDATA[<?php echo $this->Form->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cforme">
+    <codetemplate contexts="" abbreviation="cforme">
         <code><![CDATA[<?php echo $this->Form->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfcheck">
+    <codetemplate contexts="" abbreviation="cfcheck">
         <code><![CDATA[<?php echo $this->Form->checkbox('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfcreate">
+    <codetemplate contexts="" abbreviation="cfcreate">
         <code><![CDATA[<?php echo $this->Form->create('${Model}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfcreatee">
+    <codetemplate contexts="" abbreviation="cfcreatee">
         <code><![CDATA[<?php echo $this->Form->create(); ?>
 <?php echo $this->Form->input('${field}'); ?>
 <?php echo $this->Form->end('${name}'); ?>
 ${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfdate">
+    <codetemplate contexts="" abbreviation="cfdate">
         <code><![CDATA[<?php echo $this->Form->dateTime('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfday">
+    <codetemplate contexts="" abbreviation="cfday">
         <code><![CDATA[<?php echo $this->Form->day('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfend">
+    <codetemplate contexts="" abbreviation="cfend">
         <code><![CDATA[<?php echo $this->Form->end(${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cferror">
+    <codetemplate contexts="" abbreviation="cferror">
         <code><![CDATA[<?php echo $this->Form->error('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cffile">
+    <codetemplate contexts="" abbreviation="cffile">
         <code><![CDATA[<?php echo $this->Form->file('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfhid">
+    <codetemplate contexts="" abbreviation="cfhid">
         <code><![CDATA[<?php echo $this->Form->hidden('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfhour">
+    <codetemplate contexts="" abbreviation="cfhour">
         <code><![CDATA[<?php echo $this->Form->hour('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfin">
+    <codetemplate contexts="" abbreviation="cfin">
         <code><![CDATA[<?php echo $this->Form->input('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfinputs">
+    <codetemplate contexts="" abbreviation="cfinputs">
         <code><![CDATA[<?php echo $this->Form->inputs(${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cflabel">
+    <codetemplate contexts="" abbreviation="cflabel">
         <code><![CDATA[<?php echo $this->Form->label(${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfmeridian">
+    <codetemplate contexts="" abbreviation="cfmeridian">
         <code><![CDATA[<?php echo $this->Form->meridian('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfminute">
+    <codetemplate contexts="" abbreviation="cfminute">
         <code><![CDATA[<?php echo $this->Form->minute('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfmonth">
+    <codetemplate contexts="" abbreviation="cfmonth">
         <code><![CDATA[<?php echo $this->Form->month('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfpostb">
+    <codetemplate contexts="" abbreviation="cfpostb">
         <code><![CDATA[<?php echo $this->Form->postButton('${title}', ${$url}${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfpostl">
+    <codetemplate contexts="" abbreviation="cfpostl">
         <code><![CDATA[<?php echo $this->Form->postLink('${title}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfradio">
+    <codetemplate contexts="" abbreviation="cfradio">
         <code><![CDATA[<?php echo $this->Form->radio('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfselect">
+    <codetemplate contexts="" abbreviation="cfselect">
         <code><![CDATA[<?php echo $this->Form->select('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfsec">
+    <codetemplate contexts="" abbreviation="cfsec">
         <code><![CDATA[<?php echo $this->Form->secure(${$field}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfsub">
+    <codetemplate contexts="" abbreviation="cfsub">
         <code><![CDATA[<?php echo $this->Form->submit(${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cftext">
+    <codetemplate contexts="" abbreviation="cftext">
         <code><![CDATA[<?php echo $this->Form->textarea('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cfyear">
+    <codetemplate contexts="" abbreviation="cfyear">
         <code><![CDATA[<?php echo $this->Form->year('${field}'${cursor}); ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
 
     <!--Session Helper-->
-    <codetemplate contexts="cake-code" abbreviation="csession">
+    <codetemplate contexts="" abbreviation="csession">
         <code><![CDATA[<?php $this->Session->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="csessione">
+    <codetemplate contexts="" abbreviation="csessione">
         <code><![CDATA[<?php echo $this->Session->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cserr">
+    <codetemplate contexts="" abbreviation="cserr">
         <code><![CDATA[<?php echo $this->Session->error(); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="csflash">
+    <codetemplate contexts="" abbreviation="csflash">
         <code><![CDATA[<?php echo $this->Session->flash('${key}'); ?>${cursor}]]></code>
         <description>CakePHP</description>
     </codetemplate>
 
     <!--Number Helper-->
-    <codetemplate contexts="cake-code" abbreviation="cnumber">
+    <codetemplate contexts="" abbreviation="cnumber">
         <code><![CDATA[<?php $this->Number->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cnumbere">
+    <codetemplate contexts="" abbreviation="cnumbere">
         <code><![CDATA[<?php echo $this->Number->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
 
     <!--Paginator Helper-->
-    <codetemplate contexts="cake-code" abbreviation="cpaginator">
+    <codetemplate contexts="" abbreviation="cpaginator">
         <code><![CDATA[<?php $this->Paginator->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="cpaginatore">
+    <codetemplate contexts="" abbreviation="cpaginatore">
         <code><![CDATA[<?php echo $this->Paginator->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
 
     <!--Rss Helper-->
-    <codetemplate contexts="cake-code" abbreviation="crss">
+    <codetemplate contexts="" abbreviation="crss">
         <code><![CDATA[<?php $this->Rss->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="crsse">
+    <codetemplate contexts="" abbreviation="crsse">
         <code><![CDATA[<?php echo $this->Rss->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
 
     <!--Text Helper-->
-    <codetemplate contexts="cake-code" abbreviation="ctext">
+    <codetemplate contexts="" abbreviation="ctext">
         <code><![CDATA[<?php $this->Text->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="ctexte">
+    <codetemplate contexts="" abbreviation="ctexte">
         <code><![CDATA[<?php echo $this->Text->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
 
     <!--Time Helper-->
-    <codetemplate contexts="cake-code" abbreviation="ctime">
+    <codetemplate contexts="" abbreviation="ctime">
         <code><![CDATA[<?php $this->Time->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>
-    <codetemplate contexts="cake-code" abbreviation="ctimee">
+    <codetemplate contexts="" abbreviation="ctimee">
         <code><![CDATA[<?php echo $this->Time->${cursor}; ?>]]></code>
         <description>CakePHP</description>
     </codetemplate>

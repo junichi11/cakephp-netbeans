@@ -84,6 +84,9 @@ public class ExtendMethod extends AssetMethod {
 
         // extend method was added from 2.x
         CakeVersion cakeVersion = cakeModule.getCakeVersion();
+        if (cakeVersion == null) {
+            return Collections.emptyList();
+        }
         int major = cakeVersion.getMajor();
         if (major < 2) {
             return Collections.emptyList();

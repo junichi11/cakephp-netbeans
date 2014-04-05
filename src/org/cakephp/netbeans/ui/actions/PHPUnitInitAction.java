@@ -119,7 +119,7 @@ public class PHPUnitInitAction extends BaseAction {
         // check version
         // CakePHP 1.x uses Simple Test
         CakePhpModule module = CakePhpModule.forPhpModule(phpModule);
-        if (module == null || module.getCakeVersion().getMajor() <= 1) {
+        if (module == null || module.getCakeVersion() == null || module.isCakePhp(1)) {
             return;
         }
         webroot = module.getWebrootDirectory(DIR_TYPE.APP);
