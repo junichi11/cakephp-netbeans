@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2014 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans;
+package org.cakephp.netbeans.dotcake;
 
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
