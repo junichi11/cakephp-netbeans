@@ -61,6 +61,7 @@ public class CakePreferences {
     private static final String IGNORE_TMP_DIRECTORY = "ignore-tmp-directory"; // NOI18N
     private static final String SHOW_POPUP_FOR_ONE_ITEM = "show-popup-for-one-item"; // NOI18N
     private static final String APP_DIRECTORY_PATH = "app-directory-path"; // NOI18N
+    private static final String DOTCAKE_FILE_PATH = "dotcake-file-path"; // NOI18N
 
     public static void setEnabled(PhpModule phpModule, Boolean isEnabled) {
         getPreferences(phpModule).putBoolean(ENABLED, isEnabled);
@@ -136,6 +137,14 @@ public class CakePreferences {
 
     public static void setAppDirectoryPath(PhpModule phpModule, String path) {
         getPreferences(phpModule).put(APP_DIRECTORY_PATH, path);
+    }
+
+    public static String getDotcakeFilePath(PhpModule phpModule) {
+        return getPreferences(phpModule).get(DOTCAKE_FILE_PATH, ""); // NOI18N
+    }
+
+    public static void setDotcakeFilePath(PhpModule phpModule, String path) {
+        getPreferences(phpModule).put(DOTCAKE_FILE_PATH, path);
     }
 
     private static Preferences getPreferences(PhpModule phpModule) {
