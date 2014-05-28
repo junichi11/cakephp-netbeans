@@ -43,6 +43,7 @@ package org.cakephp.netbeans.dotcake;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +55,7 @@ import java.util.Map;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 
 /**
@@ -82,6 +84,7 @@ public final class Dotcake {
     private final String cake;
     @SerializedName("build_path")
     private final Map<String, List<String>> buildPath;
+    private File dotcakeFile;
     private static final String DOTCAKE_NAME = ".cake"; // NOI18N
 
     public enum BuildPathCategory {
@@ -103,7 +106,8 @@ public final class Dotcake {
         LIBS,
         LOCALES,
         VENDORS,
-        PLUGINS,;
+        PLUGINS,
+        NONE,;
 
         @Override
         public String toString() {
@@ -115,6 +119,15 @@ public final class Dotcake {
     public Dotcake(String cake, Map<String, List<String>> buildPath) {
         this.cake = cake;
         this.buildPath = buildPath;
+    }
+
+    private Dotcake setDotcakeFile(File dotcakeFile) {
+        this.dotcakeFile = dotcakeFile;
+        return this;
+    }
+
+    public File getDotcakeFile() {
+        return dotcakeFile;
     }
 
     /**
@@ -135,7 +148,9 @@ public final class Dotcake {
             InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8"); // NOI18N
             try {
                 Gson gson = new Gson();
-                return gson.fromJson(reader, Dotcake.class); // NOI18N
+                Dotcake dotcake = gson.fromJson(reader, Dotcake.class)
+                        .setDotcakeFile(FileUtil.toFile(dotcakeFile));
+                return dotcake;
             } finally {
                 try {
                     if (inputStream != null) {
