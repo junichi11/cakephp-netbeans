@@ -44,10 +44,13 @@ package org.cakephp.netbeans.modules;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cakephp.netbeans.dotcake.Dotcake;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP;
 import static org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE.APP_LIB;
@@ -86,7 +89,11 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_FIXTURES = "fixtures"; // NOI18N
 
     public CakePhp1ModuleImpl(PhpModule phpModule, Versions versions) {
-        super(phpModule, versions);
+        super(phpModule, versions, null);
+    }
+
+    public CakePhp1ModuleImpl(PhpModule phpModule, Versions versions, Dotcake dotcake) {
+        super(phpModule, versions, dotcake);
     }
 
     @Override
@@ -98,6 +105,13 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
 
         FileObject cake = console.getFileObject("cake.php"); // NOI18N
         return cake != null && !cake.isFolder();
+    }
+
+    @Override
+    public List<FileObject> getDirectories(DIR_TYPE dirType, FILE_TYPE fileType, String pluginName) {
+        // TODO need .cake support?
+        FileObject directory = getDirectory(dirType, fileType, pluginName);
+        return directory == null ? Collections.<FileObject>emptyList() : Collections.singletonList(directory);
     }
 
     @Override

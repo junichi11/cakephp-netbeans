@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.cakephp.netbeans.dotcake.Dotcake;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.preferences.CakePreferences;
@@ -69,11 +70,13 @@ public abstract class CakePhpModuleImpl {
     protected static final String PHP_EXT = "php"; // NOI18N
     protected static final String CTP_EXT = "ctp"; // NOI18N
     private FileObject appDirectory;
+    private final Dotcake dotcake;
     private final Versions versions;
 
-    public CakePhpModuleImpl(PhpModule phpModule, Versions versions) {
+    public CakePhpModuleImpl(PhpModule phpModule, Versions versions, Dotcake dotcake) {
         this.phpModule = phpModule;
         this.versions = versions;
+        this.dotcake = dotcake;
     }
 
     /**
@@ -97,6 +100,10 @@ public abstract class CakePhpModuleImpl {
 
     public Versions getVersions() {
         return versions;
+    }
+
+    public Dotcake getDotcake() {
+        return dotcake;
     }
 
     public static String getExt(FILE_TYPE type) {
@@ -312,6 +319,8 @@ public abstract class CakePhpModuleImpl {
 
     public abstract FileObject getDirectory(DIR_TYPE type);
 
+    public abstract List<FileObject> getDirectories(DIR_TYPE type, FILE_TYPE fileType, String pluginName);
+
     protected FileObject getAppDirectory() {
         if (appDirectory != null) {
             return appDirectory;
@@ -437,17 +446,25 @@ public abstract class CakePhpModuleImpl {
      * @return
      */
     protected FileObject getFile(String pluginName, DIR_TYPE dirType, FILE_TYPE fileType, String fileName, String directoryName) {
-        FileObject targetDirectory = getDirectory(dirType, fileType, pluginName);
-        if (targetDirectory == null || StringUtils.isEmpty(fileName)) {
+        if (StringUtils.isEmpty(fileName)) {
             return null;
         }
 
-        String targetPath = ""; // NOI18N
-        if (directoryName != null && !directoryName.isEmpty()) {
-            targetPath = toViewDirectoryName(directoryName) + "/"; // NOI18N
+        List<FileObject> directories = getDirectories(dirType, fileType, pluginName);
+        for (FileObject directory : directories) {
+            String targetPath = ""; // NOI18N
+            if (directoryName != null && !directoryName.isEmpty()) {
+                targetPath = toViewDirectoryName(directoryName) + "/"; // NOI18N
+            }
+            targetPath = targetPath + getFileNameWithExt(fileType, fileName);
+            FileObject targetFile = directory.getFileObject(targetPath);
+            if (targetFile != null) {
+                return targetFile;
+            }
         }
-        targetPath = targetPath + getFileNameWithExt(fileType, fileName);
-        return targetDirectory.getFileObject(targetPath);
+
+        // Not found target file
+        return null;
     }
 
     public abstract void refresh();
