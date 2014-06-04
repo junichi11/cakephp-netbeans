@@ -41,6 +41,7 @@
  */
 package org.cakephp.netbeans.validator;
 
+import org.cakephp.netbeans.dotcake.Dotcake;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.api.validation.ValidationResult;
 import org.openide.filesystems.FileObject;
@@ -119,6 +120,7 @@ public final class CakePhpCustomizerValidator {
     @NbBundle.Messages({
         "CakePhpCustomizerValidator.error.dotcake.notFound=[.cake] Existing .cake file must be set.",
         "CakePhpCustomizerValidator.error.dotcake.notFile=[.cake] File path must be set.",
+        "CakePhpCustomizerValidator.error.dotcake.invalid.file.format=[.cake] Invalid format. Can't get data from .cake.",
         "CakePhpCustomizerValidator.error.dotcake.invalid.file.name=[.cake] File name must be .cake."
     })
     public CakePhpCustomizerValidator validateDotcakeFilePath(FileObject sourceDirectory, String path) {
@@ -140,6 +142,13 @@ public final class CakePhpCustomizerValidator {
 
         if (!targetFile.getNameExt().equals(".cake")) { // NOI18N
             result.addWarning(new ValidationResult.Message("dotcake.path", Bundle.CakePhpCustomizerValidator_error_dotcake_invalid_file_name())); // NOI18N
+            return this;
+        }
+
+        // invalid format
+        Dotcake dotcake = Dotcake.fromJson(targetFile);
+        if (dotcake == null || dotcake.getCake() == null || dotcake.getBuildPath() == null) {
+            result.addWarning(new ValidationResult.Message("dotcake.path", Bundle.CakePhpCustomizerValidator_error_dotcake_invalid_file_format())); // NOI18N
         }
         return this;
     }
