@@ -364,6 +364,10 @@ public class CakePhpModule implements ChangeListener {
         return impl.getDirectory(dirType, fileType, pluginName);
     }
 
+    public List<FileObject> getDirectories(DIR_TYPE dirType, FILE_TYPE fileType, String pluginName) {
+        return impl.getDirectories(dirType, fileType, pluginName);
+    }
+
     public DIR_TYPE getDirectoryType(FileObject currentFile) {
         return impl.getDirectoryType(currentFile);
     }

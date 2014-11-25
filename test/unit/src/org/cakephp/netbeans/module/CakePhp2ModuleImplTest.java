@@ -78,6 +78,7 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
     boolean useProjectPath;
     boolean useAutoCreate;
     String cakeVersion;
+    private static final String CAKES_DIRECTORY_NAME = "cakes";
 
     public CakePhp2ModuleImplTest(String name) {
         super(name);
@@ -810,7 +811,7 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
     }
 
     private FileObject getCakePhpDir() {
-        return FileUtil.toFileObject(getDataDir()).getFileObject(cakeVersion);
+        return FileUtil.toFileObject(getDataDir()).getFileObject(CAKES_DIRECTORY_NAME + "/" + cakeVersion);
     }
 
     private void init() {
@@ -828,17 +829,17 @@ public class CakePhp2ModuleImplTest extends NbTestCase {
             @Override
             public FileObject getProjectDirectory() {
                 if (useProjectPath) {
-                    return FileUtil.toFileObject(getDataDir()).getFileObject(cakeVersion + "/" + app);
+                    return FileUtil.toFileObject(getDataDir()).getFileObject(CAKES_DIRECTORY_NAME + "/" + cakeVersion + "/" + app);
                 }
-                return FileUtil.toFileObject(getDataDir()).getFileObject(cakeVersion);
+                return FileUtil.toFileObject(getDataDir()).getFileObject(CAKES_DIRECTORY_NAME + "/" + cakeVersion);
             }
 
             @Override
             public FileObject getSourceDirectory() {
                 if (useProjectPath) {
-                    return FileUtil.toFileObject(getDataDir()).getFileObject(cakeVersion + "/" + app);
+                    return FileUtil.toFileObject(getDataDir()).getFileObject(CAKES_DIRECTORY_NAME + "/" + cakeVersion + "/" + app);
                 }
-                return FileUtil.toFileObject(getDataDir()).getFileObject(cakeVersion);
+                return FileUtil.toFileObject(getDataDir()).getFileObject(CAKES_DIRECTORY_NAME + "/" + cakeVersion);
             }
 
             @Override

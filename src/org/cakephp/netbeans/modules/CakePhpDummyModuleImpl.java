@@ -43,7 +43,9 @@ package org.cakephp.netbeans.modules;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import org.cakephp.netbeans.dotcake.Dotcake;
 import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -52,7 +54,16 @@ import org.openide.filesystems.FileObject;
 public class CakePhpDummyModuleImpl extends CakePhpModuleImpl {
 
     public CakePhpDummyModuleImpl(PhpModule phpModule, Versions versions) {
-        super(phpModule, versions);
+        super(phpModule, versions, null);
+    }
+
+    public CakePhpDummyModuleImpl(PhpModule phpModule, Versions versions, Dotcake dotcake) {
+        super(phpModule, versions, dotcake);
+    }
+
+    @Override
+    public List<FileObject> getDirectories(CakePhpModule.DIR_TYPE dirType, CakePhpModule.FILE_TYPE fileType, String pluginName) {
+        return Collections.emptyList();
     }
 
     @Override

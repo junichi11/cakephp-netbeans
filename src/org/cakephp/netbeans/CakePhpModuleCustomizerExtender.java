@@ -67,6 +67,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     private CakePhpCustomizerPanel component;
     private final String appDirectoryPath;
     private final String cakePhpDirPath;
+    private final String dotcakeFilePath;
     private final boolean isShowPopupForOneItem;
     private final boolean originalAutoCreateState;
     private final boolean originalIgnoreTmpDirectory;
@@ -89,6 +90,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             cakeVersion = cakeModule.getCakeVersion();
         }
         appDirectoryPath = CakePreferences.getAppDirectoryPath(phpModule, cakeVersion);
+        dotcakeFilePath = CakePreferences.getDotcakeFilePath(phpModule);
     }
 
     @Override
@@ -145,6 +147,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         String newCakePhpDirPath = getPanel().getCakePhpDirPath();
         boolean newIgnoreTmpDirectory = getPanel().ignoreTmpDirectory();
         String newAppDirectoryPath = getPanel().getAppDirectoryPath();
+        String newDotcakeFilePath = getPanel().getDotcakeFilePath();
 
         if (newAutoCreateState != originalAutoCreateState) {
             CakePreferences.setAutoCreateView(phpModule, newAutoCreateState);
@@ -166,6 +169,9 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             CakePreferences.setAppDirectoryPath(phpModule, newAppDirectoryPath);
             fireChange();
         }
+        if (!newDotcakeFilePath.equals(dotcakeFilePath)) {
+            CakePreferences.setDotcakeFilePath(phpModule, newDotcakeFilePath);
+        }
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
             cakeModule.notifyPropertyChanged(new PropertyChangeEvent(this, CakePhpModule.PROPERTY_CHANGE_CAKE, null, null));
@@ -181,6 +187,7 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
             component.setIgnoreTmpDirectory(originalIgnoreTmpDirectory);
             component.setShowPopupForOneItem(isShowPopupForOneItem);
             component.setAppDirectoryPath(appDirectoryPath);
+            component.setDotcakeFilePath(dotcakeFilePath);
             component.setEnabledCakePhp(isEnabled);
         }
         return component;
@@ -207,7 +214,8 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
         // validate
         CakePhpCustomizerValidator validator = new CakePhpCustomizerValidator()
                 .validateCakePhpPath(sourceDirectory, panel.getCakePhpDirPath())
-                .validateAppPath(sourceDirectory, panel.getAppDirectoryPath());
+                .validateAppPath(sourceDirectory, panel.getAppDirectoryPath())
+                .validateDotcakeFilePath(sourceDirectory, panel.getDotcakeFilePath());
         ValidationResult result = validator.getResult();
         if (result.hasWarnings()) {
             isValid = false;

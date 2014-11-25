@@ -402,21 +402,56 @@ public abstract class CakePhpGoToStatus {
         Collections.sort(views, FILE_COMPARATOR);
     }
 
-    private FileObject getAppDirectory(FILE_TYPE fileType) {
+    /**
+     * Get root directories for app file type.
+     *
+     * @param fileType file type
+     * @return directories for file type
+     */
+    private List<FileObject> getAppDirectories(FILE_TYPE fileType) {
         if (phpModule == null) {
-            return null;
+            return Collections.emptyList();
         }
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {
-            return null;
+            return Collections.emptyList();
         }
-        return cakeModule.getDirectory(DIR_TYPE.APP, fileType, null);
+        return cakeModule.getDirectories(DIR_TYPE.APP, fileType, null);
     }
 
+    /**
+     * Create GoToItems for file type.
+     *
+     * @param fileType
+     * @return
+     */
     private List<GoToItem> createGoToItems(FILE_TYPE fileType) {
-        return createGoToItems(getAppDirectory(fileType), fileType);
+        // multiple directories support [.cake support]
+        return createGoToItems(getAppDirectories(fileType), fileType);
     }
 
+    /**
+     * Create GoToItems for multiple directories.
+     *
+     * @param targetDirectories target directories
+     * @param fileType file type
+     * @return GoToItems
+     */
+    private List<GoToItem> createGoToItems(List<FileObject> targetDirectories, FILE_TYPE fileType) {
+        ArrayList<GoToItem> items = new ArrayList<GoToItem>();
+        for (FileObject targetDirectory : targetDirectories) {
+            items.addAll(createGoToItems(targetDirectory, fileType));
+        }
+        return items;
+    }
+
+    /**
+     * Create GoToItems.
+     *
+     * @param targetDirectory target directory
+     * @param fileType file type
+     * @return GoToItems
+     */
     private List<GoToItem> createGoToItems(FileObject targetDirectory, FILE_TYPE fileType) {
         if (targetDirectory == null || !targetDirectory.isFolder()) {
             return Collections.emptyList();

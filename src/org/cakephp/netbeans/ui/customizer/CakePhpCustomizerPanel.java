@@ -82,6 +82,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         DocumentListener documentListener = new DefaultDocumentListener();
         appDirectoryTextField.getDocument().addDocumentListener(documentListener);
         cakePhpDirTextField.getDocument().addDocumentListener(documentListener);
+        dotcakeTextField.getDocument().addDocumentListener(documentListener);
     }
 
     public boolean isEnabledCakePhp() {
@@ -132,6 +133,14 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         appDirectoryTextField.setText(path);
     }
 
+    public String getDotcakeFilePath() {
+        return dotcakeTextField.getText().trim();
+    }
+
+    public void setDotcakeFilePath(String path) {
+        dotcakeTextField.setText(path);
+    }
+
     public void addChangeListener(ChangeListener changeListener) {
         changeSupport.addChangeListener(changeListener);
     }
@@ -150,6 +159,7 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         showPopupForOneItemCheckBox.setEnabled(enabled);
         appDirectoryTextField.setEnabled(enabled);
         cakePhpDirTextField.setEnabled(enabled);
+        dotcakeTextField.setEnabled(enabled);
     }
 
     /**
@@ -175,6 +185,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         generalLabel = new javax.swing.JLabel();
         generalSeparator = new javax.swing.JSeparator();
         enabledCheckBox = new javax.swing.JCheckBox();
+        dotcakeLabel = new javax.swing.JLabel();
+        dotcakeTextField = new javax.swing.JTextField();
 
         autoCreateViewCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.autoCreateViewCheckBox.text")); // NOI18N
 
@@ -197,6 +209,10 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
         generalLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.generalLabel.text")); // NOI18N
 
         enabledCheckBox.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.enabledCheckBox.text")); // NOI18N
+
+        dotcakeLabel.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.dotcakeLabel.text")); // NOI18N
+
+        dotcakeTextField.setText(org.openide.util.NbBundle.getMessage(CakePhpCustomizerPanel.class, "CakePhpCustomizerPanel.dotcakeTextField.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -233,14 +249,18 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(appDirectoryTextField))
                                     .addGroup(layout.createSequentialGroup()
+                                        .addComponent(cakePhpDirLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cakePhpDirTextField))
+                                    .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(enabledCheckBox)
                                             .addComponent(ignoreTmpCheckBox))
                                         .addGap(0, 0, Short.MAX_VALUE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cakePhpDirLabel)
+                                        .addComponent(dotcakeLabel)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cakePhpDirTextField)))))
+                                        .addComponent(dotcakeTextField)))))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -274,6 +294,10 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cakePhpDirLabel)
                     .addComponent(cakePhpDirTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dotcakeLabel)
+                    .addComponent(dotcakeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -285,6 +309,8 @@ public class CakePhpCustomizerPanel extends javax.swing.JPanel {
     private javax.swing.JTextField cakePhpDirTextField;
     private javax.swing.JLabel customDirectoryPathLabel;
     private javax.swing.JSeparator customDirectoryPathSeparator;
+    private javax.swing.JLabel dotcakeLabel;
+    private javax.swing.JTextField dotcakeTextField;
     private javax.swing.JCheckBox enabledCheckBox;
     private javax.swing.JLabel generalLabel;
     private javax.swing.JSeparator generalSeparator;

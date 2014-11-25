@@ -41,6 +41,8 @@
  */
 package org.cakephp.netbeans.validator;
 
+import org.cakephp.netbeans.dotcake.Dotcake;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.api.validation.ValidationResult;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
@@ -111,6 +113,42 @@ public final class CakePhpCustomizerValidator {
         }
         if (config == null) {
             result.addWarning(new ValidationResult.Message("app.config", Bundle.CakePhpCustomizerValidator_error_app_config_invalid()));
+        }
+        return this;
+    }
+
+    @NbBundle.Messages({
+        "CakePhpCustomizerValidator.error.dotcake.notFound=[.cake] Existing .cake file must be set.",
+        "CakePhpCustomizerValidator.error.dotcake.notFile=[.cake] File path must be set.",
+        "CakePhpCustomizerValidator.error.dotcake.invalid.file.format=[.cake] Invalid format. Can't get data from .cake.",
+        "CakePhpCustomizerValidator.error.dotcake.invalid.file.name=[.cake] File name must be .cake."
+    })
+    public CakePhpCustomizerValidator validateDotcakeFilePath(FileObject sourceDirectory, String path) {
+        // ignore if file path is empy
+        if (StringUtils.isEmpty(path)) {
+            return this;
+        }
+
+        FileObject targetFile = sourceDirectory.getFileObject(path);
+        if (targetFile == null) {
+            result.addWarning(new ValidationResult.Message("dotcake.path", Bundle.CakePhpCustomizerValidator_error_dotcake_notFound())); // NOI18N
+            return this;
+        }
+
+        if (targetFile.isFolder()) {
+            result.addWarning(new ValidationResult.Message("dotcake.path", Bundle.CakePhpCustomizerValidator_error_dotcake_notFile())); // NOI18N
+            return this;
+        }
+
+        if (!targetFile.getNameExt().equals(".cake")) { // NOI18N
+            result.addWarning(new ValidationResult.Message("dotcake.path", Bundle.CakePhpCustomizerValidator_error_dotcake_invalid_file_name())); // NOI18N
+            return this;
+        }
+
+        // invalid format
+        Dotcake dotcake = Dotcake.fromJson(targetFile);
+        if (dotcake == null || dotcake.getCake() == null || dotcake.getBuildPath() == null) {
+            result.addWarning(new ValidationResult.Message("dotcake.path", Bundle.CakePhpCustomizerValidator_error_dotcake_invalid_file_format())); // NOI18N
         }
         return this;
     }
