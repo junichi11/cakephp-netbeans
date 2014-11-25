@@ -45,12 +45,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.spi.framework.actions.BaseAction;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
@@ -88,6 +91,9 @@ public class CheckDefaultAction extends BaseAction {
         return Bundle.LBL_VerifyCakePHP();
     }
 
+    @NbBundle.Messages({
+        "CheckDefaultAction.message.webroot.dir.error=Not found: webroot directory"
+    })
     @Override
     protected void actionPerformed(PhpModule phpModule) {
         // is it cake module? called via shortcut
@@ -102,6 +108,12 @@ public class CheckDefaultAction extends BaseAction {
             return;
         }
         FileObject webroot = module.getWebrootDirectory(CakePhpModule.DIR_TYPE.APP);
+        if (webroot == null) {
+            LOGGER.log(Level.WARNING, Bundle.CheckDefaultAction_message_webroot_dir_error());
+            NotifyDescriptor.Message message = new NotifyDescriptor.Message(Bundle.CheckDefaultAction_message_webroot_dir_error(), NotifyDescriptor.ERROR_MESSAGE);
+            DialogDisplayer.getDefault().notify(message);
+            return;
+        }
 
         // favicon.ico
         if (isChangedFavicon(phpModule)) {
@@ -211,6 +223,9 @@ public class CheckDefaultAction extends BaseAction {
      * @return
      */
     private boolean existFile(FileObject webroot, String path) {
+        if (webroot == null) {
+            return false;
+        }
         FileObject fileObject = webroot.getFileObject(path);
         if (fileObject == null) {
             return false;
