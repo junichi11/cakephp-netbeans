@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
+import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.wizards.RunActionPanel;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.netbeans.api.editor.EditorRegistry;
@@ -154,13 +155,20 @@ public class RunActionAction extends BaseAction {
             return;
         }
 
+        // plugin?
+        CakePhpModule cakePhpModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakePhpModule == null) {
+            return;
+        }
+        String pluginName = cakePhpModule.getCurrentPluginName(targetFile);
+
         // get arguments
         List<FormalParameter> arguments = getArguments(targetFile, actionName);
         String controllerId = CakePhpUtils.toUnderscoreCase(controllerName);
         String actionId = CakePhpUtils.toUnderscoreCase(actionName);
 
         // run action
-        runAction(arguments, phpModule, controllerId, actionId);
+        runAction(arguments, phpModule, controllerId, actionId, pluginName);
     }
 
     /**
@@ -236,9 +244,9 @@ public class RunActionAction extends BaseAction {
      * @param controllerId controller name
      * @param actionId action name
      */
-    private void runAction(final List<FormalParameter> params, final PhpModule pm, final String controllerId, final String actionId) {
+    private void runAction(final List<FormalParameter> params, final PhpModule pm, final String controllerId, final String actionId, final String pluginName) {
         if (params.isEmpty()) {
-            openBrowser(pm, controllerId, actionId);
+            openBrowser(pm, controllerId, actionId, pluginName);
         } else {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -255,8 +263,9 @@ public class RunActionAction extends BaseAction {
                     // open browser
                     if (descriptor.getValue() == DialogDescriptor.OK_OPTION) {
                         Map<String, String> requests = panel.getGetRequest();
-                        openBrowser(pm, controllerId, actionId, requests);
+                        openBrowser(pm, controllerId, actionId, requests, pluginName);
                     }
+                    dialog.dispose();
                 }
             });
         }
@@ -269,8 +278,8 @@ public class RunActionAction extends BaseAction {
      * @param controllerId
      * @param actionId
      */
-    private void openBrowser(PhpModule phpModule, String controllerId, String actionId) {
-        openBrowser(phpModule, controllerId, actionId, new HashMap<String, String>());
+    private void openBrowser(PhpModule phpModule, String controllerId, String actionId, String pluginName) {
+        openBrowser(phpModule, controllerId, actionId, new HashMap<String, String>(), pluginName);
     }
 
     /**
@@ -281,7 +290,7 @@ public class RunActionAction extends BaseAction {
      * @param actionId
      * @param getRequests
      */
-    private void openBrowser(PhpModule phpModule, String controllerId, String actionId, Map<String, String> getRequests) {
+    private void openBrowser(PhpModule phpModule, String controllerId, String actionId, Map<String, String> getRequests, String pluginName) {
         // build url
         StringBuilder sb = new StringBuilder();
         PhpModuleProperties properties = phpModule.getLookup().lookup(PhpModuleProperties.Factory.class).getProperties();
@@ -292,6 +301,12 @@ public class RunActionAction extends BaseAction {
                 sb.append(SLASH);
             }
         }
+
+        // plugin
+        if (!StringUtils.isEmpty(pluginName)) {
+            sb.append(CakePhpUtils.toUnderscoreCase(pluginName)).append(SLASH);
+        }
+
         sb.append(controllerId)
                 .append(SLASH)
                 .append(actionId);
