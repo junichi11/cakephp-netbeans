@@ -171,6 +171,9 @@ public abstract class CakePhpGoToStatus {
     protected abstract void scan(PhpModule phpModule, FileObject currentFile, int offset);
 
     protected void scan(final DefaultVisitor visitor, FileObject targetFile) throws ParseException {
+        if (targetFile == null) {
+            return;
+        }
         ParserManager.parse(Collections.singleton(Source.create(targetFile)), new UserTask() {
             @Override
             public void run(ResultIterator resultIterator) throws Exception {
