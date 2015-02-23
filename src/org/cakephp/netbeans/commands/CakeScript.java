@@ -193,9 +193,7 @@ public final class CakeScript {
         if (cakeModule == null) {
             return;
         }
-        FileObject app = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
-        appParams.add("-app"); // NOI18N
-        appParams.add(app.getPath());
+        appParams.addAll(getAppParam(phpModule));
         createPhpExecutable(phpModule)
                 .displayName(getDisplayName(phpModule, parameters.get(0)))
                 .additionalParameters(getAllParams(parameters))
@@ -206,6 +204,8 @@ public final class CakeScript {
         assert phpModule != null;
 
         List<String> allParams = new ArrayList<String>();
+        // #116
+        allParams.addAll(getAppParam(phpModule));
         allParams.addAll(Arrays.asList(params));
         allParams.add(HELP_PARAM);
 
@@ -366,7 +366,14 @@ public final class CakeScript {
             LOGGER.log(Level.WARNING, null, ex);
             return null;
         }
-        if (!redirectToFile(phpModule, tmpFile, LIST_XML_COMMAND)) {
+
+        // #116
+        List<String> appParam = getAppParam(phpModule);
+
+        ArrayList<String> listXmlParams = new ArrayList<String>();
+        listXmlParams.addAll(appParam);
+        listXmlParams.addAll(LIST_XML_COMMAND);
+        if (!redirectToFile(phpModule, tmpFile, listXmlParams)) {
             LOGGER.log(Level.WARNING, Bundle.CakeScript_redirect_xml_error());
             return null;
         }
@@ -385,7 +392,10 @@ public final class CakeScript {
         // parse each command
         List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
         for (CakeCommandItem item : commandsItem) {
-            if (!redirectToFile(phpModule, tmpFile, Arrays.asList(item.getCommand(), HELP_PARAM, "xml"))) { // NOI18N
+            ArrayList<String> commandParams = new ArrayList<String>();
+            commandParams.addAll(appParam);
+            commandParams.addAll(Arrays.asList(item.getCommand(), HELP_PARAM, "xml")); // NOI18N
+            if (!redirectToFile(phpModule, tmpFile, commandParams)) {
                 commands.add(new CakePhpCommand(phpModule,
                         item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
@@ -423,6 +433,20 @@ public final class CakeScript {
         }
         tmpFile.delete();
         return commands;
+    }
+
+    private List<String> getAppParam(PhpModule phpModule) {
+        ArrayList<String> appParam = new ArrayList<String>();
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return Collections.emptyList();
+        }
+        FileObject app = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
+        if (app != null) {
+            appParam.add("-app"); // NOI18N
+            appParam.add(app.getPath());
+        }
+        return appParam;
     }
 
     @NbBundle.Messages({
