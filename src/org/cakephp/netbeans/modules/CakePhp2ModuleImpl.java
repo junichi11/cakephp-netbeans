@@ -61,6 +61,7 @@ import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
@@ -145,6 +146,20 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public FileObject getDirectory(DIR_TYPE type, FILE_TYPE fileType, String pluginName) {
+        // #120 use Web Root of project properties
+        if (type == DIR_TYPE.APP && fileType == FILE_TYPE.WEBROOT) {
+            PhpModuleProperties.Factory factory = phpModule.getLookup().lookup(PhpModuleProperties.Factory.class);
+            if (factory != null) {
+                PhpModuleProperties properties = factory.getProperties();
+                if (properties != null) {
+                    FileObject webRoot = properties.getWebRoot();
+                    if (webRoot != null) {
+                        return webRoot;
+                    }
+                }
+            }
+        }
+
         if (pluginName != null && pluginName.isEmpty()) {
             pluginName = null;
         }
