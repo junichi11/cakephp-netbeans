@@ -155,12 +155,18 @@ public final class CakeScript {
         String error = null;
         if (sourceDirectory != null) {
             FileObject cake = sourceDirectory.getFileObject(scriptPath);
+            // #121
+            if (cake == null) {
+                cake = sourceDirectory.getFileObject("Vendor/cakephp/cakephp/lib/Cake/Console/cake.php"); // NOI18N
+            }
             if (cake != null) {
                 console = FileUtil.toFile(cake).getAbsolutePath();
-            }
-            error = validate(console);
-            if (error == null) {
-                return new CakeScript(console);
+                error = validate(console);
+                if (error == null) {
+                    return new CakeScript(console);
+                }
+            } else {
+                error = "Not Found: cake.php script"; // NOI18N
             }
         }
         throw new InvalidPhpExecutableException(error);
