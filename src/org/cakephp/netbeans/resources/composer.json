@@ -1,13 +1,7 @@
 {
 	"name": "your_vendor/your_project",
-	"repositories": [
-		{
-			"type": "pear",
-			"url": "http://pear.cakephp.org"
-		}
-	],
 	"require": {
-		"pear-cakephp/cakephp": ">=2.4.0",
+		"cakephp/cakephp": ">=2.6.0",
 		"composer/installers": "*",
 		"cakephp/debug_kit": "*"
 	},
