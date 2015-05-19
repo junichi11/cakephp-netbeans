@@ -247,15 +247,7 @@ public class CheckDefaultAction extends BaseAction {
         }
 
         // CakePHP 1.x, 2.x core.php
-        // CakePHP 3.x session.php
-        if (cakeModule.isCakePhp(3)) {
-            FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
-            if (configDirectory != null) {
-                config = configDirectory.getFileObject("session.php"); // NOI18N
-            }
-        } else {
-            config = cakeModule.getConfigFile();
-        }
+        config = cakeModule.getConfigFile();
 
         if (config == null) {
             return false;
