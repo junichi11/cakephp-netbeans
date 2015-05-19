@@ -105,7 +105,7 @@ public final class CakePhpCustomizerValidator {
             return this;
         }
 
-        // Cake2.x, Cake3.x
+        // Cake2.x
         FileObject config = targetDirectory.getFileObject("Config"); // NOI18N
         if (config == null) {
             // Cake1.x
