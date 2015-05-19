@@ -225,13 +225,10 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     /**
      * Get regex for debug value.
      *
-     * @param config core.php or app.php
+     * @param config core.php
      * @return regex for debug value.
      */
     private String getDebugRegex(@NonNull FileObject config) {
-        if (isCakePHP3(config)) {
-            return DEBUG_APP_REGEX;
-        }
         return DEBUG_CORE_REGEX;
     }
 
@@ -296,22 +293,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
      * @return format for debug value.
      */
     private String getDebugFormat(@NonNull FileObject config) {
-        if (isCakePHP3(config)) {
-            return DEBUG_APP_FORMAT;
-        }
         return DEBUG_CORE_FORMAT;
-    }
-
-    /**
-     * Check whether version is 3.x. Check config file name. If it's app,
-     * version 3.x, otherwise version 1.x or 2.x.
-     *
-     * @param config
-     * @return true if version is 3.x, otherwise false.
-     */
-    private boolean isCakePHP3(@NonNull FileObject config) {
-        String name = config.getName();
-        return "app".equals(name); // NOI18N
     }
 
     public void setLevel(String level) {
