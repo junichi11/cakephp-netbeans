@@ -14,7 +14,7 @@ This plugin provides support for CakePHP.
 
 ## About CakePHP 3.x
 
-Currently, This plugin doesn't recognize CakePHP3.
+Please use the following : [cakephp3-netbeans](https://github.com/junichi11/cakephp3-netbeans) 
 
 ## How to enable
 
@@ -45,7 +45,6 @@ Please check project properties > Framework > CakePHP > enabled
 - support for PHPUnit settings and create test case [v0.6.17]
 - code generation [v0.8.1]
 - run action action
-- fix namespace action (only CakePHP3.x)
 - suport for .cake file (CakePHP 2.x)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
