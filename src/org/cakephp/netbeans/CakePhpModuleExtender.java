@@ -257,7 +257,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         private static final String REFS_HEADS = "refs/heads/master"; // NOI18N
         private static final String REMOTE_COMMAND = "remote"; // NOI18N
         private static final String UTF8 = "UTF-8"; // NOI18N
-        // CakePHP 1.x, 2.x : app, CakePHP 3.x : App
+        // CakePHP 1.x, 2.x : app
         private String defaultAppName;
 
         private final CakePhpConfigurationInnerPanel innerPanel;
@@ -323,12 +323,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         }
 
         private void createDBFile(@NonNull CakePhpModule cakeModule) {
-            // create database.php
-            if (cakeModule.isCakePhp(3)) {
-                createDatasourcesFile(cakeModule);
-            } else {
-                createDatabaseFile(cakeModule);
-            }
+            createDatabaseFile(cakeModule);
         }
 
         /**
@@ -392,72 +387,6 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
             }
 
             pw.println("\t);"); // NOI18N
-        }
-
-        /**
-         * Create datasources.php (CakePHP 3.x)
-         *
-         * @param phpModule
-         */
-        private void createDatasourcesFile(CakePhpModule cakeModule) {
-            // TODO use app.php
-//        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-//        FileObject configDirectory = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
-//        if (configDirectory == null) {
-//            return;
-//        }
-//        FileObject datasourcesDefault = configDirectory.getFileObject("datasources.default.php"); // NOI18N
-//        if (datasourcesDefault == null) {
-//            return;
-//        }
-//
-//        // write file
-//        try {
-//            final OutputStream outputStream = configDirectory.createAndOpen("datasources.php"); // NOI18N
-//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, UTF8);
-//            PrintWriter pw = new PrintWriter(outputStreamWriter);
-//            NewProjectConfigurationPanel p = getPanel();
-//            boolean defaultEndFlag = false;
-//            try {
-//                for (String line : datasourcesDefault.asLines(UTF8)) {
-//                    if (defaultEndFlag == true) {
-//                        pw.println(line);
-//                        continue;
-//                    }
-//
-//                    // Datasource.default
-//                    if (line.contains("'datasources'")) { // NOI18N
-//                        pw.println("\t'datasources' => 'Cake\\Database\\Driver\\" + p.getDatasourceTextField().getText() + "',");
-//                    } else if (line.contains("'persistent'")) { // NOI18N
-//                        pw.println("\t'persistent' => " + String.valueOf(p.getPersistentCheckBox().isSelected()) + ","); // NOI18N
-//                    } else if (line.contains("'host'")) { // NOI18N
-//                        pw.println("\t'host' => '" + p.getHostTextField().getText() + "',"); // NOI18N
-//                    } else if (line.contains("'login'")) { // NOI18N
-//                        pw.println("\t'login' => '" + p.getLoginTextField().getText() + "',"); // NOI18N
-//                    } else if (line.contains("'password'")) { // NOI18N
-//                        pw.println("\t'password' => '" + String.valueOf(p.getPasswordField().getPassword()) + "',"); // NOI18N
-//                    } else if (line.contains("'database'")) { // NOI18N
-//                        pw.println("\t'database' => '" + p.getDatabaseTextField().getText() + "',"); // NOI18N
-//                    } else if (line.contains("'prefix'")) { // NOI18N
-//                        pw.println("\t'prefix' => '" + p.getPrefixTextField().getText() + "',"); // NOI18N
-//                    } else if (line.contains("'encoding'")) { // NOI18N
-//                        defaultEndFlag = true;
-//                        String encoding = p.getEncodingTextField().getText();
-//                        if (!encoding.isEmpty()) {
-//                            pw.println("\t'encoding' => '" + p.getEncodingTextField().getText() + "'"); // NOI18N
-//                        } else {
-//                            pw.println(line);
-//                        }
-//                    } else {
-//                        pw.println(line);
-//                    }
-//                }
-//            } finally {
-//                pw.close();
-//            }
-//        } catch (IOException ex) {
-//            LOGGER.log(Level.WARNING, "Fail: can't create datasources.php");
-//        }
         }
 
         /**
