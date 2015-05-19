@@ -10,7 +10,6 @@ This plugin provides support for CakePHP.
 - NetBeans 8.0+
 - CakePHP 1.3.x
 - CakePHP 2.x
-- CakePHP 3.x (early support)
 
 ## About CakePHP 3.x
 
@@ -506,16 +505,6 @@ public function index() {
 Currently, this is available for the simple situation.
 
 Please also see the following: https://github.com/junichi11/cakephp-netbeans/issues/16
-
-### Fix Namespace Action (CakePHP 3.x)
-
-Add namespace to top of file if it doesn't exist.
-
-```php
-// e.g.
-<?php
-namespace App\Controller;
-```
 
 ## CMS Support
 
