@@ -163,7 +163,7 @@ public final class CakeVersion implements Versionable {
             version = root.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/Cake/VERSION.txt"); // NOI18N
         }
 
-        // CakePHP 3.x
+        // Composer
         if (version == null) {
             version = root.getFileObject("vendor/cakephp/cakephp/VERSION.txt"); // NOI18N
         }
