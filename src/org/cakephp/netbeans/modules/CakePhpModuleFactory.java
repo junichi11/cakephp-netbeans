@@ -146,8 +146,6 @@ public final class CakePhpModuleFactory {
             } else {
                 impl = new CakePhp2ModuleImpl(phpModule, versions, dotcake);
             }
-        } else if (version.isCakePhp(3)) {
-            impl = new CakePhp3ModuleImpl(phpModule, versions);
         } else {
             impl = new CakePhpDummyModuleImpl(phpModule, versions);
         }

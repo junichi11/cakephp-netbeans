@@ -56,7 +56,7 @@ import org.openide.util.NbBundle;
         position = 500
 )
 @NbBundle.Messages({"LBL_CakePhpOptionsName=CakePHP", "CakePhp.options.keywords.TabTitle=Frameworks & Tools"})
-@OptionsPanelController.Keywords(keywords = {"php", "cakephp", "cakephp2", "cakephp3"},
+@OptionsPanelController.Keywords(keywords = {"php", "cakephp", "cakephp2"},
         location = UiUtils.OPTIONS_PATH, tabTitle = "#CakePhp.options.keywords.TabTitle")
 public final class CakePhpOptionsPanelController extends OptionsPanelController {
 

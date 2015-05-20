@@ -10,11 +10,10 @@ This plugin provides support for CakePHP.
 - NetBeans 8.0+
 - CakePHP 1.3.x
 - CakePHP 2.x
-- CakePHP 3.x (early support)
 
 ## About CakePHP 3.x
 
-Currently, This plugin doesn't recognize CakePHP3.
+Please use the following : [cakephp3-netbeans](https://github.com/junichi11/cakephp3-netbeans) 
 
 ## How to enable
 
@@ -45,7 +44,6 @@ Please check project properties > Framework > CakePHP > enabled
 - support for PHPUnit settings and create test case [v0.6.17]
 - code generation [v0.8.1]
 - run action action
-- fix namespace action (only CakePHP3.x)
 - suport for .cake file (CakePHP 2.x)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
@@ -507,16 +505,6 @@ public function index() {
 Currently, this is available for the simple situation.
 
 Please also see the following: https://github.com/junichi11/cakephp-netbeans/issues/16
-
-### Fix Namespace Action (CakePHP 3.x)
-
-Add namespace to top of file if it doesn't exist.
-
-```php
-// e.g.
-<?php
-namespace App\Controller;
-```
 
 ## CMS Support
 

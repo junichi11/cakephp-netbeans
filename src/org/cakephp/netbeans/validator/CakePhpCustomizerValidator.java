@@ -83,7 +83,7 @@ public final class CakePhpCustomizerValidator {
             script = targetDirectory.getFileObject("Vendor/pear-pear.cakephp.org/CakePHP/bin/cake.php"); // NOI18N
         }
 
-        // CakePHP 3.x
+        // composer
         if (script == null) {
             script = targetDirectory.getFileObject("vendor/cakephp/cakephp/Cake/Console/cake.php"); // NOI18N
         }
@@ -105,7 +105,7 @@ public final class CakePhpCustomizerValidator {
             return this;
         }
 
-        // Cake2.x, Cake3.x
+        // Cake2.x
         FileObject config = targetDirectory.getFileObject("Config"); // NOI18N
         if (config == null) {
             // Cake1.x

@@ -62,8 +62,6 @@ public final class CakePhpEditorExtenderFactory {
                     return new BaserCms3EditorExtender(phpModule);
                 }
                 return new CakePhp2EditorExtender(phpModule);
-            } else if (cakeModule.isCakePhp(3)) {
-                return new CakePhp3EditorExtender(phpModule);
             }
         }
         return null;
