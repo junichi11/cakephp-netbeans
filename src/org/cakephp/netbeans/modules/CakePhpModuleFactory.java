@@ -43,6 +43,8 @@ package org.cakephp.netbeans.modules;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.cakephp.netbeans.dotcake.Dotcake;
+import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.versions.CakeVersion;
 import org.cakephp.netbeans.versions.Versionable;
 import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
@@ -50,12 +52,14 @@ import org.cakephp.netbeans.versions.Versions;
 import org.cakephp.netbeans.versions.VersionsFactory;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.StringUtils;
+import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author junichi11
  */
-public class CakePhpModuleFactory {
+public final class CakePhpModuleFactory {
 
     private final Map<PhpModule, CakePhpModule> modules = new HashMap<PhpModule, CakePhpModule>();
     private static final CakePhpModuleFactory INSTANCE = new CakePhpModuleFactory();
@@ -131,6 +135,8 @@ public class CakePhpModuleFactory {
             return new CakePhpDummyModuleImpl(phpModule, versions);
         }
 
+        // .cake support (only CakePHP 2.x)
+        Dotcake dotcake = getDotcake(phpModule);
         CakePhpModuleImpl impl;
         if (version.isCakePhp(1)) {
             impl = new CakePhp1ModuleImpl(phpModule, versions);
@@ -138,14 +144,27 @@ public class CakePhpModuleFactory {
             if (versions.hasVersion(VERSION_TYPE.BASERCMS)) {
                 impl = new BaserCms3ModuleImpl(phpModule, versions);
             } else {
-                impl = new CakePhp2ModuleImpl(phpModule, versions);
+                impl = new CakePhp2ModuleImpl(phpModule, versions, dotcake);
             }
-        } else if (version.isCakePhp(3)) {
-            impl = new CakePhp3ModuleImpl(phpModule, versions);
         } else {
             impl = new CakePhpDummyModuleImpl(phpModule, versions);
         }
         return impl;
+    }
+
+    /**
+     * Get {@link Dotcake}.
+     *
+     * @param phpModule
+     * @return Dotcake instance if .cake setting exists, {@code null} otherwise
+     */
+    private Dotcake getDotcake(PhpModule phpModule) {
+        String dotcakeFilePath = CakePreferences.getDotcakeFilePath(phpModule);
+        FileObject sourceDirectory = phpModule.getSourceDirectory();
+        if (sourceDirectory != null && !StringUtils.isEmpty(dotcakeFilePath)) {
+            return Dotcake.fromJson(sourceDirectory.getFileObject(dotcakeFilePath));
+        }
+        return null;
     }
 
     private void start() {

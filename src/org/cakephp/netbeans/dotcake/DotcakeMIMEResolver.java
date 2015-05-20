@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2014 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,33 +37,32 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2013 Sun Microsystems, Inc.
+ * Portions Copyrighted 2014 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.editor.codecompletion;
+package org.cakephp.netbeans.dotcake;
 
-import org.cakephp.netbeans.editor.CakePhpEditorExtender;
-import org.cakephp.netbeans.modules.CakePhpModule;
-import org.cakephp.netbeans.versions.Versionable;
-import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.MIMEResolver;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
+ * Support for .cake file.
  *
  * @author junichi11
  */
-public final class CakePhpEditorExtenderFactory {
+@ServiceProvider(service = MIMEResolver.class)
+public final class DotcakeMIMEResolver extends MIMEResolver {
 
-    public static CakePhpEditorExtender create(PhpModule phpModule) {
-        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        if (cakeModule != null) {
-            if (cakeModule.isCakePhp(1)) {
-                return new CakePhp1EditorExtender(phpModule);
-            } else if (cakeModule.isCakePhp(2)) {
-                if (cakeModule.getVersion(Versionable.VERSION_TYPE.BASERCMS) != null) {
-                    return new BaserCms3EditorExtender(phpModule);
-                }
-                return new CakePhp2EditorExtender(phpModule);
-            }
+    private static final String DOTCAKE_FILE = ".cake"; // NOI18N
+    private static final String JSON_MIME_TYPE = "text/x-json"; // NOI18N
+
+    @Override
+    public String findMIMEType(FileObject fileObject) {
+        String fileName = fileObject.getNameExt();
+        if (DOTCAKE_FILE.equals(fileName)) {
+            return JSON_MIME_TYPE;
         }
         return null;
     }
+
 }

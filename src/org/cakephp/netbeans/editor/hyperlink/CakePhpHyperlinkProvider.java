@@ -41,16 +41,21 @@
  */
 package org.cakephp.netbeans.editor.hyperlink;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
@@ -62,13 +67,18 @@ import org.netbeans.modules.csl.api.UiUtils;
 import org.netbeans.modules.editor.NbEditorUtilities;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.util.FileUtils;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.editor.lexer.LexUtilities;
 import org.netbeans.modules.php.editor.lexer.PHPTokenId;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
 
 /**
  *
@@ -82,7 +92,10 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
     private int targetStart;
     private int targetEnd;
     private String tooltipText;
-    private static final List<String> targetMethods = Arrays.asList("element"); // NOI18N
+    private String methodName;
+    private static final String ELEMENT_METHOD = "element"; // NOI18N
+    private static final List<String> targetMethods = Arrays.asList(ELEMENT_METHOD);
+    private static final Logger LOGGER = Logger.getLogger(CakePhpHyperlinkProvider.class.getName());
 
     @Override
     public Set<HyperlinkType> getSupportedHyperlinkTypes() {
@@ -99,7 +112,9 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
         return verifyState(doc, offset);
     }
 
-    @SuppressWarnings("unchecked")
+    @NbBundle.Messages({
+        "CakePhpHyperlinkProvider.new.file.message=<html>The file doesn't exist.<b>[Click : Create a new file]</b>"
+    })
     public boolean verifyState(Document doc, int offset) {
         PhpModule phpModule = PhpModule.Factory.inferPhpModule();
         if (phpModule == null || !CakePhpUtils.isCakePHP(phpModule)) {
@@ -127,7 +142,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
         Token<PHPTokenId> token = ts.token();
         PHPTokenId id = token.id();
         int newOffset = ts.offset();
-        String methodName = getMethodName(ts);
+        methodName = getMethodName(ts);
         if (!isTarget(methodName)) {
             return false;
         }
@@ -142,10 +157,14 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
             }
 
             targetFile = getTargetFile(doc, methodName);
+            targetStart = newOffset + 1;
+            targetEnd = targetStart + targetText.length();
             if (targetFile != null) {
-                targetStart = newOffset + 1;
-                targetEnd = targetStart + targetText.length();
                 tooltipText = getTooltipText(phpModule, targetFile);
+                return true;
+            } else {
+                // create a new file
+                tooltipText = Bundle.CakePhpHyperlinkProvider_new_file_message();
                 return true;
             }
         }
@@ -207,14 +226,21 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
 
     @Override
     public int[] getHyperlinkSpan(Document doc, int offset, HyperlinkType hyperlinkType) {
-        if (targetFile != null) {
-            return new int[]{targetStart, targetEnd};
-        }
-        return new int[0];
+        return new int[]{targetStart, targetEnd};
     }
 
     @Override
     public void performClickAction(Document doc, int offset, HyperlinkType hyperlinkType) {
+        if (StringUtils.isEmpty(targetText)) {
+            return;
+        }
+
+        // create a new file?
+        if (targetFile == null) {
+            targetFile = createNewFile(doc);
+        }
+
+        // open
         if (targetFile != null) {
             try {
                 DataObject dataObject = DataObject.find(targetFile);
@@ -249,7 +275,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
      * @return {@code true} if method name is element, {@code false} otherwise
      */
     private boolean isElement(String methodName) {
-        return methodName.equals("element"); // NOI18N
+        return methodName.equals(ELEMENT_METHOD);
     }
 
     /**
@@ -266,4 +292,64 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
         }
         return previousToken.text().toString();
     }
+
+    @CheckForNull
+    private FileObject createNewFile(Document document) {
+        if (ELEMENT_METHOD.equals(methodName)) {
+            return createNewElement(document);
+        }
+        return null;
+    }
+
+    @NbBundle.Messages({
+        "# {0} - name",
+        "CakePhpHyperlinkProvider.notFound.message=Not found: {0}"
+    })
+    private FileObject createNewElement(Document document) {
+        FileObject fileObject = NbEditorUtilities.getFileObject(document);
+        PhpModule phpModule = PhpModule.Factory.forFileObject(fileObject);
+        if (phpModule == null) {
+            return null;
+        }
+        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+        if (cakeModule == null) {
+            return null;
+        }
+
+        // check plugin : Plugin.element
+        final String[] pluginSplit = CakePhpUtils.pluginSplit(targetText);
+        if (pluginSplit.length == 2) {
+            for (DIR_TYPE plugin : CakePhpModule.ALL_PLUGINS) {
+                List<FileObject> directories = cakeModule.getDirectories(plugin, FILE_TYPE.ELEMENT, pluginSplit[0]);
+                for (FileObject directory : directories) {
+                    try {
+                        return FileUtil.createData(directory, pluginSplit[1].concat(".ctp")); // NOI18N
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, ex.getMessage());
+                    }
+                }
+            }
+
+            // show dialog
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    String info = Bundle.CakePhpHyperlinkProvider_notFound_message(pluginSplit[0] + " Elements directory."); // NOI18N
+                    NotifyDescriptor.Message message = new NotifyDescriptor.Message(info, NotifyDescriptor.INFORMATION_MESSAGE);
+                    DialogDisplayer.getDefault().notify(message);
+                }
+            });
+        } else if (pluginSplit.length == 1) {
+            String pluginName = cakeModule.getCurrentPluginName(fileObject);
+            DIR_TYPE dirType = cakeModule.getDirectoryType(fileObject);
+            FileObject elementDirectory = cakeModule.getDirectory(dirType, FILE_TYPE.ELEMENT, pluginName);
+            try {
+                return FileUtil.createData(elementDirectory, targetText.concat(".ctp")); // NOI18N
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage());
+            }
+        }
+        return null;
+    }
+
 }

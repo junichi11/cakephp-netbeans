@@ -43,17 +43,25 @@ package org.cakephp.netbeans.modules;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cakephp.netbeans.dotcake.Dotcake;
+import org.cakephp.netbeans.dotcake.DotcakeSupport;
 import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.modules.CakePhpModule.FILE_TYPE;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.CakeVersion;
+import org.cakephp.netbeans.versions.Versionable.VERSION_TYPE;
 import org.cakephp.netbeans.versions.Versions;
 import org.netbeans.modules.php.api.editor.PhpBaseElement;
 import org.netbeans.modules.php.api.editor.PhpClass;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
@@ -81,12 +89,24 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     private static final String DIR_HELPER = "Helper"; // NOI18N
     private static final String DIR_BEHAVIOR = "Behavior"; // NOI18N
     private static final String DIR_FIXTURE = "Fixture"; // NOI18N
+    private static final List<FILE_TYPE> FILE_TYPES = Arrays.asList( // don't change order
+            FILE_TYPE.BEHAVIOR,
+            FILE_TYPE.MODEL,
+            FILE_TYPE.HELPER,
+            FILE_TYPE.VIEW,
+            FILE_TYPE.COMPONENT,
+            FILE_TYPE.CONTROLLER,
+            FILE_TYPE.CONSOLE);
 
     // XXX #66 (problem for Mac)
     private final boolean isMac = Utilities.isMac();
 
     public CakePhp2ModuleImpl(PhpModule phpModule, Versions versions) {
-        super(phpModule, versions);
+        super(phpModule, versions, null);
+    }
+
+    public CakePhp2ModuleImpl(PhpModule phpModule, Versions versions, Dotcake dotcake) {
+        super(phpModule, versions, dotcake);
     }
 
     @Override
@@ -106,7 +126,40 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     }
 
     @Override
+    public List<FileObject> getDirectories(DIR_TYPE dirType, FILE_TYPE fileType, String pluginName) {
+        List<FileObject> directories = null;
+        if (dirType == DIR_TYPE.APP) {
+            // .cake
+            Dotcake dotcake = getDotcake();
+            if (dotcake != null) {
+                directories = DotcakeSupport.getDirectories(dotcake, fileType);
+            }
+            if (directories != null && !directories.isEmpty()) {
+                return directories;
+            }
+        }
+
+        // default
+        FileObject directory = getDirectory(dirType, fileType, pluginName);
+        return directory == null ? Collections.<FileObject>emptyList() : Collections.singletonList(directory);
+    }
+
+    @Override
     public FileObject getDirectory(DIR_TYPE type, FILE_TYPE fileType, String pluginName) {
+        // #120 use Web Root of project properties
+        if (type == DIR_TYPE.APP && fileType == FILE_TYPE.WEBROOT) {
+            PhpModuleProperties.Factory factory = phpModule.getLookup().lookup(PhpModuleProperties.Factory.class);
+            if (factory != null) {
+                PhpModuleProperties properties = factory.getProperties();
+                if (properties != null) {
+                    FileObject webRoot = properties.getWebRoot();
+                    if (webRoot != null) {
+                        return webRoot;
+                    }
+                }
+            }
+        }
+
         if (pluginName != null && pluginName.isEmpty()) {
             pluginName = null;
         }
@@ -290,8 +343,19 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
     }
 
     private FileObject getCoreDirectory() {
+        // .cake
+        Dotcake dotcake = getDotcake();
+        FileObject core = null;
+        if (dotcake != null) {
+            core = DotcakeSupport.getCoreDirectory(dotcake, (CakeVersion) getVersions().getVersion(VERSION_TYPE.CAKEPHP));
+        }
+        if (core != null) {
+            return core;
+        }
+
+        // default
         FileObject cakePhpDirectory = getCakePhpDirectory();
-        FileObject core = cakePhpDirectory.getFileObject("lib/Cake"); // NOI18N
+        core = cakePhpDirectory.getFileObject("lib/Cake"); // NOI18N
         if (core != null) {
             return core;
         }
@@ -514,6 +578,18 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         if (currentFile == null) {
             return FILE_TYPE.NONE;
         }
+
+        // .cake support
+        Dotcake dotcake = getDotcake();
+        DIR_TYPE dirType = getDirectoryType(currentFile);
+        if (dotcake != null && dirType == DIR_TYPE.APP) {
+            FILE_TYPE fileType = getFileType(dotcake, currentFile);
+            if (fileType != FILE_TYPE.NONE) {
+                return fileType;
+            }
+        }
+
+        // default structure
         String path = currentFile.getPath();
         String fileName = currentFile.getName();
 
@@ -568,6 +644,80 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
         }
 
         return FILE_TYPE.NONE;
+    }
+
+    /**
+     * Get {@link FILE_TYPE} from .cake information. Warning: Support only
+     * Model, Behavior, View, Element, Layout, Helper, Controller, Component,
+     * Console.
+     *
+     * @param dotcake
+     * @param currentFile current file
+     * @return file type
+     */
+    private FILE_TYPE getFileType(Dotcake dotcake, FileObject currentFile) {
+        for (FILE_TYPE type : FILE_TYPES) {
+            List<FileObject> directories = DotcakeSupport.getDirectories(dotcake, type);
+            for (FileObject directory : directories) {
+                if (FileUtil.isParentOf(directory, currentFile)) {
+                    if (!isFileTypeFileName(currentFile, type)) {
+                        return FILE_TYPE.NONE;
+                    }
+                    if (type == FILE_TYPE.VIEW) {
+                        FileObject subdirectory = directory.getFileObject("Elements"); // NOI18N
+                        if (FileUtil.isParentOf(subdirectory, currentFile)) {
+                            return FILE_TYPE.ELEMENT;
+                        }
+                        subdirectory = directory.getFileObject("Layouts"); // NOI18N
+                        if (FileUtil.isParentOf(subdirectory, currentFile)) {
+                            return FILE_TYPE.ELEMENT;
+                        }
+                    }
+                    return type;
+                }
+            }
+        }
+        return FILE_TYPE.NONE;
+    }
+
+    /**
+     * Check whether file name is proper.
+     *
+     * @param targetFile target file
+     * @param fileType file type
+     * @return true if file name for file type is proper, false otherwise.
+     */
+    private boolean isFileTypeFileName(FileObject targetFile, FILE_TYPE fileType) {
+        String ext = targetFile.getExt();
+        if (targetFile.isFolder() || ext.isEmpty()) {
+            return false;
+        }
+        switch (fileType) {
+            case CONTROLLER: // no break
+            case COMPONENT: // no break
+            case HELPER: // no break
+            case BEHAVIOR:
+                String suffixName = fileType.toString();
+                if (targetFile.getName().endsWith(suffixName) && FileUtils.isPhpFile(targetFile)) {
+                    return true;
+                }
+                break;
+            case VIEW: // no break
+            case ELEMENT: // no break
+            case LAYOUT:
+                if (FileUtils.isPhpFile(targetFile) || ext.equals("ctp")) { // NOI18N
+                    return true;
+                }
+                break;
+            case TESTCASE:
+                if (targetFile.getName().endsWith("Test") && FileUtils.isPhpFile(targetFile)) { // NOI18N
+                    return true;
+                }
+                break;
+            default:
+                return true;
+        }
+        return false;
     }
 
     @Override

@@ -11,7 +11,7 @@
 class ${name}Shell extends Shell {
 
 	public $uses = array();
-	public $task = array();
+	public $tasks = array();
 
 	function main(){
 

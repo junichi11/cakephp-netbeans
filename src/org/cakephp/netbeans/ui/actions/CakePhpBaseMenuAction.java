@@ -50,7 +50,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.StyledDocument;
 import org.cakephp.netbeans.CakePhp;
-import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToBehaviorsAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToComponentsAction;
 import org.cakephp.netbeans.ui.actions.gotos.CakePhpGoToControllersAction;
@@ -155,15 +154,6 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
                 JMenuItem run = new JMenuItem(RunActionAction.getInstance());
                 menu.add(run);
             }
-            // fix namespace
-            CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-            if (isAvaibable && cakeModule != null && cakeModule.isCakePhp(3)) {
-                FileObject fileObject = getFileObject();
-                if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
-                    JMenuItem fixNamespace = new JMenuItem(new FixNamespaceAction());
-                    menu.add(fixNamespace);
-                }
-            }
         }
         if (menu.getItemCount() == 0) {
             menu.setVisible(false);
@@ -249,15 +239,6 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
 
                         // run action
                         popup.add(RunActionAction.getInstance());
-
-                        // fix namespace
-                        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-                        if (cakeModule != null && cakeModule.isCakePhp(3)) {
-                            FileObject fileObject = getFileObject();
-                            if (fileObject != null && !CakePhpUtils.isCtpFile(fileObject)) {
-                                popup.add(new FixNamespaceAction());
-                            }
-                        }
 
                         popup.show(CakeToolbarPresenter.this, 0, CakeToolbarPresenter.this.getHeight());
                     }

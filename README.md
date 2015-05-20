@@ -10,11 +10,10 @@ This plugin provides support for CakePHP.
 - NetBeans 8.0+
 - CakePHP 1.3.x
 - CakePHP 2.x
-- CakePHP 3.x (early support)
 
 ## About CakePHP 3.x
 
-Currently, This plugin doesn't recognize CakePHP3.
+Please use the following : [cakephp3-netbeans](https://github.com/junichi11/cakephp3-netbeans) 
 
 ## How to enable
 
@@ -45,7 +44,7 @@ Please check project properties > Framework > CakePHP > enabled
 - support for PHPUnit settings and create test case [v0.6.17]
 - code generation [v0.8.1]
 - run action action
-- fix namespace action (only CakePHP3.x)
+- suport for .cake file (CakePHP 2.x)
 
 [*1] right-click in project node > CakePHP > (Run Command | Clear Cache | Install Plugins)
 
@@ -147,6 +146,25 @@ myproject(e.g. myapp)
 Please notice that Code Completion is not available. You have to add the cakephp core path to include path.
 
 After settings, please close your project and reopen it.
+
+### .cake file support
+
+`.cake` is configuration file for plugins of editors and IDEs.
+If your CakePHP project is not default directory structure, you should use it.
+e.g. In case of your `app/Model` directory name is `app/MyModel`,
+you have some `Controller` directories (Controller(default), SecondController, ThirdController), e.t.c.
+You can create it with [Dotcake Plugin](https://github.com/dotcake/dotcake) .
+
+#### Supported category
+
+- Controller
+- Component
+- Model
+- Behavior
+- View
+- Helper
+
+If you want to use it, please set its path to `Project properties > Framework > CakePHP > .cake`
 
 ### Clear Cache Action
 
@@ -487,16 +505,6 @@ public function index() {
 Currently, this is available for the simple situation.
 
 Please also see the following: https://github.com/junichi11/cakephp-netbeans/issues/16
-
-### Fix Namespace Action (CakePHP 3.x)
-
-Add namespace to top of file if it doesn't exist.
-
-```php
-// e.g.
-<?php
-namespace App\Controller;
-```
 
 ## CMS Support
 

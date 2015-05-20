@@ -57,18 +57,16 @@ import org.openide.util.Exceptions;
  *
  * @author junichi11
  */
-public class CakePhpSecurityString {
+public final class CakePhpSecurityString {
 
     // CakePHP 1.x, 2.x
     private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT = "\tConfigure::write('Security.cipherSeed', '%s');"; // NOI18N
     private static final String CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN = "Configure::write('Security.cipherSeed"; // NOI18N
     private static final String CONFIGURE_WRITE_SECURITY_SALTS_FORMAT = "\tConfigure::write('Security.salt', '%s');"; // NOI18N
     private static final String CONFIGURE_WRITE_SECURITY_SALT_PATTERN = "Configure::write('Security.salt'"; // NOI18N
-    // CakePHP 3.x
-    private static final String CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT = "\t\t'cipherSeed' => '%s',"; // NOI18N
-    private static final String CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN = "'cipherSeed'"; // NOI18N
-    private static final String CAKE_3_CONFIGURE_WRITE_SECURITY_SALTS_FORMAT = "\t\t'salt' => '%s',"; // NOI18N
-    private static final String CAKE_3_CONFIGURE_WRITE_SECURITY_SALT_PATTERN = "'salt'"; // NOI18N
+
+    CakePhpSecurityString() {
+    }
 
     /**
      * Change Security.salt and Security.cipherSeed
@@ -88,10 +86,6 @@ public class CakePhpSecurityString {
                     line = String.format(CONFIGURE_WRITE_SECURITY_SALTS_FORMAT, salt);
                 } else if (line.contains(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN)) {
                     line = String.format(CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT, cipherSeed);
-                } else if (line.contains(CAKE_3_CONFIGURE_WRITE_SECURITY_SALT_PATTERN)) {
-                    line = String.format(CAKE_3_CONFIGURE_WRITE_SECURITY_SALTS_FORMAT, salt);
-                } else if (line.contains(CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_PATTERN)) {
-                    line = String.format(CAKE_3_CONFIGURE_WRITE_SECURITY_CIPHER_SEED_FORMAT, cipherSeed);
                 } else {
                     // nothing
                 }

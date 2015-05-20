@@ -56,11 +56,11 @@ public class CakePreferences {
     private static final String AUTO_CREATE_VIEW = "auto-create-view"; // NOI18N
     private static final String CAKE_PHP_DIR_PATH = "cake-php-dir-path"; // NOI18N
     private static final String DEFAULT_APP_NAME = "app"; // NOI18N
-    private static final String CAKE3_DEFAULT_APP_NAME = "App"; // NOI18N
     private static final String USE_PROJECT_DIRECTORY = "use-project-directory"; // NOI18N
     private static final String IGNORE_TMP_DIRECTORY = "ignore-tmp-directory"; // NOI18N
     private static final String SHOW_POPUP_FOR_ONE_ITEM = "show-popup-for-one-item"; // NOI18N
     private static final String APP_DIRECTORY_PATH = "app-directory-path"; // NOI18N
+    private static final String DOTCAKE_FILE_PATH = "dotcake-file-path"; // NOI18N
 
     public static void setEnabled(PhpModule phpModule, Boolean isEnabled) {
         getPreferences(phpModule).putBoolean(ENABLED, isEnabled);
@@ -77,14 +77,7 @@ public class CakePreferences {
     public static String getAppName(PhpModule phpModule, CakeVersion version) {
         String appName = getPreferences(phpModule).get(APP_NAME, null); // NOI18N
         if (appName == null) {
-            if (version == null) {
-                return DEFAULT_APP_NAME;
-            }
-            if (version.isCakePhp(3)) {
-                appName = CAKE3_DEFAULT_APP_NAME;
-            } else {
-                appName = DEFAULT_APP_NAME;
-            }
+            appName = DEFAULT_APP_NAME;
         }
         return appName;
     }
@@ -136,6 +129,14 @@ public class CakePreferences {
 
     public static void setAppDirectoryPath(PhpModule phpModule, String path) {
         getPreferences(phpModule).put(APP_DIRECTORY_PATH, path);
+    }
+
+    public static String getDotcakeFilePath(PhpModule phpModule) {
+        return getPreferences(phpModule).get(DOTCAKE_FILE_PATH, ""); // NOI18N
+    }
+
+    public static void setDotcakeFilePath(PhpModule phpModule, String path) {
+        getPreferences(phpModule).put(DOTCAKE_FILE_PATH, path);
     }
 
     private static Preferences getPreferences(PhpModule phpModule) {
