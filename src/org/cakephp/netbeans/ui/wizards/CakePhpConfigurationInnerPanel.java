@@ -133,7 +133,7 @@ public class CakePhpConfigurationInnerPanel extends ConfigurationInnerPanel {
         String[] names = githubTags.getNames();
         Arrays.sort(names, Versionable.VERSION_COMPARATOR);
         versionComboBox.setEnabled(true);
-        versionComboBox.setModel(new DefaultComboBoxModel<String>(names));
+        versionComboBox.setModel(new DefaultComboBoxModel<>(names));
     }
 
     private void initLocalUnzipping() {

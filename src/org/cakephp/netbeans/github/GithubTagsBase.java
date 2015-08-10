@@ -74,7 +74,7 @@ public abstract class GithubTagsBase {
 
     private void init() {
         isNetworkError = false;
-        tags = new ArrayList<GithubTag>();
+        tags = new ArrayList<>();
         try {
             // JSON -> Object
             Gson gson = new Gson();
@@ -96,7 +96,7 @@ public abstract class GithubTagsBase {
             isNetworkError = true;
         }
 
-        names = new ArrayList<String>(tags.size());
+        names = new ArrayList<>(tags.size());
         if (isNetworkError) {
             return;
         }

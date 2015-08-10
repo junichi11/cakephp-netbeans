@@ -92,7 +92,7 @@ public class MVCNodeFactory implements NodeFactory {
                 FileObject rootFolder = null;
                 CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
                 if (cakeModule != null) {
-                    List<Node> list = new ArrayList<Node>();
+                    List<Node> list = new ArrayList<>();
                     for (Object object : getAvailableCustomNodeList()) {
                         if (object instanceof FILE_TYPE) {
                             rootFolder = cakeModule.getDirectory(DIR_TYPE.APP, (FILE_TYPE) object, null);
@@ -116,7 +116,7 @@ public class MVCNodeFactory implements NodeFactory {
 
         private List<Object> getAvailableCustomNodeList() {
             CakePhpOptions options = CakePhpOptions.getInstance();
-            List<Object> list = new ArrayList<Object>();
+            List<Object> list = new ArrayList<>();
             for (String customNode : options.getAvailableCustomNodes()) {
                 if (customNode.equals("Controller")) { // NOI18N
                     list.add(FILE_TYPE.CONTROLLER);

@@ -105,7 +105,7 @@ public class AssetMethod extends Method {
             return Collections.emptyList();
         }
         int cakeVersion = version.getMajor();
-        List<String> elements = new LinkedList<String>();
+        List<String> elements = new LinkedList<>();
         if (type == null) {
             return elements;
         }

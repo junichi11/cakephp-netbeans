@@ -55,7 +55,7 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpBehaviorGoToStatus extends CakePhpGoToStatus {
 
-    private final List<GoToItem> models = new ArrayList<GoToItem>();
+    private final List<GoToItem> models = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpBehaviorGoToStatus.class.getName());
     private static CakePhpBehaviorGoToStatus INSTANCE = new CakePhpBehaviorGoToStatus();
 

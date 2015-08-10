@@ -616,7 +616,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public Set<String> getAllPluginNames() {
-        Set<String> allPlugins = new HashSet<String>();
+        Set<String> allPlugins = new HashSet<>();
         for (DIR_TYPE dirType : Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN)) {
             FileObject directory = getDirectory(dirType);
             if (directory == null) {

@@ -82,7 +82,7 @@ public class DefaultField extends FieldImpl {
             fieldList = Arrays.asList(Field.VALIDATE);
         }
 
-        ArrayList<CompletionItem> items = new ArrayList<CompletionItem>();
+        ArrayList<CompletionItem> items = new ArrayList<>();
         TokenSequence<PHPTokenId> ts = CakePhpDocUtils.getTokenSequence(getDocument(), getOffset());
         ts.movePrevious();
         Token<PHPTokenId> token = ts.token();

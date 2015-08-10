@@ -150,7 +150,7 @@ public abstract class CakePhpGoToStatus {
      * @return all GoToItems
      */
     public List<GoToItem> getAll() {
-        List<GoToItem> items = new ArrayList<GoToItem>(getAllSize());
+        List<GoToItem> items = new ArrayList<>(getAllSize());
         items.addAll(getControllers());
         items.addAll(getModels());
         items.addAll(getViews());
@@ -292,7 +292,7 @@ public abstract class CakePhpGoToStatus {
             }
         }
 
-        List<GoToItem> items = new ArrayList<GoToItem>();
+        List<GoToItem> items = new ArrayList<>();
         for (ClassElement classElement : classElements) {
             FileObject testClass = classElement.getFileObject();
             items.add(new GoToTestCaseItem(testClass, DEFAULT_OFFSET));
@@ -332,7 +332,7 @@ public abstract class CakePhpGoToStatus {
         if (!StringUtils.isEmpty(target) && !target.contains(" ")) { // NOI18N
             // null means first test directory
             FileObject targetDirectory = phpModule.getTestDirectory(null);
-            Set<ClassElement> classElements = new HashSet<ClassElement>();
+            Set<ClassElement> classElements = new HashSet<>();
             if (targetDirectory != null) {
                 classElements.addAll(getClassElements(targetDirectory, target));
             }
@@ -441,7 +441,7 @@ public abstract class CakePhpGoToStatus {
      * @return GoToItems
      */
     private List<GoToItem> createGoToItems(List<FileObject> targetDirectories, FILE_TYPE fileType) {
-        ArrayList<GoToItem> items = new ArrayList<GoToItem>();
+        ArrayList<GoToItem> items = new ArrayList<>();
         for (FileObject targetDirectory : targetDirectories) {
             items.addAll(createGoToItems(targetDirectory, fileType));
         }
@@ -460,7 +460,7 @@ public abstract class CakePhpGoToStatus {
             return Collections.emptyList();
         }
         Enumeration<? extends FileObject> children = targetDirectory.getChildren(true);
-        ArrayList<GoToItem> items = new ArrayList<GoToItem>();
+        ArrayList<GoToItem> items = new ArrayList<>();
         while (children.hasMoreElements()) {
             FileObject next = children.nextElement();
             if (next.isFolder()) {

@@ -112,7 +112,7 @@ public class ProjectPropertiesSupport {
     }
 
     private static void setPhpUnitProperties(PhpModule phpModule, String bootstrapPath, String scriptPath) {
-        HashMap<String, String> propertiesMap = new HashMap<String, String>();
+        HashMap<String, String> propertiesMap = new HashMap<>();
         if (!StringUtils.isEmpty(bootstrapPath)) {
             propertiesMap.put(PHPUNIT_BOOTSTRAP_CREATE_TESTS, "true"); // NOI18N
             propertiesMap.put(PHPUNIT_BOOTSTRAP_ENABLED, "true"); // NOI18N

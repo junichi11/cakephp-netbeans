@@ -79,7 +79,7 @@ public class InitializeVagrantSettingsAction extends BaserCmsBaseAction {
     @Override
     protected void actionPerformed(PhpModule phpModule) {
         // default vagrant settings
-        HashMap<String, String> propertiesMap = new HashMap<String, String>();
+        HashMap<String, String> propertiesMap = new HashMap<>();
         propertiesMap.put("index.file", "index.file=index.php"); // NOI18N
         propertiesMap.put("run.as", "run.as=LOCAL"); // NOI18N
         propertiesMap.put("url", "url=http://192.168.33.10"); // NOI18N

@@ -215,7 +215,7 @@ public class MBHCFieldInfo extends FieldInfo {
             return Collections.emptyList();
         }
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         EditorSupport editorSupport = Lookup.getDefault().lookup(EditorSupport.class);
         FileObject appDir = module.getDirectory(DIR_TYPE.APP, fileType, null);
         list.addAll(getCommonNames(appDir, editorSupport, null));
@@ -277,7 +277,7 @@ public class MBHCFieldInfo extends FieldInfo {
      * @return common names
      */
     private List<String> getCommonNames(FileObject targetDirectory, EditorSupport editorSupport, String plugin) {
-        List<String> list = new LinkedList<String>();
+        List<String> list = new LinkedList<>();
         if (targetDirectory.isFolder()) {
             for (FileObject child : targetDirectory.getChildren()) {
                 if (child.isFolder()) {
@@ -325,11 +325,11 @@ public class MBHCFieldInfo extends FieldInfo {
     //~ inner class
     private static final class MBHCFileldsVisitor extends DefaultVisitor {
 
-        private final List<String> existingComponents = new ArrayList<String>();
-        private final List<String> existingHelpers = new ArrayList<String>();
-        private final List<String> existingUses = new ArrayList<String>();
-        private final List<String> existingActsAs = new ArrayList<String>();
-        private final Map<Type, Integer> insertOffsetMap = new EnumMap<Type, Integer>(Type.class);
+        private final List<String> existingComponents = new ArrayList<>();
+        private final List<String> existingHelpers = new ArrayList<>();
+        private final List<String> existingUses = new ArrayList<>();
+        private final List<String> existingActsAs = new ArrayList<>();
+        private final Map<Type, Integer> insertOffsetMap = new EnumMap<>(Type.class);
 
         public MBHCFileldsVisitor() {
         }

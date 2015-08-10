@@ -54,7 +54,7 @@ public class CakeZipEntryFilter implements ZipEntryFilter {
 
     private boolean deleteEmpty;
     private JTextComponent component = null;
-    private Set<String> topDirectories = new HashSet<String>();
+    private Set<String> topDirectories = new HashSet<>();
 
     public CakeZipEntryFilter(boolean deletEmpty) {
         this.deleteEmpty = deletEmpty;

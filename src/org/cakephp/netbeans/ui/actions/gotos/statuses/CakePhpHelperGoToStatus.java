@@ -63,7 +63,7 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpHelperGoToStatus extends CakePhpGoToStatus {
 
-    private final List<GoToItem> helpers = new ArrayList<GoToItem>();
+    private final List<GoToItem> helpers = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpHelperGoToStatus.class.getName());
     private static CakePhpHelperGoToStatus INSTANCE = new CakePhpHelperGoToStatus();
 

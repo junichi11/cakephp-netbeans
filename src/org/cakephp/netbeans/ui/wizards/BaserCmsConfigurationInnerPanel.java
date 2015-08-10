@@ -83,7 +83,7 @@ public class BaserCmsConfigurationInnerPanel extends ConfigurationInnerPanel {
         BaserCmsGithubTags githubTags = BaserCmsGithubTags.getInstance();
         String[] names = githubTags.getNames();
         Arrays.sort(names, Versionable.VERSION_COMPARATOR);
-        baserVersionComboBox.setModel(new DefaultComboBoxModel<String>(names));
+        baserVersionComboBox.setModel(new DefaultComboBoxModel<>(names));
     }
 
     @Override

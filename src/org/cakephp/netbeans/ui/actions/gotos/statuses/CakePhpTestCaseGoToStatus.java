@@ -81,7 +81,7 @@ import org.openide.util.Lookup;
 public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
     private FILE_TYPE fileType = FILE_TYPE.NONE;
-    private final List<GoToItem> fixtures = new ArrayList<GoToItem>();
+    private final List<GoToItem> fixtures = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpTestCaseGoToStatus.class.getName());
     private static CakePhpTestCaseGoToStatus INSTANCE = new CakePhpTestCaseGoToStatus();
 
@@ -185,7 +185,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
 
         // get class name
         String className = cakeModule.getTestedClassName(testCase);
-        List<GoToItem> items = new ArrayList<GoToItem>();
+        List<GoToItem> items = new ArrayList<>();
         Set<ClassElement> classElements = getClassElements(phpModule.getSourceDirectory(), className);
         for (ClassElement classElement : classElements) {
             FileObject fileObject = classElement.getFileObject();

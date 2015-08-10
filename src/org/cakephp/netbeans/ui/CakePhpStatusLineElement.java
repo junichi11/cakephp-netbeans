@@ -100,7 +100,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private final ImageIcon icon = new ImageIcon(getClass().getResource("/" + CakePhp.CAKE_ICON_16)); // NOI18N
     private final JLabel debugLabel = new JLabel(""); // NOI18N
     private final JLabel cakeVersionLabel = new JLabel("");
-    private static final Map<String, String> debugLevels = new HashMap<String, String>();
+    private static final Map<String, String> debugLevels = new HashMap<>();
     private Lookup.Result<FileObject> result = null;
     private PhpModule phpModule = null;
     private String level = ""; // NOI18N
@@ -122,11 +122,11 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
         result.addLookupListener(new LookupListenerImpl());
 
         // create list
-        model = new DefaultListModel<String>();
+        model = new DefaultListModel<>();
         for (String debugLv : debugLevels.keySet()) {
             model.addElement(debugLv);
         }
-        list = new JList<String>(model);
+        list = new JList<>(model);
 
         // add mouse listener
         debugLabel.addMouseListener(new MouseAdapter() {

@@ -156,7 +156,7 @@ public final class FormatPlusAction extends BaseAction {
      */
     private void removeIndentDocBlock() {
         EditorFindSupport efs = EditorFindSupport.getInstance();
-        Map<String, Object> property = new HashMap<String, Object>();
+        Map<String, Object> property = new HashMap<>();
         property.put(EditorFindSupport.FIND_WHAT, REGEX);
         property.put(EditorFindSupport.FIND_REG_EXP, true);
         property.put(EditorFindSupport.FIND_WRAP_SEARCH, true);

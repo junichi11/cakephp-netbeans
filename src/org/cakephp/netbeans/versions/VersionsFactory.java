@@ -70,7 +70,7 @@ public final class VersionsFactory {
      * @return {@link Versions}
      */
     public Versions create(@NonNull PhpModule phpModule) {
-        HashMap<VERSION_TYPE, Versionable> versionsMap = new HashMap<VERSION_TYPE, Versionable>();
+        HashMap<VERSION_TYPE, Versionable> versionsMap = new HashMap<>();
         for (VERSION_TYPE type : VERSION_TYPE.values()) {
             Versionable version = create(phpModule, type);
             if (version != null) {

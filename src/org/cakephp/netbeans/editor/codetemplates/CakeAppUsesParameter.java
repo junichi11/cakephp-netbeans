@@ -76,7 +76,7 @@ import org.openide.util.Exceptions;
 
 public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
 
-    private static final Set<String> ignoreSet = new HashSet<String>();
+    private static final Set<String> ignoreSet = new HashSet<>();
 
     static {
         ignoreSet.add("App"); // NOI18N
@@ -267,8 +267,8 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
 
         public DefaultVisitorImpl() {
         }
-        private final Set<String> classes = new HashSet<String>();
-        private final Set<String> existingClasses = new HashSet<String>();
+        private final Set<String> classes = new HashSet<>();
+        private final Set<String> existingClasses = new HashSet<>();
 
         @Override
         public void visit(StaticMethodInvocation node) {

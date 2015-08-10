@@ -60,7 +60,7 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpComponentGoToStatus extends CakePhpGoToStatus {
 
-    private final List<GoToItem> components = new ArrayList<GoToItem>();
+    private final List<GoToItem> components = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpComponentGoToStatus.class.getName());
     private static CakePhpComponentGoToStatus INSTANCE = new CakePhpComponentGoToStatus();
 
