@@ -45,18 +45,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.modules.CakePhpModule;
-import org.cakephp.netbeans.modules.CakePhpModule.DIR_TYPE;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.validator.CakePhpCustomizerValidator;
@@ -66,7 +60,6 @@ import org.cakephp.netbeans.versions.VersionsFactory;
 import org.netbeans.modules.php.api.framework.BadgeIcon;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
-import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.api.validation.ValidationResult;
 import org.netbeans.modules.php.spi.editor.EditorExtender;
 import org.netbeans.modules.php.spi.framework.PhpFrameworkProvider;
@@ -75,10 +68,10 @@ import org.netbeans.modules.php.spi.framework.PhpModuleCustomizerExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleExtender;
 import org.netbeans.modules.php.spi.framework.PhpModuleIgnoredFilesExtender;
 import org.netbeans.modules.php.spi.framework.commands.FrameworkCommandSupport;
+import org.netbeans.modules.php.spi.phpmodule.ImportantFilesImplementation;
 import org.openide.awt.Notification;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
@@ -90,14 +83,7 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     private static final RequestProcessor RP = new RequestProcessor(CakePhpFrameworkProvider.class);
     private static final String ICON_PATH = "org/cakephp/netbeans/ui/resources/cakephp_badge_8.png"; // NOI18N
     private static final CakePhpFrameworkProvider INSTANCE = new CakePhpFrameworkProvider();
-    private static final Comparator<File> FILE_COMPARATOR = new Comparator<File>() {
-        @Override
-        public int compare(File o1, File o2) {
-            return o1.getName().compareToIgnoreCase(o2.getName());
-        }
-    };
     private final BadgeIcon badgeIcon;
-    private static final Logger LOGGER = Logger.getLogger(CakePhpFrameworkProvider.class.getName());
 
     private CakePhpFrameworkProvider() {
         super("cakephp", // NOI18N
@@ -123,36 +109,9 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
         return CakePreferences.isEnabled(phpModule);
     }
 
-    @NbBundle.Messages({
-        "# {0} - name",
-        "CakePhpFrameworkProvider.config.invalid=app config directory not found for CakePHP project {0}"
-    })
     @Override
-    public File[] getConfigurationFiles(PhpModule phpModule) {
-        // return all php files from app/config
-        CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
-        if (cakeModule == null) {
-            return new File[0];
-        }
-        List<File> configFiles = new LinkedList<File>();
-        FileObject config = cakeModule.getConfigDirectory(DIR_TYPE.APP);
-        if (config == null) {
-            LOGGER.log(Level.WARNING, Bundle.CakePhpFrameworkProvider_config_invalid(phpModule.getDisplayName()));
-            return new File[0];
-        }
-        if (config.isFolder()) {
-            Enumeration<? extends FileObject> children = config.getChildren(true);
-            while (children.hasMoreElements()) {
-                FileObject child = children.nextElement();
-                if (child.isData() && FileUtils.isPhpFile(child)) {
-                    configFiles.add(FileUtil.toFile(child));
-                }
-            }
-        }
-        if (!configFiles.isEmpty()) {
-            Collections.sort(configFiles, FILE_COMPARATOR);
-        }
-        return configFiles.toArray(new File[configFiles.size()]);
+    public ImportantFilesImplementation getConfigurationFiles2(PhpModule phpModule) {
+        return new ConfigurationFiles(phpModule);
     }
 
     @Override
