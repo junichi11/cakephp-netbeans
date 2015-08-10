@@ -478,16 +478,14 @@ public final class CakeScript {
                     return false;
                 }
             }
-        } catch (CancellationException ex) {
+        } catch (CancellationException | ExecutionException ex) {
             // canceled
             return false;
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             return false;
-        } catch (ExecutionException ex) {
-            // ignored
-            return false;
         }
+
         return true;
     }
 

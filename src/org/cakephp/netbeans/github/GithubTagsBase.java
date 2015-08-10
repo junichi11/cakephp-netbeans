@@ -85,9 +85,7 @@ public abstract class GithubTagsBase {
                 }.getType();
                 tags = gson.fromJson(jsonReader, type);
             }
-        } catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (UnsupportedEncodingException ex) {
+        } catch (MalformedURLException | UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
             isNetworkError = true;

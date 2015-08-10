@@ -424,9 +424,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 Process pullProcess = Runtime.getRuntime().exec(pullCommand, envp);
                 pullProcess.waitFor();
                 progressTextField.setText("Complete"); // NOI18N
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
+            } catch (InterruptedException | IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
@@ -588,9 +586,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 if (result != null) {
                     try {
                         result.get();
-                    } catch (InterruptedException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (ExecutionException ex) {
+                    } catch (InterruptedException | ExecutionException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                 }
@@ -646,9 +642,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                     if (result != null) {
                         result.get();
                     }
-                } catch (InterruptedException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (ExecutionException ex) {
+                } catch (InterruptedException | ExecutionException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             } catch (InvalidPhpExecutableException ex) {
@@ -727,9 +721,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 ec.saveDocument();
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (BadLocationException ex) {
+            } catch (IOException | BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
@@ -812,9 +804,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 ec.saveDocument();
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (BadLocationException ex) {
+            } catch (IOException | BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }

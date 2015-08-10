@@ -161,9 +161,7 @@ public final class Dotcake {
                     Exceptions.printStackTrace(ex);
                 }
             }
-        } catch (FileNotFoundException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (UnsupportedEncodingException ex) {
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);
         }
         return null;
