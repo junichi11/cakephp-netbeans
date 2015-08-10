@@ -678,9 +678,8 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         private void createComposerJson(FileObject targetDirectory) throws IOException {
             String appName = innerPanel.getAppName();
 
-            OutputStream outputStream = null; // NOI18N
-            try {
-                outputStream = targetDirectory.createAndOpen("composer.json");
+            try (OutputStream outputStream = targetDirectory.createAndOpen("composer.json")) { // NOI18N
+
                 PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true);
                 try {
                     String composerJson = CakePhpOptions.getInstance().getComposerJson();
@@ -695,12 +694,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 } finally {
                     pw.close();
                 }
-            } finally {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
             }
-
         }
 
         /**

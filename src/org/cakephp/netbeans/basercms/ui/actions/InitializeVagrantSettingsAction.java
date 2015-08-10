@@ -102,8 +102,7 @@ public class InitializeVagrantSettingsAction extends BaserCmsBaseAction {
                 return;
             }
             OutputStream outputStream = privateProperties.getOutputStream();
-            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(outputStream), true);
-            try {
+            try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(outputStream), true)) {
                 for (String line : lines) {
                     Matcher matcher = PROPERTIES_PATTERN.matcher(line);
                     if (matcher.find()) {
@@ -116,8 +115,6 @@ public class InitializeVagrantSettingsAction extends BaserCmsBaseAction {
                 for (Map.Entry<String, String> entry : propertiesMap.entrySet()) {
                     printWriter.println(entry.getValue());
                 }
-            } finally {
-                printWriter.close();
             }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);

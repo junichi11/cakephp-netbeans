@@ -198,14 +198,11 @@ public class CakePhpOptions {
         StringBuilder sb = new StringBuilder();
         InputStream inputStream = CakePhpOptions.class.getResourceAsStream("/org/cakephp/netbeans/resources/composer.json"); // NOI18N
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // NOI18N
-            try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) { // NOI18N
                 String line;
                 while ((line = reader.readLine()) != null) {
                     sb.append(line).append("\n"); // NOI18N
                 }
-            } finally {
-                reader.close();
             }
         } catch (UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);
