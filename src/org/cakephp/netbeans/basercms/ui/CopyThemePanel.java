@@ -69,7 +69,7 @@ public class CopyThemePanel extends JPanel {
      * Creates new form CopyThemePanel
      */
     @NbBundle.Messages({
-        "CopyThemePanel.title=Copy existing theme"
+        "CopyThemePanel.title=Copy an existing theme"
     })
     public CopyThemePanel() {
         initComponents();
