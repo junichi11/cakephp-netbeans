@@ -83,7 +83,7 @@ public class CakePhpTestCaseGoToStatus extends CakePhpGoToStatus {
     private FILE_TYPE fileType = FILE_TYPE.NONE;
     private final List<GoToItem> fixtures = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpTestCaseGoToStatus.class.getName());
-    private static CakePhpTestCaseGoToStatus INSTANCE = new CakePhpTestCaseGoToStatus();
+    private static final CakePhpTestCaseGoToStatus INSTANCE = new CakePhpTestCaseGoToStatus();
 
     private CakePhpTestCaseGoToStatus() {
     }

@@ -146,7 +146,7 @@ public class AssetMethod extends Method {
 
                 FileObject webrootDirectory = cakeModule.getDirectory(dirType, FILE_TYPE.WEBROOT, pluginName);
                 if (webrootDirectory != null) {
-                    FileObject targetDirectory = null;
+                    FileObject targetDirectory;
                     if (filter.startsWith(SLASH)) {
                         targetDirectory = webrootDirectory;
                     } else {
@@ -202,6 +202,9 @@ public class AssetMethod extends Method {
     private boolean isPlugin(String pluginName) {
         if (!pluginName.startsWith(SLASH)) {
             CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
+            if (cakeModule == null) {
+                return false;
+            }
             for (DIR_TYPE dirType : PLUGINS) {
                 FileObject pluginDirectory = cakeModule.getDirectory(dirType, FILE_TYPE.NONE, pluginName);
                 if (pluginDirectory != null) {

@@ -73,14 +73,18 @@ public class MBHCField extends FieldImpl {
     }
 
     private FILE_TYPE getFileType(String fieldName) {
-        if (fieldName.equals(Field.COMPONENTS)) {
-            return FILE_TYPE.COMPONENT;
-        } else if (fieldName.equals(Field.HELPERS)) {
-            return FILE_TYPE.HELPER;
-        } else if (fieldName.equals(Field.ACTS_AS)) {
-            return FILE_TYPE.BEHAVIOR;
-        } else if (fieldName.equals(Field.USES)) {
-            return FILE_TYPE.MODEL;
+        if (fieldName != null) {
+            switch (fieldName) {
+                case Field.COMPONENTS:
+                    return FILE_TYPE.COMPONENT;
+                case Field.HELPERS:
+                    return FILE_TYPE.HELPER;
+                case Field.ACTS_AS:
+                    return FILE_TYPE.BEHAVIOR;
+                case Field.USES:
+                    return FILE_TYPE.MODEL;
+                default:
+            }
         }
         return FILE_TYPE.NONE;
     }

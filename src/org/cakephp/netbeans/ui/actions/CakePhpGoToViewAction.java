@@ -137,7 +137,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
     public FileObject[] getThemes() {
         PhpModule phpModule = PhpModule.Factory.forFileObject(controller);
         FileObject[] themes = null;
-        FileObject themeDirectory = null;
+        FileObject themeDirectory;
 
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {

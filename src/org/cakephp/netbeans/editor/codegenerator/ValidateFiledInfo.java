@@ -63,22 +63,22 @@ import org.openide.util.Lookup;
  */
 public class ValidateFiledInfo extends FieldInfo {
 
-    private static final String VALIDATION_TEMPLATE = "'${name}' => array(\n"
-            + "'rule' => '${name}',\n"
-            + "'message' => '${${name}_message}'\n"
-            + "),\n";
-    private static final String VALIDATION_TEMPLATE_ARG1 = "'${name}' => array(\n"
-            + "'rule' => array('${name}', ${${name}_arg1}),\n"
-            + "'message' => '${${name}_message}'\n"
-            + "),\n";
-    private static final String VALIDATION_TEMPLATE_ARG2 = "'${name}' => array(\n"
-            + "'rule' => array('${name}', ${${name}_arg1}, ${${name}_arg2}),\n"
-            + "'message' => '${${name}_message}'\n"
-            + "),\n";
+    private static final String VALIDATION_TEMPLATE = "'${name}' => array(\n" // NOI18N
+            + "'rule' => '${name}',\n" // NOI18N
+            + "'message' => '${${name}_message}'\n" // NOI18N
+            + "),\n"; // NOI18N
+    private static final String VALIDATION_TEMPLATE_ARG1 = "'${name}' => array(\n" // NOI18N
+            + "'rule' => array('${name}', ${${name}_arg1}),\n" // NOI18N
+            + "'message' => '${${name}_message}'\n" // NOI18N
+            + "),\n"; // NOI18N
+    private static final String VALIDATION_TEMPLATE_ARG2 = "'${name}' => array(\n" // NOI18N
+            + "'rule' => array('${name}', ${${name}_arg1}, ${${name}_arg2}),\n" // NOI18N
+            + "'message' => '${${name}_message}'\n" // NOI18N
+            + "),\n"; // NOI18N
     private static final String NAME_PLACE = "${name}"; // NOI18N
     private static final String CURSOR = "${cursor}"; // NOI18N
-    private List<String> has1args = Arrays.asList("minLength", "maxLength", "equalTo"); // NOI18N
-    private List<String> has2args = Arrays.asList("between"); // NOI18N
+    private static final List<String> HAS1ARGS = Arrays.asList("minLength", "maxLength", "equalTo"); // NOI18N
+    private static final List<String> HAS2ARGS = Arrays.asList("between"); // NOI18N
 
     protected ValidateFiledInfo(Type type, JTextComponent textComponent) {
         super(type, textComponent);
@@ -90,10 +90,10 @@ public class ValidateFiledInfo extends FieldInfo {
         for (Property property : getPossibleProperties()) {
             if (property.isSelected()) {
                 String name = property.getName();
-                String template = "";  // NOI18N
-                if (has1args.contains(name)) {
+                String template;
+                if (HAS1ARGS.contains(name)) {
                     template = VALIDATION_TEMPLATE_ARG1.replace(NAME_PLACE, name);
-                } else if (has2args.contains(name)) {
+                } else if (HAS2ARGS.contains(name)) {
                     template = VALIDATION_TEMPLATE_ARG2.replace(NAME_PLACE, name);
                 } else {
                     template = VALIDATION_TEMPLATE.replace(NAME_PLACE, name);

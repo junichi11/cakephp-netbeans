@@ -74,7 +74,7 @@ public class CakePhpFileUtils {
         }
         URL zipUrl = new URL(url);
         try (ZipInputStream zipInputStream = new ZipInputStream(zipUrl.openStream())) {
-            ZipEntry entry = null;
+            ZipEntry entry;
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 if (!filter.accept(entry)) {
                     zipInputStream.closeEntry();
@@ -105,7 +105,7 @@ public class CakePhpFileUtils {
                 return;
             }
             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
-            int data = 0;
+            int data;
             try {
                 while ((data = zipInputStream.read()) != -1) {
                     outputStream.write(data);

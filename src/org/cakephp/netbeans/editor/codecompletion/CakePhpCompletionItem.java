@@ -65,8 +65,8 @@ import org.openide.util.ImageUtilities;
 public class CakePhpCompletionItem implements CompletionItem {
 
     private final String text;
-    private static final ImageIcon fieldIcon = new ImageIcon(ImageUtilities.loadImage(CakePhp.CAKE_ICON_16));
-    private static final Color fieldColor = UIManager.getColor("List.foreground"); // NOI18N
+    private static final ImageIcon FIELD_ICON = new ImageIcon(ImageUtilities.loadImage(CakePhp.CAKE_ICON_16));
+    private static final Color FIELD_COLOR = UIManager.getColor("List.foreground"); // NOI18N
     private final int startOffset;
     private final int removeLength;
 
@@ -99,7 +99,7 @@ public class CakePhpCompletionItem implements CompletionItem {
 
     @Override
     public void render(Graphics grphcs, Font font, Color color, Color color1, int width, int height, boolean selected) {
-        CompletionUtilities.renderHtml(fieldIcon, text, null, grphcs, font, (selected ? Color.white : fieldColor), width, height, selected);
+        CompletionUtilities.renderHtml(FIELD_ICON, text, null, grphcs, font, (selected ? Color.white : FIELD_COLOR), width, height, selected);
     }
 
     @Override

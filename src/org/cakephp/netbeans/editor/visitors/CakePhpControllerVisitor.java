@@ -166,7 +166,7 @@ public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
                 // e.g. $this->view = 'add';
                 // left
                 FieldAccess f = (FieldAccess) leftHandSide;
-                Variable v = f.getField();;
+                Variable v = f.getField();
                 String variableName = CodeUtils.extractVariableName(v);
                 if (!"view".equals(variableName) && !"theme".equals(variableName)) { // NOI18N
                     return;

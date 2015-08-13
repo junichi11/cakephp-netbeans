@@ -133,9 +133,6 @@ public class CakePhpViewVisitor extends DefaultVisitor {
     }
 
     private boolean isCaretPosition(int startOffset, int endOffset) {
-        if (startOffset <= caretPositon && caretPositon <= endOffset) {
-            return true;
-        }
-        return false;
+        return startOffset <= caretPositon && caretPositon <= endOffset;
     }
 }

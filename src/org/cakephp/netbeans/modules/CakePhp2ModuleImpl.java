@@ -183,7 +183,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
             }
         }
 
-        FileObject directory = null;
+        FileObject directory;
         StringBuilder sb = new StringBuilder();
         switch (type) {
             case APP_LIB:

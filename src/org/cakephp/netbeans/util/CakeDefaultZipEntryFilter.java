@@ -53,10 +53,7 @@ public class CakeDefaultZipEntryFilter implements ZipEntryFilter {
     public boolean accept(ZipEntry entry) {
         String name = entry.getName();
         String[] splits = name.split("/"); // NOI18N
-        if (splits.length == 1 && entry.isDirectory()) {
-            return false;
-        }
-        return true;
+        return !(splits.length == 1 && entry.isDirectory());
     }
 
     @Override

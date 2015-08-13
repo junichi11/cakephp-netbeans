@@ -52,9 +52,6 @@ public class DefaultFileFilter implements FileFilter {
     @Override
     public boolean accept(FileObject fo) {
         String name = fo.getName();
-        if (name.startsWith("App") || name.startsWith("app") || name.equals("empty")) { // NOI18N
-            return false;
-        }
-        return true;
+        return !(name.startsWith("App") || name.startsWith("app") || name.equals("empty")); // NOI18N
     }
 }

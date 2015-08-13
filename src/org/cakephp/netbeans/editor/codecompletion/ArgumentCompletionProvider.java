@@ -49,6 +49,7 @@ import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
+import org.netbeans.modules.php.api.util.FileUtils;
 import org.netbeans.modules.php.editor.lexer.PHPTokenId;
 import org.netbeans.spi.editor.completion.CompletionProvider;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
@@ -61,7 +62,7 @@ import org.openide.filesystems.FileObject;
  *
  * @author junichi11
  */
-@MimeRegistration(mimeType = "text/x-php5", service = CompletionProvider.class)
+@MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = CompletionProvider.class)
 public class ArgumentCompletionProvider extends CakePhpCompletionProvider {
 
     private int argCount;

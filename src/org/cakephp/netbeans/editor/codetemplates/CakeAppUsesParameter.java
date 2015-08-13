@@ -76,14 +76,14 @@ import org.openide.util.Exceptions;
 
 public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
 
-    private static final Set<String> ignoreSet = new HashSet<>();
+    private static final Set<String> IGNORED_SET = new HashSet<>();
 
     static {
-        ignoreSet.add("App"); // NOI18N
-        ignoreSet.add("Configure"); // NOI18N
-        ignoreSet.add("Inflector"); // NOI18N
-        ignoreSet.add("CakePlugin"); // NOI18N
-        ignoreSet.add("NotFoundException"); // NOI18N
+        IGNORED_SET.add("App"); // NOI18N
+        IGNORED_SET.add("Configure"); // NOI18N
+        IGNORED_SET.add("Inflector"); // NOI18N
+        IGNORED_SET.add("CakePlugin"); // NOI18N
+        IGNORED_SET.add("NotFoundException"); // NOI18N
     }
 
     public CakeAppUsesParameter(CodeTemplateParameter parameter) {
@@ -280,7 +280,7 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
                     addExistingClass(node);
                     return;
                 }
-                if (!StringUtils.isEmpty(name) && !ignoreSet.contains(name)) {
+                if (!StringUtils.isEmpty(name) && !IGNORED_SET.contains(name)) {
                     classes.add(name);
                 }
             }
@@ -309,7 +309,7 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
         public void visit(ClassName node) {
             super.visit(node);
             String name = CodeUtils.extractClassName(node);
-            if (!StringUtils.isEmpty(name) && !ignoreSet.contains(name)) {
+            if (!StringUtils.isEmpty(name) && !IGNORED_SET.contains(name)) {
                 classes.add(name);
             }
         }

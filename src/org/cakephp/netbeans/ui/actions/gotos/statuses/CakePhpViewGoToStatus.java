@@ -91,7 +91,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
     private static final Logger LOGGER = Logger.getLogger(CakePhpViewGoToStatus.class.getName());
     private String caretPositionElementPath = ""; // NOI18N
     private String caretPositionExtendPath = ""; // NOI18N
-    private static CakePhpViewGoToStatus INSTANCE = new CakePhpViewGoToStatus();
+    private static final CakePhpViewGoToStatus INSTANCE = new CakePhpViewGoToStatus();
     private DIR_TYPE dirType;
     private boolean isInElement;
     private boolean isInLayout;
@@ -398,14 +398,12 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
                 viewBaseDirectory = viewBaseDirectory.getFileObject(ELEMENTS);
             } else if (isInLayout) {
                 viewBaseDirectory = viewBaseDirectory.getFileObject(LAYOUTS);
-            } else {
-                if (StringUtils.isEmpty(pluginName)) {
-                    if (controller == null) {
-                        continue;
-                    }
-                    String viewFolderName = cakeModule.getViewFolderName(controller.getName());
-                    viewBaseDirectory = viewBaseDirectory.getFileObject(viewFolderName);
+            } else if (StringUtils.isEmpty(pluginName)) {
+                if (controller == null) {
+                    continue;
                 }
+                String viewFolderName = cakeModule.getViewFolderName(controller.getName());
+                viewBaseDirectory = viewBaseDirectory.getFileObject(viewFolderName);
             }
             if (viewBaseDirectory == null) {
                 continue;

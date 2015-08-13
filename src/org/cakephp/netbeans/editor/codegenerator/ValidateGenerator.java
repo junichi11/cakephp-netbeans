@@ -53,6 +53,7 @@ import org.cakephp.netbeans.editor.codegenerator.ui.FieldsGeneratorPanel;
 import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
@@ -164,7 +165,12 @@ public class ValidateGenerator implements CodeGenerator {
                 if (cakeModule == null) {
                     return Collections.emptyList();
                 }
-                if (CakePhpUtils.isCakePHP(phpModule) && cakeModule.getCakeVersion().getMajor() > 1) {
+                CakeVersion cakeVersion = cakeModule.getCakeVersion();
+                if (cakeVersion == null) {
+                    return Collections.emptyList();
+                }
+
+                if (CakePhpUtils.isCakePHP(phpModule) && cakeVersion.getMajor() > 1) {
                     if (CakePhpUtils.isModel(fileObject)) {
                         return Collections.singletonList(new ValidateGenerator(context, Collections.singletonList(Type.VALIDATE)));
                     }

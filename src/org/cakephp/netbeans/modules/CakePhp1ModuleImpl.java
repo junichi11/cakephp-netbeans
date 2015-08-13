@@ -135,7 +135,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         if (fileType == null && pluginName == null) {
             return getDirectory(type);
         }
-        FileObject directory = null;
+        FileObject directory;
         String plugin = ""; // NOI18N
         switch (type) {
             case APP_LIB:    // no break
@@ -167,6 +167,9 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
                 break;
         }
         StringBuilder sb = new StringBuilder();
+        if (fileType == null) {
+            fileType = FILE_TYPE.NONE;
+        }
         switch (type) {
             case CORE:
                 String libs = "libs/"; // NOI18N
@@ -304,7 +307,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
             LOGGER.log(Level.WARNING, "Not found source directory");
             return null;
         }
-        String path = ""; // NOI18N
+        String path;
         switch (type) {
             case APP:
             case APP_LIB:
@@ -474,10 +477,7 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
         if (fileName.endsWith(".test")) { // NOI18N
             return true;
         }
-        if (path.contains("/tests/cases/") || path.contains("/tests/test_app/")) { // NOI18N
-            return true;
-        }
-        return false;
+        return path.contains("/tests/cases/") || path.contains("/tests/test_app/"); // NOI18N
     }
 
     @Override
@@ -517,18 +517,27 @@ public class CakePhp1ModuleImpl extends CakePhpModuleImpl {
     }
 
     private String getClassNameSuffixForTestDirectory(FileObject testDirectory) {
-        String suffix = "";
+        String suffix = ""; // NOI18N
         String parentFolderName = testDirectory.getName();
-        if ("controllers".equals(parentFolderName)) { // NOI18N
-            suffix = "Controller"; // NOI18N
-        } else if ("models".equals(parentFolderName)) { // NOI18N
-            suffix = ""; // NOI18N
-        } else if ("components".equals(parentFolderName)) { // NOI18N
-            suffix = "Component"; // NOI18N
-        } else if ("helpers".equals(parentFolderName)) { // NOI18N
-            suffix = "Helper"; // NOI18N
-        } else if ("behaviors".equals(parentFolderName)) { // NOI18N
-            suffix = "Behavior"; // NOI18N
+        if (null != parentFolderName) {
+            switch (parentFolderName) {
+                case "controllers": // NOI18N
+                    suffix = "Controller"; // NOI18N
+                    break;
+                case "models": // NOI18N
+                    suffix = ""; // NOI18N
+                    break;
+                case "components": // NOI18N
+                    suffix = "Component"; // NOI18N
+                    break;
+                case "helpers": // NOI18N
+                    suffix = "Helper"; // NOI18N
+                    break;
+                case "behaviors": // NOI18N
+                    suffix = "Behavior"; // NOI18N
+                    break;
+                default:
+            }
         }
         return suffix;
     }

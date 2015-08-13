@@ -52,9 +52,9 @@ import javax.swing.text.JTextComponent;
  */
 public class CakeZipEntryFilter implements ZipEntryFilter {
 
-    private boolean deleteEmpty;
+    private final boolean deleteEmpty;
     private JTextComponent component = null;
-    private Set<String> topDirectories = new HashSet<>();
+    private static final Set<String> TOP_DIRECTORIES = new HashSet<>();
 
     public CakeZipEntryFilter(boolean deletEmpty) {
         this.deleteEmpty = deletEmpty;
@@ -68,11 +68,11 @@ public class CakeZipEntryFilter implements ZipEntryFilter {
     }
 
     private void initialize() {
-        topDirectories.add("app");  // NOI18N
-        topDirectories.add("lib"); // NOI18N 2.x
-        topDirectories.add("plugins"); // NOI18N
-        topDirectories.add("vendors"); // NOI18N
-        topDirectories.add("cake"); // NOI18N 1.x
+        TOP_DIRECTORIES.add("app");  // NOI18N
+        TOP_DIRECTORIES.add("lib"); // NOI18N 2.x
+        TOP_DIRECTORIES.add("plugins"); // NOI18N
+        TOP_DIRECTORIES.add("vendors"); // NOI18N
+        TOP_DIRECTORIES.add("cake"); // NOI18N 1.x
     }
 
     /**
@@ -89,17 +89,14 @@ public class CakeZipEntryFilter implements ZipEntryFilter {
         String topDirectory = splits[0];
 
         if (splits.length == 1
-                && !topDirectories.contains(topDirectory)
+                && !TOP_DIRECTORIES.contains(topDirectory)
                 && entry.isDirectory()) {
             return false;
         }
         if (!deleteEmpty) {
             return true;
         }
-        if (!entry.isDirectory() && name.endsWith("/empty")) { // NOI18N
-            return false;
-        }
-        return true;
+        return !(!entry.isDirectory() && name.endsWith("/empty")); // NOI18N
     }
 
     /**
@@ -113,7 +110,7 @@ public class CakeZipEntryFilter implements ZipEntryFilter {
         String path = entry.getName();
         String[] splitPath = splitPath(path);
         String topDirectory = splitPath[0];
-        if (splitPath.length == 1 || topDirectories.contains(topDirectory)) {
+        if (splitPath.length == 1 || TOP_DIRECTORIES.contains(topDirectory)) {
             return path;
         }
         return path.replaceFirst(topDirectory + "/", ""); // NOI18N

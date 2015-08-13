@@ -118,18 +118,26 @@ public class MVCNodeFactory implements NodeFactory {
             CakePhpOptions options = CakePhpOptions.getInstance();
             List<Object> list = new ArrayList<>();
             for (String customNode : options.getAvailableCustomNodes()) {
-                if (customNode.equals("Controller")) { // NOI18N
-                    list.add(FILE_TYPE.CONTROLLER);
-                } else if (customNode.equals("View")) { // NOI18N
-                    list.add(FILE_TYPE.VIEW);
-                } else if (customNode.equals("Model")) { // NOI18N
-                    list.add(FILE_TYPE.MODEL);
-                } else if (customNode.equals("webroot")) { // NOI18N
-                    list.add(FILE_TYPE.WEBROOT);
-                } else if (customNode.equals("Helper")) { // NOI18N
-                    list.add(FILE_TYPE.HELPER);
-                } else if (customNode.equals("app/Plugin")) { // NOI18N
-                    list.add(DIR_TYPE.APP_PLUGIN);
+                switch (customNode) {
+                    case "Controller": // NOI18N
+                        list.add(FILE_TYPE.CONTROLLER);
+                        break;
+                    case "View": // NOI18N
+                        list.add(FILE_TYPE.VIEW);
+                        break;
+                    case "Model": // NOI18N
+                        list.add(FILE_TYPE.MODEL);
+                        break;
+                    case "webroot": // NOI18N
+                        list.add(FILE_TYPE.WEBROOT);
+                        break;
+                    case "Helper": // NOI18N
+                        list.add(FILE_TYPE.HELPER);
+                        break;
+                    case "app/Plugin": // NOI18N
+                        list.add(DIR_TYPE.APP_PLUGIN);
+                        break;
+                    default:
                 }
             }
             return list;

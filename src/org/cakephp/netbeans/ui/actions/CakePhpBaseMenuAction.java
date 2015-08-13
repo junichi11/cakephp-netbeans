@@ -191,10 +191,7 @@ public class CakePhpBaseMenuAction extends BaseAction implements Presenter.Popup
         Lookup context = Utilities.actionsGlobalContext();
         EditorCookie ec = context.lookup(EditorCookie.class);
         StyledDocument document = ec.getDocument();
-        if (document == null) {
-            return false;
-        }
-        return true;
+        return document != null;
     }
 
     //~ inner classes

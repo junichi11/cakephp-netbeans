@@ -89,7 +89,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
     private final List<GoToItem> fixtures = new ArrayList<>();
     private final List<GoToItem> behaviors = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpModelGoToStatus.class.getName());
-    private static CakePhpModelGoToStatus INSTANCE = new CakePhpModelGoToStatus();
+    private static final CakePhpModelGoToStatus INSTANCE = new CakePhpModelGoToStatus();
 
     private CakePhpModelGoToStatus() {
     }

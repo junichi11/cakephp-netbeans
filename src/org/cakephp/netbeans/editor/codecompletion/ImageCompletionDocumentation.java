@@ -58,7 +58,7 @@ import org.openide.filesystems.FileObject;
 public class ImageCompletionDocumentation implements CompletionDocumentation {
 
     private final ImageCompletionItem item;
-    private static final List<String> exts = Arrays.asList("jpg", "jpeg", "gif", "png", "bmp", "ico"); // NOI18N
+    private static final List<String> EXTS = Arrays.asList("jpg", "jpeg", "gif", "png", "bmp", "ico"); // NOI18N
 
     ImageCompletionDocumentation(ImageCompletionItem item) {
         this.item = item;
@@ -70,7 +70,7 @@ public class ImageCompletionDocumentation implements CompletionDocumentation {
         StringBuilder imgTag = new StringBuilder();
         if (fileObject != null) {
             String ext = fileObject.getExt().toLowerCase(Locale.ENGLISH);
-            if (exts.contains(ext)) {
+            if (EXTS.contains(ext)) {
                 int height = 0;
                 double width = 0;
                 Image image = new ImageIcon(fileObject.toURL()).getImage();

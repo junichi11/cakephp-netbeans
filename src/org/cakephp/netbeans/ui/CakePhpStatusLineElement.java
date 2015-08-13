@@ -94,13 +94,11 @@ import org.openide.util.lookup.ServiceProvider;
 public class CakePhpStatusLineElement implements StatusLineElementProvider {
 
     private static final String DEBUG_CORE_REGEX = "^\\tConfigure::write\\('debug', (.+)\\)"; // NOI18N
-    private static final String DEBUG_APP_REGEX = "^\\t'debug' => (.+?),"; // NOI18N
     private static final String DEBUG_CORE_FORMAT = "\tConfigure::write('debug', %s);"; // NOI18N
-    private static final String DEBUG_APP_FORMAT = "\t'debug' => %s,"; // NOI18N
     private final ImageIcon icon = new ImageIcon(getClass().getResource("/" + CakePhp.CAKE_ICON_16)); // NOI18N
     private final JLabel debugLabel = new JLabel(""); // NOI18N
-    private final JLabel cakeVersionLabel = new JLabel("");
-    private static final Map<String, String> debugLevels = new HashMap<>();
+    private final JLabel cakeVersionLabel = new JLabel(""); // NOI18N
+    private static final Map<String, String> DEBUG_LEVELS = new HashMap<>();
     private Lookup.Result<FileObject> result = null;
     private PhpModule phpModule = null;
     private String level = ""; // NOI18N
@@ -111,9 +109,9 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
     private FileChangeAdapterImpl fileChangeListener;
 
     static {
-        debugLevels.put("0", "0"); // NOI18N
-        debugLevels.put("1", "1"); // NOI18N
-        debugLevels.put("2", "2"); // NOI18N
+        DEBUG_LEVELS.put("0", "0"); // NOI18N
+        DEBUG_LEVELS.put("1", "1"); // NOI18N
+        DEBUG_LEVELS.put("2", "2"); // NOI18N
     }
 
     public CakePhpStatusLineElement() {
@@ -123,7 +121,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
 
         // create list
         model = new DefaultListModel<>();
-        for (String debugLv : debugLevels.keySet()) {
+        for (String debugLv : DEBUG_LEVELS.keySet()) {
             model.addElement(debugLv);
         }
         list = new JList<>(model);
@@ -142,7 +140,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
                 list.addListSelectionListener(new ListSelectionListener() {
                     @Override
                     public void valueChanged(ListSelectionEvent e) {
-                        String debugLv = list.getSelectedValue().toString();
+                        String debugLv = list.getSelectedValue();
                         if (!debugLv.equals(level)) {
                             writeConfig(debugLv);
                         }
@@ -239,7 +237,7 @@ public class CakePhpStatusLineElement implements StatusLineElementProvider {
      */
     private void setDebugLevelLabel(String debugLv) {
         if (debugLv.matches("^[012]$")) { // NOI18N
-            debugLabel.setText(debugLevels.get(debugLv));
+            debugLabel.setText(DEBUG_LEVELS.get(debugLv));
         } else {
             debugLabel.setText(debugLv);
         }

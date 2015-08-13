@@ -75,7 +75,7 @@ import org.openide.util.NbBundle;
 // @ActionReference(path="Menu/Tools", position=...)
 public final class InstallPluginsWizardAction extends BaseAction implements ActionListener {
 
-    private static final String LF = "\n";
+    private static final String LF = "\n"; // NOI18N
     private static final long serialVersionUID = 4405963698419409213L;
     private static final InstallPluginsWizardAction INSTANCE = new InstallPluginsWizardAction();
 
@@ -186,7 +186,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                             }
 
                             String errorMessage = errors.toString();
-                            NotifyDescriptor d = null;
+                            NotifyDescriptor d;
                             if (!errorMessage.isEmpty()) {
                                 //display error dialog
                                 d = new NotifyDescriptor.Message("Please confirm the URL.\n" + errorMessage, NotifyDescriptor.ERROR_MESSAGE);

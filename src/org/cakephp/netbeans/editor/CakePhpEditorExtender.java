@@ -85,7 +85,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
     private boolean isController = false;
     private boolean isComponent = false;
     private boolean isHelper = false;
-    private PhpModule phpModule;
+    private final PhpModule phpModule;
 
     public CakePhpEditorExtender(PhpModule phpModule) {
         this.phpModule = phpModule;
@@ -111,7 +111,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         // get AppController
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule != null) {
-            FileObject appController = cakeModule.getFile(DIR_TYPE.APP, CakePhpModule.FILE_TYPE.CONTROLLER, "App", null);
+            FileObject appController = cakeModule.getFile(DIR_TYPE.APP, CakePhpModule.FILE_TYPE.CONTROLLER, "App", null); // NOI18N
             if (appController != null) {
                 for (PhpClass phpClass : parseFields(appController)) {
                     elements.add(new PhpVariable("$this", phpClass, fo, 0)); // NOI18N
