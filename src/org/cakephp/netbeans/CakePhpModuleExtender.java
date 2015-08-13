@@ -672,22 +672,17 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         private void createComposerJson(FileObject targetDirectory) throws IOException {
             String appName = innerPanel.getAppName();
 
-            try (OutputStream outputStream = targetDirectory.createAndOpen("composer.json")) { // NOI18N
-
-                PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true);
-                try {
-                    String composerJson = CakePhpOptions.getInstance().getComposerJson();
-                    String placeholder = "\\{\\$nb-app-name\\}"; // NOI18N
-                    if (appName.isEmpty()) {
-                        composerJson = composerJson.replaceAll(placeholder + "/", ""); // NOI18N
-                        composerJson = composerJson.replaceAll(placeholder, ""); // NOI18N
-                    } else {
-                        composerJson = composerJson.replaceAll(placeholder, appName); // NOI18N
-                    }
-                    pw.println(composerJson);
-                } finally {
-                    pw.close();
+            try (OutputStream outputStream = targetDirectory.createAndOpen("composer.json"); // NOI18N
+                    PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true)) {
+                String composerJson = CakePhpOptions.getInstance().getComposerJson();
+                String placeholder = "\\{\\$nb-app-name\\}"; // NOI18N
+                if (appName.isEmpty()) {
+                    composerJson = composerJson.replaceAll(placeholder + "/", ""); // NOI18N
+                    composerJson = composerJson.replaceAll(placeholder, ""); // NOI18N
+                } else {
+                    composerJson = composerJson.replaceAll(placeholder, appName); // NOI18N
                 }
+                pw.println(composerJson);
             }
         }
 
