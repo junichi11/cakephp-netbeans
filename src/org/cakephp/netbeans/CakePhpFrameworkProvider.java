@@ -44,10 +44,7 @@ package org.cakephp.netbeans;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-import java.io.File;
-import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import org.cakephp.netbeans.commands.CakePhpCommandSupport;
 import org.cakephp.netbeans.editor.codecompletion.CakePhpEditorExtenderFactory;
 import org.cakephp.netbeans.modules.CakePhpModule;
@@ -79,9 +76,7 @@ import org.openide.util.RequestProcessor;
 // TODO: in static block, consider registering *.ctp as a php mime-type (can be dangerous, do it only if it's not already set!)
 public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
 
-    // TODO: provide better badge icon
     private static final RequestProcessor RP = new RequestProcessor(CakePhpFrameworkProvider.class);
-    private static final String ICON_PATH = "org/cakephp/netbeans/ui/resources/cakephp_badge_8.png"; // NOI18N
     private static final CakePhpFrameworkProvider INSTANCE = new CakePhpFrameworkProvider();
     private final BadgeIcon badgeIcon;
 
@@ -90,8 +85,8 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
                 NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"),
                 NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
         badgeIcon = new BadgeIcon(
-                ImageUtilities.loadImage(ICON_PATH),
-                CakePhpFrameworkProvider.class.getResource("/" + ICON_PATH)); // NOI18N
+                ImageUtilities.loadImage(CakePhp.CAKE_BADGE_8),
+                CakePhpFrameworkProvider.class.getResource("/" + CakePhp.CAKE_BADGE_8)); // NOI18N
     }
 
     @PhpFrameworkProvider.Registration(position = 500)
