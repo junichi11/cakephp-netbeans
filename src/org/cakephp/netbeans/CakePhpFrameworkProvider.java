@@ -80,10 +80,14 @@ public final class CakePhpFrameworkProvider extends PhpFrameworkProvider {
     private static final CakePhpFrameworkProvider INSTANCE = new CakePhpFrameworkProvider();
     private final BadgeIcon badgeIcon;
 
+    @NbBundle.Messages({
+        "LBL_CakePhpFramework=CakePHP PHP Web Framework",
+        "LBL_CakePhpDescription=CakePHP PHP Web Framework"
+    })
     private CakePhpFrameworkProvider() {
         super("cakephp", // NOI18N
-                NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpFramework"),
-                NbBundle.getMessage(CakePhpFrameworkProvider.class, "LBL_CakePhpDescription"));
+                Bundle.LBL_CakePhpFramework(),
+                Bundle.LBL_CakePhpDescription());
         badgeIcon = new BadgeIcon(
                 ImageUtilities.loadImage(CakePhp.CAKE_BADGE_8),
                 CakePhpFrameworkProvider.class.getResource("/" + CakePhp.CAKE_BADGE_8)); // NOI18N

@@ -65,8 +65,9 @@ import org.openide.util.NbBundle;
 public class CakePhpActionsExtender extends PhpModuleActionsExtender {
 
     @Override
+    @NbBundle.Messages("LBL_MenuName=CakePHP")
     public String getMenuName() {
-        return NbBundle.getMessage(CakePhpActionsExtender.class, "LBL_MenuName");
+        return Bundle.LBL_MenuName();
     }
 
     @Override
