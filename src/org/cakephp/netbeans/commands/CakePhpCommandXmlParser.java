@@ -61,7 +61,7 @@ import org.xml.sax.SAXException;
  */
 public class CakePhpCommandXmlParser {
 
-    private List<CakeCommandItem> commands;
+    private final List<CakeCommandItem> commands;
 
     public CakePhpCommandXmlParser(List<CakeCommandItem> commands) {
         this.commands = commands;
@@ -74,12 +74,14 @@ public class CakePhpCommandXmlParser {
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document document = builder.parse(file);
             Element root = document.getDocumentElement();
-            if (root.getNodeName().equals("shells")) { // NOI18N
-                parser.parseCommandList(root);
-            } else if (root.getNodeName().equals("shell")) { // NOI18N
-                parser.parseCommand(root);
-            } else {
-                return;
+            switch (root.getNodeName()) {
+                case "shells": // NOI18N
+                    parser.parseCommandList(root);
+                    break;
+                case "shell": // NOI18N
+                    parser.parseCommand(root);
+                    break;
+                default:
             }
         } catch (IOException | ParserConfigurationException ex) {
             Exceptions.printStackTrace(ex);
@@ -92,7 +94,9 @@ public class CakePhpCommandXmlParser {
             Node node = nodeList.item(i);
             NamedNodeMap attr = node.getAttributes();
             commands.add(new CakeCommandItem(
-                attr.getNamedItem("call_as").getNodeValue(), attr.getNamedItem("provider").getNodeValue(), attr.getNamedItem("name").getNodeValue())); // NOI18N
+                    attr.getNamedItem("call_as").getNodeValue(), // NOI18N
+                    attr.getNamedItem("provider").getNodeValue(), // NOI18N
+                    attr.getNamedItem("name").getNodeValue())); // NOI18N
         }
     }
 
@@ -108,9 +112,9 @@ public class CakePhpCommandXmlParser {
                 Node child = children.item(j);
                 NamedNodeMap attr = child.getAttributes();
                 item.addSubcommand(new CakeCommandItem(
-                    attr.getNamedItem("name").getTextContent(), // NOI18N
-                    attr.getNamedItem("help").getTextContent(), // NOI18N
-                    attr.getNamedItem("name").getTextContent()));
+                        attr.getNamedItem("name").getTextContent(), // NOI18N
+                        attr.getNamedItem("help").getTextContent(), // NOI18N
+                        attr.getNamedItem("name").getTextContent())); // NOI18N
             }
         }
         Collections.singletonList(commands.add(item));
