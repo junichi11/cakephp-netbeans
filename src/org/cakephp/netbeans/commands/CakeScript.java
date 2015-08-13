@@ -88,15 +88,21 @@ public final class CakeScript {
     public static final String OPTIONS_SUB_PATH = "CakePhp"; // NOI18N
     public static final String SCRIPT_NAME = "cake"; // NOI18N
     public static final String SCRIPT_NAME_LONG = SCRIPT_NAME + ".php"; // NOI18N
+
     // commands
     private static final String BAKE_COMMAND = "bake"; // NOI18N
     private static final String LIST_COMMAND = "command_list"; // NOI18N
     private static final String PROJECT_COMMAND = "project"; // NOI18N
+    private static final String TEST_COMMAND = "test"; // NOI18N
+
     // params
     private static final String HELP_PARAM = "--help"; // NOI18N
     private static final String EMPTY_PARAM = "--empty"; // NOI18N
     private static final String XML_PARAM = "--xml"; // NOI18N
+    private static final String PLUGIN_PARAM = "--plugin"; // NOI18N
+    private static final String APP_PARAM = "-app";
 
+    private static final String UTF8 = "UTF-8"; // NOI18N
     private static final List<String> LIST_XML_COMMAND = Arrays.asList(LIST_COMMAND, XML_PARAM);
     // XXX any default params?
     private static final List<String> DEFAULT_PARAMS = Collections.emptyList();
@@ -149,7 +155,7 @@ public final class CakeScript {
      * @throws InvalidPhpExecutableException
      */
     public static CakeScript forComposer(PhpModule phpModule) throws InvalidPhpExecutableException {
-        String console = null;
+        String console;
         String scriptPath = "Vendor/bin/cake.php"; // NOI18N
         FileObject sourceDirectory = phpModule.getSourceDirectory();
         String error = null;
@@ -179,7 +185,7 @@ public final class CakeScript {
         }
         FileObject consoleDirectory = module.getConsoleDirectory(CakePhpModule.DIR_TYPE.APP);
         if (consoleDirectory == null) {
-            LOGGER.log(Level.WARNING, "Not found " + SCRIPT_NAME);
+            LOGGER.log(Level.WARNING, "Not found " + SCRIPT_NAME); // NOI18N
             return null;
         }
         return consoleDirectory.getFileObject(SCRIPT_NAME_LONG);
@@ -258,9 +264,9 @@ public final class CakeScript {
     public void bakeTest(PhpModule phpModule, CakePhpModule.FILE_TYPE fileType, String className, String pluginName) {
         List<String> params = new ArrayList<>();
         params.add(BAKE_COMMAND);
-        params.add("test");
+        params.add(TEST_COMMAND);
         if (pluginName != null && !pluginName.isEmpty()) {
-            params.add("--plugin");
+            params.add(PLUGIN_PARAM);
             params.add(pluginName);
         }
         params.add(fileType.toString().toLowerCase(Locale.ENGLISH));
@@ -311,8 +317,8 @@ public final class CakeScript {
      */
     private Reader getReaderForBakeProject() throws UnsupportedEncodingException {
         String yes = "y\n"; // NOI18N
-        InputStream in = new ByteArrayInputStream(yes.getBytes("UTF-8")); // NOI18N
-        return new InputStreamReader(in, "UTF-8"); // NOI18N
+        InputStream in = new ByteArrayInputStream(yes.getBytes(UTF8));
+        return new InputStreamReader(in, UTF8);
     }
 
     private PhpExecutable createPhpExecutable(PhpModule phpModule) {
@@ -410,7 +416,7 @@ public final class CakeScript {
             try {
                 CakePhpCommandXmlParser.parse(tmpFile, mainCommandsItem);
             } catch (SAXException ex) {
-                LOGGER.log(Level.WARNING, "Xml file Error:{0}", ex.getMessage());
+                LOGGER.log(Level.WARNING, "Xml file Error:{0}", ex.getMessage()); // NOI18N
                 commands.add(new CakePhpCommand(phpModule,
                         item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
@@ -424,7 +430,9 @@ public final class CakeScript {
             String mainCommand = main.getCommand();
             String provider = item.getDescription();
             commands.add(new CakePhpCommand(phpModule,
-                    mainCommand, "[" + provider + "] " + main.getDescription(), main.getDisplayName())); // NOI18N
+                    mainCommand,
+                    "[" + provider + "] " + main.getDescription(), // NOI18N
+                    main.getDisplayName()));
 
             // add subcommands
             List<CakeCommandItem> subcommands = main.getSubcommands();
@@ -434,7 +442,9 @@ public final class CakeScript {
             for (CakeCommandItem subcommand : subcommands) {
                 String[] command = {mainCommand, subcommand.getCommand()};
                 commands.add(new CakePhpCommand(phpModule,
-                        command, "[" + provider + "] " + subcommand.getDescription(), main.getCommand() + " " + subcommand.getDisplayName())); // NOI18N
+                        command,
+                        "[" + provider + "] " + subcommand.getDescription(), // NOI18N
+                        main.getCommand() + " " + subcommand.getDisplayName())); // NOI18N
             }
         }
         tmpFile.delete();
@@ -449,7 +459,7 @@ public final class CakeScript {
         }
         FileObject app = cakeModule.getDirectory(CakePhpModule.DIR_TYPE.APP);
         if (app != null) {
-            appParam.add("-app"); // NOI18N
+            appParam.add(APP_PARAM);
             appParam.add(app.getPath());
         }
         return appParam;
@@ -461,7 +471,7 @@ public final class CakeScript {
     })
     private boolean redirectToFile(PhpModule phpModule, File file, List<String> commands) {
         Future<Integer> result = createPhpExecutable(phpModule)
-                .fileOutput(file, "UTF-8", true) // NOI18N
+                .fileOutput(file, UTF8, true)
                 .warnUser(false)
                 .additionalParameters(commands)
                 .run(getSilentDescriptor());
@@ -510,7 +520,7 @@ public final class CakeScript {
         }
 
         for (FileObject shellDir : shellDirs) {
-            Enumeration<? extends FileObject> shellFiles = null;
+            Enumeration<? extends FileObject> shellFiles;
             if (shellDir != null) {
                 shellFiles = shellDir.getChildren(false);
             } else {
@@ -520,7 +530,11 @@ public final class CakeScript {
                 while (shellFiles.hasMoreElements()) {
                     FileObject shell = shellFiles.nextElement();
                     if (!shell.getName().equals("shell") && !shell.isFolder()) { // NOI18N
-                        commands.add(new CakePhpCommand(phpModule, shell.getName(), "[" + getShellsPlace(phpModule, shellDir) + "]", shell.getName())); // NOI18N
+                        commands.add(new CakePhpCommand(
+                                phpModule,
+                                shell.getName(),
+                                "[" + getShellsPlace(phpModule, shellDir) + "]", // NOI18N
+                                shell.getName()));
                     }
                 }
             }
