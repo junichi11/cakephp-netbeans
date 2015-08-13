@@ -106,7 +106,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         }
 
         List<PhpBaseElement> elements;
-        elements = new LinkedList<PhpBaseElement>();
+        elements = new LinkedList<>();
 
         // get AppController
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
@@ -160,7 +160,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         if (controller == null) {
             return Collections.emptySet();
         }
-        final Set<PhpVariable> phpVariables = new HashSet<PhpVariable>();
+        final Set<PhpVariable> phpVariables = new HashSet<>();
         try {
             ParserManager.parse(Collections.singleton(Source.create(controller)), new UserTask() {
                 @Override
@@ -188,7 +188,7 @@ public abstract class CakePhpEditorExtender extends EditorExtender {
         }
 
         final FileObject target = tmp;
-        final Set<PhpClass> phpClasses = new HashSet<PhpClass>();
+        final Set<PhpClass> phpClasses = new HashSet<>();
         try {
             ParserManager.parse(Collections.singleton(Source.create(target)), new UserTask() {
                 @Override

@@ -81,9 +81,7 @@ public class CakePhpCommandXmlParser {
             } else {
                 return;
             }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (ParserConfigurationException ex) {
+        } catch (IOException | ParserConfigurationException ex) {
             Exceptions.printStackTrace(ex);
         }
     }

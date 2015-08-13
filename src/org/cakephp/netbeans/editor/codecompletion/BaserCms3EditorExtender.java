@@ -152,7 +152,7 @@ public class BaserCms3EditorExtender extends CakePhp2EditorExtender {
             return Collections.emptyList();
         }
         FileObject[] children = baserPluginDirectory.getChildren();
-        ArrayList<String> pluginNames = new ArrayList<String>(children.length);
+        ArrayList<String> pluginNames = new ArrayList<>(children.length);
         for (FileObject child : children) {
             if (!child.isFolder()) {
                 continue;

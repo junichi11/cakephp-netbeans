@@ -95,7 +95,7 @@ public class MBHCGenerator implements CodeGenerator {
     private MBHCGenerator(Lookup context, List<Type> types) {
         textComp = context.lookup(JTextComponent.class);
         // create FiledInfo
-        fields = new ArrayList<FieldInfo>();
+        fields = new ArrayList<>();
         for (Type type : types) {
             fields.add(FieldInfoFactory.create(type, textComp));
         }
@@ -197,7 +197,7 @@ public class MBHCGenerator implements CodeGenerator {
             }
 
             if (CakePhpUtils.isCakePHP(phpModule) && cakeModule.getCakeVersion().getMajor() > 1) {
-                List<Type> types = new ArrayList<Type>();
+                List<Type> types = new ArrayList<>();
                 if (CakePhpUtils.isController(fileObject)) {
                     types.add(Type.USES);
                     types.add(Type.HELPERS);

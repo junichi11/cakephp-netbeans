@@ -73,9 +73,7 @@ public class CakePhpFileUtils {
             return;
         }
         URL zipUrl = new URL(url);
-        ZipInputStream zipInputStream = new ZipInputStream(zipUrl.openStream());
-
-        try {
+        try (ZipInputStream zipInputStream = new ZipInputStream(zipUrl.openStream())) {
             ZipEntry entry = null;
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 if (!filter.accept(entry)) {
@@ -90,8 +88,6 @@ public class CakePhpFileUtils {
                 createDirectories(outFile, entry);
                 writeFile(outFile, zipInputStream, entry);
             }
-        } finally {
-            zipInputStream.close();
         }
     }
 

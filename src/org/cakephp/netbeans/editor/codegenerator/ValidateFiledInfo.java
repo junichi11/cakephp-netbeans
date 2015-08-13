@@ -123,7 +123,7 @@ public class ValidateFiledInfo extends FieldInfo {
     }
 
     private List<String> getAllValidations() {
-        List<String> validations = new ArrayList<String>();
+        List<String> validations = new ArrayList<>();
         PhpModule phpModule = getPhpModule();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {

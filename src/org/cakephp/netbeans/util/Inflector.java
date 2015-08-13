@@ -165,19 +165,19 @@ public final class Inflector {
      * List of <code>Replacer</code>s for performing replacement operations on
      * matches for plural words.</p>
      */
-    private final List<Replacer> plurals = new LinkedList<Replacer>();
+    private final List<Replacer> plurals = new LinkedList<>();
     /**
      * <p>
      * List of <code>Replacer</code>s for performing replacement operations on
      * matches for addSingular words.</p>
      */
-    private final List<Replacer> singulars = new ArrayList<Replacer>();
+    private final List<Replacer> singulars = new ArrayList<>();
     /**
      * <p>
      * List of words that represent addUncountable concepts that cannot be
      * pluralized or singularized.</p>
      */
-    private final List<String> uncountables = new LinkedList<String>();
+    private final List<String> uncountables = new LinkedList<>();
 
     // ------------------------------------------------------ Instance Variables
     // ---------------------------------------------------------- Static Methods

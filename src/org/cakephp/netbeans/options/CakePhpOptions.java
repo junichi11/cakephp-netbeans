@@ -83,7 +83,7 @@ public class CakePhpOptions {
             "Helper", // NOI18N
             "webroot" // NOI18N
     );
-    public static final List<String> ALL_AVAILABLE_NODES = new ArrayList<String>(DEFAULT_AVAILABLE_NODES);
+    public static final List<String> ALL_AVAILABLE_NODES = new ArrayList<>(DEFAULT_AVAILABLE_NODES);
 
     static {
         ALL_AVAILABLE_NODES.add("app/Plugin"); // NOI18N
@@ -97,7 +97,7 @@ public class CakePhpOptions {
     }
 
     public List<CakePhpPlugin> getPlugins() {
-        ArrayList<CakePhpPlugin> plugins = new ArrayList<CakePhpPlugin>();
+        ArrayList<CakePhpPlugin> plugins = new ArrayList<>();
         Preferences p = getPreferences().node(PLUGINS).node(PLUGINS);
         String s = "";
         if (p != null) {
@@ -198,14 +198,11 @@ public class CakePhpOptions {
         StringBuilder sb = new StringBuilder();
         InputStream inputStream = CakePhpOptions.class.getResourceAsStream("/org/cakephp/netbeans/resources/composer.json"); // NOI18N
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // NOI18N
-            try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) { // NOI18N
                 String line;
                 while ((line = reader.readLine()) != null) {
                     sb.append(line).append("\n"); // NOI18N
                 }
-            } finally {
-                reader.close();
             }
         } catch (UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);

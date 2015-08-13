@@ -119,49 +119,49 @@ public class CakePhpCodeUtilsTest extends NbTestCase {
         assertEquals(null, CakePhpCodeUtils.getEntity(ac));
 
         Scalar scalarValue = new Scalar(5, 5, "3", Scalar.Type.INT);
-        List<ArrayElement> list = new ArrayList<ArrayElement>();
+        List<ArrayElement> list = new ArrayList<>();
         list.add(new ArrayElement(0, 0, scalarValue));
         ac = new ArrayCreation(0, 0, list, Type.OLD);
         assertEquals(null, CakePhpCodeUtils.getEntity(ac));
 
         Scalar scalarKey = new Scalar(5, 5, "\"test\"", Scalar.Type.STRING);
         scalarValue = new Scalar(5, 5, "", Scalar.Type.STRING);
-        list = new ArrayList<ArrayElement>();
+        list = new ArrayList<>();
         list.add(new ArrayElement(0, 0, scalarKey, scalarValue));
         ac = new ArrayCreation(0, 0, list, Type.OLD);
         assertEquals(null, CakePhpCodeUtils.getEntity(ac));
 
         scalarKey = new Scalar(1, 3, "key", Scalar.Type.STRING);
         scalarValue = new Scalar(5, 5, "5", Scalar.Type.INT);
-        list = new ArrayList<ArrayElement>();
+        list = new ArrayList<>();
         list.add(new ArrayElement(0, 0, scalarKey));
         list.add(new ArrayElement(0, 0, new Scalar(10, 12, "test", Scalar.Type.STRING), scalarValue));
         ac = new ArrayCreation(0, 0, list, Type.OLD);
         assertEquals(null, CakePhpCodeUtils.getEntity(ac));
 
         scalarValue = new Scalar(5, 5, "className", Scalar.Type.STRING);
-        list = new ArrayList<ArrayElement>();
+        list = new ArrayList<>();
         list.add(new ArrayElement(0, 0, scalarValue));
         ac = new ArrayCreation(0, 0, list, Type.OLD);
         assertEquals(null, CakePhpCodeUtils.getEntity(ac));
 
         scalarKey = new Scalar(1, 3, "className", Scalar.Type.STRING);
         scalarValue = new Scalar(5, 5, "5", Scalar.Type.INT);
-        list = new ArrayList<ArrayElement>();
+        list = new ArrayList<>();
         list.add(new ArrayElement(0, 0, scalarKey, scalarValue));
         ac = new ArrayCreation(0, 0, list, Type.OLD);
         assertEquals(null, CakePhpCodeUtils.getEntity(ac));
 
         scalarKey = new Scalar(1, 3, "'className'", Scalar.Type.STRING);
         scalarValue = new Scalar(5, 5, "Entity", Scalar.Type.STRING);
-        list = new ArrayList<ArrayElement>();
+        list = new ArrayList<>();
         list.add(new ArrayElement(0, 0, scalarKey, scalarValue));
         ac = new ArrayCreation(0, 0, list, Type.OLD);
         assertEquals(scalarValue, CakePhpCodeUtils.getEntity(ac));
 
         scalarKey = new Scalar(1, 3, "\"className\"", Scalar.Type.STRING);
         scalarValue = new Scalar(5, 5, "Entity", Scalar.Type.STRING);
-        list = new ArrayList<ArrayElement>();
+        list = new ArrayList<>();
         list.add(new ArrayElement(0, 0, scalarKey, scalarValue));
         ac = new ArrayCreation(0, 0, list, Type.OLD);
         assertEquals(scalarValue, CakePhpCodeUtils.getEntity(ac));

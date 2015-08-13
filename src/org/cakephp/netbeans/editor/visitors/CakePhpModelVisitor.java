@@ -62,7 +62,7 @@ public class CakePhpModelVisitor extends CakePhpFieldsVisitor {
 
     @Override
     public Set<String> getFieldNames() {
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         names.add(USES);
         names.add(ACTS_AS);
         return names;

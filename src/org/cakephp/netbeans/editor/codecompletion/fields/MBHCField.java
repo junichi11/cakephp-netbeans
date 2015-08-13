@@ -102,7 +102,7 @@ public class MBHCField extends FieldImpl {
         int insertStart = ts.offset() + 1;
         int removeLength = caretInputString.length();
 
-        ArrayList<CompletionItem> items = new ArrayList<CompletionItem>();
+        ArrayList<CompletionItem> items = new ArrayList<>();
         String pluginName = null;
         CakePhpModule.DIR_TYPE dirType = CakePhpModule.DIR_TYPE.APP;
 
@@ -129,7 +129,7 @@ public class MBHCField extends FieldImpl {
     }
 
     private List<FileObject> getTargetDirectories(CakePhpModule cakeModule, CakePhpModule.DIR_TYPE dirType, String pluginName) {
-        ArrayList<FileObject> targetDirectories = new ArrayList<FileObject>();
+        ArrayList<FileObject> targetDirectories = new ArrayList<>();
         List<DIR_TYPE> types = Collections.emptyList();
         if (dirType == DIR_TYPE.APP) {
             if (fileType == FILE_TYPE.MODEL) {

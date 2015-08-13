@@ -61,7 +61,7 @@ import org.openide.filesystems.FileObject;
  */
 public final class CakePhpModuleFactory {
 
-    private final Map<PhpModule, CakePhpModule> modules = new HashMap<PhpModule, CakePhpModule>();
+    private final Map<PhpModule, CakePhpModule> modules = new HashMap<>();
     private static final CakePhpModuleFactory INSTANCE = new CakePhpModuleFactory();
     private boolean isCreating = false;
 

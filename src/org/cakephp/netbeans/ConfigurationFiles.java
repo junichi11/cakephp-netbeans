@@ -42,7 +42,7 @@ public final class ConfigurationFiles extends FileChangeAdapter implements Impor
     @Override
     public Collection<FileInfo> getFiles() {
         List<FileObject> directories = getConfigDirectories();
-        List<FileInfo> files = new ArrayList<FileInfo>();
+        List<FileInfo> files = new ArrayList<>();
         for (FileObject directory : directories) {
             FileObject[] children = directory.getChildren();
             for (FileObject child : children) {

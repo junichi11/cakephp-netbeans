@@ -74,11 +74,11 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpControllerGoToStatus extends CakePhpGoToStatus {
 
-    private final List<GoToItem> models = new ArrayList<GoToItem>();
-    private final List<GoToItem> components = new ArrayList<GoToItem>();
-    private final List<GoToItem> helpers = new ArrayList<GoToItem>();
-    private final List<GoToItem> views = new ArrayList<GoToItem>();
-    private final List<GoToItem> allViews = new ArrayList<GoToItem>();
+    private final List<GoToItem> models = new ArrayList<>();
+    private final List<GoToItem> components = new ArrayList<>();
+    private final List<GoToItem> helpers = new ArrayList<>();
+    private final List<GoToItem> views = new ArrayList<>();
+    private final List<GoToItem> allViews = new ArrayList<>();
     private Set<String> themeNames;
     private Set<String> allThemeNames;
     private boolean isTheme;

@@ -62,8 +62,8 @@ import org.openide.filesystems.FileObject;
 public class CakePhpViewVisitor extends DefaultVisitor {
 
     private final int caretPositon;
-    private final Set<String> elementPaths = new HashSet<String>();
-    private final Set<String> extendPaths = new HashSet<String>();
+    private final Set<String> elementPaths = new HashSet<>();
+    private final Set<String> extendPaths = new HashSet<>();
     private String caretPositionElementPath = ""; // NOI18N
     private String caretPositionExtendPath = ""; // NOI18N
     private static final String ELEMENT = "element"; // NOI18N

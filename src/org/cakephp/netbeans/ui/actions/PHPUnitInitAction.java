@@ -85,7 +85,7 @@ public class PHPUnitInitAction extends BaseAction {
     private static final String CONFIG_BOOTSTRAP_PHPUNIT_PHP = CONFIG_PATH + BOOTSTRAP_PHPUNIT_PHP;
     private static final String PHPUNIT = "phpunit"; // NOI18N
     private static final String PHPUNIT_PHP = PHPUNIT + ".php"; // NOI18N
-    private static final Map<String, String> messages = new HashMap<String, String>();
+    private static final Map<String, String> messages = new HashMap<>();
     private static final String SUCCESS_MSG = "success";
     private static final String FAIL_MSG = "fail";
     private static final String BOOTSTRAP = "bootstrap";

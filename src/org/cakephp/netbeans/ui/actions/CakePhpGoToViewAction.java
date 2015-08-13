@@ -174,7 +174,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
                     if (field.getName().equals("$theme")) { // NOI18N
 
                         // create items
-                        final List<GoToItem> viewItems = new ArrayList<GoToItem>();
+                        final List<GoToItem> viewItems = new ArrayList<>();
                         for (FileObject themeDirectory : themes) {
                             if (themeDirectory.isFolder()) {
                                 FileObject view = CakePhpUtils.getView(controller, phpElement, themeDirectory);

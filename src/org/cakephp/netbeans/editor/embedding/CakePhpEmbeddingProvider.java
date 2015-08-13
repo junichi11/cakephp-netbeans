@@ -73,7 +73,7 @@ public class CakePhpEmbeddingProvider extends EmbeddingProvider {
             return Collections.emptyList();
         }
         sequence.moveStart();
-        List<Embedding> embeddings = new ArrayList<Embedding>();
+        List<Embedding> embeddings = new ArrayList<>();
         boolean scriptFlg = false;
         while (sequence.moveNext()) {
             Token<? extends TokenId> t = sequence.token();

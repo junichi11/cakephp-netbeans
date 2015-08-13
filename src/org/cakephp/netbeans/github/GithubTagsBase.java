@@ -74,29 +74,24 @@ public abstract class GithubTagsBase {
 
     private void init() {
         isNetworkError = false;
-        tags = new ArrayList<GithubTag>();
+        tags = new ArrayList<>();
         try {
             // JSON -> Object
             Gson gson = new Gson();
             URL tagsJson = new URL(getUrl());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8")); // NOI18N
-            try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8"))) { // NOI18N
                 JsonReader jsonReader = new JsonReader(reader);
                 Type type = new TypeToken<ArrayList<GithubTag>>() {
                 }.getType();
                 tags = gson.fromJson(jsonReader, type);
-            } finally {
-                reader.close();
             }
-        } catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (UnsupportedEncodingException ex) {
+        } catch (MalformedURLException | UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
             isNetworkError = true;
         }
 
-        names = new ArrayList<String>(tags.size());
+        names = new ArrayList<>(tags.size());
         if (isNetworkError) {
             return;
         }

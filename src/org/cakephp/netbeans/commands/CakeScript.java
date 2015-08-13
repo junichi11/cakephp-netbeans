@@ -103,7 +103,7 @@ public final class CakeScript {
     private static final String CORE_SHELLS_DIRECTORY = "cake/console/libs"; // NOI18N
     private static final String VENDORS_SHELLS_DIRECTORY = "vendors/shells"; // NOI18N
     private final String cakePath;
-    private final List<String> appParams = new ArrayList<String>();
+    private final List<String> appParams = new ArrayList<>();
 
     private CakeScript(String cakePath) {
         this.cakePath = cakePath;
@@ -209,7 +209,7 @@ public final class CakeScript {
     public String getHelp(PhpModule phpModule, String[] params) {
         assert phpModule != null;
 
-        List<String> allParams = new ArrayList<String>();
+        List<String> allParams = new ArrayList<>();
         // #116
         allParams.addAll(getAppParam(phpModule));
         allParams.addAll(Arrays.asList(params));
@@ -256,7 +256,7 @@ public final class CakeScript {
     }
 
     public void bakeTest(PhpModule phpModule, CakePhpModule.FILE_TYPE fileType, String className, String pluginName) {
-        List<String> params = new ArrayList<String>();
+        List<String> params = new ArrayList<>();
         params.add(BAKE_COMMAND);
         params.add("test");
         if (pluginName != null && !pluginName.isEmpty()) {
@@ -285,7 +285,7 @@ public final class CakeScript {
             File root = FileUtil.toFile(sourceDirectory);
             File app = new File(root, name);
             String appPath = (Utilities.isWindows() ? "/" : "") + app.getAbsolutePath(); // NOI18N
-            ArrayList<String> parameters = new ArrayList<String>();
+            ArrayList<String> parameters = new ArrayList<>();
             parameters.add(BAKE_COMMAND);
             parameters.add(PROJECT_COMMAND);
             if (isEmpty) {
@@ -321,7 +321,7 @@ public final class CakeScript {
     }
 
     private List<String> getAllParams(List<String> params) {
-        List<String> allParams = new ArrayList<String>();
+        List<String> allParams = new ArrayList<>();
         allParams.addAll(DEFAULT_PARAMS);
         allParams.addAll(appParams);
         allParams.addAll(params);
@@ -376,14 +376,14 @@ public final class CakeScript {
         // #116
         List<String> appParam = getAppParam(phpModule);
 
-        ArrayList<String> listXmlParams = new ArrayList<String>();
+        ArrayList<String> listXmlParams = new ArrayList<>();
         listXmlParams.addAll(appParam);
         listXmlParams.addAll(LIST_XML_COMMAND);
         if (!redirectToFile(phpModule, tmpFile, listXmlParams)) {
             LOGGER.log(Level.WARNING, Bundle.CakeScript_redirect_xml_error());
             return null;
         }
-        List<CakeCommandItem> commandsItem = new ArrayList<CakeCommandItem>();
+        List<CakeCommandItem> commandsItem = new ArrayList<>();
         try {
             CakePhpCommandXmlParser.parse(tmpFile, commandsItem);
         } catch (SAXException ex) {
@@ -396,9 +396,9 @@ public final class CakeScript {
             return null;
         }
         // parse each command
-        List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
+        List<FrameworkCommand> commands = new ArrayList<>();
         for (CakeCommandItem item : commandsItem) {
-            ArrayList<String> commandParams = new ArrayList<String>();
+            ArrayList<String> commandParams = new ArrayList<>();
             commandParams.addAll(appParam);
             commandParams.addAll(Arrays.asList(item.getCommand(), HELP_PARAM, "xml")); // NOI18N
             if (!redirectToFile(phpModule, tmpFile, commandParams)) {
@@ -406,7 +406,7 @@ public final class CakeScript {
                         item.getCommand(), item.getDescription(), item.getDisplayName()));
                 continue;
             }
-            List<CakeCommandItem> mainCommandsItem = new ArrayList<CakeCommandItem>();
+            List<CakeCommandItem> mainCommandsItem = new ArrayList<>();
             try {
                 CakePhpCommandXmlParser.parse(tmpFile, mainCommandsItem);
             } catch (SAXException ex) {
@@ -442,7 +442,7 @@ public final class CakeScript {
     }
 
     private List<String> getAppParam(PhpModule phpModule) {
-        ArrayList<String> appParam = new ArrayList<String>();
+        ArrayList<String> appParam = new ArrayList<>();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {
             return Collections.emptyList();
@@ -478,23 +478,21 @@ public final class CakeScript {
                     return false;
                 }
             }
-        } catch (CancellationException ex) {
+        } catch (CancellationException | ExecutionException ex) {
             // canceled
             return false;
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             return false;
-        } catch (ExecutionException ex) {
-            // ignored
-            return false;
         }
+
         return true;
     }
 
     private List<FrameworkCommand> getFrameworkCommandsInternalConsole(PhpModule phpModule) {
         // cakephp1.3+
-        List<FrameworkCommand> commands = new ArrayList<FrameworkCommand>();
-        List<FileObject> shellDirs = new ArrayList<FileObject>();
+        List<FrameworkCommand> commands = new ArrayList<>();
+        List<FileObject> shellDirs = new ArrayList<>();
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {
             return commands;

@@ -722,7 +722,7 @@ public class CakePhp2ModuleImpl extends CakePhpModuleImpl {
 
     @Override
     public Set<String> getAllPluginNames() {
-        Set<String> allPlugins = new HashSet<String>();
+        Set<String> allPlugins = new HashSet<>();
         for (DIR_TYPE dirType : CakePhpModule.ALL_PLUGINS) {
             FileObject directory = getDirectory(dirType);
             if (directory == null) {

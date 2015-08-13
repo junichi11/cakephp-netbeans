@@ -191,9 +191,7 @@ public class CheckDefaultAction extends BaseAction {
         if (targetFavicon == null) {
             return true;
         }
-        try {
-            InputStream originalInputStream = favicon.getInputStream();
-            InputStream targetInputStream = targetFavicon.getInputStream();
+        try (InputStream originalInputStream = favicon.getInputStream(); InputStream targetInputStream = targetFavicon.getInputStream()) {
             int originalData = 0;
             int targetData = 0;
             do {
@@ -205,8 +203,6 @@ public class CheckDefaultAction extends BaseAction {
                     return true;
                 }
             } while ((originalData != -1) && (targetData != -1));
-            originalInputStream.close();
-            targetInputStream.close();
         } catch (FileNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {

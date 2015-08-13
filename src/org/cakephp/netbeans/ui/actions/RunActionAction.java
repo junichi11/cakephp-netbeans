@@ -216,7 +216,7 @@ public class RunActionAction extends BaseAction {
      * @return argment list
      */
     private List<FormalParameter> getArguments(FileObject targetFile, final String actionName) {
-        final List<FormalParameter> params = new ArrayList<FormalParameter>();
+        final List<FormalParameter> params = new ArrayList<>();
         try {
             ParserManager.parse(Collections.singleton(Source.create(targetFile)), new UserTask() {
                 @Override
@@ -330,7 +330,7 @@ public class RunActionAction extends BaseAction {
     private static class ControllerMethodVisitor extends DefaultVisitor {
 
         private String targetMethodName;
-        private final List<FormalParameter> params = new ArrayList<FormalParameter>();
+        private final List<FormalParameter> params = new ArrayList<>();
 
         public ControllerMethodVisitor(String targetMethodName) {
             this.targetMethodName = targetMethodName;

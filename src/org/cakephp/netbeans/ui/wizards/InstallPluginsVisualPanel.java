@@ -178,7 +178,7 @@ public final class InstallPluginsVisualPanel extends JPanel {
                 NbBundle.getMessage(InstallPluginsVisualPanel.class, "InstallPluginsVisualPanel.pluginTable.columnModel.title1"),
                 NbBundle.getMessage(InstallPluginsVisualPanel.class, "InstallPluginsVisualPanel.pluginTable.columnModel.title2")
             };
-            plugins = new ArrayList<CakePhpPlugin>();
+            plugins = new ArrayList<>();
         }
 
         @Override

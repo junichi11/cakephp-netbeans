@@ -78,7 +78,7 @@ public class CakeCommandItem {
 
     public void addSubcommand(CakeCommandItem subcommand) {
         if (this.subcommands == null) {
-            this.subcommands = new ArrayList<CakeCommandItem>();
+            this.subcommands = new ArrayList<>();
         }
         this.subcommands.add(subcommand);
     }

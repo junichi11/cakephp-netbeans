@@ -184,22 +184,22 @@ public class CakePhpOptionsPanelRegisterDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
         private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-            if (valid()) {
-                setVisible(false);
-                dispose();
-            }
+        if (valid()) {
+            setVisible(false);
+            dispose();
+        }
         }//GEN-LAST:event_okButtonActionPerformed
 
         private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-            nameTextField.setText(""); // NOI18N
-            urlTextField.setText(""); // NOI18N
-            setVisible(false);
-            dispose();
+        nameTextField.setText(""); // NOI18N
+        urlTextField.setText(""); // NOI18N
+        setVisible(false);
+        dispose();
         }//GEN-LAST:event_cancelButtonActionPerformed
 
         private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-            nameTextField.setText(""); // NOI18N
-            urlTextField.setText(""); // NOI18N
+        nameTextField.setText(""); // NOI18N
+        urlTextField.setText(""); // NOI18N
         }//GEN-LAST:event_formWindowClosing
 
     /**
@@ -260,13 +260,7 @@ public class CakePhpOptionsPanelRegisterDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CakePhpOptionsPanelRegisterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CakePhpOptionsPanelRegisterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CakePhpOptionsPanelRegisterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(CakePhpOptionsPanelRegisterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
