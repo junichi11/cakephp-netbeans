@@ -46,6 +46,9 @@
  */
 package org.cakephp.netbeans.ui.wizards;
 
+import java.awt.EventQueue;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -53,27 +56,30 @@ import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.github.CakePhpGithubTags;
 import org.cakephp.netbeans.options.CakePhpOptions;
 import org.cakephp.netbeans.versions.Versionable;
 import org.netbeans.modules.php.api.executable.InvalidPhpExecutableException;
 import org.netbeans.modules.php.api.util.StringUtils;
 import org.netbeans.modules.php.composer.api.Composer;
+import org.openide.util.ChangeSupport;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
-import org.openide.util.lookup.ServiceProvider;
+import org.openide.util.RequestProcessor;
 
 /**
  *
  * @author junichi11
  */
-@ServiceProvider(path = ConfigurationInnerPanel.CONFIGURATION_INNER_PANELS_PATH, service = ConfigurationInnerPanel.class)
 public class CakePhpConfigurationInnerPanel extends ConfigurationInnerPanel {
 
     private static final long serialVersionUID = 7874450246517944114L;
     private String errorMessage;
     private boolean isNetworkError = true;
     private static final Logger LOGGER = Logger.getLogger(CakePhpConfigurationInnerPanel.class.getName());
+    private static final RequestProcessor RP = new RequestProcessor(CakePhpConfigurationInnerPanel.class);
+    private final ChangeSupport changeSupport = new ChangeSupport(this);
 
     /**
      * Creates new form CakePhpConfigurationPanel
@@ -126,14 +132,37 @@ public class CakePhpConfigurationInnerPanel extends ConfigurationInnerPanel {
         setError();
     }
 
+    @NbBundle.Messages("CakePhpConfigurationInnerPanel.message.fetching=Fetching...")
     private void initUnzipping() {
+        assert EventQueue.isDispatchThread();
+        versionComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                setError();
+                fireChange();
+            }
+        });
         unzipRadioButton.setSelected(true);
+        versionComboBox.setEnabled(false);
+        versionComboBox.addItem(Bundle.CakePhpConfigurationInnerPanel_message_fetching()); // NOI18N
 
-        CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
-        String[] names = githubTags.getNames();
-        Arrays.sort(names, Versionable.VERSION_COMPARATOR);
-        versionComboBox.setEnabled(true);
-        versionComboBox.setModel(new DefaultComboBoxModel<String>(names));
+        RP.post(new Runnable() {
+            @Override
+            public void run() {
+                CakePhpGithubTags githubTags = CakePhpGithubTags.getInstance();
+                final String[] names = githubTags.getNames();
+
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Arrays.sort(names, Versionable.VERSION_COMPARATOR);
+                        versionComboBox.removeAllItems();
+                        versionComboBox.setEnabled(true);
+                        versionComboBox.setModel(new DefaultComboBoxModel<String>(names));
+                    }
+                });
+            }
+        });
     }
 
     private void initLocalUnzipping() {
@@ -226,6 +255,7 @@ public class CakePhpConfigurationInnerPanel extends ConfigurationInnerPanel {
     /**
      * Set error message
      */
+    @NbBundle.Messages("CakePhpConfigurationInnerPanel.error.message.fetching=Fetching versions...")
     private void setError() {
         errorMessage = null;
         if (isNetworkError) {
@@ -245,6 +275,10 @@ public class CakePhpConfigurationInnerPanel extends ConfigurationInnerPanel {
                     }
                 });
             }
+        }
+        int itemCount = versionComboBox.getItemCount();
+        if (itemCount == 1 && versionComboBox.getItemAt(0).equals(Bundle.CakePhpConfigurationInnerPanel_message_fetching())) {
+            errorMessage = Bundle.CakePhpConfigurationInnerPanel_error_message_fetching();
         }
     }
 
@@ -276,6 +310,20 @@ public class CakePhpConfigurationInnerPanel extends ConfigurationInnerPanel {
 
             LOGGER.log(Level.WARNING, Bundle.CakePhpConfigurationPanel_git_invalid());
         }
+    }
+
+    @Override
+    public void addChangeListener(ChangeListener listener) {
+        changeSupport.addChangeListener(listener);
+    }
+
+    @Override
+    public void removeChangeListener(ChangeListener listener) {
+        changeSupport.removeChangeListener(listener);
+    }
+
+    void fireChange() {
+        changeSupport.fireChange();
     }
 
     /**

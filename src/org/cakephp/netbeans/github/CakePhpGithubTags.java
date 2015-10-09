@@ -49,6 +49,7 @@ public final class CakePhpGithubTags extends GithubTagsBase {
 
     private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/cakephp/cakephp/tags"; // NOI18N
     private static final CakePhpGithubTags INSTANCE = new CakePhpGithubTags();
+    private static final Filter FILTER = new CakeFilter();
 
     public static CakePhpGithubTags getInstance() {
         return INSTANCE;
@@ -61,6 +62,15 @@ public final class CakePhpGithubTags extends GithubTagsBase {
 
     @Override
     public Filter getFilter() {
-        return null;
+        return FILTER;
+    }
+
+    private static class CakeFilter implements Filter {
+
+        @Override
+        public boolean accept(String name) {
+            return name.startsWith("1.") || name.startsWith("2."); // NOI18N
+        }
+
     }
 }

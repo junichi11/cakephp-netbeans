@@ -41,6 +41,8 @@
  */
 package org.cakephp.netbeans.github;
 
+import org.cakephp.netbeans.options.CakePhpOptions;
+
 public class BaserCmsGithubTags extends GithubTagsBase {
 
     private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/basercms/basercms/tags"; // NOI18N
@@ -48,6 +50,13 @@ public class BaserCmsGithubTags extends GithubTagsBase {
 
     public static BaserCmsGithubTags getInstance() {
         return INSTANCE;
+    }
+
+    @Override
+    public void reload() {
+        if (CakePhpOptions.getInstance().isBaserCmsEnabled()) {
+            super.reload();
+        }
     }
 
     @Override
