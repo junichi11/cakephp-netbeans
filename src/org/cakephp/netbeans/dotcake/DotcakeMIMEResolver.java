@@ -56,6 +56,13 @@ public final class DotcakeMIMEResolver extends MIMEResolver {
     private static final String DOTCAKE_FILE = ".cake"; // NOI18N
     private static final String JSON_MIME_TYPE = "text/x-json"; // NOI18N
 
+    public DotcakeMIMEResolver() {
+    }
+
+    public DotcakeMIMEResolver(String... mimeTypes) {
+        super(mimeTypes);
+    }
+
     @Override
     public String findMIMEType(FileObject fileObject) {
         String fileName = fileObject.getNameExt();
