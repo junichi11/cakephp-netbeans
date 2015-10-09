@@ -73,6 +73,7 @@ import org.cakephp.netbeans.preferences.CakePreferences;
 import org.cakephp.netbeans.ui.wizards.BaserCmsConfigurationInnerPanel;
 import org.cakephp.netbeans.ui.wizards.CakePhpConfigurationInnerPanel;
 import org.cakephp.netbeans.ui.wizards.ConfigurationInnerPanel;
+import org.cakephp.netbeans.ui.wizards.ConfigurationInnerPanels;
 import org.cakephp.netbeans.ui.wizards.DBConfigPanel;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationDetailPanel;
 import org.cakephp.netbeans.ui.wizards.NewProjectConfigurationPanel;
@@ -96,9 +97,7 @@ import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
-import org.openide.util.lookup.Lookups;
 
 /**
  * @author juncihi11
@@ -198,8 +197,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
     public NewProjectConfigurationPanel getPanel() {
         if (panel == null) {
             panel = new NewProjectConfigurationPanel();
-            Lookup lookup = Lookups.forPath(ConfigurationInnerPanel.CONFIGURATION_INNER_PANELS_PATH);
-            Collection<? extends ConfigurationInnerPanel> configurationPanels = lookup.lookupAll(ConfigurationInnerPanel.class);
+            Collection<? extends ConfigurationInnerPanel> configurationPanels = ConfigurationInnerPanels.getPanels();
             for (ConfigurationInnerPanel configurationPanel : configurationPanels) {
                 panel.addPanel(configurationPanel);
             }

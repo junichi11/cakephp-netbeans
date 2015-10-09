@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.ui.wizards;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -58,4 +59,7 @@ public abstract class ConfigurationInnerPanel extends JPanel {
 
     public abstract void setNetworkError(boolean isError);
 
+    public abstract void addChangeListener(ChangeListener listener);
+
+    public abstract void removeChangeListener(ChangeListener listener);
 }

@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2014 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,46 +37,26 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2014 Sun Microsystems, Inc.
+ * Portions Copyrighted 2015 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.github;
+package org.cakephp.netbeans.ui.wizards;
 
-import org.cakephp.netbeans.options.CakePhpOptions;
+import java.util.Arrays;
+import java.util.List;
 
-public class BaserCmsGithubTags extends GithubTagsBase {
+/**
+ *
+ * @author junichi11
+ */
+public final class ConfigurationInnerPanels {
 
-    private static final String GITHUB_API_REPOS_TAGS = "https://api.github.com/repos/basercms/basercms/tags"; // NOI18N
-    private static final BaserCmsGithubTags INSTANCE = new BaserCmsGithubTags();
-
-    public static BaserCmsGithubTags getInstance() {
-        return INSTANCE;
+    private ConfigurationInnerPanels() {
     }
 
-    @Override
-    public void reload() {
-        if (CakePhpOptions.getInstance().isBaserCmsEnabled()) {
-            super.reload();
-        }
+    public static List<ConfigurationInnerPanel> getPanels() {
+        return Arrays.asList(
+                new CakePhpConfigurationInnerPanel(),
+                new BaserCmsConfigurationInnerPanel()
+        );
     }
-
-    @Override
-    public String getUrl() {
-        return GITHUB_API_REPOS_TAGS;
-    }
-
-    @Override
-    public Filter getFilter() {
-        return new BaserCmsFilter();
-    }
-
-    private static class BaserCmsFilter implements Filter {
-
-        @Override
-        public boolean accept(String name) {
-            // provides support for version 3.x.x+
-            return name.matches("^basercms-[3-9]\\..+$"); // NOI18N
-        }
-
-    }
-
 }
