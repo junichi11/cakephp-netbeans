@@ -47,14 +47,23 @@ import com.google.gson.stream.JsonReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NonNull;
+import org.netbeans.modules.php.api.util.StringUtils;
 import org.openide.util.Exceptions;
 
 /**
@@ -63,40 +72,34 @@ import org.openide.util.Exceptions;
  */
 public abstract class GithubTagsBase {
 
-    private ArrayList<GithubTag> tags;
-    private ArrayList<String> names;
+    private final List<GithubTag> tags = new ArrayList<GithubTag>();
+    private final List<String> names = new ArrayList<String>();
     private boolean isNetworkError = true;
+    private static final Pattern LINK_URL_PATTERN = Pattern.compile("<(?<url>https://.+)>; rel=\"(?<rel>.+)\""); // NOI18N
+    private static final Logger LOGGER = Logger.getLogger(GithubTagsBase.class.getName());
 
     @NonNull
     public abstract String getUrl();
 
     public abstract Filter getFilter();
 
-    private void init() {
+    private synchronized void init() {
         isNetworkError = false;
-        tags = new ArrayList<GithubTag>();
+        // fetch tags
+        tags.clear();
         try {
-            // JSON -> Object
-            Gson gson = new Gson();
-            URL tagsJson = new URL(getUrl());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8")); // NOI18N
-            try {
-                JsonReader jsonReader = new JsonReader(reader);
-                Type type = new TypeToken<ArrayList<GithubTag>>() {
-                }.getType();
-                tags = gson.fromJson(jsonReader, type);
-            } finally {
-                reader.close();
-            }
+            addGitHubTags(getUrl(), false);
         } catch (MalformedURLException ex) {
             Exceptions.printStackTrace(ex);
         } catch (UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage());
             isNetworkError = true;
         }
 
-        names = new ArrayList<String>(tags.size());
+        // add names
+        names.clear();
         if (isNetworkError) {
             return;
         }
@@ -111,6 +114,67 @@ public abstract class GithubTagsBase {
                 names.add(name);
             }
         }
+    }
+
+    private void addGitHubTags(String url, boolean isLast) throws MalformedURLException, UnsupportedEncodingException, IOException {
+        if (StringUtils.isEmpty(url)) {
+            return;
+        }
+        URL tagsJson = new URL(url);
+        HttpURLConnection urlConnection = (HttpURLConnection) tagsJson.openConnection();
+        urlConnection.setRequestMethod("GET"); // NOI18N
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(tagsJson.openStream(), "UTF-8")); // NOI18N
+        addGitHubTags(reader);
+
+        // paging
+        if (!isLast) {
+            String link = urlConnection.getHeaderField("Link"); // NOI18N
+            if (!StringUtils.isEmpty(link)) {
+                String next = getLinkUrl(link, "next"); // NOI18N
+                String last = getLinkUrl(link, "last"); // NOI18N
+                if (next != null) {
+                    // get tags recursively
+                    addGitHubTags(next, last != null && next.equals(last));
+                }
+            }
+        }
+    }
+
+    private void addGitHubTags(Reader reader) {
+        // JSON -> Object
+        Gson gson = new Gson();
+        try {
+            JsonReader jsonReader = new JsonReader(reader);
+            Type type = new TypeToken<ArrayList<GithubTag>>() {
+            }.getType();
+            tags.addAll((Collection<? extends GithubTag>) gson.fromJson(jsonReader, type));
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage());
+                isNetworkError = true;
+            }
+        }
+    }
+
+    @CheckForNull
+    private String getLinkUrl(String link, String rel) {
+        if (StringUtils.isEmpty(link) || StringUtils.isEmpty(rel)) {
+            return null;
+        }
+        String[] urls = link.split(","); // NOI18N
+        for (String url : urls) {
+            String trimedUrl = url.trim();
+            Matcher matcher = LINK_URL_PATTERN.matcher(trimedUrl);
+            if (matcher.find()) {
+                if (rel.equals(matcher.group("rel"))) { // NOI18N
+                    return matcher.group("url"); // NOI18N
+                }
+            }
+        }
+        return null;
     }
 
     public void reload() {
