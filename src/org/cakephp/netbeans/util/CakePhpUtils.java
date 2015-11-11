@@ -302,11 +302,7 @@ public final class CakePhpUtils {
         if (fileObject == null) {
             return false;
         }
-        if (fileObject.getExt().equals(CakePhp.CTP)) {
-            return true;
-        }
-
-        return false;
+        return fileObject.getExt().equals(CakePhp.CTP);
     }
 
     public static int getActionMethodOffset(FileObject controller, FileObject view) {
@@ -346,10 +342,7 @@ public final class CakePhpUtils {
      */
     public static boolean isFixture(FileObject fileObject) {
         String className = getClassName(fileObject);
-        if (!StringUtils.isEmpty(className) && className.endsWith("Fixture")) {  // NOI18N
-            return true;
-        }
-        return false;
+        return !StringUtils.isEmpty(className) && className.endsWith("Fixture"); // NOI18N
     }
 
     /**
@@ -362,10 +355,7 @@ public final class CakePhpUtils {
         if (path == null || path.startsWith("//")) { // NOI18N
             return false;
         }
-        if (path.startsWith("/")) { // NOI18N
-            return true;
-        }
-        return false;
+        return path.startsWith("/"); // NOI18N
     }
 
     /**

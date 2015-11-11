@@ -89,12 +89,16 @@ abstract class CakePhpCodeTemplateParameter {
         @CheckForNull
         public static CakePhpCodeTemplateParameter create(CodeTemplateParameter parameter) {
             String name = parameter.getName();
-            if (name.equals(CAKE_MODEL_VALUE)) {
-                return new CakeModelParameter(parameter);
-            } else if (name.equals(CAKE_FILE_NAME_VALUE)) {
-                return new CakeFileNameParameter(parameter);
-            } else if (name.equals(CAKE_APP_USES_VALUE)) {
-                return new CakeAppUsesParameter(parameter);
+            if (name != null) {
+                switch (name) {
+                    case CAKE_MODEL_VALUE:
+                        return new CakeModelParameter(parameter);
+                    case CAKE_FILE_NAME_VALUE:
+                        return new CakeFileNameParameter(parameter);
+                    case CAKE_APP_USES_VALUE:
+                        return new CakeAppUsesParameter(parameter);
+                    default:
+                }
             }
             return null;
         }

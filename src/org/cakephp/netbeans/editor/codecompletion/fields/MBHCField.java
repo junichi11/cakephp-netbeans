@@ -73,14 +73,18 @@ public class MBHCField extends FieldImpl {
     }
 
     private FILE_TYPE getFileType(String fieldName) {
-        if (fieldName.equals(Field.COMPONENTS)) {
-            return FILE_TYPE.COMPONENT;
-        } else if (fieldName.equals(Field.HELPERS)) {
-            return FILE_TYPE.HELPER;
-        } else if (fieldName.equals(Field.ACTS_AS)) {
-            return FILE_TYPE.BEHAVIOR;
-        } else if (fieldName.equals(Field.USES)) {
-            return FILE_TYPE.MODEL;
+        if (fieldName != null) {
+            switch (fieldName) {
+                case Field.COMPONENTS:
+                    return FILE_TYPE.COMPONENT;
+                case Field.HELPERS:
+                    return FILE_TYPE.HELPER;
+                case Field.ACTS_AS:
+                    return FILE_TYPE.BEHAVIOR;
+                case Field.USES:
+                    return FILE_TYPE.MODEL;
+                default:
+            }
         }
         return FILE_TYPE.NONE;
     }
@@ -102,7 +106,7 @@ public class MBHCField extends FieldImpl {
         int insertStart = ts.offset() + 1;
         int removeLength = caretInputString.length();
 
-        ArrayList<CompletionItem> items = new ArrayList<CompletionItem>();
+        ArrayList<CompletionItem> items = new ArrayList<>();
         String pluginName = null;
         CakePhpModule.DIR_TYPE dirType = CakePhpModule.DIR_TYPE.APP;
 
@@ -129,7 +133,7 @@ public class MBHCField extends FieldImpl {
     }
 
     private List<FileObject> getTargetDirectories(CakePhpModule cakeModule, CakePhpModule.DIR_TYPE dirType, String pluginName) {
-        ArrayList<FileObject> targetDirectories = new ArrayList<FileObject>();
+        ArrayList<FileObject> targetDirectories = new ArrayList<>();
         List<DIR_TYPE> types = Collections.emptyList();
         if (dirType == DIR_TYPE.APP) {
             if (fileType == FILE_TYPE.MODEL) {

@@ -109,7 +109,7 @@ public class ExtendMethod extends AssetMethod {
         // set sub directory path
         String filter = setSubDirectoryPath(basePath);
 
-        List<String> elements = new ArrayList<String>();
+        List<String> elements = new ArrayList<>();
         if (argCount == 1) {
             // get DIR_TYPE, FILE_TYPE
             DIR_TYPE dirType = cakeModule.getDirectoryType(currentFile);

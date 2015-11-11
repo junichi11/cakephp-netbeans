@@ -75,7 +75,7 @@ import org.openide.util.NbBundle;
 // @ActionReference(path="Menu/Tools", position=...)
 public final class InstallPluginsWizardAction extends BaseAction implements ActionListener {
 
-    private static final String LF = "\n";
+    private static final String LF = "\n"; // NOI18N
     private static final long serialVersionUID = 4405963698419409213L;
     private static final InstallPluginsWizardAction INSTANCE = new InstallPluginsWizardAction();
 
@@ -101,7 +101,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
     })
     @Override
     protected void actionPerformed(PhpModule pm) {
-        List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+        List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<>();
         panels.add(new InstallPluginsWizardPanel(pm));
         String[] steps = new String[panels.size()];
         for (int i = 0; i < panels.size(); i++) {
@@ -117,7 +117,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                 jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
             }
         }
-        WizardDescriptor wiz = new WizardDescriptor(new WizardDescriptor.ArrayIterator<WizardDescriptor>(panels));
+        WizardDescriptor wiz = new WizardDescriptor(new WizardDescriptor.ArrayIterator<>(panels));
         // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
         wiz.setTitleFormat(new MessageFormat("{0}"));
         wiz.setTitle(Bundle.LBL_InstallPluginsTitle());
@@ -186,7 +186,7 @@ public final class InstallPluginsWizardAction extends BaseAction implements Acti
                             }
 
                             String errorMessage = errors.toString();
-                            NotifyDescriptor d = null;
+                            NotifyDescriptor d;
                             if (!errorMessage.isEmpty()) {
                                 //display error dialog
                                 d = new NotifyDescriptor.Message("Please confirm the URL.\n" + errorMessage, NotifyDescriptor.ERROR_MESSAGE);

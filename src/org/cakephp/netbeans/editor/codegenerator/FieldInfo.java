@@ -121,7 +121,7 @@ public abstract class FieldInfo {
         this.textComponent = textComponent;
         this.type = type;
         isExist = false;
-        possibleProperties = new ArrayList<Property>();
+        possibleProperties = new ArrayList<>();
         this.insertOffset = 0;
     }
 

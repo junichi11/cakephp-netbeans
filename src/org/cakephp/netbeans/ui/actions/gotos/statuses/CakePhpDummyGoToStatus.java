@@ -54,7 +54,7 @@ import org.openide.filesystems.FileObject;
  */
 public final class CakePhpDummyGoToStatus extends CakePhpGoToStatus {
 
-    private static CakePhpDummyGoToStatus INSTANCE = new CakePhpDummyGoToStatus();
+    private static final CakePhpDummyGoToStatus INSTANCE = new CakePhpDummyGoToStatus();
 
     private CakePhpDummyGoToStatus() {
     }

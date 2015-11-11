@@ -41,6 +41,8 @@
  */
 package org.cakephp.netbeans.basercms;
 
+import org.netbeans.api.annotations.common.StaticResource;
+
 /**
  *
  * @author junichi11
@@ -50,6 +52,8 @@ public final class BaserCms {
     private BaserCms() {
     }
 
+    @StaticResource
     public static final String BASER_ICON_16 = "org/cakephp/netbeans/basercms/ui/resources/basercms_icon_16.png"; // NOI18N
+    @StaticResource
     public static final String BASER_ICON_32 = "org/cakephp/netbeans/basercms/ui/resources/basercms_icon_32.png"; // NOI18N
 }

@@ -60,7 +60,7 @@ public class CheckBoxTreeRenderer extends JPanel implements TreeCellRenderer {
     private static final long serialVersionUID = 1537076774398838068L;
     protected JCheckBox check;
     protected JLabel label;
-    private static final JList<String> LIST_FOR_COLORS = new JList<String>();
+    private static final JList<String> LIST_FOR_COLORS = new JList<>();
 
     public CheckBoxTreeRenderer() {
         setLayout(new BorderLayout());

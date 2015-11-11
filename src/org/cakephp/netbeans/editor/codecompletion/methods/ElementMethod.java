@@ -77,7 +77,7 @@ public class ElementMethod extends AssetMethod {
             return Collections.emptyList();
         }
 
-        List<String> elements = new ArrayList<String>();
+        List<String> elements = new ArrayList<>();
         CakeVersion cakeVersion = cakeModule.getCakeVersion();
         if (cakeVersion == null) {
             return Collections.emptyList();

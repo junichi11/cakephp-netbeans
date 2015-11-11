@@ -77,12 +77,12 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
     private final PhpClass phpClass;
     protected FileObject targetFile;
     protected PhpModule phpModule;
-    private List<FileObject> models = new ArrayList<FileObject>();
-    private List<FileObject> components = new ArrayList<FileObject>();
-    private List<FileObject> helpers = new ArrayList<FileObject>();
-    private List<FileObject> behaviors = new ArrayList<FileObject>();
-    private List<FileObject> fixtures = new ArrayList<FileObject>();
-    public static final Map<String, FILE_TYPE> FILE_TYPES = new HashMap<String, CakePhpModule.FILE_TYPE>();
+    private final List<FileObject> models = new ArrayList<>();
+    private final List<FileObject> components = new ArrayList<>();
+    private final List<FileObject> helpers = new ArrayList<>();
+    private final List<FileObject> behaviors = new ArrayList<>();
+    private final List<FileObject> fixtures = new ArrayList<>();
+    public static final Map<String, FILE_TYPE> FILE_TYPES = new HashMap<>();
     public static final String USES = "$uses"; // NOI18N
     public static final String COMPONENTS = "$components"; // NOI18N
     public static final String HELPERS = "$helpers"; // NOI18N
@@ -214,10 +214,7 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
      * @return
      */
     private boolean containsFieldNames(String fieldName, Set<String> names) {
-        if (fieldName != null && names.contains(fieldName)) {
-            return true;
-        }
-        return false;
+        return fieldName != null && names.contains(fieldName);
     }
 
     private Set<CakePhpModule.DIR_TYPE> getDirTypes(boolean isPlugin) {

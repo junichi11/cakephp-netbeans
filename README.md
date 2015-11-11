@@ -2,18 +2,18 @@
 
 This plugin provides support for CakePHP.
 
-- 2010/07/16
-- 2014/03/20 last update
+since 2010/07/16
 
-## Environment
+## Environments
 
-- NetBeans 8.0+
+- NetBeans 8.1+
 - CakePHP 1.3.x
 - CakePHP 2.x
 
 ## About CakePHP 3.x
 
-Please use the following : [cakephp3-netbeans](https://github.com/junichi11/cakephp3-netbeans) 
+CakePHP3 support is not provide in this plugin.
+Please use the following : [cakephp3-netbeans](https://github.com/junichi11/cakephp3-netbeans)
 
 ## How to enable
 
@@ -84,7 +84,7 @@ Please select your cakephp dir(e.g. /home/NetBeansProjects/myproject)
 
 ### App Directory Path
 
-You can set app directory path from source directory.  
+You can set app directory path from source directory.
 Project properties > Framework > CakePHP > Custom directory path > app
 
 #### Use multiple app directories
@@ -194,10 +194,10 @@ Plugin version numbers are not necessarily latest. Please try to check and edit 
 4. Run Configuration
 5. PHP Framework > check CakePHP PHP Web Framework
 
-Select `Unzip` or `Unzip local file` or `Composer` or `git command`.  
-If you select `Unzip`, also select CakePHP version.  
+Select `Unzip` or `Unzip local file` or `Composer` or `git command`.
+If you select `Unzip`, also select CakePHP version.
 If you want to unzip the local file, please set the option
-(`Tools > Options > PHP > CakePHP > New Project > Local file path`)  
+(`Tools > Options > PHP > CakePHP > New Project > Local file path`)
 If you want to create a database.php file, please, check the Create database.php.
 
 Also set the following automatically.
@@ -443,7 +443,7 @@ https://gist.github.com/2055307 ([nojimage](https://github.com/nojimage))
 `Alt` + `Insert` or Right-click on editor, select `Insert Code`.
 
 #### Generate uses, helpers, components and actsAs fields
-Dialog is displayed when you run Insert Code action.  
+Dialog is displayed when you run Insert Code action.
 Please select what you want to use. And code like followings are inserted.
 
 ```php
@@ -455,7 +455,7 @@ $actsAs = array('Tree', ..., 'PluignName.SomeBehavior');
 You have to add settings for each classes by yourself if you need it.
 
 #### Generate validations
-This provides support for only **Core validations**.(e.g. notEmpty, isUnique, e.t.c)  
+This provides support for only **Core validations**.(e.g. notEmpty, isUnique, e.t.c)
 At first, you have to write the following before you run this feature.
 
 ```php
@@ -482,7 +482,7 @@ Then, code like followings will be inserted:
 },
 ```
 
-Since message is focused, you can change it to your message.  
+Since message is focused, you can change it to your message.
 Please push `Enter` key after you change it. And you can move to next message.
 If you want to move to previous message, please push `Shift` + `Tab`.
 
@@ -510,7 +510,7 @@ Please also see the following: https://github.com/junichi11/cakephp-netbeans/iss
 
 ### baserCMS3
 
-baserCMS is open source CMS and powered by CakePHP Framework.
+baserCMS is an open source CMS and powered by CakePHP Framework.
 
 #### Features
 

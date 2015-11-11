@@ -192,7 +192,7 @@ public class GoToPopup extends JPanel implements FocusListener {
     }
 
     private ListModel<GoToItem> createListModel() {
-        DefaultListModel<GoToItem> dlm = new DefaultListModel<GoToItem>();
+        DefaultListModel<GoToItem> dlm = new DefaultListModel<>();
 
         for (GoToItem el : items) {
             dlm.addElement(el);

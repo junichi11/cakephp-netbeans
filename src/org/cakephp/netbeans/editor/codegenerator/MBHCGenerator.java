@@ -56,6 +56,7 @@ import org.cakephp.netbeans.modules.CakePhpModule;
 import org.cakephp.netbeans.util.CakePhpDocUtils;
 import org.cakephp.netbeans.util.CakePhpUtils;
 import org.cakephp.netbeans.util.DocUtils;
+import org.cakephp.netbeans.versions.CakeVersion;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
@@ -95,7 +96,7 @@ public class MBHCGenerator implements CodeGenerator {
     private MBHCGenerator(Lookup context, List<Type> types) {
         textComp = context.lookup(JTextComponent.class);
         // create FiledInfo
-        fields = new ArrayList<FieldInfo>();
+        fields = new ArrayList<>();
         for (Type type : types) {
             fields.add(FieldInfoFactory.create(type, textComp));
         }
@@ -195,9 +196,13 @@ public class MBHCGenerator implements CodeGenerator {
             if (cakeModule == null) {
                 return Collections.emptyList();
             }
+            CakeVersion cakeVersion = cakeModule.getCakeVersion();
+            if (cakeVersion == null) {
+                return Collections.emptyList();
+            }
 
-            if (CakePhpUtils.isCakePHP(phpModule) && cakeModule.getCakeVersion().getMajor() > 1) {
-                List<Type> types = new ArrayList<Type>();
+            if (CakePhpUtils.isCakePHP(phpModule) && cakeVersion.getMajor() > 1) {
+                List<Type> types = new ArrayList<>();
                 if (CakePhpUtils.isController(fileObject)) {
                     types.add(Type.USES);
                     types.add(Type.HELPERS);

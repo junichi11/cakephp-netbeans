@@ -69,7 +69,7 @@ public class CakePhpCodeUtils {
             if (name.length() > 2) {
                 name = name.substring(1, name.length() - 1);
             } else {
-                name = "";
+                name = ""; // NOI18N
             }
         }
         return name;

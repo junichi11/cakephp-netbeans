@@ -72,11 +72,11 @@ import org.openide.util.Lookup;
 
 public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
 
-    private final Set<PhpVariable> fields = new HashSet<PhpVariable>();
-    private final Set<String> viewNames = new HashSet<String>();
-    private final Set<String> allViewNames = new HashSet<String>();
-    private final Set<String> themeNames = new HashSet<String>();
-    private final Set<String> allThemeNames = new HashSet<String>();
+    private final Set<PhpVariable> fields = new HashSet<>();
+    private final Set<String> viewNames = new HashSet<>();
+    private final Set<String> allViewNames = new HashSet<>();
+    private final Set<String> themeNames = new HashSet<>();
+    private final Set<String> allThemeNames = new HashSet<>();
     private String className = null;
     private String methodName = "";
     private String viewName = null;
@@ -166,7 +166,7 @@ public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
                 // e.g. $this->view = 'add';
                 // left
                 FieldAccess f = (FieldAccess) leftHandSide;
-                Variable v = f.getField();;
+                Variable v = f.getField();
                 String variableName = CodeUtils.extractVariableName(v);
                 if (!"view".equals(variableName) && !"theme".equals(variableName)) { // NOI18N
                     return;
@@ -199,7 +199,7 @@ public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
 
     @Override
     public Set<String> getFieldNames() {
-        Set<String> fieldNames = new HashSet<String>();
+        Set<String> fieldNames = new HashSet<>();
 
         // get AppController fields info.
         String name = CakePhpUtils.toUnderscoreCase(targetFile.getName());
@@ -224,7 +224,7 @@ public final class CakePhpControllerVisitor extends CakePhpFieldsVisitor {
     }
 
     public Set<PhpVariable> getPhpVariables() {
-        Set<PhpVariable> phpVariables = new HashSet<PhpVariable>();
+        Set<PhpVariable> phpVariables = new HashSet<>();
         synchronized (fields) {
             phpVariables.addAll(fields);
         }

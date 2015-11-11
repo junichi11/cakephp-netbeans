@@ -94,7 +94,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
     private String tooltipText;
     private String methodName;
     private static final String ELEMENT_METHOD = "element"; // NOI18N
-    private static final List<String> targetMethods = Arrays.asList(ELEMENT_METHOD);
+    private static final List<String> TARGET_METHODS = Arrays.asList(ELEMENT_METHOD);
     private static final Logger LOGGER = Logger.getLogger(CakePhpHyperlinkProvider.class.getName());
 
     @Override
@@ -265,7 +265,7 @@ public class CakePhpHyperlinkProvider implements HyperlinkProviderExt {
      * @return {@code true} if target methos name, {@code false} otherwise.
      */
     private boolean isTarget(String methodName) {
-        return targetMethods.contains(methodName);
+        return TARGET_METHODS.contains(methodName);
     }
 
     /**

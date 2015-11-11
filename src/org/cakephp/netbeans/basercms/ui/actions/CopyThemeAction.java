@@ -74,7 +74,7 @@ public class CopyThemeAction extends BaserCmsBaseAction implements ChangeListene
     private static final RequestProcessor RP = new RequestProcessor(CopyThemeAction.class);
     private static final long serialVersionUID = 939505827965160398L;
     private CopyThemePanel panel = null;
-    private List<String> themeNames = new ArrayList<String>();
+    private List<String> themeNames = new ArrayList<>();
 
     @NbBundle.Messages("CopyThemeAction.name=Copy Existing Theme")
     @Override
@@ -150,7 +150,7 @@ public class CopyThemeAction extends BaserCmsBaseAction implements ChangeListene
      * @return initial files to be opened
      */
     private Set<FileObject> getInitialFiles(FileObject themeDirectory, String themeName) {
-        Set<FileObject> initialFiles = new HashSet<FileObject>();
+        Set<FileObject> initialFiles = new HashSet<>();
         FileObject newThemeDirectory = themeDirectory.getFileObject(themeName);
         if (newThemeDirectory == null) {
             return initialFiles;
@@ -222,7 +222,7 @@ public class CopyThemeAction extends BaserCmsBaseAction implements ChangeListene
      */
     private List<String> getThemeNames(@NonNull FileObject themeDirectory) {
         FileObject[] children = themeDirectory.getChildren();
-        ArrayList<String> names = new ArrayList<String>(children.length);
+        ArrayList<String> names = new ArrayList<>(children.length);
         for (FileObject child : children) {
             if (child.isFolder()) {
                 names.add(child.getName());

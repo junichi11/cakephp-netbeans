@@ -69,7 +69,7 @@ public class CopyThemePanel extends JPanel {
      * Creates new form CopyThemePanel
      */
     @NbBundle.Messages({
-        "CopyThemePanel.title=Copy existing theme"
+        "CopyThemePanel.title=Copy an existing theme"
     })
     public CopyThemePanel() {
         initComponents();
@@ -83,7 +83,7 @@ public class CopyThemePanel extends JPanel {
 
     public void setExistingThemeNames(List<String> names) {
         themesComboBox.removeAllItems();
-        DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<String>(names.toArray(new String[0]));
+        DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>(names.toArray(new String[0]));
         themesComboBox.setModel(defaultComboBoxModel);
     }
 
@@ -101,7 +101,7 @@ public class CopyThemePanel extends JPanel {
 
     private void init() {
         themeNameTextField.getDocument().addDocumentListener(new DeafultDocumentListener());
-        DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<String>();
+        DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>();
         themesComboBox.setModel(defaultComboBoxModel);
     }
 

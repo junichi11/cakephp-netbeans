@@ -48,7 +48,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +82,7 @@ import org.openide.util.Exceptions;
 public final class Dotcake {
 
     private final String cake;
-    @SerializedName("build_path")
+    @SerializedName("build_path") // NOI18N
     private final Map<String, List<String>> buildPath;
     private File dotcakeFile;
     private static final String DOTCAKE_NAME = ".cake"; // NOI18N
@@ -145,7 +145,7 @@ public final class Dotcake {
         InputStream inputStream;
         try {
             inputStream = dotcakeFile.getInputStream();
-            InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8"); // NOI18N
+            InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             try {
                 Gson gson = new Gson();
                 Dotcake dotcake = gson.fromJson(reader, Dotcake.class)
@@ -162,8 +162,6 @@ public final class Dotcake {
                 }
             }
         } catch (FileNotFoundException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (UnsupportedEncodingException ex) {
             Exceptions.printStackTrace(ex);
         }
         return null;

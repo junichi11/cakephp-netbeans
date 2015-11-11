@@ -71,10 +71,10 @@ import org.openide.util.Exceptions;
 public class CakePhpFixtureGoToStatus extends CakePhpGoToStatus {
 
     private static final String FIXTURE = "Fixture"; // NOI18N
-    private final List<GoToItem> models = new ArrayList<GoToItem>();
-    private final List<GoToItem> testCases = new ArrayList<GoToItem>();
+    private final List<GoToItem> models = new ArrayList<>();
+    private final List<GoToItem> testCases = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpFixtureGoToStatus.class.getName());
-    private static CakePhpFixtureGoToStatus INSTANCE = new CakePhpFixtureGoToStatus();
+    private static final CakePhpFixtureGoToStatus INSTANCE = new CakePhpFixtureGoToStatus();
 
     private CakePhpFixtureGoToStatus() {
     }

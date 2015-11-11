@@ -85,11 +85,11 @@ import org.openide.filesystems.FileObject;
  */
 public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
 
-    private final List<GoToItem> models = new ArrayList<GoToItem>();
-    private final List<GoToItem> fixtures = new ArrayList<GoToItem>();
-    private final List<GoToItem> behaviors = new ArrayList<GoToItem>();
+    private final List<GoToItem> models = new ArrayList<>();
+    private final List<GoToItem> fixtures = new ArrayList<>();
+    private final List<GoToItem> behaviors = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpModelGoToStatus.class.getName());
-    private static CakePhpModelGoToStatus INSTANCE = new CakePhpModelGoToStatus();
+    private static final CakePhpModelGoToStatus INSTANCE = new CakePhpModelGoToStatus();
 
     private CakePhpModelGoToStatus() {
     }
@@ -107,7 +107,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
     @Override
     protected void scan(PhpModule phpModule, FileObject currentFile, int offset) {
         reset();
-        final Set<FileObject> fixtureFiles = new HashSet<FileObject>();
+        final Set<FileObject> fixtureFiles = new HashSet<>();
 
         // scan
         final CakePhpModelVisitor modelVisitor = new CakePhpModelVisitor(currentFile);
@@ -170,7 +170,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         FileObject controllerDirectory = cakeModule.getControllerDirectory(CakePhpModule.DIR_TYPE.APP);
 
         // scan controllers
-        final Set<FileObject> controllers = new HashSet<FileObject>();
+        final Set<FileObject> controllers = new HashSet<>();
         Enumeration<? extends FileObject> children = controllerDirectory.getChildren(true);
         while (children.hasMoreElements()) {
             final FileObject fileObject = children.nextElement();
@@ -185,7 +185,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         }
 
         // add GoToItem
-        List<GoToItem> controllerItems = new ArrayList<GoToItem>(controllers.size());
+        List<GoToItem> controllerItems = new ArrayList<>(controllers.size());
         for (FileObject controller : controllers) {
             if (CakePhpUtils.isController(controller)) {
                 controllerItems.add(new GoToControllerItem(controller, DEFAULT_OFFSET));
@@ -230,7 +230,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         List<GoToItem> testCases = getTestCases();
         List<GoToItem> fixtrues = getFixtrues();
         int size = controllers.size() + testCases.size() + models.size() + fixtrues.size();
-        List<GoToItem> items = new ArrayList<GoToItem>(size);
+        List<GoToItem> items = new ArrayList<>(size);
         items.addAll(controllers);
         items.addAll(testCases);
         items.addAll(models);
@@ -263,7 +263,7 @@ public class CakePhpModelGoToStatus extends CakePhpGoToStatus {
         // get controller name
         String controllerName = infrector.pluralize(className) + "Controller"; // NOI18N
         Set<ClassElement> classElements = getClassElements(getPhpModule().getSourceDirectory(), controllerName);
-        List<GoToItem> items = new ArrayList<GoToItem>(classElements.size());
+        List<GoToItem> items = new ArrayList<>(classElements.size());
         for (ClassElement classElement : classElements) {
             FileObject controller = classElement.getFileObject();
             if (CakePhpUtils.isController(controller)) {

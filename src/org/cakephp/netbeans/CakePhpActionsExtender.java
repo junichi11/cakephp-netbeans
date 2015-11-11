@@ -65,13 +65,14 @@ import org.openide.util.NbBundle;
 public class CakePhpActionsExtender extends PhpModuleActionsExtender {
 
     @Override
+    @NbBundle.Messages("LBL_MenuName=CakePHP")
     public String getMenuName() {
-        return NbBundle.getMessage(CakePhpActionsExtender.class, "LBL_MenuName");
+        return Bundle.LBL_MenuName();
     }
 
     @Override
     public List<? extends Action> getActions() {
-        List<Action> list = new ArrayList<Action>();
+        List<Action> list = new ArrayList<>();
         list.add(ClearCacheAction.getInstance());
         list.add(InstallPluginsWizardAction.getInstance());
         list.add(CheckDefaultAction.getInstance());

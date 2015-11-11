@@ -94,8 +94,9 @@ public class CakePhpModuleCustomizerExtender extends PhpModuleCustomizerExtender
     }
 
     @Override
+    @NbBundle.Messages("LBL_CakePHP=CakePHP")
     public String getDisplayName() {
-        return NbBundle.getMessage(CakePhpModuleCustomizerExtender.class, "LBL_CakePHP"); // NOI18N
+        return Bundle.LBL_CakePHP();
     }
 
     @Override

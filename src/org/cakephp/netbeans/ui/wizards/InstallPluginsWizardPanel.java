@@ -53,7 +53,7 @@ public class InstallPluginsWizardPanel implements WizardDescriptor.Panel<WizardD
      * component from this class, just use getComponent().
      */
     private InstallPluginsVisualPanel component;
-    private PhpModule phpModule;
+    private final PhpModule phpModule;
 
     public InstallPluginsWizardPanel(PhpModule phpModule) {
         this.phpModule = phpModule;

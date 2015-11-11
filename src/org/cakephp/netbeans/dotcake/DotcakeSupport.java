@@ -114,7 +114,7 @@ public final class DotcakeSupport {
         // get directories
         FileObject dotcakeFileObject = FileUtil.toFileObject(dotcakeFile);
         List<String> buildPaths = dotcake.getBuildPaths(category);
-        ArrayList<FileObject> directories = new ArrayList<FileObject>(buildPaths.size());
+        ArrayList<FileObject> directories = new ArrayList<>(buildPaths.size());
         for (String path : buildPaths) {
             FileObject fileObject = dotcakeFileObject.getParent().getFileObject(path);
             if (fileObject != null && fileObject.isFolder()) {

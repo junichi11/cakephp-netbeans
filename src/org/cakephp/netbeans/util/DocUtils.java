@@ -41,7 +41,6 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.cakephp.netbeans.util;
 
 import java.awt.Toolkit;
@@ -52,22 +51,22 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import org.netbeans.api.annotations.common.NonNull;
+import org.netbeans.editor.AcceptorFactory;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
-import org.netbeans.modules.editor.lib2.AcceptorFactory;
 import org.openide.util.NbBundle;
 
 /**
  * This class contains useful methods for working with documents.
- * 
+ *
  * @author Vita Stejskal
  */
 public final class DocUtils {
 
     private static final Logger LOG = Logger.getLogger(DocUtils.class.getName());
-    
+
     public static int getRowStart(Document doc, int offset, int lineShift)
-    throws BadLocationException {
-        
+            throws BadLocationException {
+
         checkOffsetValid(doc, offset);
 
         if (lineShift != 0) {
@@ -81,20 +80,21 @@ public final class DocUtils {
 
         } else { // no shift
             return doc.getDefaultRootElement().getElement(
-                   doc.getDefaultRootElement().getElementIndex(offset)).getStartOffset();
+                    doc.getDefaultRootElement().getElementIndex(offset)).getStartOffset();
         }
     }
 
     public static int getRowEnd(Document doc, int offset)
-    throws BadLocationException {
+            throws BadLocationException {
         checkOffsetValid(doc, offset);
 
         return doc.getDefaultRootElement().getElement(
-               doc.getDefaultRootElement().getElementIndex(offset)).getEndOffset() - 1;
+                doc.getDefaultRootElement().getElementIndex(offset)).getEndOffset() - 1;
     }
-    
+
     /**
      * Return line index (line number - 1) for some offset in document.
+     *
      * @throws BadLocationException in case the offset is out of document.
      * @see {@link #getLineIndex(javax.swing.text.Document, int)} instead.
      */
@@ -103,13 +103,14 @@ public final class DocUtils {
         return getLineIndex(doc, offset);
     }
 
-    /** 
+    /**
      * Return line index (line number - 1) for some offset in document.
-     * 
+     *
      * @param doc document to operate on.
      * @param offset offset in document.
-     * @return line index &gt;=0 since document always contains at least single '\n'.
-     *  Returns 0 if offset &lt;=0. Returns last line index if offset is beyond document's end.
+     * @return line index &gt;=0 since document always contains at least single
+     * '\n'. Returns 0 if offset &lt;=0. Returns last line index if offset is
+     * beyond document's end.
      */
     public static int getLineIndex(Document doc, int offset) {
         Element lineRoot = doc.getDefaultRootElement();
@@ -126,7 +127,7 @@ public final class DocUtils {
                 ret = String.valueOf(line) + ":" + String.valueOf(col); // NOI18N
             } catch (BadLocationException e) {
                 ret = NbBundle.getBundle(DocUtils.class).getString("wrong_position")
-                      + ' ' + offset + " > " + doc.getLength(); // NOI18N
+                        + ' ' + offset + " > " + doc.getLength(); // NOI18N
             }
         } else {
             ret = String.valueOf(offset);
@@ -135,11 +136,14 @@ public final class DocUtils {
         return ret;
     }
 
-    /** Return visual column (with expanded tabs) on the line.
-    * @param doc document to operate on
-    * @param offset position in document for which the visual column should be found
-    * @return visual column on the line determined by position
-    */
+    /**
+     * Return visual column (with expanded tabs) on the line.
+     *
+     * @param doc document to operate on
+     * @param offset position in document for which the visual column should be
+     * found
+     * @return visual column on the line determined by position
+     */
     public static int getVisualColumn(Document doc, int offset) throws BadLocationException {
         int docLen = doc.getLength();
         if (offset == docLen + 1) { // at ending extra '\n' => make docLen to proceed without BLE
@@ -158,9 +162,10 @@ public final class DocUtils {
             return -1;
         }
     }
-    
+
     /**
      * Transpose letter at offset with the next one at offset+1.
+     *
      * @param doc non-null document that should be write-locked.
      * @param offset
      * @return true if succeeded or false when at end of doc.
@@ -180,9 +185,9 @@ public final class DocUtils {
         }
         return false;
     }
-    
+
     private static Method findDeclaredMethod(Class<?> clazz, String name, Class... parameters) throws NoSuchMethodException {
-        while(clazz != null) {
+        while (clazz != null) {
             try {
                 return clazz.getDeclaredMethod(name, parameters);
             } catch (NoSuchMethodException e) {
@@ -191,17 +196,12 @@ public final class DocUtils {
         }
         throw new NoSuchMethodException("Method: " + name); //NOI18N
     }
-    
-    public static boolean isIdentifierPart(Document doc, char ch) {
-        // TODO: make this configurable
-        return AcceptorFactory.UNICODE_IDENTIFIER.accept(ch);
-    }
-    
+
     public static boolean isWhitespace(char ch) {
         // TODO: make this configurable
         return AcceptorFactory.WHITESPACE.accept(ch);
     }
-    
+
     public static void atomicLock(Document doc) {
         // TODO: fix this, do not use reflection
         try {
@@ -211,7 +211,7 @@ public final class DocUtils {
             LOG.log(Level.WARNING, e.getMessage(), e);
         }
     }
-    
+
     public static void atomicUnlock(Document doc) {
         // TODO: fix this, do not use reflection
         try {
@@ -221,7 +221,7 @@ public final class DocUtils {
             LOG.log(Level.WARNING, e.getMessage(), e);
         }
     }
-    
+
     public static void runAtomicAsUser(Document doc, Runnable r) {
         try {
             Method m = doc.getClass().getMethod("runAtomicAsUser", Runnable.class);
@@ -230,21 +230,23 @@ public final class DocUtils {
             LOG.log(Level.WARNING, e.getMessage(), e);
         }
     }
-    
+
     private static void checkOffsetValid(Document doc, int offset) throws BadLocationException {
         checkOffsetValid(offset, doc.getLength());
     }
 
     private static void checkOffsetValid(int offset, int limitOffset) throws BadLocationException {
-        if (offset < 0 || offset > limitOffset) { 
+        if (offset < 0 || offset > limitOffset) {
             throw new BadLocationException("Invalid offset=" + offset // NOI18N
-                + " not within <0, " + limitOffset + ">", // NOI18N
-                offset);
+                    + " not within <0, " + limitOffset + ">", // NOI18N
+                    offset);
         }
     }
-    
-    /** Creates a new instance of DocUtils */
+
+    /**
+     * Creates a new instance of DocUtils
+     */
     private DocUtils() {
     }
-    
+
 }

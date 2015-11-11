@@ -2236,16 +2236,6 @@ public class CakePhpModuleTest extends NbTestCase {
         }
 
         @Override
-        public FileObject getTestDirectory() {
-            return null;
-        }
-
-        @Override
-        public PhpModuleProperties getProperties() {
-            return new PhpModuleProperties();
-        }
-
-        @Override
         public Preferences getPreferences(Class<?> type, boolean bln) {
             return new Preferences() {
                 @Override
@@ -2416,10 +2406,6 @@ public class CakePhpModuleTest extends NbTestCase {
         @Override
         public boolean isBroken() {
             return false;
-        }
-
-        @Override
-        public void openCustomizer(String string) {
         }
 
         @Override

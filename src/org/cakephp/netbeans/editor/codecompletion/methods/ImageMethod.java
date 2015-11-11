@@ -61,7 +61,7 @@ public class ImageMethod extends AssetMethod {
 
     private static final List<String> EXT_FILTER = Arrays.asList("jpeg", "jpg", "png", "gif", "bmp", "ico"); // NOI18N
     private static final String SPLIT_PLUGIN_REGEX_PATTERN = "^([A-Z].+?\\.|)(.+\\.[a-zA-Z]+)$";// NOI18N
-    private CakePhpModule cakeModule;
+    private final CakePhpModule cakeModule;
 
     ImageMethod(PhpModule phpModule) {
         super(phpModule);
@@ -88,10 +88,10 @@ public class ImageMethod extends AssetMethod {
         String pluginName = ""; // NOI18N
         String filePath = ""; // NOI18N
         if (matcher.find()) {
-            pluginName = matcher.group(1).replace(DOT, "");
+            pluginName = matcher.group(1).replace(DOT, ""); // NOI18N
             filePath = matcher.group(2);
         }
-        FileObject webrootDirectory = null;
+        FileObject webrootDirectory;
         if (!filePath.startsWith(SLASH)) {
             filePath = "img/" + filePath; // NOI18N
         }

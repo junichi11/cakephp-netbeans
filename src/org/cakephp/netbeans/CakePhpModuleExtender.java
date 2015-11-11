@@ -422,9 +422,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 Process pullProcess = Runtime.getRuntime().exec(pullCommand, envp);
                 pullProcess.waitFor();
                 progressTextField.setText("Complete"); // NOI18N
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
+            } catch (InterruptedException | IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
@@ -465,7 +463,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 return Collections.emptySet();
             }
 
-            Set<FileObject> files = new HashSet<FileObject>();
+            Set<FileObject> files = new HashSet<>();
             files.add(config);
             if (files.isEmpty()) {
                 FileObject index = targetDirectory.getFileObject(defaultAppName + "/webroot/index.php"); // NOI18N
@@ -586,9 +584,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 if (result != null) {
                     try {
                         result.get();
-                    } catch (InterruptedException ex) {
-                        Exceptions.printStackTrace(ex);
-                    } catch (ExecutionException ex) {
+                    } catch (InterruptedException | ExecutionException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                 }
@@ -644,9 +640,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                     if (result != null) {
                         result.get();
                     }
-                } catch (InterruptedException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (ExecutionException ex) {
+                } catch (InterruptedException | ExecutionException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             } catch (InvalidPhpExecutableException ex) {
@@ -676,29 +670,18 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
         private void createComposerJson(FileObject targetDirectory) throws IOException {
             String appName = innerPanel.getAppName();
 
-            OutputStream outputStream = null; // NOI18N
-            try {
-                outputStream = targetDirectory.createAndOpen("composer.json");
-                PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true);
-                try {
-                    String composerJson = CakePhpOptions.getInstance().getComposerJson();
-                    String placeholder = "\\{\\$nb-app-name\\}"; // NOI18N
-                    if (appName.isEmpty()) {
-                        composerJson = composerJson.replaceAll(placeholder + "/", ""); // NOI18N
-                        composerJson = composerJson.replaceAll(placeholder, ""); // NOI18N
-                    } else {
-                        composerJson = composerJson.replaceAll(placeholder, appName); // NOI18N
-                    }
-                    pw.println(composerJson);
-                } finally {
-                    pw.close();
+            try (OutputStream outputStream = targetDirectory.createAndOpen("composer.json"); // NOI18N
+                    PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, UTF8), true)) {
+                String composerJson = CakePhpOptions.getInstance().getComposerJson();
+                String placeholder = "\\{\\$nb-app-name\\}"; // NOI18N
+                if (appName.isEmpty()) {
+                    composerJson = composerJson.replaceAll(placeholder + "/", ""); // NOI18N
+                    composerJson = composerJson.replaceAll(placeholder, ""); // NOI18N
+                } else {
+                    composerJson = composerJson.replaceAll(placeholder, appName); // NOI18N
                 }
-            } finally {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
+                pw.println(composerJson);
             }
-
         }
 
         /**
@@ -731,9 +714,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 ec.saveDocument();
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (BadLocationException ex) {
+            } catch (IOException | BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
@@ -765,7 +746,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 LOGGER.log(Level.WARNING, "Not found: webroot directory({0})", phpModule.getDisplayName());
                 return;
             }
-            ArrayList<FileObject> files = new ArrayList<FileObject>(2);
+            ArrayList<FileObject> files = new ArrayList<>(2);
             FileObject index = webrootDirectory.getFileObject("index.php"); // NOI18N
             if (index != null) {
                 files.add(index);
@@ -816,9 +797,7 @@ public class CakePhpModuleExtender extends PhpModuleExtender {
                 ec.saveDocument();
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (BadLocationException ex) {
+            } catch (IOException | BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }

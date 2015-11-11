@@ -96,7 +96,7 @@ public class MBHCFieldInfo extends FieldInfo {
     private static final String USES_TEMPLATE = String.format(ARRAY_FIELD_TEMPLATE, USES_NAME);
     private static final String ACTSAS_TEMPLATE = String.format(ARRAY_FIELD_TEMPLATE, ACTS_AS_NAME);
     // ignore list
-    private String[] filters = {
+    private static final String[] FILTERS = {
         "JqueryEngine", // NOI18N
         "PrototypeEngine", // NOI18N
         "MootoolsEngine", // NOI18N
@@ -158,13 +158,13 @@ public class MBHCFieldInfo extends FieldInfo {
 
         // add properties
         for (String property : allProperties) {
-            if (existings.contains(property) || Arrays.asList(filters).contains(property)) {
+            if (existings.contains(property) || Arrays.asList(FILTERS).contains(property)) {
                 continue;
             }
             getPossibleProperties().add(new Property(property, 0, type.toString()));
             Integer offset = insertOffsetMap.get(type);
             if (offset != null) {
-                setInsertOffset(offset.intValue());
+                setInsertOffset(offset);
                 isExist = true;
             }
         }
@@ -186,7 +186,7 @@ public class MBHCFieldInfo extends FieldInfo {
                         Map<Type, Integer> insertOffsetMap = visitor.getInsertOffsetMap();
                         Integer offset = insertOffsetMap.get(type);
                         if (offset != null) {
-                            setInsertOffset(offset.intValue());
+                            setInsertOffset(offset);
                             isExist = true;
                         }
                     }
@@ -215,7 +215,7 @@ public class MBHCFieldInfo extends FieldInfo {
             return Collections.emptyList();
         }
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         EditorSupport editorSupport = Lookup.getDefault().lookup(EditorSupport.class);
         FileObject appDir = module.getDirectory(DIR_TYPE.APP, fileType, null);
         list.addAll(getCommonNames(appDir, editorSupport, null));
@@ -277,7 +277,7 @@ public class MBHCFieldInfo extends FieldInfo {
      * @return common names
      */
     private List<String> getCommonNames(FileObject targetDirectory, EditorSupport editorSupport, String plugin) {
-        List<String> list = new LinkedList<String>();
+        List<String> list = new LinkedList<>();
         if (targetDirectory.isFolder()) {
             for (FileObject child : targetDirectory.getChildren()) {
                 if (child.isFolder()) {
@@ -325,11 +325,11 @@ public class MBHCFieldInfo extends FieldInfo {
     //~ inner class
     private static final class MBHCFileldsVisitor extends DefaultVisitor {
 
-        private final List<String> existingComponents = new ArrayList<String>();
-        private final List<String> existingHelpers = new ArrayList<String>();
-        private final List<String> existingUses = new ArrayList<String>();
-        private final List<String> existingActsAs = new ArrayList<String>();
-        private final Map<Type, Integer> insertOffsetMap = new EnumMap<Type, Integer>(Type.class);
+        private final List<String> existingComponents = new ArrayList<>();
+        private final List<String> existingHelpers = new ArrayList<>();
+        private final List<String> existingUses = new ArrayList<>();
+        private final List<String> existingActsAs = new ArrayList<>();
+        private final Map<Type, Integer> insertOffsetMap = new EnumMap<>(Type.class);
 
         public MBHCFileldsVisitor() {
         }
@@ -348,7 +348,7 @@ public class MBHCFieldInfo extends FieldInfo {
                 if (arrayCreation == null) {
                     continue;
                 }
-                String valueName = null;
+                String valueName;
                 for (ArrayElement element : arrayCreation.getElements()) {
                     Expression key = element.getKey();
                     if (key != null) {
@@ -356,18 +356,26 @@ public class MBHCFieldInfo extends FieldInfo {
                     } else {
                         valueName = CakePhpCodeUtils.getStringValue(element.getValue());
                     }
-                    if (name.equals("$components")) { // NOI18N
-                        existingComponents.add(valueName);
-                        insertOffsetMap.put(Type.COMPONENTS, field.getEndOffset() - 1);
-                    } else if (name.equals("$helpers")) { // NOI18N
-                        existingHelpers.add(valueName);
-                        insertOffsetMap.put(Type.HELPERS, field.getEndOffset() - 1);
-                    } else if (name.equals("$uses")) { // NOI18N
-                        existingUses.add(valueName);
-                        insertOffsetMap.put(Type.USES, field.getEndOffset() - 1);
-                    } else if (name.equals("$actsAs")) { // NOI18N
-                        existingActsAs.add(valueName);
-                        insertOffsetMap.put(Type.ACTS_AS, field.getEndOffset() - 1);
+                    if (name != null) {
+                        switch (name) {
+                            case "$components": // NOI18N
+                                existingComponents.add(valueName);
+                                insertOffsetMap.put(Type.COMPONENTS, field.getEndOffset() - 1);
+                                break;
+                            case "$helpers": // NOI18N
+                                existingHelpers.add(valueName);
+                                insertOffsetMap.put(Type.HELPERS, field.getEndOffset() - 1);
+                                break;
+                            case "$uses": // NOI18N
+                                existingUses.add(valueName);
+                                insertOffsetMap.put(Type.USES, field.getEndOffset() - 1);
+                                break;
+                            case "$actsAs": // NOI18N
+                                existingActsAs.add(valueName);
+                                insertOffsetMap.put(Type.ACTS_AS, field.getEndOffset() - 1);
+                                break;
+                            default:
+                        }
                     }
                 }
             }

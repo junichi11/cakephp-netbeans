@@ -398,7 +398,7 @@ public class CakePhpModule implements ChangeListener {
         if (filter == null) {
             filter = new DefaultFileFilter();
         }
-        List<FileObject> list = new ArrayList<FileObject>();
+        List<FileObject> list = new ArrayList<>();
         FileObject[] children = targetDirectory.getChildren();
         for (FileObject child : children) {
             if (child.isFolder()) {

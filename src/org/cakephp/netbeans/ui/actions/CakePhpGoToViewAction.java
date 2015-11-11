@@ -137,7 +137,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
     public FileObject[] getThemes() {
         PhpModule phpModule = PhpModule.Factory.forFileObject(controller);
         FileObject[] themes = null;
-        FileObject themeDirectory = null;
+        FileObject themeDirectory;
 
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {
@@ -174,7 +174,7 @@ public final class CakePhpGoToViewAction extends GoToViewAction {
                     if (field.getName().equals("$theme")) { // NOI18N
 
                         // create items
-                        final List<GoToItem> viewItems = new ArrayList<GoToItem>();
+                        final List<GoToItem> viewItems = new ArrayList<>();
                         for (FileObject themeDirectory : themes) {
                             if (themeDirectory.isFolder()) {
                                 FileObject view = CakePhpUtils.getView(controller, phpElement, themeDirectory);

@@ -701,7 +701,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
 
     private void setAvailableCustomNodes() {
         CakePhpOptions options = CakePhpOptions.getInstance();
-        DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
+        DefaultListModel<String> defaultListModel = new DefaultListModel<>();
         for (String node : CakePhpOptions.ALL_AVAILABLE_NODES) {
             defaultListModel.addElement(node);
         }
@@ -730,7 +730,7 @@ final class CakePhpOptionsPanel extends javax.swing.JPanel {
                 NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.pluginTable.columnModel.title0"),
                 NbBundle.getMessage(CakePhpOptionsPanel.class, "CakePhpOptionsPanel.pluginTable.columnModel.title1")
             };
-            plugins = new ArrayList<CakePhpPlugin>();
+            plugins = new ArrayList<>();
         }
 
         @Override

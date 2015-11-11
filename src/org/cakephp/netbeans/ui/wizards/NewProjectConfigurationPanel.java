@@ -79,7 +79,7 @@ public class NewProjectConfigurationPanel extends JPanel {
     private String errorMessage;
     private boolean isNetworkError = false;
     private static final Logger LOGGER = Logger.getLogger(NewProjectConfigurationPanel.class.getName());
-    private final Map<String, ConfigurationInnerPanel> panels = new HashMap<String, ConfigurationInnerPanel>();
+    private final Map<String, ConfigurationInnerPanel> panels = new HashMap<>();
     private final ChangeSupport changeSupport = new ChangeSupport(this);
 
     /**

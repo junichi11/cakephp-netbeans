@@ -42,6 +42,7 @@
 package org.cakephp.netbeans.versions;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  *
@@ -94,9 +95,7 @@ public interface Versionable {
                     try {
                         Integer aInt = Integer.parseInt(aString);
                         Integer bInt = Integer.parseInt(bString);
-                        if (aInt == bInt) {
-                            continue;
-                        } else {
+                        if (!Objects.equals(aInt, bInt)) {
                             return bInt - aInt;
                         }
                     } catch (NumberFormatException ex) {

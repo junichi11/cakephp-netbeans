@@ -80,18 +80,18 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
 
     private static final String ELEMENTS = "Elements"; // NOI18N
     private static final String LAYOUTS = "Layouts"; // NOI18N
-    private final Set<FileObject> views = new HashSet<FileObject>();
-    private final List<GoToItem> viewItems = new ArrayList<GoToItem>();
-    private final Set<GoToItem> elementItems = new HashSet<GoToItem>();
-    private final Set<GoToItem> extendItems = new HashSet<GoToItem>();
+    private final Set<FileObject> views = new HashSet<>();
+    private final List<GoToItem> viewItems = new ArrayList<>();
+    private final Set<GoToItem> elementItems = new HashSet<>();
+    private final Set<GoToItem> extendItems = new HashSet<>();
     private FileObject caretPositionElement;
     private FileObject caretPositionExtend;
-    private final List<GoToItem> controllerItems = new ArrayList<GoToItem>();
-    private final List<GoToItem> helperItems = new ArrayList<GoToItem>();
+    private final List<GoToItem> controllerItems = new ArrayList<>();
+    private final List<GoToItem> helperItems = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(CakePhpViewGoToStatus.class.getName());
     private String caretPositionElementPath = ""; // NOI18N
     private String caretPositionExtendPath = ""; // NOI18N
-    private static CakePhpViewGoToStatus INSTANCE = new CakePhpViewGoToStatus();
+    private static final CakePhpViewGoToStatus INSTANCE = new CakePhpViewGoToStatus();
     private DIR_TYPE dirType;
     private boolean isInElement;
     private boolean isInLayout;
@@ -224,7 +224,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
             return Collections.emptyList();
         }
 
-        List<GoToItem> items = new ArrayList<GoToItem>();
+        List<GoToItem> items = new ArrayList<>();
         EditorSupport editorSupport = Lookup.getDefault().lookup(EditorSupport.class);
         for (PhpClass phpClass : editorSupport.getClasses(controller)) {
             items.add(new GoToControllerItem(controller, DEFAULT_OFFSET));
@@ -246,7 +246,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
             return Collections.emptyList();
         }
 
-        List<GoToItem> items = new ArrayList<GoToItem>();
+        List<GoToItem> items = new ArrayList<>();
         int actionMethodOffset = CakePhpUtils.getActionMethodOffset(controller, view);
         if (actionMethodOffset > 0) {
             items.add(new GoToControllerItem(controller, DEFAULT_OFFSET));
@@ -293,7 +293,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
 
     @Override
     public List<GoToItem> getSmart() {
-        List<GoToItem> items = new ArrayList<GoToItem>();
+        List<GoToItem> items = new ArrayList<>();
 
         // element
         if (caretPositionElement != null) {
@@ -398,14 +398,12 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
                 viewBaseDirectory = viewBaseDirectory.getFileObject(ELEMENTS);
             } else if (isInLayout) {
                 viewBaseDirectory = viewBaseDirectory.getFileObject(LAYOUTS);
-            } else {
-                if (StringUtils.isEmpty(pluginName)) {
-                    if (controller == null) {
-                        continue;
-                    }
-                    String viewFolderName = cakeModule.getViewFolderName(controller.getName());
-                    viewBaseDirectory = viewBaseDirectory.getFileObject(viewFolderName);
+            } else if (StringUtils.isEmpty(pluginName)) {
+                if (controller == null) {
+                    continue;
                 }
+                String viewFolderName = cakeModule.getViewFolderName(controller.getName());
+                viewBaseDirectory = viewBaseDirectory.getFileObject(viewFolderName);
             }
             if (viewBaseDirectory == null) {
                 continue;
@@ -422,7 +420,7 @@ public class CakePhpViewGoToStatus extends CakePhpGoToStatus {
     }
 
     private List<DIR_TYPE> getDirTypes(String pluginName) {
-        List<DIR_TYPE> dirTypes = new ArrayList<DIR_TYPE>();
+        List<DIR_TYPE> dirTypes = new ArrayList<>();
         if (!StringUtils.isEmpty(pluginName)) {
             dirTypes.addAll(Arrays.asList(DIR_TYPE.APP_PLUGIN, DIR_TYPE.PLUGIN));
         } else {

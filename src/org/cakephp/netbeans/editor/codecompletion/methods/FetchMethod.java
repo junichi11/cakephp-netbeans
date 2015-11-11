@@ -61,7 +61,7 @@ public class FetchMethod extends Method {
 
     @Override
     public List<String> getElements(int argCount, String filter) {
-        List<String> elements = new LinkedList<String>();
+        List<String> elements = new LinkedList<>();
         if (argCount == 1) {
             for (String item : DEFAULT) {
                 if (item.startsWith(filter)) {

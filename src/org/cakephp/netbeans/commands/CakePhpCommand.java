@@ -58,13 +58,13 @@ public class CakePhpCommand extends FrameworkCommand {
     public CakePhpCommand(PhpModule phpModule, String command, String description, String displayName) {
         super(command, description, displayName);
         assert phpModule != null;
-        this.phpModule = new WeakReference<PhpModule>(phpModule);
+        this.phpModule = new WeakReference<>(phpModule);
     }
 
     public CakePhpCommand(PhpModule phpModule, String[] command, String description, String displayName) {
         super(command, description, displayName);
         assert phpModule != null;
-        this.phpModule = new WeakReference<PhpModule>(phpModule);
+        this.phpModule = new WeakReference<>(phpModule);
     }
 
     @Override

@@ -132,7 +132,7 @@ public class MVCNode extends FilterNode {
         "LBL_SyncCommand=Synchronize..."
     })
     public Action[] getActions(boolean context) {
-        List<Action> actions = new ArrayList<Action>();
+        List<Action> actions = new ArrayList<>();
         actions.add(CommonProjectActions.newFileAction());
         actions.add(null);
         actions.add(FileSensitiveActions.fileCommandAction("dowonload", Bundle.LBL_DownloadCommand(), null));
@@ -148,7 +148,7 @@ public class MVCNode extends FilterNode {
         actions.add(SystemAction.get(ToolsAction.class));
         actions.add(null);
         // customizer - open sources for source node, phpunit for test node
-        Action customizeAction = null;
+        Action customizeAction;
         customizeAction = CommonProjectActions.customizeProjectAction();
         actions.add(customizeAction);
         return actions.toArray(new Action[actions.size()]);
@@ -213,7 +213,7 @@ public class MVCNode extends FilterNode {
 
         @Override
         public Action[] getActions(boolean context) {
-            List<Action> actions = new ArrayList<Action>();
+            List<Action> actions = new ArrayList<>();
             actions.addAll(Arrays.asList(getOriginal().getActions(context)));
             Action[] commonActions = getCommonActions();
             int idx = actions.indexOf(SystemAction.get(PasteAction.class));
@@ -260,7 +260,7 @@ public class MVCNode extends FilterNode {
 
         @Override
         public Action[] getActions(boolean context) {
-            List<Action> actions = new ArrayList<Action>();
+            List<Action> actions = new ArrayList<>();
             actions.addAll(Arrays.asList(getOriginal().getActions(context)));
             int idx = actions.indexOf(SystemAction.get(PasteAction.class));
             Action[] toAdd = getCommonActions();
@@ -293,7 +293,7 @@ public class MVCNode extends FilterNode {
             "LBL_TestFile=Test"
         })
         private Action[] getCommonActions() {
-            List<Action> toAdd = new ArrayList<Action>();
+            List<Action> toAdd = new ArrayList<>();
             if (isPhpOrHtmlFile(getFileObject())) {
                 // not available for multiple selected nodes => create new instance every time
                 toAdd.add(null);
@@ -304,7 +304,7 @@ public class MVCNode extends FilterNode {
                 }
             }
 
-            List<Action> actions = new ArrayList<Action>(COMMON_ACTIONS.length + toAdd.size());
+            List<Action> actions = new ArrayList<>(COMMON_ACTIONS.length + toAdd.size());
             actions.addAll(toAdd);
             if (!isTest) {
                 actions.addAll(Arrays.asList(COMMON_ACTIONS));

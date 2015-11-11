@@ -191,11 +191,9 @@ public class CheckDefaultAction extends BaseAction {
         if (targetFavicon == null) {
             return true;
         }
-        try {
-            InputStream originalInputStream = favicon.getInputStream();
-            InputStream targetInputStream = targetFavicon.getInputStream();
-            int originalData = 0;
-            int targetData = 0;
+        try (InputStream originalInputStream = favicon.getInputStream(); InputStream targetInputStream = targetFavicon.getInputStream()) {
+            int originalData;
+            int targetData;
             do {
                 originalData = originalInputStream.read();
                 targetData = targetInputStream.read();
@@ -205,8 +203,6 @@ public class CheckDefaultAction extends BaseAction {
                     return true;
                 }
             } while ((originalData != -1) && (targetData != -1));
-            originalInputStream.close();
-            targetInputStream.close();
         } catch (FileNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
@@ -227,10 +223,7 @@ public class CheckDefaultAction extends BaseAction {
             return false;
         }
         FileObject fileObject = webroot.getFileObject(path);
-        if (fileObject == null) {
-            return false;
-        }
-        return true;
+        return fileObject != null;
     }
 
     /**
@@ -240,7 +233,7 @@ public class CheckDefaultAction extends BaseAction {
      * @return
      */
     private boolean isChangedSessionName(PhpModule phpModule) {
-        FileObject config = null;
+        FileObject config;
         CakePhpModule cakeModule = CakePhpModule.forPhpModule(phpModule);
         if (cakeModule == null) {
             return false;
@@ -254,7 +247,7 @@ public class CheckDefaultAction extends BaseAction {
         }
 
         try {
-            List<String> lines = config.asLines("UTF-8");
+            List<String> lines = config.asLines("UTF-8"); // NOI18N
             boolean existSessionCookie = false;
             for (String line : lines) {
                 if (line.matches("^.*'Session\\.cookie', *'CAKEPHP'.*$")) { // NOI18N
