@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2014 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2015 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,39 +37,26 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2014 Sun Microsystems, Inc.
+ * Portions Copyrighted 2015 Sun Microsystems, Inc.
  */
-package org.cakephp.netbeans.dotcake;
+package org.cakephp.netbeans.ui.wizards;
 
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.MIMEResolver;
-import org.openide.util.lookup.ServiceProvider;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Support for .cake file.
  *
  * @author junichi11
  */
-@ServiceProvider(service = MIMEResolver.class)
-public final class DotcakeMIMEResolver extends MIMEResolver {
+public final class ConfigurationInnerPanels {
 
-    private static final String DOTCAKE_FILE = ".cake"; // NOI18N
-    private static final String JSON_MIME_TYPE = "text/x-json"; // NOI18N
-
-    public DotcakeMIMEResolver() {
+    private ConfigurationInnerPanels() {
     }
 
-    public DotcakeMIMEResolver(String... mimeTypes) {
-        super(mimeTypes);
+    public static List<ConfigurationInnerPanel> getPanels() {
+        return Arrays.asList(
+                new CakePhpConfigurationInnerPanel(),
+                new BaserCmsConfigurationInnerPanel()
+        );
     }
-
-    @Override
-    public String findMIMEType(FileObject fileObject) {
-        String fileName = fileObject.getNameExt();
-        if (DOTCAKE_FILE.equals(fileName)) {
-            return JSON_MIME_TYPE;
-        }
-        return null;
-    }
-
 }

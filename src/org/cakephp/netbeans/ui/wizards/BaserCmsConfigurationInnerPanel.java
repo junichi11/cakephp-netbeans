@@ -41,21 +41,25 @@
  */
 package org.cakephp.netbeans.ui.wizards;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeListener;
 import org.cakephp.netbeans.github.BaserCmsGithubTags;
 import org.cakephp.netbeans.versions.Versionable;
+import org.openide.util.ChangeSupport;
 import org.openide.util.NbBundle;
-import org.openide.util.lookup.ServiceProvider;
+import org.openide.util.RequestProcessor;
 
 /**
  *
  * @author junichi11
  */
-@ServiceProvider(path = ConfigurationInnerPanel.CONFIGURATION_INNER_PANELS_PATH, service = ConfigurationInnerPanel.class)
 public class BaserCmsConfigurationInnerPanel extends ConfigurationInnerPanel {
 
     private int reloadCount = 0;
@@ -64,6 +68,8 @@ public class BaserCmsConfigurationInnerPanel extends ConfigurationInnerPanel {
     private static final Logger LOGGER = Logger.getLogger(BaserCmsConfigurationInnerPanel.class.getName());
     private static final long serialVersionUID = 7990017232014609165L;
     private boolean isNetworkError = true;
+    private final ChangeSupport changeSupport = new ChangeSupport(this);
+    private static final RequestProcessor RP = new RequestProcessor(BaserCmsConfigurationInnerPanel.class);
 
     /**
      * Creates new form BaserCmsConfigurationPanel
@@ -79,11 +85,33 @@ public class BaserCmsConfigurationInnerPanel extends ConfigurationInnerPanel {
     /**
      * Initialze versions.
      */
+    @NbBundle.Messages("BaserCmsConfigurationInnerPanel.message.fetching=Fetching...")
     private void initVersion() {
-        BaserCmsGithubTags githubTags = BaserCmsGithubTags.getInstance();
-        String[] names = githubTags.getNames();
-        Arrays.sort(names, Versionable.VERSION_COMPARATOR);
-        baserVersionComboBox.setModel(new DefaultComboBoxModel<>(names));
+        baserVersionComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                setError();
+                fireChange();
+            }
+        });
+        baserVersionComboBox.setEnabled(false);
+        baserVersionComboBox.addItem(Bundle.BaserCmsConfigurationInnerPanel_message_fetching());
+        RP.post(new Runnable() {
+            @Override
+            public void run() {
+                BaserCmsGithubTags githubTags = BaserCmsGithubTags.getInstance();
+                final String[] names = githubTags.getNames();
+                Arrays.sort(names, Versionable.VERSION_COMPARATOR);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        baserVersionComboBox.removeAllItems();
+                        baserVersionComboBox.setModel(new DefaultComboBoxModel<String>(names));
+                        baserVersionComboBox.setEnabled(true);
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -115,11 +143,30 @@ public class BaserCmsConfigurationInnerPanel extends ConfigurationInnerPanel {
     /**
      * Set error message.
      */
+    @NbBundle.Messages("BaserCmsConfigurationInnerPanel.error.message.fetching=Fetching versions...")
     private void setError() {
         errorMessage = null;
         if (isNetworkError) {
             errorMessage = Bundle.LBL_ConnectErrorMessage();
         }
+        int itemCount = baserVersionComboBox.getItemCount();
+        if (itemCount == 1 && baserVersionComboBox.getItemAt(0).equals(Bundle.BaserCmsConfigurationInnerPanel_message_fetching())) {
+            errorMessage = Bundle.BaserCmsConfigurationInnerPanel_error_message_fetching();
+        }
+    }
+
+    @Override
+    public void addChangeListener(ChangeListener listener) {
+        changeSupport.addChangeListener(listener);
+    }
+
+    @Override
+    public void removeChangeListener(ChangeListener listener) {
+        changeSupport.removeChangeListener(listener);
+    }
+
+    void fireChange() {
+        changeSupport.fireChange();
     }
 
     /**

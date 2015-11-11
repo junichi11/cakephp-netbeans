@@ -242,10 +242,16 @@ public class NewProjectConfigurationPanel extends JPanel {
 
     public void addChangeListener(ChangeListener changeListener) {
         changeSupport.addChangeListener(changeListener);
+        for (ConfigurationInnerPanel panel : panels.values()) {
+            panel.addChangeListener(changeListener);
+        }
     }
 
     public void removeChangeListener(ChangeListener changeListener) {
         changeSupport.removeChangeListener(changeListener);
+        for (ConfigurationInnerPanel panel : panels.values()) {
+            panel.removeChangeListener(changeListener);
+        }
     }
 
     void fireChange() {

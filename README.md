@@ -544,5 +544,12 @@ baserCMS is an open source CMS and powered by CakePHP Framework.
 - [2] [Working With NetBeans Sources](http://wiki.netbeans.org/WorkingWithNetBeansSources)
 - [3] [Nightly latest zip](http://bits.netbeans.org/download/trunk/nightly/latest/zip/)
 
+## Trableshooting
+
+#### Can't get CakePHP verison numbers in the New Project Wizard
+
+- Please try checking whether your machine is connected to internet
+- Your request count via GitHub API may be over the limit. Please try waiting for one hour.
+
 ## License
 [Common Development and Distribution License (CDDL) v1.0 and GNU General Public License (GPL) v2](http://netbeans.org/cddl-gplv2.html)
