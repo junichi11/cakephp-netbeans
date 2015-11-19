@@ -61,6 +61,9 @@ public final class ConfigurationFiles extends FileChangeAdapter implements Impor
             return Collections.emptyList();
         }
         FileObject config = cakeModule.getConfigDirectory(CakePhpModule.DIR_TYPE.APP);
+        if (config == null) {
+            return Collections.emptyList();
+        }
         if (!isInitialized) {
             isInitialized = true;
             addListener(FileUtil.toFile(config));
