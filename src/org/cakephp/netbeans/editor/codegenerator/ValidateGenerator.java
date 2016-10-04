@@ -61,7 +61,7 @@ import org.netbeans.lib.editor.codetemplates.api.CodeTemplate;
 import org.netbeans.lib.editor.codetemplates.api.CodeTemplateManager;
 import org.netbeans.modules.php.api.editor.EditorSupport;
 import org.netbeans.modules.php.api.editor.PhpClass;
-import org.netbeans.modules.php.api.editor.PhpClass.Field;
+import org.netbeans.modules.php.api.editor.PhpType.Field;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
 import org.netbeans.spi.editor.codegen.CodeGenerator;
 import org.netbeans.spi.editor.codegen.CodeGeneratorContextProvider;

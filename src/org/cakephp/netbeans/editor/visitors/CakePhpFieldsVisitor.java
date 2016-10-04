@@ -199,7 +199,7 @@ public abstract class CakePhpFieldsVisitor extends DefaultVisitor {
     }
 
     private String getClassName(StaticMethodInvocation node) {
-        Expression className = node.getClassName();
+        Expression className = node.getDispatcher();
         if (className instanceof NamespaceName) {
             return CodeUtils.extractQualifiedName((NamespaceName) className);
         }

@@ -273,7 +273,7 @@ public class CakeAppUsesParameter extends CakePhpCodeTemplateParameter {
         @Override
         public void visit(StaticMethodInvocation node) {
             super.visit(node);
-            Expression className = node.getClassName();
+            Expression className = node.getDispatcher();
             if (className instanceof NamespaceName) {
                 String name = CodeUtils.extractQualifiedName((NamespaceName) className);
                 if (name.equals("App")) { // NOI18N
