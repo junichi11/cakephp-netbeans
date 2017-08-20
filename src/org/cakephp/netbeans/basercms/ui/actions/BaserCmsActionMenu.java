@@ -70,7 +70,7 @@ import org.openide.util.actions.Presenter;
         lazy = false,
         displayName = "#CTL_BaserCmsActionMenu")
 @ActionReferences({
-    @ActionReference(path = "Projects/org-netbeans-modules-php-phpproject/Actions", position = 900)})
+    @ActionReference(path = "Projects/org-netbeans-modules-php-project/Actions", position = 900)})
 @NbBundle.Messages("CTL_BaserCmsActionMenu=baserCMS")
 public final class BaserCmsActionMenu extends AbstractAction implements Presenter.Popup {
 
