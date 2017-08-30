@@ -77,6 +77,7 @@ public class CakePhpOptions {
     private static final String BASERCMS_VAGARANT_SETTINGS = "basercms-vagrant-settings"; // NOI18N
     private static final CakePhpOptions INSTANCE = new CakePhpOptions();
     public static final List<String> DEFAULT_AVAILABLE_NODES = Arrays.asList(
+            "Console", // NOI18N
             "Controller", // NOI18N
             "Model", // NOI18N
             "View", // NOI18N

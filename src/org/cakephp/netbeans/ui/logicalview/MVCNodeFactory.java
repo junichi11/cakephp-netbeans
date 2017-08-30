@@ -119,6 +119,9 @@ public class MVCNodeFactory implements NodeFactory {
             List<Object> list = new ArrayList<>();
             for (String customNode : options.getAvailableCustomNodes()) {
                 switch (customNode) {
+                    case "Console": // NOI18N
+                        list.add(FILE_TYPE.CONSOLE);
+                        break;
                     case "Controller": // NOI18N
                         list.add(FILE_TYPE.CONTROLLER);
                         break;
