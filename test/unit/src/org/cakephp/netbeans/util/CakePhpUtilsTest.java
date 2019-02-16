@@ -42,7 +42,6 @@
 package org.cakephp.netbeans.util;
 
 import java.io.IOException;
-import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 import org.netbeans.junit.NbTestCase;
 import org.openide.filesystems.FileObject;
