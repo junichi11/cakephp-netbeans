@@ -59,7 +59,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.netbeans.junit.NbTestCase;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
-import org.netbeans.modules.php.api.phpmodule.PhpModuleProperties;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
