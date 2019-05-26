@@ -106,7 +106,7 @@ public class BaserCmsConfigurationInnerPanel extends ConfigurationInnerPanel {
                     @Override
                     public void run() {
                         baserVersionComboBox.removeAllItems();
-                        baserVersionComboBox.setModel(new DefaultComboBoxModel<String>(names));
+                        baserVersionComboBox.setModel(new DefaultComboBoxModel<>(names));
                         baserVersionComboBox.setEnabled(true);
                     }
                 });

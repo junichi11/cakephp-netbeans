@@ -279,7 +279,7 @@ public class RunActionAction extends BaseAction {
      * @param actionId
      */
     private void openBrowser(PhpModule phpModule, String controllerId, String actionId, String pluginName) {
-        openBrowser(phpModule, controllerId, actionId, new HashMap<String, String>(), pluginName);
+        openBrowser(phpModule, controllerId, actionId, new HashMap<>(), pluginName);
     }
 
     /**
