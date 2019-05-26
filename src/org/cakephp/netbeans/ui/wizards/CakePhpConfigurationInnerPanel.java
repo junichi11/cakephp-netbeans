@@ -158,7 +158,7 @@ public class CakePhpConfigurationInnerPanel extends ConfigurationInnerPanel {
                         Arrays.sort(names, Versionable.VERSION_COMPARATOR);
                         versionComboBox.removeAllItems();
                         versionComboBox.setEnabled(true);
-                        versionComboBox.setModel(new DefaultComboBoxModel<String>(names));
+                        versionComboBox.setModel(new DefaultComboBoxModel<>(names));
                     }
                 });
             }

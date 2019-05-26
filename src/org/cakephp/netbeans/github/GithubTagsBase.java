@@ -72,8 +72,8 @@ import org.openide.util.Exceptions;
  */
 public abstract class GithubTagsBase {
 
-    private final List<GithubTag> tags = new ArrayList<GithubTag>();
-    private final List<String> names = new ArrayList<String>();
+    private final List<GithubTag> tags = new ArrayList<>();
+    private final List<String> names = new ArrayList<>();
     private boolean isNetworkError = true;
     private static final Pattern LINK_URL_PATTERN = Pattern.compile("<(?<url>https://.+)>; rel=\"(?<rel>.+)\""); // NOI18N
     private static final Logger LOGGER = Logger.getLogger(GithubTagsBase.class.getName());
