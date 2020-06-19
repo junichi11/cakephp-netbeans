@@ -553,7 +553,7 @@ baserCMS is an open source CMS and powered by CakePHP Framework.
 
 ## Donation
 
-<a href="https://www.patreon.com/junichi11"><img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" height="50"></a>
+- https://github.com/sponsors/junichi11
 
 ## License
 [Common Development and Distribution License (CDDL) v1.0 and GNU General Public License (GPL) v2](http://netbeans.org/cddl-gplv2.html)
