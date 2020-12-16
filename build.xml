@@ -23,6 +23,17 @@
     <property name="ossrh-server-id" value="ossrh" />
     <property name="code-name-base" value="org-cakephp-netbeans" />
 
+    <target name="update-version-number">
+        <replaceregexp file="pom/pom.xml"
+                       match="(^    &lt;version&gt;).+(&lt;/version&gt;)"
+                       replace="\1${version}\2"
+                       byline="true" />
+        <replaceregexp file="manifest.mf"
+                       match="(OpenIDE-Module-Specification-Version:[ ]*).+"
+                       replace="\1${version}"
+                       byline="true" />
+    </target>
+
     <target name="deploy" depends="nbm" description="deploy release version to Maven repository">
         <move file="${build}/${code-name-base}.nbm" toFile="${build}/${artifactId}-${version}.nbm"/>
         <artifact:mvn>
