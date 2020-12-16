@@ -24,7 +24,7 @@
     <property name="code-name-base" value="org-cakephp-netbeans" />
 
     <target name="update-version-number">
-        <replaceregexp file="pom/pom.xml"
+        <replaceregexp file="pom.xml"
                        match="(^    &lt;version&gt;).+(&lt;/version&gt;)"
                        replace="\1${version}\2"
                        byline="true" />
